@@ -8,7 +8,7 @@ library(lubridate)
 read.vad <- function(path){
   
   filename <- (Sys.glob(path))
-  datetime <- ymd_hms(stringi::stri_sub(filename, from = 21, to = 41))
+  datetime <- ymd_hms(stringi::stri_sub(filename, from = 24, to = 44))
   
   for (i in 1:length(filename)){
     temp <- read.csv(filename[i], sep = ";", dec = ".", na.strings = "-9999")

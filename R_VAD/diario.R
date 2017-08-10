@@ -4,21 +4,24 @@ library(lubridate)
 library(RadioSonde)
 library(gridBase)
 library(grid)
+library(magrittr)
+library(data.table)
+library(zoo)
 source("geom_arrow.R")
 source("helpfun.R")
 
 
 #Leo los datos con la funcion read.vad
 
-vad_20160114 <- read.vad("../20160114_240/vda*")
-vad_20160123 <- read.vad("../20160123_240/vda*")
-vad_20160111 <- read.vad("../20160111_240/vda*")
-vad_20160116 <- read.vad("../20160116_240/vda*")
-vad_20160201 <- read.vad("../20160201_240/vda*")
-vad_20160228 <- read.vad("../20160228_240/vda*")
-vad_20170111 <- read.vad("../20170111_240/vda*")
-vad_20170120 <- read.vad("../20170120_240/vda*")
-vad_20170121 <- read.vad("../20170121_240/vda*")
+vad_20160114 <- read.vad("../../20160114_240/vda*")
+vad_20160123 <- read.vad("../../20160123_240/vda*")
+vad_20160111 <- read.vad("../../20160111_240/vda*")
+vad_20160116 <- read.vad("../../20160116_240/vda*")
+vad_20160201 <- read.vad("../../20160201_240/vda*")
+vad_20160228 <- read.vad("../../20160228_240/vda*")
+vad_20170111 <- read.vad("../../20170111_240/vda*")
+vad_20170120 <- read.vad("../../20170120_240/vda*")
+vad_20170121 <- read.vad("../../20170121_240/vda*")
 vad_20160114_3 <- read.vad("../Test/temporal/temp-3/vda*")
 vad_20160114_1 <- read.vad("../Test/temporal/temp-1/vda*")
 vad_20160114_5 <- read.vad("../Test/temporal/temp-5/vda*")
@@ -101,7 +104,7 @@ ggsave(paste0("Hodografa_nivel_", as.Date(dia$date_time[1]), ".png"), device = "
 
 #============================================
 #Viento por niveles
-ggplot(subset(dia, ht < 1.7), aes(date_time, spd)) + geom_line(color = "#FF3300") + facet_wrap(~ht) + 
+ggplot(subset(dia, ht < 2.5), aes(date_time, spd)) + geom_line(color = "#FF3300") + facet_wrap(~ht) + 
   xlab("Tiempo (hora UTC)") + ylab("Viento (m/s)") + 
   scale_x_datetime(date_breaks = "6 hour", date_labels = "%H") +
   theme_minimal() + theme(axis.text.x = element_text(angle = 45))

@@ -12,7 +12,7 @@ import scipy
 import csv
 import LowPassFilter
 import RadarBeamPropagation
-import radarfun
+#import radarfun
 
 
 
@@ -229,7 +229,7 @@ for f in range(len(FileList)):
         ringpl = len(temp.spd)
 
         #Calculo el promedio de spd para la capa
-        
+        totalvad.ht[l] = pht[l]
         w = temp.rmse + temp.rh
         if not w.any():
             continue
@@ -244,7 +244,7 @@ for f in range(len(FileList)):
         rmsec3 = sum(np.power(temp.spd-spd_wavg,2)/np.sqrt(temp.rmse))/(sum(1/np.sqrt(temp.rmse))*(ringpl-1))
 
         #Guardo en el dataframe
-        totalvad.ht[l] = pht[l]
+        
         totalvad.spd[l] = spd_wavg
         totalvad.rmse[l] = rmsec1
         totalvad.rmse2[l] = rmsec2
