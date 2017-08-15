@@ -58,8 +58,9 @@ ggplot(perfiles, aes(ht, spd, color = as.factor(hour(date_time)))) +
 #ggsave(paste0("Perfiles_", as.Date(dia$date_time[1]), ".png"), device = "png", path = "fig")
 
 # Dirección del viento
-ggplot(tiempos, aes(date_time, ht)) +
-  geom_arrow(aes(mag = spd, angle = di, color = spd)) +
+tiempos <- (subset(dia, hour(date_time) == 12))
+ggplot(subset(tiempos, !is.na(spd)), aes(date_time, ht)) +
+  geom_arrow(aes(mag = spd, angle = di, color = spd)) 
   geom_point(aes(size = ifelse(rmse > 0.5, rmse, NA)), shape = 1, color = "black") +
   geom_point(aes(size = ifelse(rmse2 > 0.5, rmse2, NA)), shape = 4, color = "grey25") +
   scale_size_continuous(range = c(0, 5), guide = "none") +
