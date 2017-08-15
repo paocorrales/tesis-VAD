@@ -14,6 +14,7 @@ source("helpfun.R")
 #Leo los datos con la funcion read.vad
 
 vad_20160114 <- read.vad("../../20160114_240/vda*")
+vad_20160114n <- read.vad("../../20160114_240/vda*")
 vad_20160123 <- read.vad("../../20160123_240/vda*")
 vad_20160111 <- read.vad("../../20160111_240/vda*")
 vad_20160116 <- read.vad("../../20160116_240/vda*")
@@ -26,19 +27,22 @@ vad_20160114_3 <- read.vad("../Test/temporal/temp-3/vda*")
 vad_20160114_1 <- read.vad("../Test/temporal/temp-1/vda*")
 vad_20160114_5 <- read.vad("../Test/temporal/temp-5/vda*")
 
+# Aplico lowess para consistencia temporal
+
+vad_20160114n <- lowess.vad(vad_20160114n)
 
 #Plots
 
-dia <- vad_20160114
+dia <- vad_20160114n
 perfiles <- subset(dia, ht < 1.5 & minute(date_time) == 00 & hour(date_time) %in% c(0, 6, 12, 18, 23))
 tiempos <- subset(dia, minute(date_time) == 0)
 
 # Campo de viento con errores
 ggplot(dia, aes(date_time, ht)) + 
-  geom_contour(aes(z = spd, color = ..level..), binwidth = 1) +
-  #geom_contour(data = vad_20160114_3, aes(z = spd)) +
+  geom_contour(aes(z = spd.smooth, color = ..level..), binwidth = 1) +
+ # geom_contour(data = vad_20160114, aes(z = spd)) +
   scale_color_distiller(name = "Velocidad", type = "seq", palette = 8, direction = 1) + 
-  geom_point(data = subset(dia, rmse > 0.5), aes(size = rmse), shape = 1, color = "black") +
+  geom_point(data = subset(dia, rmse1 > 0.5), aes(size = rmse1), shape = 1, color = "black") +
   geom_point(data = subset(dia, rmse2 > 0.5), aes(size = rmse2), shape = 4, color = "grey25") +
   ylim(c(0,2)) + xlab("Tiempo") + 
   ylab("Altura (km)") + 
@@ -58,10 +62,11 @@ ggplot(perfiles, aes(ht, spd, color = as.factor(hour(date_time)))) +
 #ggsave(paste0("Perfiles_", as.Date(dia$date_time[1]), ".png"), device = "png", path = "fig")
 
 # Dirección del viento
-tiempos <- (subset(dia, hour(date_time) == 12))
+tiempos1 <- subset(vad_20160114, minute(date_time) == 0 & !is.na(spd))
 ggplot(subset(tiempos, !is.na(spd)), aes(date_time, ht)) +
-  geom_arrow(aes(mag = spd, angle = di, color = spd)) 
-  geom_point(aes(size = ifelse(rmse > 0.5, rmse, NA)), shape = 1, color = "black") +
+  #geom_arrow(data =  tiempos1, aes(mag = spd, angle = di), color = "red") +
+  geom_arrow(aes(mag = spd, angle = di, color = spd)) +
+  geom_point(aes(size = ifelse(rmse1 > 0.5, rmse1, NA)), shape = 1, color = "black") +
   geom_point(aes(size = ifelse(rmse2 > 0.5, rmse2, NA)), shape = 4, color = "grey25") +
   scale_size_continuous(range = c(0, 5), guide = "none") +
   scale_color_distiller(palette = "Oranges", name="Velocidad", direction = 1) +

@@ -10,22 +10,24 @@ group_by(vad_20170120, ht) %>%
   facet_wrap(~ht, scales = "free_y")
 
 
-vad_20170120 %>% 
+vad_20160114n %>% 
   group_by(ht) %>% 
   mutate(spd.smooth = loess.smooth(date_time, spd, span = 0.12, evaluation = length(spd))$y)
 
 # Convierte mis datos en data.table
-vad.dt <- as.data.table(vad_20160114)
+vad.dt <- as.data.table(vad_20160114n)
 
 # Calculo el loess para cada altura. Span pequeño para que la regresión sea mas localizada.
 vad.dt[, spd.smooth := loess.smooth(date_time, spd, span = 0.06, evaluation = .N)$y, 
        by = ht]
+vad.dt[, spd.smooth := loess(spd ~ as.numeric(date_time), span = 0.75, evaluation = .N, 
+                             na.action = na.exclude)$y, by = ht]
 
 # Cuenta NA en una ventana de 6 datos (equivalente a una hora)
 vad.dt[, na.acum := zoo::rollsum(is.na(spd), k = 6, fill = NA), by = ht]
 
 ggplot(vad.dt, aes(date_time)) +
-  geom_col(aes(y = na.acum)) +
+  #geom_col(aes(y = na.acum)) +
   geom_line(aes(y = spd)) +
   geom_line(aes(y = spd.smooth), color = "red") +
   facet_wrap(~ht) +

@@ -1,9 +1,11 @@
 library(reshape2)
 library(lubridate)
+library(data.table)
 
-
+#=========================================================================================#
 # read.vad es una funcion que lee los archivos con los datos de un vad para una determinada
 # fecha. Recibe la ubicación de los archivos y devuelve un dataframe con los datos.
+#=========================================================================================#
 
 read.vad <- function(path){
   
@@ -27,3 +29,19 @@ read.vad <- function(path){
 }
   
 
+#=========================================================================================#
+# loess.vad aplica loess a spd para corregir inconsistencias temporales
+# Si hay NAs no agrega nada, de hecho se pieren algunos datos vecinos.
+#=========================================================================================#
+
+lowess.vad <- function(dataframe, span = 0.06, delta = 0){
+  
+  # Convierte mis datos en data.table
+  vad.dt <- as.data.table(dataframe)
+  
+  # Calculo el loess para cada altura. Span pequeño para que la regresión sea mas localizada.
+  vad.dt[, spd.smooth := lowess(spd ~ date_time, f = span, delta = delta)$y, by = ht]
+  
+  return(as.data.frame(vad.dt))
+  
+}

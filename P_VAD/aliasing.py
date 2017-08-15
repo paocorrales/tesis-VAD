@@ -19,6 +19,7 @@ import netCDF4
 import RadarBeamPropagation
 
 path_user = '../../Radar/VAD/PARANA/20160114/240/*.nc'
+path_user = '../../Radar/VAD/PARANA/20160114/240/cfrad.20160114_030004.000_to_20160114_030431.002_INTA_Parana_SUR.nc'
 
 FileList = np.sort(glob.glob(path_user))
 file2read=FileList[0]
@@ -39,7 +40,7 @@ fig = plt.figure(figsize=[20,15])
 
 ax = fig.add_subplot(211,aspect=1.0)
 
-display.plot_ppi('V', sweep=4, 
+display.plot_ppi('Vda', sweep=2, 
                  axislabels=(xlabel,ylabel),
                  cmap='seismic',
                  #vmin=-20, vmax=20,
@@ -137,8 +138,8 @@ for j in data_dates:
 
 # Leemos los archicos .nc
 rango = '240/' #Elejimos con que rango queremos trabajar
-path_user = '../../Radar/VAD/PARANA/20160114/'
-FileList = np.sort(glob.glob(path_user + rango + '*.nc'))
+#path_user = '../../Radar/VAD/PARANA/20160114/'
+#FileList = np.sort(glob.glob(path_user + rango + '*.nc'))
 
 # Parametros
 
@@ -321,20 +322,29 @@ for f in range(len(FileList)):
     vad.to_csv('20160114_240/elev_vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
     #Muestra por pantalla la cantidad de anillos válidos para cada ángulo de elevación
     
+#%%
+
+#%%
     #Calculo del perfil final
     #========================
+ 
+#Leemos los archivos
+path_user = '20160114_240/'
+FileList = np.sort(glob.glob(path_user + 'elev*'))
+
+# Parámetros
+minlev = 0.1  #Nivel inferior en kilometros
+maxlev = 3.0  #Nivel superior en kilometros
+deltalev = 0.1 #Intervalo de la grilla
+
+# Generamos la grilla del perfil
+pnlevs = ((maxlev - minlev)/deltalev)+1 #Cantidad de niveles
+pht = np.zeros(shape=(int(pnlevs),))*np.nan
+
+for f in range(len(FileList)):
     
-    # Parámetros
-    minlev = 0.1  #Nivel inferior en kilometros
-    maxlev = 3.0  #Nivel superior en kilometros
-    deltalev = 0.1 #Intervalo de la grilla
-
-    # Generamos la grilla del perfil
-    pnlevs = ((maxlev - minlev)/deltalev)+1 #Cantidad de niveles
-
-    pht = np.zeros(shape=(int(pnlevs),))*np.nan
+    vad = pandas.read_csv(FileList[f], sep=';', header=0, na_values=-9999.0)
     totalvad = pandas.DataFrame(np.zeros(shape=(int(pnlevs),7))*np.nan, columns = ['ht', 'spd', 'rmse1', 'rmse2', 'rmse3', 'di', 'rings'])
-
 
     for l in range(int(pnlevs)):
 
@@ -353,6 +363,7 @@ for f in range(len(FileList)):
         #Calculo el promedio de spd para la capa
         totalvad.ht[l] = pht[l]
         w = temp.rmse + temp.rh
+        
         if not w.any():
             continue
 
@@ -360,7 +371,7 @@ for f in range(len(FileList)):
         #di_wavg = np.average(np.asarray(temp.di), weights=np.asarray(temp.rh))
         u_wavg = np.average(np.asarray(temp.u), weights=np.asarray(temp.rh))
         v_wavg = np.average(np.asarray(temp.v), weights=np.asarray(temp.rh))
-        di_wavg = np.arctan(u_wavg/v_wavg)*180/np.pi
+        di_wavg = np.arctan2(u_wavg, v_wavg)*180/np.pi
 
         #Calculo el RMSE
         var = sum(np.power(temp.spd-spd_wavg,2)/temp.rmse)/sum(1/temp.rmse)
@@ -377,12 +388,26 @@ for f in range(len(FileList)):
         totalvad.di[l] = di_wavg
         totalvad.rings[l] = ringpl
 
-    print "Listo " + DateTime
+    print "Listo " + FileList[f]
     #Escribo un .csv que se guarda con la fecha y la hora del volumen de datos
-    totalvad.to_csv('20160114_240/vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
-
+    #totalvad.to_csv('20160114_240/vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
+    totalvad.to_csv('20160114_240/'+ FileList[f][18:58], sep = ';', na_rep = '-9999')
 
 
 
 
 #%%
+
+
+x = np.arange(-90, 90, 1)
+
+y = np.arctan(x*np.pi/180)
+z = np.arctan2(x*np.pi/180)
+
+plt.plot(x,y)
+
+di1 = np.arctan(u_wavg/v_wavg)*180/np.pi
+m = u_wavg/v_wavg
+di2 = np.arctan2(u_wavg, v_wavg)*180/np.pi
+
+print di1, di2
