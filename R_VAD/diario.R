@@ -14,7 +14,9 @@ source("helpfun.R")
 #Leo los datos con la funcion read.vad
 
 vad_20160114 <- read.vad("../../20160114_240/vda*")
-vad_20160114n <- read.vad("../../20160114_240/vda*")
+vad_20170120 <- read.vad("../../20170120_240/vda*")
+vad_20160116 <- read.vad("../../20160116_240/vda*")
+
 vad_20160123 <- read.vad("../../20160123_240/vda*")
 vad_20160111 <- read.vad("../../20160111_240/vda*")
 vad_20160116 <- read.vad("../../20160116_240/vda*")
@@ -23,17 +25,17 @@ vad_20160228 <- read.vad("../../20160228_240/vda*")
 vad_20170111 <- read.vad("../../20170111_240/vda*")
 vad_20170120 <- read.vad("../../20170120_240/vda*")
 vad_20170121 <- read.vad("../../20170121_240/vda*")
-vad_20160114_3 <- read.vad("../Test/temporal/temp-3/vda*")
-vad_20160114_1 <- read.vad("../Test/temporal/temp-1/vda*")
-vad_20160114_5 <- read.vad("../Test/temporal/temp-5/vda*")
+
 
 # Aplico lowess para consistencia temporal
 
-vad_20160114n <- lowess.vad(vad_20160114n)
+vad_20160114 <- lowess.vad(vad_20160114)
+vad_20160116 <- lowess.vad(vad_20160116)
+vad_20170120 <- lowess.vad(vad_20170120)
 
 #Plots
 
-dia <- vad_20160114n
+dia <- vad_20160116
 perfiles <- subset(dia, ht < 1.5 & minute(date_time) == 00 & hour(date_time) %in% c(0, 6, 12, 18, 23))
 tiempos <- subset(dia, minute(date_time) == 0)
 
@@ -62,7 +64,7 @@ ggplot(perfiles, aes(ht, spd, color = as.factor(hour(date_time)))) +
 #ggsave(paste0("Perfiles_", as.Date(dia$date_time[1]), ".png"), device = "png", path = "fig")
 
 # Dirección del viento
-tiempos1 <- subset(vad_20160114, minute(date_time) == 0 & !is.na(spd))
+
 ggplot(subset(tiempos, !is.na(spd)), aes(date_time, ht)) +
   #geom_arrow(data =  tiempos1, aes(mag = spd, angle = di), color = "red") +
   geom_arrow(aes(mag = spd, angle = di, color = spd)) +
@@ -85,9 +87,9 @@ ggplot(perfiles, aes(u, v,  color = as.factor(hour(date_time)))) +
   geom_path() +
   scale_color_brewer(palette = "Set1", name="Hora", type = "qual") + 
   xlab("u (m/s)") + ylab("v (m/s)") +
-  labs(title = paste0("Hodógrafa para el ", as.Date(dia$date_time[1]))) +
-  xlim(c(-10,14)) +
-  ylim(c(-10,14)) +
+  labs(title = paste0("Hodógrafa para el ", as.Date(dia$date_time[1]), "en distintos tiempos")) +
+  #xlim(c(-10,14)) +
+  #ylim(c(-10,14)) +
   coord_equal() +
   theme_minimal() 
 ggsave(paste0("Hodografa_horaria_", as.Date(dia$date_time[1]), ".png"), device = "png", path = "fig")
@@ -100,9 +102,9 @@ ggplot(subset(tiempos, ht %in% c(0.3, 1.0)), aes(u, v,  color = as.factor(ht))) 
   geom_path() +
   scale_color_brewer(palette = "Set1", name="Nivel", type = "qual") + 
   xlab("u (m/s)") + ylab("v (m/s)") +
-  labs(title = paste0("Hodógrafa para el ", as.Date(dia$date_time[1]))) +
-  xlim(c(-12,10)) +
-  ylim(c(-14,10)) +
+  labs(title = paste0("Hodógrafa para el ", as.Date(dia$date_time[1]), "para distintos niveles")) +
+  #xlim(c(-12,10)) +
+  #ylim(c(-14,10)) +
   coord_equal() +
   theme_minimal() 
 ggsave(paste0("Hodografa_nivel_", as.Date(dia$date_time[1]), ".png"), device = "png", path = "fig")
