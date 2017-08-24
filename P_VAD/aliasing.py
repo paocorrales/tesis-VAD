@@ -18,11 +18,11 @@ import netCDF4
 #import LowPassFilter
 import RadarBeamPropagation
 
-path_user = '../../Radar/VAD/PARANA/20160116/240/*.nc'
-path_user = '../../Radar/VAD/PARANA/20160114/240/cfrad.20160114_030004.000_to_20160114_030431.002_INTA_Parana_SUR.nc'
+path_user = '../../Radar/VAD/PARANA/20160123/240/*.nc'
+path_user = '../../Radar/VAD/PARANA/20170128/240/cfrad.20170128_103003.000_to_20170128_103427.998_PAR_SUR.nc'
 
 FileList = np.sort(glob.glob(path_user))
-file2read=FileList[0]
+file2read=FileList[42]
 
 # Creamos el objeto "radar"
 radar = pyart.io.read(file2read)
@@ -40,7 +40,7 @@ fig = plt.figure(figsize=[20,15])
 
 ax = fig.add_subplot(211,aspect=1.0)
 
-display.plot_ppi('V', sweep=2, 
+display.plot_ppi('Vda', sweep=6, 
                  axislabels=(xlabel,ylabel),
                  cmap='seismic',
                  #vmin=-20, vmax=20,
@@ -138,7 +138,7 @@ for j in data_dates:
 
 # Leemos los archicos .nc
 rango = '240/' #Elejimos con que rango queremos trabajar
-path_user = '../../Radar/VAD/PARANA/20160116/'
+path_user = '../../Radar/VAD/PARANA/20160123/'
 FileList = np.sort(glob.glob(path_user + rango + '*.nc'))
 
 # Parametros
@@ -319,7 +319,7 @@ for f in range(len(FileList)):
     rs = rs.flatten('F')
     vad = pandas.DataFrame({'spd':spd, 'rmse':rmse, 'di':di, 'rh':rh, 'ht':ht, 'elev':elev, 'a':a, 'b':b, 'rs':rs})
 
-    vad.to_csv('20160116_240/elev_vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
+    vad.to_csv('20160123_240/elev_vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
     #Muestra por pantalla la cantidad de anillos válidos para cada ángulo de elevación
     
 #%%
@@ -329,7 +329,7 @@ for f in range(len(FileList)):
     #========================
  
 #Leemos los archivos
-path_user = '20160116_240/'
+path_user = '20160123_240/'
 FileList = np.sort(glob.glob(path_user + 'elev*'))
 
 # Parámetros
@@ -391,7 +391,7 @@ for f in range(len(FileList)):
     print "Listo " + FileList[f]
     #Escribo un .csv que se guarda con la fecha y la hora del volumen de datos
     #totalvad.to_csv('20160114_240/vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
-    totalvad.to_csv('20160116_240/'+ FileList[f][18:58], sep = ';', na_rep = '-9999')
+    totalvad.to_csv('20160123_240/'+ FileList[f][18:58], sep = ';', na_rep = '-9999')
 
 
 
@@ -399,15 +399,4 @@ for f in range(len(FileList)):
 #%%
 
 
-x = np.arange(-90, 90, 1)
 
-y = np.arctan(x*np.pi/180)
-z = np.arctan2(x*np.pi/180)
-
-plt.plot(x,y)
-
-di1 = np.arctan(u_wavg/v_wavg)*180/np.pi
-m = u_wavg/v_wavg
-di2 = np.arctan2(u_wavg, v_wavg)*180/np.pi
-
-print di1, di2

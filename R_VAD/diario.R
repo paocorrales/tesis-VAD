@@ -15,9 +15,11 @@ source("helpfun.R")
 
 vad_20160114 <- read.vad("../../20160114_240/vda*")
 vad_20170120 <- read.vad("../../20170120_240/vda*")
+vad_20170121 <- read.vad("../../20170121_240/vda*")
+vad_20170129 <- read.vad("../../20170129_240/vda*")
 vad_20160116 <- read.vad("../../20160116_240/vda*")
-
 vad_20160123 <- read.vad("../../20160123_240/vda*")
+
 vad_20160111 <- read.vad("../../20160111_240/vda*")
 vad_20160116 <- read.vad("../../20160116_240/vda*")
 vad_20160201 <- read.vad("../../20160201_240/vda*")
@@ -32,16 +34,19 @@ vad_20170121 <- read.vad("../../20170121_240/vda*")
 vad_20160114 <- lowess.vad(vad_20160114)
 vad_20160116 <- lowess.vad(vad_20160116)
 vad_20170120 <- lowess.vad(vad_20170120)
+vad_20170121 <- lowess.vad(vad_20170121)
+vad_20160123 <- lowess.vad(vad_20160123)
+
 
 #Plots
 
-dia <- vad_20160116
+dia <- vad_20160123
 perfiles <- subset(dia, ht < 1.5 & minute(date_time) == 00 & hour(date_time) %in% c(0, 6, 12, 18, 23))
 tiempos <- subset(dia, minute(date_time) == 0)
 
 # Campo de viento con errores
 ggplot(dia, aes(date_time, ht)) + 
-  geom_contour(aes(z = spd.smooth, color = ..level..), binwidth = 1) +
+  geom_contour(aes(z = spd, color = ..level..), binwidth = 1) +
  # geom_contour(data = vad_20160114, aes(z = spd)) +
   scale_color_distiller(name = "Velocidad", type = "seq", palette = 8, direction = 1) + 
   geom_point(data = subset(dia, rmse1 > 0.5), aes(size = rmse1), shape = 1, color = "black") +
