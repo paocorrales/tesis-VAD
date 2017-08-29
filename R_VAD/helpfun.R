@@ -49,14 +49,14 @@ lowess.vad <- function(dataframe, span = 0.06, delta = 0){
 
 #=========================================================================================#
 # ri.j calcula el número de Richarson bulk jet según Banta 2003
-# 
+# acepta parámetros con unidades el sistema internacional
 #=========================================================================================#
-t_i <- 27.7
-t_f <- 22.3
-p_i <- 1002.6
-p_f <- 1003.3
-u_max <- 16.51094
-z_max <- 0.3
+# t_i <- 27.7+273.15
+# t_f <- 22.3+273.15
+# p_i <- 1002.6
+# p_f <- 1003.3
+# u_max <- 16.51094
+# z_max <- 300
 
 
 ri.j <- function(t_i, t_f, p_i, p_f, u_max, z_max){
@@ -66,8 +66,7 @@ ri.j <- function(t_i, t_f, p_i, p_f, u_max, z_max){
   tita_f <- t_f*(p_f/1000)^(-0.286)
   
     tita_m <- (tita_i + tita_f)/2
-  delta_z <- z_max - 10
-  ri<- (g * (tita_f - tita_i)/delta_z) / (tita_m * (u_max/z_max)^2)
+  ri<- (g * (tita_i - tita_f)/z_max) / (tita_m * (u_max/z_max)^2)
   return(ri)
 }
 
