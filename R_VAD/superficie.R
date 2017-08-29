@@ -32,4 +32,6 @@ superficie <- data.frame(X = NA,
                          v = sup$v)
 
 
-vad_20160114$date_time <- ymd_hm(vad_20160114$date_time)
+vad_20160114$date_time <- round_date(vad_20160114$date_time, "minute")
+
+vad_20160114 <- rbind(subset(superficie, day(date_time) == 14), vad_20160114)

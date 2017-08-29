@@ -7,6 +7,8 @@ library(grid)
 library(magrittr)
 library(data.table)
 library(zoo)
+library(dplyr)
+library(mutate)
 source("geom_arrow.R")
 source("helpfun.R")
 
@@ -14,19 +16,13 @@ source("helpfun.R")
 #Leo los datos con la funcion read.vad
 
 vad_20160114 <- read.vad("../../20160114_240/vda*")
-vad_20170120 <- read.vad("../../20170120_240/vda*")
+vad_20170120 <- read.vad("../../20170120_240/vda*") %>% lowess.vad()
 vad_20170121 <- read.vad("../../20170121_240/vda*")
 vad_20170129 <- read.vad("../../20170129_240/vda*")
 vad_20160116 <- read.vad("../../20160116_240/vda*")
 vad_20160123 <- read.vad("../../20160123_240/vda*")
-
-vad_20160111 <- read.vad("../../20160111_240/vda*")
-vad_20160116 <- read.vad("../../20160116_240/vda*")
-vad_20160201 <- read.vad("../../20160201_240/vda*")
-vad_20160228 <- read.vad("../../20160228_240/vda*")
-vad_20170111 <- read.vad("../../20170111_240/vda*")
-vad_20170120 <- read.vad("../../20170120_240/vda*")
-vad_20170121 <- read.vad("../../20170121_240/vda*")
+vad_20160122 <- read.vad("../../20160122_240/vda*")
+vad_20160113 <- read.vad("../../20160113_240/vda*")
 
 
 # Aplico lowess para consistencia temporal
@@ -36,11 +32,13 @@ vad_20160116 <- lowess.vad(vad_20160116)
 vad_20170120 <- lowess.vad(vad_20170120)
 vad_20170121 <- lowess.vad(vad_20170121)
 vad_20160123 <- lowess.vad(vad_20160123)
+vad_20160122 <- lowess.vad(vad_20160122)
+vad_20160113 <- lowess.vad(vad_20160113)
 
 
 #Plots
 
-dia <- vad_20160123
+dia <- vad_20160114
 perfiles <- subset(dia, ht < 1.5 & minute(date_time) == 00 & hour(date_time) %in% c(0, 6, 12, 18, 23))
 tiempos <- subset(dia, minute(date_time) == 0)
 
