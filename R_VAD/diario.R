@@ -17,34 +17,24 @@ source("helpfun.R")
 
 vad_20160114 <- read.vad("../../20160114_240/vda*") %>% lowess.vad()
 vad_20170120 <- read.vad("../../20170120_240/vda*") %>% lowess.vad()
-vad_20170121 <- read.vad("../../20170121_240/vda*")
-vad_20170129 <- read.vad("../../20170129_240/vda*")
-vad_20160116 <- read.vad("../../20160116_240/vda*")
-vad_20160123 <- read.vad("../../20160123_240/vda*")
-vad_20160122 <- read.vad("../../20160122_240/vda*")
+vad_20170121 <- read.vad("../../20170121_240/vda*") %>% lowess.vad()
+vad_20170129 <- read.vad("../../20170129_240/vda*") %>% lowess.vad()
+vad_20160116 <- read.vad("../../20160116_240/vda*") %>% lowess.vad()
+vad_20160123 <- read.vad("../../20160123_240/vda*") %>% lowess.vad()
+vad_20160122 <- read.vad("../../20160122_240/vda*") %>% lowess.vad()
 vad_20160113 <- read.vad("../../20160113_240/vda*") %>% lowess.vad()
 
-
-# Aplico lowess para consistencia temporal
-
-vad_20160114 <- lowess.vad(vad_20160114)
-vad_20160116 <- lowess.vad(vad_20160116)
-vad_20170120 <- lowess.vad(vad_20170120)
-vad_20170121 <- lowess.vad(vad_20170121)
-vad_20160123 <- lowess.vad(vad_20160123)
-vad_20160122 <- lowess.vad(vad_20160122)
-vad_20160113 <- lowess.vad(vad_20160113)
 
 
 #Plots
 
-dia <- rbind(vad_20160114, vad_20160113)
+dia <- rbind(vad_20160122, vad_20160123)
 perfiles <- subset(dia, ht < 1.5 & minute(date_time) == 00 & hour(date_time) %in% c(0, 6, 12, 18, 23))
 tiempos <- subset(dia, minute(date_time) == 0)
 
 # Campo de viento con errores
 ggplot(dia, aes(date_time, ht)) + 
-  geom_contour(aes(z = spd, color = ..level..), binwidth = 1) +
+  geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
  # geom_contour(data = vad_20160114, aes(z = spd)) +
   scale_color_distiller(name = "Velocidad", type = "seq", palette = 8, direction = 1) + 
   geom_point(data = subset(dia, rmse1 > 0.5), aes(size = rmse1), shape = 1, color = "black") +
