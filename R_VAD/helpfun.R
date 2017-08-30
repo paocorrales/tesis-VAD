@@ -22,9 +22,10 @@ read.vad <- function(path){
       temp2 <- rbind(temp2, temp)
     }
   }
+  temp2 <- lowess.vad(temp2)
   temp2$di <- temp2$di
-  temp2$u <- -temp2$spd * sin(temp2$di*pi/180)
-  temp2$v <- -temp2$spd * cos(temp2$di*pi/180)
+  temp2$u <- -temp2$spd_smooth * sin(temp2$di*pi/180)
+  temp2$v <- -temp2$spd_smooth * cos(temp2$di*pi/180)
   return(temp2)
 }
   

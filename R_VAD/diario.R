@@ -15,21 +15,21 @@ source("helpfun.R")
 
 #Leo los datos con la funcion read.vad
 
-vad_20160114 <- read.vad("../../20160114_240/vda*") %>% lowess.vad()
+vad_20160114 <- read.vad("../../20160114_240/vda*") #%>% lowess.vad()
 vad_20170120 <- read.vad("../../20170120_240/vda*") %>% lowess.vad()
 vad_20170121 <- read.vad("../../20170121_240/vda*") %>% lowess.vad()
 vad_20170129 <- read.vad("../../20170129_240/vda*") %>% lowess.vad()
 vad_20160116 <- read.vad("../../20160116_240/vda*") %>% lowess.vad()
 vad_20160123 <- read.vad("../../20160123_240/vda*") %>% lowess.vad()
 vad_20160122 <- read.vad("../../20160122_240/vda*") %>% lowess.vad()
-vad_20160113 <- read.vad("../../20160113_240/vda*") %>% lowess.vad()
+vad_20160113 <- read.vad("../../20160113_240/vda*") #%>% lowess.vad()
 
 
 
 #Plots
 
-dia <- rbind(vad_20160122, vad_20160123)
-perfiles <- subset(dia, ht < 1.5 & minute(date_time) == 00 & hour(date_time) %in% c(0, 6, 12, 18, 23))
+dia <- vad_20160114
+perfiles <- subset(dia, ht < 1.0 & minute(date_time) == 00 & hour(date_time) %in% c(17,18,19,20,21,22,23,24))
 tiempos <- subset(dia, minute(date_time) == 0)
 
 # Campo de viento con errores
@@ -89,7 +89,7 @@ ggsave(paste0("Hodografa_horaria_", as.Date(dia$date_time[1]), ".png"), device =
 
 # Hodógrafa
 
-ggplot(subset(tiempos, ht %in% c(0.3, 1.0)), aes(u, v,  color = as.factor(ht))) +
+ggplot(subset(tiempos, ht %in% c(0.01, 0.3, 1.0)), aes(u, v,  color = as.factor(ht))) +
   geom_point(aes(x = ifelse(hour(date_time) != 0, u, NA)), size = 1) +
   geom_point(aes(x = ifelse(hour(date_time) == 0, u, NA)), shape = 17, size = 3) +
   geom_path() +
