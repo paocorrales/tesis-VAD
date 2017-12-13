@@ -1,0 +1,60 @@
+---
+title: "Preliminar"
+author: "Pao"
+date: "December 11, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(metR)
+library(ggplot2)
+library(lubridate)
+library(magrittr)
+library(dplyr)
+library(viridis)
+```
+
+```{r}
+caso.YSU <- ReadNetCDF("../caso1_YSU/spd_YSU.nc") %>% 
+  mutate(dir = ReadNetCDF("../caso1_YSU/dir_YSU.nc", out = "vector"),
+         u = ReadNetCDF("../caso1_YSU/u_YSU.nc", out = "vector"),
+         v = ReadNetCDF("../caso1_YSU/v_YSU.nc", out = "vector"),
+         t = ReadNetCDF("../caso1_YSU/t_YSU.nc", out = "vector"),
+         theta = ReadNetCDF("../caso1_YSU/theta_YSU.nc", out = "vector"),
+         p = ReadNetCDF("../caso1_YSU/p_YSU.nc", out = "vector"),
+         pblh = ReadNetCDF("../caso1_YSU/pblh_YSU.nc", out = "vector"),
+         ust = ReadNetCDF("../caso1_YSU/ust_YSU.nc", out = "vector"),
+         exchh = ReadNetCDF("../caso1_YSU/exchh_YSU.nc", out = "vector"),
+         exchm = ReadNetCDF("../caso1_YSU/exchm_YSU.nc", out = "vector")
+         )
+```
+
+```{r}
+ggplot(subset(caso.YSU, lon%~%-60.53 & lat%~%-31.858 & lev < 2 & day(date)==14), 
+       aes(date, lev)) +
+  geom_contour(aes(z = spd, color =..level..)) + 
+  geom_contourlabel(aes(z = spd, color =..level..)) +
+  scale_color_viridis(name = "Magnitud del viento", option = "viridis", direction = -1) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(subset(caso.YSU, date == "2016-01-14 06:00:00 -03" & lev == 0.9), aes(lon, lat)) +
+  geom_point()
+```
+
+```{r}
+ggplot(subset(caso.YSU, lon%~%-60.53  & lat%~%-31.858 & !is.na(spd) & minute(date)==0 & lev < 2 & day(date)==14), aes(date, lev)) +
+  geom_arrow(aes(mag = spd, angle = dir, color = spd), start = -90, direction = -1) +
+  scale_size_continuous(range = c(0, 5), guide = "none") +
+  scale_color_viridis(name = "Magnitud del viento", option = "viridis", direction = -1) +
+  theme_minimal()
+```
+
+
+```{r}
+ggplot(subset(pblh.YSU, lon%~%-60.53  & lat%~%-31.858), aes(date, pblh)) +
+         geom_point()
+```
+

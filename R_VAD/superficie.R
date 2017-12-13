@@ -38,3 +38,6 @@ vad_20160114 <- rbind(subset(superficie, day(date_time) == 14), vad_20160114)
 
 vad_20160113$date_time <- round_date(vad_20160113$date_time, "minute")
 vad_20160113 <- rbind(subset(superficie, day(date_time) == 13), vad_20160113)
+
+vad_20160123$date_time <- round_date(vad_20160123$date_time, "minute")
+vad_20160123 <- rbind(subset(superficie, day(date_time) == 23), vad_20160123)

@@ -7,7 +7,7 @@ library(data.table)
 # fecha. Recibe la ubicación de los archivos y devuelve un dataframe con los datos.
 #=========================================================================================#
 
-read.vad <- function(path){
+read.vad <- function(path, lowess = TRUE){
   
   filename <- (Sys.glob(path))
   datetime <- ymd_hms(stringi::stri_sub(filename, from = 24, to = 44))
@@ -22,10 +22,16 @@ read.vad <- function(path){
       temp2 <- rbind(temp2, temp)
     }
   }
-  temp2 <- lowess.vad(temp2)
+  if (lowess == TRUE){
+    temp2 <- lowess.vad(temp2)
+    temp2$u <- -temp2$spd_smooth * sin(temp2$di*pi/180)
+    temp2$v <- -temp2$spd_smooth * cos(temp2$di*pi/180)
+  } else{
+    temp2$u <- -temp2$spd * sin(temp2$di*pi/180)
+    temp2$v <- -temp2$spd * cos(temp2$di*pi/180)
+  }
   temp2$di <- temp2$di
-  temp2$u <- -temp2$spd_smooth * sin(temp2$di*pi/180)
-  temp2$v <- -temp2$spd_smooth * cos(temp2$di*pi/180)
+  
   return(temp2)
 }
   

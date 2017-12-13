@@ -21,15 +21,16 @@ vad_20170121 <- read.vad("../../20170121_240/vda*") %>% lowess.vad()
 vad_20170129 <- read.vad("../../20170129_240/vda*") %>% lowess.vad()
 vad_20160116 <- read.vad("../../20160116_240/vda*") %>% lowess.vad()
 vad_20160123 <- read.vad("../../20160123_240/vda*") %>% lowess.vad()
-vad_20160122 <- read.vad("../../20160122_240/vda*") %>% lowess.vad()
+vad_20160122 <- read.vad("../../20160122_240/vda*") ##%>% lowess.vad()
 vad_20160113 <- read.vad("../../20160113_240/vda*") #%>% lowess.vad()
-
+vad_20160115 <- read.vad("../../20160115_240/vda*")
 
 
 #Plots
 
+dia <- rbind(vad_20160113, vad_20160114)
 dia <- vad_20160114
-perfiles <- subset(dia, ht < 1.0 & minute(date_time) == 00 & hour(date_time) %in% c(17,18,19,20,21,22,23,24))
+perfiles <- subset(dia, ht < 1.0 & minute(date_time) == 00 & hour(date_time) %in% c(20,21,22,23))
 tiempos <- subset(dia, minute(date_time) == 0)
 
 # Campo de viento con errores
@@ -43,7 +44,7 @@ ggplot(dia, aes(date_time, ht)) +
   ylab("Altura (km)") + 
   labs(title = paste0("Campo de viento para el ", as.Date(dia$date_time[1]))) +
   theme_minimal()
-#ggsave(paste0("Campo_", as.Date(dia$date_time[1]), ".png"), device = "png", path = "fig")
+ggsave(paste0("Campo_", as.Date(dia$date_time[1]), ".png"), device = "png", path = "fig")
 
 # Perfiles característicos
 ggplot(perfiles, aes(ht, spd, color = as.factor(hour(date_time)))) + 
@@ -71,7 +72,7 @@ ggplot(subset(tiempos, !is.na(spd)), aes(date_time, ht)) +
   theme(axis.text.x = element_text(angle = 45)) +
   labs(title = paste0("Dirección del viento para el ", as.Date(dia$date_time[1]))) +
   theme_minimal() 
-#ggsave(paste0("Dirección_", as.Date(dia$date_time[1]), ".png"), device = "png", path = "fig")
+ggsave(paste0("Dirección_", as.Date(dia$date_time[1]), ".png"), device = "png", path = "fig")
 
 # Hodógrafa
 ggplot(perfiles, aes(u, v,  color = as.factor(hour(date_time)))) +
@@ -85,6 +86,7 @@ ggplot(perfiles, aes(u, v,  color = as.factor(hour(date_time)))) +
   #ylim(c(-10,14)) +
   coord_equal() +
   theme_minimal() 
+
 ggsave(paste0("Hodografa_horaria_", as.Date(dia$date_time[1]), ".png"), device = "png", path = "fig")
 
 # Hodógrafa

@@ -35,3 +35,8 @@ spd_io <- sqrt(u^2 + v^2)
 
 with(subset(vad_20160114, date_time == date_time[1048]), plot(spd_smooth, ht*1000, type = "l"))
 points(spd_io, ht)
+
+plot(spd_io, ht, type = "b")
+with(subset(vad_20160114, date_time == date_time[1048]), lines(spd_smooth, ht*1000))
+
+
