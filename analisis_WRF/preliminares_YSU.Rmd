@@ -13,28 +13,78 @@ library(lubridate)
 library(magrittr)
 library(dplyr)
 library(viridis)
+library(directlabels)
+library(data.table)
+source("geom_contourlabel.R")
 ```
 
 ```{r}
-caso.YSU <- ReadNetCDF("../caso1_YSU/spd_YSU.nc") %>% 
-  mutate(dir = ReadNetCDF("../caso1_YSU/dir_YSU.nc", out = "vector"),
-         u = ReadNetCDF("../caso1_YSU/u_YSU.nc", out = "vector"),
-         v = ReadNetCDF("../caso1_YSU/v_YSU.nc", out = "vector"),
-         t = ReadNetCDF("../caso1_YSU/t_YSU.nc", out = "vector"),
-         theta = ReadNetCDF("../caso1_YSU/theta_YSU.nc", out = "vector"),
-         p = ReadNetCDF("../caso1_YSU/p_YSU.nc", out = "vector"),
-         pblh = ReadNetCDF("../caso1_YSU/pblh_YSU.nc", out = "vector"),
-         ust = ReadNetCDF("../caso1_YSU/ust_YSU.nc", out = "vector"),
-         exchh = ReadNetCDF("../caso1_YSU/exchh_YSU.nc", out = "vector"),
-         exchm = ReadNetCDF("../caso1_YSU/exchm_YSU.nc", out = "vector")
+path <- "~/Radar/WRF/"
+caso.YSU <- ReadNetCDF(paste(path,"caso1_YSU/spd_YSU.nc", sep = "")) %>% 
+  mutate(dir = ReadNetCDF(paste(path,"caso1_YSU/dir_YSU.nc", sep = ""), out = "vector"),
+         u = ReadNetCDF(paste(path,"caso1_YSU/u_YSU.nc", sep = ""), out = "vector"),
+         v = ReadNetCDF(paste(path,"caso1_YSU/v_YSU.nc", sep = ""), out = "vector"),
+         t = ReadNetCDF(paste(path,"caso1_YSU/t_YSU.nc", sep = ""), out = "vector"),
+         theta = ReadNetCDF(paste(path,"caso1_YSU/theta_YSU.nc", sep = ""), out = "vector"),
+         p = ReadNetCDF(paste(path,"caso1_YSU/p_YSU.nc", sep = ""), out = "vector"),
+         pblh = ReadNetCDF(paste(path,"caso1_YSU/pblh_YSU.nc", sep = ""), out = "vector"),
+         ust = ReadNetCDF(paste(path,"caso1_YSU/ust_YSU.nc", sep = ""), out = "vector"),
+         exchh = ReadNetCDF(paste(path,"caso1_YSU/exchh_YSU.nc", sep = ""), out = "vector"),
+         exchm = ReadNetCDF(paste(path,"caso1_YSU/exchm_YSU.nc", sep = ""), out = "vector"),
+         xkmh = ReadNetCDF(paste(path,"caso1_YSU/xkmh_YSU.nc", sep = ""), out = "vector"),
+         xkmv = ReadNetCDF(paste(path,"caso1_YSU/xkmv_YSU.nc", sep = ""), out = "vector"),
+         xkhh = ReadNetCDF(paste(path,"caso1_YSU/xkhh_YSU.nc", sep = ""), out = "vector"),
+         xkhv = ReadNetCDF(paste(path,"caso1_YSU/xkhv_YSU.nc", sep = ""), out = "vector"),
+         param = "YSU"
          )
+
+caso.MYJ <- ReadNetCDF(paste(path,"caso1_MYJ/spd_MYJ.nc", sep = "")) %>% 
+  mutate(dir = ReadNetCDF(paste(path,"caso1_MYJ/dir_MYJ.nc", sep = ""), out = "vector"),
+         u = ReadNetCDF(paste(path,"caso1_MYJ/u_MYJ.nc", sep = ""), out = "vector"),
+         v = ReadNetCDF(paste(path,"caso1_MYJ/v_MYJ.nc", sep = ""), out = "vector"),
+         t = ReadNetCDF(paste(path,"caso1_MYJ/t_MYJ.nc", sep = ""), out = "vector"),
+         theta = ReadNetCDF(paste(path,"caso1_MYJ/theta_MYJ.nc", sep = ""), out = "vector"),
+         p = ReadNetCDF(paste(path,"caso1_MYJ/p_MYJ.nc", sep = ""), out = "vector"),
+         pblh = ReadNetCDF(paste(path,"caso1_MYJ/pblh_MYJ.nc", sep = ""), out = "vector"),
+         ust = ReadNetCDF(paste(path,"caso1_MYJ/ust_MYJ.nc", sep = ""), out = "vector"),
+         exchh = ReadNetCDF(paste(path,"caso1_MYJ/exchh_MYJ.nc", sep = ""), out = "vector"),
+         exchm = ReadNetCDF(paste(path,"caso1_MYJ/exchm_MYJ.nc", sep = ""), out = "vector"),
+         xkmh = ReadNetCDF(paste(path,"caso1_MYJ/xkmh_MYJ.nc", sep = ""), out = "vector"),
+         xkmv = ReadNetCDF(paste(path,"caso1_MYJ/xkmv_MYJ.nc", sep = ""), out = "vector"),
+         xkhh = ReadNetCDF(paste(path,"caso1_MYJ/xkhh_MYJ.nc", sep = ""), out = "vector"),
+         xkhv = ReadNetCDF(paste(path,"caso1_MYJ/xkhv_MYJ.nc", sep = ""), out = "vector"),
+         param = "MYJ"
+         )
+
+caso.ACM2 <- ReadNetCDF(paste(path,"caso1_ACM2/spd_ACM2.nc", sep = "")) %>% 
+  mutate(dir = ReadNetCDF(paste(path,"caso1_ACM2/dir_ACM2.nc", sep = ""), out = "vector"),
+         u = ReadNetCDF(paste(path,"caso1_ACM2/u_ACM2.nc", sep = ""), out = "vector"),
+         v = ReadNetCDF(paste(path,"caso1_ACM2/v_ACM2.nc", sep = ""), out = "vector"),
+         t = ReadNetCDF(paste(path,"caso1_ACM2/t_ACM2.nc", sep = ""), out = "vector"),
+         theta = ReadNetCDF(paste(path,"caso1_ACM2/theta_ACM2.nc", sep = ""), out = "vector"),
+         p = ReadNetCDF(paste(path,"caso1_ACM2/p_ACM2.nc", sep = ""), out = "vector"),
+         pblh = ReadNetCDF(paste(path,"caso1_ACM2/pblh_ACM2.nc", sep = ""), out = "vector"),
+         ust = ReadNetCDF(paste(path,"caso1_ACM2/ust_ACM2.nc", sep = ""), out = "vector"),
+         exchh = ReadNetCDF(paste(path,"caso1_ACM2/exchh_ACM2.nc", sep = ""), out = "vector"),
+         exchm = ReadNetCDF(paste(path,"caso1_ACM2/exchm_ACM2.nc", sep = ""), out = "vector"),
+         xkmh = ReadNetCDF(paste(path,"caso1_ACM2/xkmh_ACM2.nc", sep = ""), out = "vector"),
+         xkmv = ReadNetCDF(paste(path,"caso1_ACM2/xkmv_ACM2.nc", sep = ""), out = "vector"),
+         xkhh = ReadNetCDF(paste(path,"caso1_ACM2/xkhh_ACM2.nc", sep = ""), out = "vector"),
+         xkhv = ReadNetCDF(paste(path,"caso1_ACM2/xkhv_ACM2.nc", sep = ""), out = "vector"),
+         param = "ACM2"
+         )
+#all.param <- rbind(caso.YSU, caso.MYJ, caso.ACM2)
+
 ```
 
+
+## YSU
 ```{r}
 ggplot(subset(caso.YSU, lon%~%-60.53 & lat%~%-31.858 & lev < 2 & day(date)==14), 
        aes(date, lev)) +
-  geom_contour(aes(z = spd, color =..level..)) + 
+  geom_contour(aes(z = spd, color =..level..), binwidth = 2) + 
   geom_contourlabel(aes(z = spd, color =..level..)) +
+  #geom_point(aes(date, pblh/1000)) +
   scale_color_viridis(name = "Magnitud del viento", option = "viridis", direction = -1) +
   theme_minimal()
 ```
@@ -54,7 +104,300 @@ ggplot(subset(caso.YSU, lon%~%-60.53  & lat%~%-31.858 & !is.na(spd) & minute(dat
 
 
 ```{r}
-ggplot(subset(pblh.YSU, lon%~%-60.53  & lat%~%-31.858), aes(date, pblh)) +
-         geom_point()
+ggplot(subset(caso.YSU, lon%~%-60.53  & lat%~%-31.858 & day(date) == 14), aes(date, pblh)) +
+         geom_point() +
+         theme_minimal()
+```
+
+```{r}
+ggplot(subset(caso.YSU, lon%~%-60.53 & lat%~%-31.858 & lev < 2 & day(date)==14), 
+       aes(date, lev)) +
+  geom_contour(aes(z = theta, color =..level..), binwidth = 2) + 
+  geom_contourlabel(aes(z = theta, color =..level..)) +
+  #geom_point(aes(date, pblh/1000)) +
+  scale_color_viridis(name = "Temperatura potencial", option = "viridis", direction = -1) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(subset(caso.YSU, lon%~%-60.53 & lat%~%-31.858 & date == "2016-01-14 18:00:00 -03"), 
+       aes(exchh, lev)) + 
+  geom_point() +
+  theme_minimal()
+  
+```
+
+```{r}
+ggplot(subset(caso.YSU, lon%~%-60.53 & lat%~%-31.858 & day(date) == 14 & minute(date) == 00 & hour(date) %in% c(03,06,09,12,15,18,21)), aes(lev, spd, color = as.factor(hour(date)))) + 
+  geom_line() + 
+  coord_flip() +
+  scale_color_viridis(name = "Hora", discrete = T) + 
+  geom_dl(aes(label = as.factor(hour(date))), method = "top.qp") +
+  ylab("Viento (m/s)") + 
+  xlab("Altura (Km)") + 
+  theme_minimal()
+```
+
+
+```{r}
+perfiles.YSU <- subset(caso.YSU, lon%~%-60.53 & lat%~%-31.858 & day(date) == 14 & minute(date) == 00 & hour(date) %in% c(03,06,09,12,15,18,21))
+
+ggplot(perfiles.YSU, aes(u, v,  color = as.factor(hour(date)))) +
+  geom_point(data=subset(perfiles.YSU, lev != 0.2), size = 1) +
+  geom_point(data=subset(perfiles.YSU, lev == 0.2), shape = 17, size = 3) +
+  geom_path() +
+  scale_color_viridis(name = "Hora", discrete = T) + 
+  xlab("u (m/s)") + ylab("v (m/s)") +
+  #xlim(c(-10,14)) +
+  #ylim(c(-10,14)) +
+  coord_equal() +
+  theme_minimal() 
+```
+
+
+```{r}
+ggplot(subset(perfiles.YSU, lev %in% c(0.2, 0.3, 1.0, 2.0)), aes(u, v, color = as.factor(lev))) +
+  geom_point(aes(x = ifelse(hour(date) != 0, u, NA)), size = 1) +
+  geom_point(aes(x = ifelse(hour(date) == 3, u, NA)), shape = 17, size = 3) +
+  geom_path() +
+  scale_color_viridis(name = "Nivel", discrete = T) + 
+  xlab("u (m/s)") + ylab("v (m/s)") +
+  #xlim(c(-12,10)) +
+  #ylim(c(-14,10)) +
+  coord_equal() +
+  theme_minimal() 
+```
+
+## MYJ
+
+```{r}
+ggplot(subset(caso.MYJ, lon%~%-60.53 & lat%~%-31.858 & lev < 2 & day(date)==14), 
+       aes(date, lev)) +
+  geom_contour(aes(z = spd, color =..level..), binwidth = 2) + 
+  geom_contourlabel(aes(z = spd, color =..level..)) +
+  #geom_point(aes(date, pblh/1000)) +
+  scale_color_viridis(name = "Magnitud del viento", option = "viridis", direction = -1) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(subset(caso.MYJ, date == "2016-01-14 06:00:00 -03" & lev == 0.9), aes(lon, lat)) +
+  geom_point()
+```
+
+```{r}
+ggplot(subset(caso.MYJ, lon%~%-60.53  & lat%~%-31.858 & !is.na(spd) & minute(date)==0 & lev < 2 & day(date)==14), aes(date, lev)) +
+  geom_arrow(aes(mag = spd, angle = dir, color = spd), start = -90, direction = -1) +
+  scale_size_continuous(range = c(0, 5), guide = "none") +
+  scale_color_viridis(name = "Magnitud del viento", option = "viridis", direction = -1) +
+  theme_minimal()
+```
+
+
+```{r}
+ggplot(subset(caso.MYJ, lon%~%-60.53  & lat%~%-31.858 & day(date) == 14), aes(date, pblh)) +
+         geom_point() +
+         theme_minimal()
+```
+
+```{r}
+ggplot(subset(caso.MYJ, lon%~%-60.53 & lat%~%-31.858 & lev < 2 & day(date)==14), 
+       aes(date, lev)) +
+  geom_contour(aes(z = theta, color =..level..), binwidth = 2) + 
+  geom_contourlabel(aes(z = theta, color =..level..)) +
+  #geom_point(aes(date, pblh/1000)) +
+  scale_color_viridis(name = "Temperatura potencial", option = "viridis", direction = -1) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(subset(caso.MYJ, lon%~%-60.53 & lat%~%-31.858 & date == "2016-01-14 18:00:00 -03"), 
+       aes(exchh, lev)) + 
+  geom_point() +
+  theme_minimal()
+  
+```
+
+```{r}
+ggplot(subset(caso.MYJ, lon%~%-60.53 & lat%~%-31.858 & day(date) == 14 & minute(date) == 00 & hour(date) %in% c(03,06,09,12,15,18,21)), aes(lev, spd, color = as.factor(hour(date)))) + 
+  geom_line() + 
+  coord_flip() +
+  scale_color_viridis(name = "Hora", discrete = T) + 
+  geom_dl(aes(label = as.factor(hour(date))), method = "top.qp") +
+  ylab("Viento (m/s)") + 
+  xlab("Altura (Km)") + 
+  theme_minimal()
+```
+
+
+```{r}
+perfiles.MYJ <- subset(caso.MYJ, lon%~%-60.53 & lat%~%-31.858 & day(date) == 14 & minute(date) == 00 & hour(date) %in% c(03,06,09,12,15,18,21))
+
+ggplot(perfiles.MYJ, aes(u, v,  color = as.factor(hour(date)))) +
+  geom_point(data=subset(perfiles.YSU, lev != 0.2), size = 1) +
+  geom_point(data=subset(perfiles.YSU, lev == 0.2), shape = 17, size = 3) +
+  geom_path() +
+  scale_color_viridis(name = "Hora", discrete = T) + 
+  xlab("u (m/s)") + ylab("v (m/s)") +
+  #xlim(c(-10,14)) +
+  #ylim(c(-10,14)) +
+  coord_equal() +
+  theme_minimal() 
+```
+
+
+```{r}
+ggplot(subset(perfiles.MYJ, lev %in% c(0.2, 0.3, 1.0, 2.0)), aes(u, v, color = as.factor(lev))) +
+  geom_point(aes(x = ifelse(hour(date) != 0, u, NA)), size = 1) +
+  geom_point(aes(x = ifelse(hour(date) == 3, u, NA)), shape = 17, size = 3) +
+  geom_path() +
+  scale_color_viridis(name = "Nivel", discrete = T) + 
+  xlab("u (m/s)") + ylab("v (m/s)") +
+  #xlim(c(-12,10)) +
+  #ylim(c(-14,10)) +
+  coord_equal() +
+  theme_minimal() 
+```
+
+## ACM2
+
+```{r}
+ggplot(subset(caso.ACM2, lon%~%-60.53 & lat%~%-31.858 & lev < 2 & day(date)==14), 
+       aes(date, lev)) +
+  geom_contour(aes(z = spd, color =..level..), binwidth = 2) + 
+  geom_contourlabel(aes(z = spd, color =..level..)) +
+  #geom_point(aes(date, pblh/1000)) +
+  scale_color_viridis(name = "Magnitud del viento", option = "viridis", direction = -1) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(subset(caso.ACM2, date == "2016-01-14 06:00:00 -03" & lev == 0.9), aes(lon, lat)) +
+  geom_point()
+```
+
+```{r}
+ggplot(subset(caso.ACM2, lon%~%-60.53  & lat%~%-31.858 & !is.na(spd) & minute(date)==0 & lev < 2 & day(date)==14), aes(date, lev)) +
+  geom_arrow(aes(mag = spd, angle = dir, color = spd), start = -90, direction = -1) +
+  scale_size_continuous(range = c(0, 5), guide = "none") +
+  scale_color_viridis(name = "Magnitud del viento", option = "viridis", direction = -1) +
+  theme_minimal()
+```
+
+
+```{r}
+ggplot(subset(caso.ACM2, lon%~%-60.53  & lat%~%-31.858 & day(date) == 14), aes(date, pblh)) +
+         geom_point() +
+         theme_minimal()
+```
+
+```{r}
+ggplot(subset(caso.ACM2, lon%~%-60.53 & lat%~%-31.858 & lev < 2 & day(date)==14), 
+       aes(date, lev)) +
+  geom_contour(aes(z = theta, color =..level..), binwidth = 2) + 
+  geom_contourlabel(aes(z = theta, color =..level..)) +
+  #geom_point(aes(date, pblh/1000)) +
+  scale_color_viridis(name = "Temperatura potencial", option = "viridis", direction = -1) +
+  theme_minimal()
+```
+
+```{r}
+ggplot(subset(caso.ACM2, lon%~%-60.53 & lat%~%-31.858 & date == "2016-01-14 18:00:00 -03"), 
+       aes(exchh, lev)) + 
+  geom_point() +
+  theme_minimal()
+  
+```
+
+```{r}
+ggplot(subset(caso.ACM2, lon%~%-60.53 & lat%~%-31.858 & day(date) == 14 & minute(date) == 00 & hour(date) %in% c(03,06,09,12,15,18,21)), aes(lev, spd, color = as.factor(hour(date)))) + 
+  geom_line() + 
+  coord_flip() +
+  scale_color_viridis(name = "Hora", discrete = T) + 
+  geom_dl(aes(label = as.factor(hour(date))), method = "top.qp") +
+  ylab("Viento (m/s)") + 
+  xlab("Altura (Km)") + 
+  theme_minimal()
+```
+
+
+```{r}
+perfiles.ACM2 <- subset(caso.ACM2, lon%~%-60.53 & lat%~%-31.858 & day(date) == 14 & minute(date) == 00 & hour(date) %in% c(03,06,09,12,15,18,21))
+
+ggplot(perfiles.ACM2, aes(u, v,  color = as.factor(hour(date)))) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  geom_point(data=subset(perfiles.ACM2, lev != 0.2), size = 1) +
+  geom_point(data=subset(perfiles.ACM2, lev == 0.2), shape = 17, size = 3) +
+  geom_path() +
+  scale_color_viridis(name = "Hora", discrete = T) + 
+  xlab("u (m/s)") + ylab("v (m/s)") +
+  #xlim(c(-10,14)) +
+  #ylim(c(-10,14)) +
+  coord_equal() +
+  theme_minimal() 
+```
+
+
+```{r}
+ggplot(subset(perfiles.ACM2, lev %in% c(0.2, 0.3, 1.0, 2.0)), aes(u, v, color = as.factor(lev))) +
+  geom_point(aes(x = ifelse(hour(date) != 0, u, NA)), size = 1) +
+  geom_point(aes(x = ifelse(hour(date) == 3, u, NA)), shape = 17, size = 3) +
+  geom_path() +
+  scale_color_viridis(name = "Nivel", discrete = T) + 
+  xlab("u (m/s)") + ylab("v (m/s)") +
+  #xlim(c(-12,10)) +
+  #ylim(c(-14,10)) +
+  coord_equal() +
+  theme_minimal() 
+```
+
+## Comparación
+
+```{r}
+all <- readRDS("all.param.rds")
+all[, day:=day(date)]
+```
+
+```{r}
+all[lon%~%-60.53 & lat%~%-31.858 & day==14, .(pblh = pblh/1000, pblh.spd = lev[which.max(spd)]), by = .(date, param)] %>% 
+  .[!is.na(pblh), ] %>% 
+  melt(., id.vars = c("date", "param")) %>% 
+  ggplot(aes(date, value)) +
+  # geom_area(aes(y = pblh.spd, fill = param), position = "identity", alpha = 0.5) +
+  geom_line(aes(color = param), linetype = 1) + 
+  # geom_point(aes(y = pblh.spd, color = param)) +
+  scale_color_viridis(discrete = T, option = "viridis") +
+  scale_fill_viridis(discrete = T, option = "viridis") +
+  theme_minimal() +
+  facet_wrap(~variable)
+```
+
+```{r}
+all[lon%~%-60.53 & lat%~%-31.858 & day==14 & date == "2016-01-14 06:00:00 -03" & lev < 2, ] %>%
+  ggplot(aes(lev, spd)) +
+  geom_line(aes(color = param)) +
+  scale_color_viridis(discrete = T, option = "viridis") +
+  coord_flip() + 
+  theme_minimal()
+
+```
+
+```{r}
+all[lon%~%-60.53 & lat%~%-31.858 & day==14 & date == "2016-01-14 18:00:00 -03" & lev < 2, ] %>%
+  ggplot(aes(lev, spd)) +
+  geom_line(aes(color = param)) +
+  scale_color_viridis(discrete = T, option = "viridis") +
+  coord_flip() + 
+  theme_minimal()
+```
+
+```{r}
+all[lon%~%-60.53 & lat%~%-31.858 & day==14 & date == "2016-01-14 06:00:00 -03" & lev < 2, ] %>%
+  ggplot(aes(lev, dir)) +
+  geom_line(aes(color = param)) +
+  scale_color_viridis(discrete = T, option = "viridis") +
+  coord_flip() + 
+  theme_minimal()
 ```
 
