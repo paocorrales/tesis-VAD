@@ -30,7 +30,7 @@ vad_20160115 <- read.vad("../../20160115_240/vda*")
 
 dia <- rbind(vad_20160113, vad_20160114)
 dia <- vad_20160114
-perfiles <- subset(dia, ht < 1.0 & minute(date_time) == 00 & hour(date_time) %in% c(20,21,22,23))
+perfiles <- subset(dia, ht < 1.0 & minute(date_time) == 00 & hour(date_time) %in% c(06,18))
 tiempos <- subset(dia, minute(date_time) == 0)
 
 # Campo de viento con errores
@@ -76,6 +76,8 @@ ggsave(paste0("Dirección_", as.Date(dia$date_time[1]), ".png"), device = "png",
 
 # Hodógrafa
 ggplot(perfiles, aes(u, v,  color = as.factor(hour(date_time)))) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
   geom_point(data=subset(perfiles, ht != 0.1), size = 1) +
   geom_point(data=subset(perfiles, ht == 0.1), shape = 17, size = 3) +
   geom_path() +

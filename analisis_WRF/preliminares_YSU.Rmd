@@ -2,11 +2,14 @@
 title: "Preliminar"
 author: "Pao"
 date: "December 11, 2017"
-output: html_document
+output:
+  pdf_document: 
+    latex_engine: xelatex
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 library(metR)
 library(ggplot2)
 library(lubridate)
@@ -15,10 +18,11 @@ library(dplyr)
 library(viridis)
 library(directlabels)
 library(data.table)
+library(patchwork)
 source("geom_contourlabel.R")
 ```
 
-```{r}
+```{r, include=FALSE}
 path <- "~/Radar/WRF/"
 caso.YSU <- ReadNetCDF(paste(path,"caso1_YSU/spd_YSU.nc", sep = "")) %>% 
   mutate(dir = ReadNetCDF(paste(path,"caso1_YSU/dir_YSU.nc", sep = ""), out = "vector"),
@@ -277,7 +281,7 @@ ggplot(subset(caso.ACM2, date == "2016-01-14 06:00:00 -03" & lev == 0.9), aes(lo
 ```
 
 ```{r}
-ggplot(subset(caso.ACM2, lon%~%-60.53  & lat%~%-31.858 & !is.na(spd) & minute(date)==0 & lev < 2 & day(date)==14), aes(date, lev)) +
+ggplot(subset(caso.ACM2, lon%~%-60.53  & lat%~%-31.858 & !is.na(spd) & minute(date)==0 & day(date)==14), aes(date, lev)) +
   geom_arrow(aes(mag = spd, angle = dir, color = spd), start = -90, direction = -1) +
   scale_size_continuous(range = c(0, 5), guide = "none") +
   scale_color_viridis(name = "Magnitud del viento", option = "viridis", direction = -1) +
@@ -294,10 +298,10 @@ ggplot(subset(caso.ACM2, lon%~%-60.53  & lat%~%-31.858 & day(date) == 14), aes(d
 ```{r}
 ggplot(subset(caso.ACM2, lon%~%-60.53 & lat%~%-31.858 & lev < 2 & day(date)==14), 
        aes(date, lev)) +
-  geom_contour(aes(z = theta, color =..level..), binwidth = 2) + 
-  geom_contourlabel(aes(z = theta, color =..level..)) +
+  geom_contour(aes(z = xkhv, color =..level..), binwidth = 10) + 
+  geom_contourlabel(aes(z = xkhv, color =..level..)) +
   #geom_point(aes(date, pblh/1000)) +
-  scale_color_viridis(name = "Temperatura potencial", option = "viridis", direction = -1) +
+  scale_color_viridis(name = "exchh", option = "viridis", direction = -1) +
   theme_minimal()
 ```
 
@@ -322,13 +326,14 @@ ggplot(subset(caso.ACM2, lon%~%-60.53 & lat%~%-31.858 & day(date) == 14 & minute
 
 
 ```{r}
-perfiles.ACM2 <- subset(caso.ACM2, lon%~%-60.53 & lat%~%-31.858 & day(date) == 14 & minute(date) == 00 & hour(date) %in% c(03,06,09,12,15,18,21))
+perfiles.ACM2 <- subset(caso.ACM2, lon%~%-60.53 & lat%~%-31.858 & day(date) == 14 & minute(date) == 00 & hour(date) %in% c(06,18))
 
 ggplot(perfiles.ACM2, aes(u, v,  color = as.factor(hour(date)))) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
   geom_point(data=subset(perfiles.ACM2, lev != 0.2), size = 1) +
   geom_point(data=subset(perfiles.ACM2, lev == 0.2), shape = 17, size = 3) +
+  geom_point(data=subset(perfiles.ACM2, lev > 1.5), shape = 15, size = 3) +
   geom_path() +
   scale_color_viridis(name = "Hora", discrete = T) + 
   xlab("u (m/s)") + ylab("v (m/s)") +
@@ -341,6 +346,8 @@ ggplot(perfiles.ACM2, aes(u, v,  color = as.factor(hour(date)))) +
 
 ```{r}
 ggplot(subset(perfiles.ACM2, lev %in% c(0.2, 0.3, 1.0, 2.0)), aes(u, v, color = as.factor(lev))) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
   geom_point(aes(x = ifelse(hour(date) != 0, u, NA)), size = 1) +
   geom_point(aes(x = ifelse(hour(date) == 3, u, NA)), shape = 17, size = 3) +
   geom_path() +
@@ -356,7 +363,8 @@ ggplot(subset(perfiles.ACM2, lev %in% c(0.2, 0.3, 1.0, 2.0)), aes(u, v, color = 
 
 ```{r}
 all <- readRDS("all.param.rds")
-all[, day:=day(date)]
+all[, ':=' (day = day(date), regimen = ifelse(hour(date) %between% c(9, 21), "inestable", "estable"))]
+
 ```
 
 ```{r}
@@ -399,5 +407,46 @@ all[lon%~%-60.53 & lat%~%-31.858 & day==14 & date == "2016-01-14 06:00:00 -03" &
   scale_color_viridis(discrete = T, option = "viridis") +
   coord_flip() + 
   theme_minimal()
+```
+
+```{r km, fig.cap="Coeficiente de difusividad de cantidad de movimiento Km (m-2 s-1) promediado sobre el regimen estable (izquierda) y el regimen inestable (derecha) de la capa límite para los distintos esquemas analizados."}
+all[lon%~%-60.53 & lat%~%-31.858 & date %between% c("2016-01-13 21:00:00 -03", "2016-01-14 21:00:00 -03") & lev < 2, ] %>% 
+  group_by(param, lev, regimen) %>% 
+  summarise(Km = mean(exchh, na.rm = T)) %>% 
+  ungroup() %>% 
+  ggplot(aes(lev - 0.11, Km)) + 
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Esquema de CL",discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
+  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)", limits = c(0, 1.5)) +
+  facet_wrap(~regimen, scales = "free") +
+  labs(title = "Perfiles a partir del promedio del dominio") +
+  coord_flip() +
+  theme_minimal()
+  
+  
+```
+
+```{r}
+all[date %between% c("2016-01-13 21:00:00 -03", "2016-01-14 21:00:00 -03") & lev < 2, ] %>% 
+  group_by(param, lev, regimen) %>% 
+  summarise(Km = mean(exchh, na.rm = T)) %>% 
+  ungroup() %>% 
+  ggplot(aes(lev - 0.11, Km)) + 
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Esquema de CL", discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")")))+
+  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)", limits = c(0, 1.5)) +
+  facet_wrap(~regimen, scales = "free") +
+  labs(title = "Perfiles en el punto más cercano al radar") +
+  coord_flip() +
+  theme_minimal()
+```
+
+```{r}
+all[param == "YSU" & date == "2016-01-14 15:00:00 -03", ] %>% 
+  ggplot(aes(lon, lat)) +
+  geom_point()
+  
 ```
 

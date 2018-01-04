@@ -1,0 +1,113 @@
+---
+title: "Tesis de Licenciatura"
+author: "Paola Corrales"
+date: ''
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '4'
+  bookdown::pdf_document2:
+    latex_engine: xelatex
+    number_sections: yes
+    toc: yes
+    toc_depth: 4
+  word_document:
+    reference_docx: word-template.docx
+    toc: yes
+    toc_depth: '4'
+documentclass: book
+
+geometry: inner = 3cm, outer = 2cm, top = 2.5cm, bottom = 2.5cm
+header-includes:
+- \linespread{1.25}
+- \usepackage{subfig}
+lang: es-AR
+link-citation: yes
+fontsize: 12pt
+subtitle: Desarrollo de una metodología de trabajo para caracterizar el ciclo diurno
+  del viento en la capa límite atmosférica a partir de datos de radar meteorológico
+  y su posterior uso para la validación de modelos.
+bibliography:
+- Bibliografia/papers.bib
+- Bibliografia/packages.bib
+biblio-style: apalike
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
+
+knitr::write_bib(c("base", "data.table", "ggplot2", "metR"), 
+                 file = "Bibliografia/packages.bib")
+```
+# Agradecimientos
+
+# Resumen
+
+# Introducción
+
+La capa límite planetaria (CLP) corresponde a la porción de atmósfera que se encuentra directamente influenciada por la superficie y que responde a sus forzantes en una escala de tiempo de una hora o menos (@Stull1988). Los procesos que ocurren dentro de esta capa son de suma importancia para entender y pronosticar la evolución de la atmósfera en distintas escalas espaciales y temporales. En particular estos procesos controlan el intercambio de energía entre la superficie y la atmósfera afectando, entre otras cosas, las condiciones para la ocurrencia de convección húmeda profunda y la intensidad de las circulaciones de mesoescala, que tienen un alto impacto sobre las actividades humanas.
+
+En nuestra región existen estudios que buscan caracterizar los procesos que ocurren en la capa límite de forma tal de poder avanzar en su entendimiento y su dependencia por ejemplo con las propiedades de la superficie o el estado de la atmósfera **(Mazzeo y Gassmann, 1992; Ulke 2000; Gassmann y Mazzeo, 2001; Acevedo et al., 2014; Tonti y Gassmann, 2015).**
+
+Dado que la ocurrencia de turbulencia en la  capa límite planetaria está caracterizada se da en múltiples escalas espaciales y temporales, la representación de los procesos que ocurren dentro de ella es un desafío para los modelos numéricos. Actualmene los modelos de simulación de la CLP no cuentan con la resolución necesaria para representar estos procesos de forma explícita, debiendo recurrir a una representación simplificada, donde se simula numéricamente una parte del espectro turbulento, mientras que los procesos en la escala de subgrilla se resuelven a través de parametrizaciones con cierres de distinto orden. Para ello se han formulado diferentes alternativas para parametrizar los procesos de capa límite y la validación de las mismas tambiénes un tema de gran interés **(Xie et al., 2012, Banks et al., 2016).** 
+
+A nivel regional, la representación de la capa límite en los modelos numéricos ha recibido mucha atención en las zonas oceánicas (particularmente en los océanos tropicales, Wang et al. 2004). Sin embargo, existen pocos estudios acerca del desempeño de las parametrizaciones de capa límite en las regiones continentales (Ulke y Andrade, 2001; Ruiz et al., 2010; Berry et al., 2012; Rizza et al., 2013; Carrasco et al., 2015).
+
+Uno de los principales desafíos a la hora de estudiar los procesos que ocurren en la capa límite o para validar cómo los modelos representan dichos procesos, es la disponibilidad de observaciones. Las redes de radiosondeos que permiten obtener perfiles de viento, temperatura y humedad en la capa límite miden con frecuencias temporales de entre 12 y 24 horas (solo eventualmente cada 6 horas) y tienen poco detalle de los perfiles dentro de la PBL.
+
+Sin embargo los radares Doppler permiten estimar la componente radial del viento en un radio horizontal de hasta 240 km y a partir de esa información permiten reconstruir perfiles verticales de viento utilizando la técnica VAD (Velocity Azimuth Display). En días en los que no existen ecos producidos por hidrometeoros, los radares pueden detectar la velocidad del viento dentro de la capa límite a partir de blancos como los insectos, por ejemplo **Rennie et al., 2010, Rabin and Zawadzki, 1984.** Dichos perfiles de viento están disponibles con una frecuencia temporal de hasta 5 minutos. La calidad de estos perfiles ha sido comparada con los perfiles obtenidos a partir de radiosondeos, encontrándose en general que los datos obtenidos resultan adecuados para su uso en el estudio de los procesos de capa límite y en la verificación de modelos numéricos **(Bousquet et al., 2008; Salonen et al., 2008)** y en la generación de condiciones iniciales para pronósticos a muy corto plazo **(Rennie et al., 2011).**
+Uno de los aspectos importantes a tener en cuenta en el uso de radares para el estudio de los perfiles de viento, es la necesidad de aplicar un riguroso control de calidad a los datos  que permita solucionar diversos aspectos que pueden afectar la confiabilidad de los mismo. Entre los problemas más comunes se cuentan: contaminación por ecos de terreno, efecto de aliasing, y contaminación por blancos móviles. Estos aspectos deben ser abordados antes de poder utilizar los datos para estimar el perfil de velocidad **(Holleman, 2008; Rennie et al., 2011)** aplicando algoritmos de control de calidad **(Ruiz et al., 2015; Rennie et al., 2011).**
+
+La disponibilidad de la información de radar Doppler en Argentina ofrece un gran recurso de información para estudiar las propiedades de la capa límite planetaria en nuestra región y para validar la calidad de los modelos numéricos a la hora de representar dichas propiedades.
+
+El objetivo de esta Tesis de Licenciatura es analizar el comportamiento de distintas parametrizaciones de CLP disponibles en el modelo Weather Research and Forecasting (WRF - @Skamarock2008) al representar algunos de los procesos presentes a lo largo del día. 
+
+La utilización de los datos de viento radial obtenidos de información de radar permitiran estimar los perfiles verticales de viento con una frecuencia temporal de 10 minutos, en un espesor que abarca desde superficie y hasta 2000 m de altura, permitiendo realizar una caracterización de la evolución temporal de dichos perfiles dentro de la capa límite atmosférica. La estimación de esos perfiles permitirán además validar las parametrizaciones de la capa límite que utilizan los modelos numéricos con una mayor resolución temporal a la utilizada en trabajos previos.
+
+Como objetivos particulares esta tesis se propone desarrollar dicha metodología y aplicarla a un conjunto de casos, utilizando datos de velocidad radial obtenidos en el radar de Paraná.
+
+# Metodología
+
+
+
+## Casos de estudio
+
+### Criterios utilizados
+
+## Tratamiento de aliassing
+
+## Velocity Azimuth Display (VAD)
+
+### Desarrollo matemático
+
+### Control de calidad y criterios
+
+### Validación
+
+## Loess
+
+## Detección del LLJ
+
+## Tratamiento de la turbulencia
+
+## Modelo de Oscilación Inercial
+
+## WRF
+
+### Parametrizaciones
+
+# Resultados
+
+## Análisis descriptivo de los casos
+###caracteristicas generales y sinopticas
+##Análisis de los VAD obtenidos
+##Análisis de la turbulencia
+##Análisis cualitativo de la oscilación inercial
+##Analisis de las corridas y comparación con obs
+
+# Conclusiones
+
+# Referencias
