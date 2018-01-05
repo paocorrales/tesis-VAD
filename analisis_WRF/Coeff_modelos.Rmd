@@ -1,0 +1,122 @@
+---
+title: "Analisis de Km y Kh"
+author: "Paola Corrales"
+date: "January 4, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(metR)
+library(ggplot2)
+library(lubridate)
+library(magrittr)
+library(dplyr)
+library(viridis)
+library(directlabels)
+library(data.table)
+library(patchwork)
+source("geom_contourlabel.R")
+```
+
+
+### Topografía del terreno y manejo de la grilla vertical
+
+La elevación del dominio estudiado muestra un mínimo de 5 metros sobre el nivel del mar en la cuenca del Río Paraná y un máximo de aproximadamente 110 metros sobre el nivel del mar que se ubica en en margen sudeste de río. El radar está ubicado  a 75 metros sobre el nivel del mar y se encuentra emplazado sobre una torre de 35 metros, por lo que, si no se tiene en cuenta la vegetación y posibles edificaciones bajas, la propagación de los rayos ocurren por encima de la superficie en todo el dominio.
+
+```{r topografía, fig.cap="Topografía de la región en estudio. El punto indica la ubicación del Radar Paraná."}
+path <- "~/Radar/WRF/"
+hgt.YSU <- ReadNetCDF(paste(path, "caso1_YSU/hgt_YSU.nc", sep = ""))
+
+hgt.YSU[date == "2016-01-14 21:00:00 UTC" & lev == 0.05, ] %>% 
+  ggplot(aes(lon, lat)) + 
+  geom_contour_fill(aes(z = hgt)) +
+  scale_fill_distiller(type = "seq", palette = "YlOrBr", 
+                       name = "Altura sobre el nivel del mar", 
+                       guide = guide_colorbar(title.position = "top", 
+                                              title.hjust = 0.5)) +
+  scale_x_continuous(name = "Longitud", limits = c(-61.04, -60.05), expand = c(0,0)) +
+  scale_y_continuous(name = "Latitud", limits = c(-32.25, -31.44), expand = c(0,0)) +
+  annotate(geom = "point", x = -60.537289, y = -31.848438, size = 2) +
+  coord_quickmap() + 
+  theme_minimal() + theme(legend.position = "bottom", panel.ontop = T)
+```
+
+
+- Datos de radar
+La altura de cada punto de grilla de radar fue determinada usando la apróximación *4/3 R* al calcular la trayectoria del haz de radar para cada elevación y por lo tanto se referencian respecto del nivel del terreno en la posición del radar.
+
+- Datos del modelo
+El resultado del modelo WRF se obtiene referenciado sobre el nivel del mar, para simplificar la comparación y el análisis la grilla vertical de todas las variables fue referenciada respecto del nivel del terreno en la posición del radar. 
+
+
+```{r dominio-radar, fig.cap="Topografía referida al nivel del radar. El circulo negro coresponde al dominio de análisis, de 40km de radio y centrado en el radar."}
+path <- "~/Radar/WRF/"
+hgt.YSU <- ReadNetCDF(paste(path, "caso1_YSU/hgt_YSU.nc", sep = ""))
+
+distances <- hgt.YSU[, .(dist = geosphere::alongTrackDistance(c(lon, lat), c( -60.537289, -31.848438), c( -60.537289, -31.848438))[1]),
+                     by = .(lon, lat)] %>% 
+  .[, inside := dist <= 40*1000]
+
+circle <- setDT(expand.grid(lon = seq(-61.04, -60.05, by = 0.01),
+                            lat = seq(-32.25, -31.44, by = 0.01)))
+circle <- circle[, .(dist = geosphere::alongTrackDistance(c(lon, lat), c( -60.537289, -31.848438), c( -60.537289, -31.848438))[1]),
+                     by = .(lon, lat)] %>% 
+  .[, inside := dist <= 40*1000]
+
+hgt.YSU[date == "2016-01-14 21:00:00 UTC" & lev == 0.05, ] %>% 
+  ggplot(aes(lon, lat)) + 
+  geom_contour_fill(aes(z = hgt - 75)) +
+  geom_polygon(fill = NA, color = "black", 
+               data = circle[inside == TRUE][chull(lon, lat)]) +
+  scale_fill_distiller(type = "div", palette = "BrBG", limits = c(-65,65),
+                       name = "Altura respecto del nivel de radar", 
+                       guide = guide_colorbar(title.position = "top", 
+                                              title.hjust = 0.5)) +
+  scale_x_continuous(name = "Longitud", limits = c(-61.04, -60.05), expand = c(0,0)) +
+  scale_y_continuous(name = "Latitud", limits = c(-32.25, -31.44), expand = c(0,0)) +
+  annotate(geom = "point", x = -60.537289, y = -31.848438, size = 2) +
+  # geom_point(data = subset(distances, inside == "TRUE")) +
+  #geom_circle(data = circle, aes(x0 = x0, y0 = y0, r = r), inherit.aes = F) +
+  coord_quickmap() +
+  theme_minimal() + theme(legend.position = "bottom", panel.ontop = T)
+ 
+```
+
+#### Coeficientes de difusividad vertical
+
+
+```{r}
+path <- "~/Radar/WRF/"
+caso.YSU <- ReadNetCDF(paste(path,"caso1_YSU/spd_YSU.nc", sep = "")) %>% 
+  mutate(exchh = ReadNetCDF(paste(path,"caso1_YSU/exchh_YSU.nc", sep = ""), out = "vector")[[1]],
+         pblh = ReadNetCDF(paste(path,"caso1_YSU/pblh_YSU.nc", sep = ""), out = "vector")[[1]],
+         ust = ReadNetCDF(paste(path,"caso1_YSU/ust_YSU.nc", sep = ""), out = "vector")[[1]],
+         L = ReadNetCDF(paste(path,"caso1_YSU/l_YSU.nc", sep = ""), out = "vector")[[1]],
+         param = "YSU", 
+         regimen = ifelse(L <= 0, "inestable", "estable"))
+setDT(caso.YSU)
+
+punto.YSU <- caso.YSU[lat %~% -31.8484 & lon %~% -60.5372 & date %between% c("2016-01-13 21:00:00 UTC", "2016-01-14 21:00:00 UTC"), ]
+```
+
+
+
+```{r}
+k <- 0.4
+ustz <- ust(1 - lev/pblh)
+z0 <- 0.05 #Stull
+
+kmzs <- k*ust*pblh*(lev/pblh)*(1 - lev/pblh)*(1 + 6.9*lev/L)^(-1)
+kmzu <- k*ust*pblh*(lev/pblh)*(1 - lev/pblh)*(1 - 22*lev/L)^(-1/4)
+
+khzs <- k*ust*pblh*(lev/pblh)*(1 - lev/pblh)*(1 + 9.2*lev/L)^(-1)
+khzu <- k*ust*pblh*(lev/pblh)*(1 - lev/pblh)*(1 - 13*lev/L)^(-1/2)
+
+mu = (1 - 22*lev/L)^(1/4)
+mu0 = (1 - 22*z0/L)^(1/4)
+
+uzs = (ust/k)*(ln(lev/z0) - (1 - 6.9*pblh/L)((lev - z0)/pblh) - 3.45 * pblh/L *(lev^2/pblh^2 - z0^2/pblh^2))
+uzu = (ust/k)*(ln(lev/z0) + ln((1 + mu0^2)*(1 + mu0)^2/((1 + mu^2)*(1 + mu)^2)) + 2*(atan(mu) - atan(mu0))
++ 2*L/(33*pblh)*(mu^3 - mu0^3))               
+```

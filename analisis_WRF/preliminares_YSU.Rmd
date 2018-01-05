@@ -34,11 +34,10 @@ caso.YSU <- ReadNetCDF(paste(path,"caso1_YSU/spd_YSU.nc", sep = "")) %>%
          pblh = ReadNetCDF(paste(path,"caso1_YSU/pblh_YSU.nc", sep = ""), out = "vector"),
          ust = ReadNetCDF(paste(path,"caso1_YSU/ust_YSU.nc", sep = ""), out = "vector"),
          exchh = ReadNetCDF(paste(path,"caso1_YSU/exchh_YSU.nc", sep = ""), out = "vector"),
-         exchm = ReadNetCDF(paste(path,"caso1_YSU/exchm_YSU.nc", sep = ""), out = "vector"),
-         xkmh = ReadNetCDF(paste(path,"caso1_YSU/xkmh_YSU.nc", sep = ""), out = "vector"),
-         xkmv = ReadNetCDF(paste(path,"caso1_YSU/xkmv_YSU.nc", sep = ""), out = "vector"),
-         xkhh = ReadNetCDF(paste(path,"caso1_YSU/xkhh_YSU.nc", sep = ""), out = "vector"),
-         xkhv = ReadNetCDF(paste(path,"caso1_YSU/xkhv_YSU.nc", sep = ""), out = "vector"),
+         L
+         tendu
+         tendv
+         tendth
          param = "YSU"
          )
 
@@ -444,9 +443,26 @@ all[date %between% c("2016-01-13 21:00:00 -03", "2016-01-14 21:00:00 -03") & lev
 ```
 
 ```{r}
-all[param == "YSU" & date == "2016-01-14 15:00:00 -03", ] %>% 
-  ggplot(aes(lon, lat)) +
-  geom_point()
+a <- all[date %between% c("2016-01-13 21:00:00 -03", "2016-01-14 21:00:00 -03"), ] %>%
+  .[, `:=`(exchh_norm = exchh/(ust[1]*0.4*pblh[1]),
+           lev_norm = lev*1000/pblh[1]),
+    by = .(param, regimen, date, lon, lat)] 
+a <- a[, approx(lev_norm, exchh_norm, xout = seq(0, 1.5, by = 0.1)), 
+    by = .(param, regimen, date, lon, lat)]
+group_by(a, param, x, regimen) %>% 
+  summarise(Kh = mean(y, na.rm = T)) %>% 
+  ungroup() %>% 
+
+  ggplot(aes(x, Kh)) + 
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Esquema de CL", discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")")))+
+  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)",
+                     limits = c(0, 1)) +
+  facet_wrap(~regimen, scales = "free") +
+  labs(title = "Perfiles en el punto más cercano al radar") +
+  coord_flip() +
+  theme_minimal()
   
 ```
 
