@@ -2,7 +2,9 @@
 title: "Analisis de Km y Kh"
 author: "Paola Corrales"
 date: "January 4, 2018"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -12,11 +14,13 @@ library(ggplot2)
 library(lubridate)
 library(magrittr)
 library(dplyr)
+library(dtplyr)
 library(viridis)
 library(directlabels)
 library(data.table)
 library(patchwork)
 source("geom_contourlabel.R")
+source("helpfun.R")
 ```
 
 
@@ -24,12 +28,12 @@ source("geom_contourlabel.R")
 
 La elevación del dominio estudiado muestra un mínimo de 5 metros sobre el nivel del mar en la cuenca del Río Paraná y un máximo de aproximadamente 110 metros sobre el nivel del mar que se ubica en en margen sudeste de río. El radar está ubicado  a 75 metros sobre el nivel del mar y se encuentra emplazado sobre una torre de 35 metros, por lo que, si no se tiene en cuenta la vegetación y posibles edificaciones bajas, la propagación de los rayos ocurren por encima de la superficie en todo el dominio.
 
-```{r topografía, fig.cap="Topografía de la región en estudio. El punto indica la ubicación del Radar Paraná."}
+```{r topografia, fig.cap="Topografía de la región en estudio. El punto indica la ubicación del Radar Paraná."}
 path <- "~/Radar/WRF/"
-hgt.YSU <- ReadNetCDF(paste(path, "caso1_YSU/hgt_YSU.nc", sep = ""))
+hgt <- ReadNetCDF(paste(path, "caso1_YSU/hgt_YSU.nc", sep = "")) %>% 
+  .[date == "2016-01-14 21:00:00 UTC" & lev == 0.05, ]
 
-hgt.YSU[date == "2016-01-14 21:00:00 UTC" & lev == 0.05, ] %>% 
-  ggplot(aes(lon, lat)) + 
+ggplot(hgt, aes(lon, lat)) + 
   geom_contour_fill(aes(z = hgt)) +
   scale_fill_distiller(type = "seq", palette = "YlOrBr", 
                        name = "Altura sobre el nivel del mar", 
@@ -51,24 +55,16 @@ El resultado del modelo WRF se obtiene referenciado sobre el nivel del mar, para
 
 
 ```{r dominio-radar, fig.cap="Topografía referida al nivel del radar. El circulo negro coresponde al dominio de análisis, de 40km de radio y centrado en el radar."}
-path <- "~/Radar/WRF/"
-hgt.YSU <- ReadNetCDF(paste(path, "caso1_YSU/hgt_YSU.nc", sep = ""))
-
-distances <- hgt.YSU[, .(dist = geosphere::alongTrackDistance(c(lon, lat), c( -60.537289, -31.848438), c( -60.537289, -31.848438))[1]),
-                     by = .(lon, lat)] %>% 
-  .[, inside := dist <= 40*1000]
+distances <- hgt[inside(lon, lat) == T, ]
 
 circle <- setDT(expand.grid(lon = seq(-61.04, -60.05, by = 0.01),
                             lat = seq(-32.25, -31.44, by = 0.01)))
-circle <- circle[, .(dist = geosphere::alongTrackDistance(c(lon, lat), c( -60.537289, -31.848438), c( -60.537289, -31.848438))[1]),
-                     by = .(lon, lat)] %>% 
-  .[, inside := dist <= 40*1000]
+circle <- circle[inside(lon, lat) == T, ]
 
-hgt.YSU[date == "2016-01-14 21:00:00 UTC" & lev == 0.05, ] %>% 
-  ggplot(aes(lon, lat)) + 
+ggplot(hgt, aes(lon, lat)) + 
   geom_contour_fill(aes(z = hgt - 75)) +
   geom_polygon(fill = NA, color = "black", 
-               data = circle[inside == TRUE][chull(lon, lat)]) +
+               data = circle[chull(lon, lat)]) +
   scale_fill_distiller(type = "div", palette = "BrBG", limits = c(-65,65),
                        name = "Altura respecto del nivel de radar", 
                        guide = guide_colorbar(title.position = "top", 
@@ -80,11 +76,14 @@ hgt.YSU[date == "2016-01-14 21:00:00 UTC" & lev == 0.05, ] %>%
   #geom_circle(data = circle, aes(x0 = x0, y0 = y0, r = r), inherit.aes = F) +
   coord_quickmap() +
   theme_minimal() + theme(legend.position = "bottom", panel.ontop = T)
+
+remove(list = c("circle", "distances"))
  
 ```
 
 #### Coeficientes de difusividad vertical
 
+Leo los datos necesarios y por ahora uso tanto el valor en el punto más cerca al radar como el promedio del dominio.
 
 ```{r}
 path <- "~/Radar/WRF/"
@@ -93,30 +92,178 @@ caso.YSU <- ReadNetCDF(paste(path,"caso1_YSU/spd_YSU.nc", sep = "")) %>%
          pblh = ReadNetCDF(paste(path,"caso1_YSU/pblh_YSU.nc", sep = ""), out = "vector")[[1]],
          ust = ReadNetCDF(paste(path,"caso1_YSU/ust_YSU.nc", sep = ""), out = "vector")[[1]],
          L = ReadNetCDF(paste(path,"caso1_YSU/l_YSU.nc", sep = ""), out = "vector")[[1]],
-         param = "YSU", 
-         regimen = ifelse(L <= 0, "inestable", "estable"))
-setDT(caso.YSU)
+         param = "YSU") %>% 
+  .[, lev := lev*1000 - 75] %>% 
+  .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>% 
+  .[, regimen := ifelse(L <= 0, "inestable", "estable")] %>% 
+  .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
+  .[inside(lon, lat) == T]
 
-punto.YSU <- caso.YSU[lat %~% -31.8484 & lon %~% -60.5372 & date %between% c("2016-01-13 21:00:00 UTC", "2016-01-14 21:00:00 UTC"), ]
+caso.MYJ <- ReadNetCDF(paste(path,"caso1_MYJ/spd_MYJ.nc", sep = "")) %>% 
+  mutate(exchh = ReadNetCDF(paste(path,"caso1_MYJ/exchh_MYJ.nc", sep = ""), out = "vector")[[1]],
+         pblh = ReadNetCDF(paste(path,"caso1_MYJ/pblh_MYJ.nc", sep = ""), out = "vector")[[1]],
+         ust = ReadNetCDF(paste(path,"caso1_MYJ/ust_MYJ.nc", sep = ""), out = "vector")[[1]],
+         L = ReadNetCDF(paste(path,"caso1_MYJ/l_MYJ.nc", sep = ""), out = "vector")[[1]],
+         param = "MYJ") %>% 
+  .[, lev := lev*1000 - 75] %>% 
+  .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>% 
+  .[, regimen := ifelse(L <= 0, "inestable", "estable")] %>% 
+  .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
+  .[inside(lon, lat) == T]
+
+caso.ACM2 <- ReadNetCDF(paste(path,"caso1_ACM2/spd_ACM2.nc", sep = "")) %>% 
+  mutate(exchh = ReadNetCDF(paste(path,"caso1_ACM2/exchh_ACM2.nc", sep = ""), out = "vector")[[1]],
+         pblh = ReadNetCDF(paste(path,"caso1_ACM2/pblh_ACM2.nc", sep = ""), out = "vector")[[1]],
+         ust = ReadNetCDF(paste(path,"caso1_ACM2/ust_ACM2.nc", sep = ""), out = "vector")[[1]],
+         L = ReadNetCDF(paste(path,"caso1_YSU/l_YSU.nc", sep = ""), out = "vector")[[1]],
+         param = "ACM2") %>% 
+  .[, lev := lev*1000 - 75] %>% 
+  .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>% 
+  .[, regimen := ifelse(L <= 0, "inestable", "estable")] %>% 
+  .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
+  .[inside(lon, lat) == T]
+
 ```
 
+#### Análisis de la homogeneidad espacial en las variables de estabilidad
 
+Para determinar la validez del promedio espacial de cada variable en el dominio en estudio es importante analizar la variabilidad de la misma espacial y temporalmente.
+
+En el caso de la longitud de Monin-Obukhov (L) se analizó el procentaje de veces que el valor local tenía signo distinto a la moda calculada para todo el dominio y cada tiempo de simulación. Esto es importante ya que el signo de L debe manetenerte positivo para el regimen estable y negativo para el regimen inestable a lo largo del dominio. 
+
+Sin embargo se observa que esto no ocurre y que existen regiones donde el signo de L es más 40% de las veces distinto a la moda del dominio. Esto puede estar relacionado la variación en la altura del terreno o a la presencia del río y zonas con suelos saturados donde los flujos verticales de calor tengan un comportamiento contrario al suelo seco.
+
+
+```{r L-espacial, fig.cap="Porcentaje de veces que el valor local de L (izquierda) y el flujo vertical de calor (derecha) tiene signo distinto a la moda para todo el periodo analizado, se muestran los valores mayores al 5% (colores) y topografía del dominio (contornos)."}
+L <- caso.YSU[lev == -25, La := L*mode(L), by = .(date)] %>% 
+  .[lev == -25, .(mean = mean(La < 0)), by = .(lon, lat)] %>% 
+  .[mean > 0.05, ] %>% 
+  .[, var := "L"]
+
+hfx.YSU <- ReadNetCDF(paste(path,"caso1_YSU/hfx_YSU.nc", sep = "")) %>% 
+  .[, param := "YSU"] %>% 
+  .[, lev := lev*1000 -75] %>% 
+  .[, hfx := hfx[1], by = .(date, lon, lat, param)] %>% 
+  .[date %between% as.POSIXct(c("2016-01-13 22:00:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
+  .[inside(lon, lat) == T, ]
+
+hfx <- hfx.YSU[lev == -25, hfxa := hfx*mode(hfx), by = .(date)] %>% 
+  .[lev == -25, .(mean = mean(hfxa < 0)), by = .(lon, lat)] %>% 
+  .[mean > 0.05, ] %>% 
+  .[, var := "hfx"]
+
+rbind(L, hfx) %>% 
+  .[, var := factor(var, levels = c("L", "hfx"))] %>% 
+  ggplot(aes(lon, lat)) +
+  geom_tile(aes(fill = mean)) +
+  geom_contour(data = hgt, aes(z = hgt), 
+               color = "darkgrey") +
+  scale_fill_viridis(name = "", guide = guide_colorbar(title.position = "top", 
+                                              title.hjust = 0.5),
+                     direction = -1) +
+  scale_x_continuous(name = "Longitud", expand = c(0,0)) +
+  scale_y_continuous(name = "Latitud", expand = c(0,0)) +
+  annotate(geom = "point", x = -60.537289, y = -31.848438, size = 2) +
+  coord_quickmap() + 
+  facet_wrap(~var) +
+  theme_minimal() + theme(legend.position = "bottom")
+
+```
+Entonces nos quedamos con el análsis en un punto cercano al radar que además no presenta gran variabilidad respecto de la región circundante.
 
 ```{r}
-k <- 0.4
-ustz <- ust(1 - lev/pblh)
-z0 <- 0.05 #Stull
+all.k <- rbind(caso.YSU, caso.MYJ, caso.ACM2) %>% 
+  .[lat %~% -31.8484 & lon %~% -60.5372]
 
-kmzs <- k*ust*pblh*(lev/pblh)*(1 - lev/pblh)*(1 + 6.9*lev/L)^(-1)
-kmzu <- k*ust*pblh*(lev/pblh)*(1 - lev/pblh)*(1 - 22*lev/L)^(-1/4)
-
-khzs <- k*ust*pblh*(lev/pblh)*(1 - lev/pblh)*(1 + 9.2*lev/L)^(-1)
-khzu <- k*ust*pblh*(lev/pblh)*(1 - lev/pblh)*(1 - 13*lev/L)^(-1/2)
-
-mu = (1 - 22*lev/L)^(1/4)
-mu0 = (1 - 22*z0/L)^(1/4)
-
-uzs = (ust/k)*(ln(lev/z0) - (1 - 6.9*pblh/L)((lev - z0)/pblh) - 3.45 * pblh/L *(lev^2/pblh^2 - z0^2/pblh^2))
-uzu = (ust/k)*(ln(lev/z0) + ln((1 + mu0^2)*(1 + mu0)^2/((1 + mu^2)*(1 + mu)^2)) + 2*(atan(mu) - atan(mu0))
-+ 2*L/(33*pblh)*(mu^3 - mu0^3))               
+remove(list = c("caso.YSU", "caso.MYJ", "caso.ACM2"))
 ```
+
+```{r L-parm, fig.cap="Longitud de Monin Obukhov (m) en función del tiempo y para cada parametrización."}
+
+ggplot(all.k, aes(date, L)) +
+  geom_point(aes(color = regimen)) +
+  geom_hline(yintercept = 0) +
+  scale_color_viridis(name = "Regimen",discrete = T, option = "viridis") +
+  scale_y_continuous(name = "L (m)") +
+  scale_x_datetime(name = "Hora (UTC)", date_breaks = "6 hours", date_labels = "%H") +
+  facet_wrap(~param) +
+  theme_minimal()
+  
+```
+
+```{r kh_wrf, fig.cap="Coeficiente de difusividad de calor Kh (m-2 s-1) promediado sobre el regimen estable (izquierda) y el regimen inestable (derecha) de la capa límite para los distintos esquemas analizados."}
+group_by(all.k, param, lev, regimen) %>% 
+  summarise(Kh = mean(exchh, na.rm = T)) %>% 
+  ungroup() %>% 
+  ggplot(aes(lev, Kh)) + 
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Metodología",discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
+  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)", limits = c(0, 1500)) +
+  facet_wrap(~regimen, scales = "free") +
+  #labs(title = "Perfiles a partir del promedio del dominio") +
+  coord_flip() +
+  theme_minimal()
+```
+
+
+#### Ahora si perfiles según el modelo Ulke 
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+all.k <- all.k[, c("kh.u", "km.u", "u.u") := .(
+  kh.ulke(lev, pblh, L, ust),
+  km.ulke(lev, pblh, L, ust),
+  u.ulke(lev, pblh, L, ust))] %>% 
+  .[, Pr := km.u/kh.u]
+
+ggplot(all.k[lev < 1500 & kh.u > 0], aes(date, lev)) +
+  geom_contour(aes(z = kh.u, color = ..level..)) +
+  facet_wrap(~regimen+param, scales = "free")
+```
+
+```{r kh_ulke, fig.cap="Coeficiente de difusividad de calor Kh (m-2 s-1) promediado sobre el regimen estable (izquierda) y el regimen inestable (derecha) de la capa límite para los distintos esquemas analizados."}
+
+group_by(all.k, param, lev, regimen) %>% 
+  summarise(Kh.u = mean(kh.u, na.rm = T), Km.u = mean(km.u, na.rm = T)) %>% 
+  ungroup() %>%
+  .[, Pr := Km.u/Kh.u] %>%
+  .[Kh.u > 0 & Km.u > 0, ] %>% 
+  ggplot(aes(lev, Kh.u)) + 
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
+  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)", limits = c(0, 1500)) +
+  facet_wrap(~regimen, scales = "free") +
+  #labs(title = "Perfiles a partir del promedio del dominio") +
+  coord_flip() +
+  theme_minimal()
+```
+
+```{r}
+all.k[, `:=`(kh.u_norm = kh.u/(ust*0.4*pblh),
+             km.u_norm = km.u/(ust*0.4*pblh),
+           lev_norm = lev/pblh),
+    by = .(param, regimen)] %>% 
+  .[, lapply(.SD, function(x) approx(lev_norm, x, xout = seq(0, 1, by = 0.1))$y), 
+    by = .(param, regimen), .SDcols = c("lev_norm", "kh.u_norm", "km.u_norm")] %>% 
+  group_by(param, lev_norm, regimen) %>% 
+  summarise(Kh.u_norm = mean(kh.u_norm, na.rm = T), Km.u_norm = mean(km.u_norm, na.rm = T)) %>% 
+  ungroup() %>%
+  #.[Kh.u > 0 & Km.u > 0, ] %>% 
+  ggplot(aes(lev_norm, Kh.u_norm)) + 
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
+  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)") +
+  facet_wrap(~regimen, scales = "free") +
+  #labs(title = "Perfiles a partir del promedio del dominio") +
+  coord_flip() +
+  theme_minimal()
+```
+
+```{r}
+hL <- group_by(all.k, param, regimen) %>% 
+  summarise(h_norm = mean(pblh, na.rm = T), L_norm = mean(L, na.rm = T)) %>% 
+  .[, hL := h_norm/L_norm]
+```
+
