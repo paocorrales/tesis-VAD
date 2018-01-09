@@ -330,3 +330,30 @@ ggplot(d, aes(lev, Kh.m)) +
 remove("d")
 ```
 
+#### Comparación de los perfiles de viento con el modelo Ulke
+
+```{r}
+all.k[, `:=`(u.u_norm = u.u*0.4/(ust),
+           lev_norm = lev/pblh),
+    by = .(param, regimen)] %>% 
+  .[, .(lev_norm = seq(0, 1, by = 0.1),
+        u.u_norm = approx(lev_norm, u.u_norm, xout = seq(0, 1, by = 0.1))$y,
+        u_norm = approx(lev_norm, spd, xout = seq(0, 1, by = 0.1))$y), 
+    by = .(param, regimen, date)] %>% 
+  .[, lapply(.SD, mean, na.rm = T), by = .(param, lev_norm, regimen), .SDcols = -"date"] %>% 
+  # group_by(param, lev_norm, regimen) %>% 
+  # summarise(Kh.u_norm = mean(kh.u_norm, na.rm = T), Km.u_norm = mean(km.u_norm, na.rm = T)) %>% 
+  # ungroup() %>%
+  #.[Kh.u > 0 & Km.u > 0, ] %>% 
+  ggplot(aes(lev_norm, u.u_norm)) + 
+  geom_line(aes(color = as.factor(param))) +
+  geom_line(aes(y = u_norm, color = as.factor(param)), linetype = 2) +
+  scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[h], "*"))) +
+  scale_x_continuous(name = "z/h") +
+  facet_wrap(~regimen, scales = "free") +
+  #labs(title = "Perfiles a partir del promedio del dominio") +
+  coord_flip() +
+  theme_minimal()
+```
+
