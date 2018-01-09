@@ -73,7 +73,7 @@ ggplot(hgt, aes(lon, lat)) +
   scale_y_continuous(name = "Latitud", limits = c(-32.25, -31.44), expand = c(0,0)) +
   annotate(geom = "point", x = -60.537289, y = -31.848438, size = 2) +
   # geom_point(data = subset(distances, inside == "TRUE")) +
-  #geom_circle(data = circle, aes(x0 = x0, y0 = y0, r = r), inherit.aes = F) +
+  # geom_circle(data = circle, aes(x0 = x0, y0 = y0, r = r), inherit.aes = F) +
   coord_quickmap() +
   theme_minimal() + theme(legend.position = "bottom", panel.ontop = T)
 
@@ -97,7 +97,8 @@ caso.YSU <- ReadNetCDF(paste(path,"caso1_YSU/spd_YSU.nc", sep = "")) %>%
   .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>% 
   .[, regimen := ifelse(L <= 0, "inestable", "estable")] %>% 
   .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
-  .[inside(lon, lat) == T]
+  .[inside(lon, lat) == T] %>% 
+  .[lev > -25,]
 
 caso.MYJ <- ReadNetCDF(paste(path,"caso1_MYJ/spd_MYJ.nc", sep = "")) %>% 
   mutate(exchh = ReadNetCDF(paste(path,"caso1_MYJ/exchh_MYJ.nc", sep = ""), out = "vector")[[1]],
@@ -109,7 +110,8 @@ caso.MYJ <- ReadNetCDF(paste(path,"caso1_MYJ/spd_MYJ.nc", sep = "")) %>%
   .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>% 
   .[, regimen := ifelse(L <= 0, "inestable", "estable")] %>% 
   .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
-  .[inside(lon, lat) == T]
+  .[inside(lon, lat) == T] %>% 
+  .[lev > -25,]
 
 caso.ACM2 <- ReadNetCDF(paste(path,"caso1_ACM2/spd_ACM2.nc", sep = "")) %>% 
   mutate(exchh = ReadNetCDF(paste(path,"caso1_ACM2/exchh_ACM2.nc", sep = ""), out = "vector")[[1]],
@@ -121,7 +123,8 @@ caso.ACM2 <- ReadNetCDF(paste(path,"caso1_ACM2/spd_ACM2.nc", sep = "")) %>%
   .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>% 
   .[, regimen := ifelse(L <= 0, "inestable", "estable")] %>% 
   .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
-  .[inside(lon, lat) == T]
+  .[inside(lon, lat) == T] %>% 
+  .[lev > -25,]
 
 ```
 
@@ -135,8 +138,8 @@ Sin embargo se observa que esto no ocurre y que existen regiones donde el signo 
 
 
 ```{r L-espacial, fig.cap="Porcentaje de veces que el valor local de L (izquierda) y el flujo vertical de calor (derecha) tiene signo distinto a la moda para todo el periodo analizado, se muestran los valores mayores al 5% (colores) y topografía del dominio (contornos)."}
-L <- caso.YSU[lev == -25, La := L*mode(L), by = .(date)] %>% 
-  .[lev == -25, .(mean = mean(La < 0)), by = .(lon, lat)] %>% 
+L <- caso.YSU[, La := L*mode(L), by = .(date)] %>% 
+  .[, .(mean = mean(La < 0)), by = .(lon, lat)] %>% 
   .[mean > 0.05, ] %>% 
   .[, var := "L"]
 
@@ -187,8 +190,14 @@ ggplot(all.k, aes(date, L)) +
   scale_y_continuous(name = "L (m)") +
   scale_x_datetime(name = "Hora (UTC)", date_breaks = "6 hours", date_labels = "%H") +
   facet_wrap(~param) +
-  theme_minimal()
+  theme_minimal() 
   
+  # ggplot(all.k[param == "MYJ"], aes(date, pblh)) +
+  # geom_point(aes(color = regimen)) +
+  # #facet_wrap(~param) +
+  # annotate(geom = "vline", xintercept = as.POSIXct("2016-01-14 09:00:00")) +
+  # theme_minimal()
+  # 
 ```
 
 ```{r kh_wrf, fig.cap="Coeficiente de difusividad de calor Kh (m-2 s-1) promediado sobre el regimen estable (izquierda) y el regimen inestable (derecha) de la capa límite para los distintos esquemas analizados."}
@@ -217,7 +226,7 @@ all.k <- all.k[, c("kh.u", "km.u", "u.u") := .(
   .[, Pr := km.u/kh.u]
 
 ggplot(all.k[lev < 1500 & kh.u > 0], aes(date, lev)) +
-  geom_contour(aes(z = kh.u, color = ..level..)) +
+  geom_contour(aes(z = Pr, color = ..level..)) +
   facet_wrap(~regimen+param, scales = "free")
 ```
 
@@ -239,22 +248,43 @@ group_by(all.k, param, lev, regimen) %>%
   theme_minimal()
 ```
 
-```{r}
+```{r kh_norm, fig.cap="Coeficiente de difusividad de calor Kh* = Kh/khu* promediado sobre el regimen estable (izquierda) y el regimen inestable (derecha) de la capa límite para los distintos esquemas analizados."}
+
 all.k[, `:=`(kh.u_norm = kh.u/(ust*0.4*pblh),
              km.u_norm = km.u/(ust*0.4*pblh),
            lev_norm = lev/pblh),
     by = .(param, regimen)] %>% 
-  .[, lapply(.SD, function(x) approx(lev_norm, x, xout = seq(0, 1, by = 0.1))$y), 
-    by = .(param, regimen), .SDcols = c("lev_norm", "kh.u_norm", "km.u_norm")] %>% 
-  group_by(param, lev_norm, regimen) %>% 
-  summarise(Kh.u_norm = mean(kh.u_norm, na.rm = T), Km.u_norm = mean(km.u_norm, na.rm = T)) %>% 
-  ungroup() %>%
+  .[, .(lev_norm = seq(0, 1, by = 0.1),
+        kh.u_norm = approx(lev_norm, kh.u_norm, xout = seq(0, 1, by = 0.1))$y,
+        km.u_norm = approx(lev_norm, km.u_norm, xout = seq(0, 1, by = 0.1))$y), 
+    by = .(param, regimen, date)] %>% 
+  .[, lapply(.SD, mean, na.rm = T), by = .(param, lev_norm, regimen), .SDcols = -"date"] %>% 
+  # group_by(param, lev_norm, regimen) %>% 
+  # summarise(Kh.u_norm = mean(kh.u_norm, na.rm = T), Km.u_norm = mean(km.u_norm, na.rm = T)) %>% 
+  # ungroup() %>%
   #.[Kh.u > 0 & Km.u > 0, ] %>% 
-  ggplot(aes(lev_norm, Kh.u_norm)) + 
+  ggplot(aes(lev_norm, kh.u_norm)) + 
   geom_line(aes(color = as.factor(param))) +
   scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
-  scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
-  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)") +
+  scale_y_continuous(name = expression(paste(K[h], "*"))) +
+  scale_x_continuous(name = "z/h") +
+  facet_wrap(~regimen, scales = "free") +
+  #labs(title = "Perfiles a partir del promedio del dominio") +
+  coord_flip() +
+  theme_minimal()
+```
+
+
+
+```{r}
+group_by(all.k, param, lev, regimen) %>%
+  summarise(Pr = mean(Pr, na.rm = T)) %>%
+ungroup() %>%
+ggplot(aes(lev, Pr)) + 
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
+  scale_y_continuous(name = "Km/Kh") +
+  scale_x_continuous(name = "z", limits = c(0,1500)) +
   facet_wrap(~regimen, scales = "free") +
   #labs(title = "Perfiles a partir del promedio del dominio") +
   coord_flip() +
@@ -263,7 +293,40 @@ all.k[, `:=`(kh.u_norm = kh.u/(ust*0.4*pblh),
 
 ```{r}
 hL <- group_by(all.k, param, regimen) %>% 
-  summarise(h_norm = mean(pblh, na.rm = T), L_norm = mean(L, na.rm = T)) %>% 
+  summarise(h_norm = mean(pblh, na.rm = T), 
+            L_norm = mean(L, na.rm = T), 
+            ust_norm = mean(ust, na.rm = T),
+            Pr =  mean(Pr, na.rm = T)) %>% 
   .[, hL := h_norm/L_norm]
+knitr::kable(hL)
+```
+
+```{r}
+all.k <- all.k[, exchm := Pr*exchh]
+d <- group_by(all.k, param, lev, regimen) %>% 
+  summarise(Kh.m = mean(exchh, na.rm = T), Km.m = mean(exchm, na.rm = T)) %>% 
+  ungroup()
+  #.[Kh.m > 0 & Km.m > 0, ] %>% 
+ggplot(d, aes(lev, Kh.m)) + 
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
+  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)", limits = c(0, 1500)) +
+  facet_wrap(~regimen, scales = "free") +
+  #labs(title = "Perfiles a partir del promedio del dominio") +
+  coord_flip() +
+  theme_minimal() +
+  ggplot(d, aes(lev, Km.m)) + 
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[m], " (", m^2,s^{-1}, ")"))) +
+  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)", limits = c(0, 1500)) +
+  facet_wrap(~regimen, scales = "free") +
+  #labs(title = "Perfiles a partir del promedio del dominio") +
+  coord_flip() +
+  theme_minimal() +
+  plot_layout(ncol = 1)
+  
+remove("d")
 ```
 
