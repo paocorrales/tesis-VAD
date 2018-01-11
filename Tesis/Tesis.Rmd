@@ -13,11 +13,13 @@ output:
     toc: yes
     toc_depth: '4'
 documentclass: book
+classoption: oneside
 
 geometry: inner = 3cm, outer = 2cm, top = 2.5cm, bottom = 2.5cm
 header-includes:
   - \linespread{1.25}
   - \usepackage{subfig}
+  - \usepackage{hyperref}
 lang: es-AR
 link-citation: yes
 fontsize: 12pt
@@ -38,10 +40,32 @@ knitr::opts_chunk$set(echo = FALSE,
 
 knitr::write_bib(c("base", "data.table", "ggplot2", "metR"), 
                  file = "Bibliografia/packages.bib")
-```
-# Agradecimientos
 
-# Resumen
+library(metR)
+library(ggplot2)
+library(lubridate)
+library(magrittr)
+library(dplyr)
+library(dtplyr)
+library(viridis)
+library(directlabels)
+library(data.table)
+library(patchwork)
+#source("geom_contourlabel.R")
+#source("helpfun.R")
+```
+
+\listoffigures
+\newpage
+
+\listoftables
+\newpage
+
+\section*{Agradecimientos}
+\newpage
+
+\section*{Resumen}
+\newpage
 
 # Introducción
 
@@ -49,40 +73,97 @@ La capa límite planetaria (CLP) corresponde a la porción de atmósfera que se 
 
 En nuestra región existen estudios que buscan caracterizar los procesos que ocurren en la capa límite de forma tal de poder avanzar en su entendimiento y su dependencia por ejemplo con las propiedades de la superficie o el estado de la atmósfera [@Mazzeo1990; @Ulke2000; @Gassmann2001; @Acevedo2014; @Tonti2015].
 
-Dado que la ocurrencia de turbulencia en la  capa límite planetaria está caracterizada se da en múltiples escalas espaciales y temporales, la representación de los procesos que ocurren dentro de ella es un desafío para los modelos numéricos. Actualmene los modelos de simulación de la CLP no cuentan con la resolución necesaria para representar estos procesos de forma explícita, debiendo recurrir a una representación simplificada, donde se simula numéricamente una parte del espectro turbulento, mientras que los procesos en la escala de subgrilla se resuelven a través de parametrizaciones con cierres de distinto orden. Para ello se han formulado diferentes alternativas para parametrizar los procesos de capa límite y la validación de las mismas tambiénes un tema de gran interés [@Xie2012; @Banks2016]. 
+Dado que la ocurrencia de turbulencia en la  capa límite planetaria se da en múltiples escalas espaciales y temporales, la representación de los procesos que ocurren dentro de ella es un desafío para los modelos numéricos. Actualmene los modelos de simulación regional y global no cuentan con la resolución necesaria para representar los procesos de la CLP de forma explícita, debiendo recurrir a una representación simplificada. De esta manera se simula numéricamente una parte del espectro turbulento, mientras que los procesos en la escala de subgrilla se resuelven a través de parametrizaciones con cierres de distinto orden, es decir, con diferentes niveles de aproximaciones. 
 
-A nivel regional, la representación de la capa límite en los modelos numéricos ha recibido mucha atención en las zonas oceánicas (particularmente en los océanos tropicales, Wang et al. 2004). Sin embargo, existen pocos estudios acerca del desempeño de las parametrizaciones de capa límite en las regiones continentales [@Ulke2001; @Ruiz2010; @Berri2012; @Rizza2013].
+Existen diferentes alternativas para parametrizar los procesos de capa límite pero pueden clasificarse en dos grandes grupos. De acuerdo a @Stull1988, las parametrizaciones con clausura local determinan el valor de cualquier variable desconocida en cada punto a partir del valor o el gradiente de una variable conocida en el mismo punto; suponiendo que la turbulencia tiene un comportamiento análogo a la difusión molecular. Por otro lado las parametrizaciones con clausura no local asumen que la turbulencia está caracterizada por la superposición de torbellinos de distintas escalas que transportan las características del medio; y para lograr esto, el valor de la variable desconocida en un punto es aproximada a partir de una variable conocida en varios puntos en el espacio. 
 
-Uno de los principales desafíos a la hora de estudiar los procesos que ocurren en la capa límite o para validar cómo los modelos representan dichos procesos, es la disponibilidad de observaciones. Las redes de radiosondeos que permiten obtener perfiles de viento, temperatura y humedad en la capa límite miden con frecuencias temporales de entre 12 y 24 horas (solo eventualmente cada 6 horas) y tienen poco detalle de los perfiles dentro de la PBL.
+La validación de las parametrizaciones de CLP en distintas situaciones sinópticas es un tema de gran interés debido a la necesidad de modelas los procesos de subgrilla presentes que afectan procesos en el resto de las escalas de variabiliad atmosférica [@Xie2012; @Banks2016]. 
 
-Sin embargo los radares Doppler permiten estimar la componente radial del viento en un radio horizontal de hasta 240 km y a partir de esa información permiten reconstruir perfiles verticales de viento utilizando la técnica VAD (Velocity Azimuth Display). En días en los que no existen ecos producidos por hidrometeoros, los radares pueden detectar la velocidad del viento dentro de la capa límite a partir de blancos como los insectos, por ejemplo @Rennie2010 y @Rabin1984. Dichos perfiles de viento están disponibles con una frecuencia temporal de hasta 5 minutos. La calidad de estos perfiles ha sido comparada con los perfiles obtenidos a partir de radiosondeos, encontrándose en general que los datos obtenidos resultan adecuados para su uso en el estudio de los procesos de capa límite y en la verificación de modelos numéricos [@Bousquet2008; @Salonen2008] y en la generación de condiciones iniciales para pronósticos a muy corto plazo [@Rennie2011].
+A nivel regional, la representación de la capa límite en los modelos numéricos ha recibido mucha atención en las zonas oceánicas (particularmente en los océanos tropicales, @Wang2004). Sin embargo, existen pocos estudios acerca del desempeño de las parametrizaciones de capa límite en las regiones continentales [@Ulke2001; @Ruiz2010; @Berri2012; @Rizza2013].
+
+Uno de los principales desafíos a la hora de estudiar los procesos que ocurren en la capa límite o para validar cómo los modelos representan dichos procesos, es la disponibilidad de observaciones. Las redes de radiosondeos que permiten obtener perfiles de viento, temperatura y humedad en la capa límite miden con frecuencias temporales de entre 12 y 24 horas (solo eventualmente cada 6 horas) lo que impide analizar la evolución de las características de la CLP a lo largo del día.
+
+Sin embargo los radares Doppler permiten estimar la componente radial del viento en un radio horizontal de hasta 240 km y a partir de esa información permiten reconstruir perfiles verticales de viento utilizando la técnica Velocity Azimuth Display (VAD). 
+
+En días en los que no existen ecos producidos por hidrometeoros, los radares pueden detectar la velocidad del viento dentro de la capa límite a partir de blancos como los insectos, de acuerdo a @Rennie2010 estos datos podrían ser utilizados si se elimina el efecto de los ecos de terreno y otras observaciones erroneas. Las observaciones de radar están disponibles con una frecuencia temporal de hasta 5 minutos permitiendo obtener perfiles de viento con una resolocuón temporal mucho mayor. 
+
+La calidad de estos perfiles ha sido comparada con los perfiles obtenidos a partir de radiosondeos, encontrándose en general que los datos obtenidos resultan adecuados para su uso en el estudio de los procesos de capa límite y en la verificación de modelos numéricos [@Bousquet2008; @Salonen2008] y en la generación de condiciones iniciales para pronósticos a muy corto plazo [@Rennie2011].
+
 Uno de los aspectos importantes a tener en cuenta en el uso de radares para el estudio de los perfiles de viento, es la necesidad de aplicar un riguroso control de calidad a los datos  que permita solucionar diversos aspectos que pueden afectar la confiabilidad de los mismo. Entre los problemas más comunes se cuentan: contaminación por ecos de terreno, efecto de aliasing, y contaminación por blancos móviles. Estos aspectos deben ser abordados antes de poder utilizar los datos para estimar el perfil de velocidad [@Holleman2008; @Rennie2011] aplicando algoritmos de control de calidad [@Ruiz2015; @Rennie2011].
 
 La disponibilidad de la información de radar Doppler en Argentina ofrece un gran recurso de información para estudiar las propiedades de la capa límite planetaria en nuestra región y para validar la calidad de los modelos numéricos a la hora de representar dichas propiedades.
 
-El objetivo de esta Tesis de Licenciatura es analizar el comportamiento de distintas parametrizaciones de CLP disponibles en el modelo Weather Research and Forecasting (WRF - @Skamarock2008) al representar algunos de los procesos presentes a lo largo del día. 
+El objetivo de esta Tesis de Licenciatura es desarrollar una metodología para el estudio de los procesos de capa límite a partir de los datos de radar y analizar el comportamiento de distintas parametrizaciones de CLP disponibles en el modelo Weather Research and Forecasting (WRF - @Skamarock2008) al representar algunos de los procesos presentes a lo largo del día. 
 
-La utilización de los datos de viento radial obtenidos de información de radar permitiran estimar los perfiles verticales de viento con una frecuencia temporal de 10 minutos, en un espesor que abarca desde superficie y hasta 2000 m de altura, permitiendo realizar una caracterización de la evolución temporal de dichos perfiles dentro de la capa límite atmosférica. La estimación de esos perfiles permitirán además validar las parametrizaciones de la capa límite que utilizan los modelos numéricos con una mayor resolución temporal a la utilizada en trabajos previos.
+Se plantea como hipótesis que los datos de viento radial obtenidos de información de radar permiten estimar los perfiles verticales de viento con una frecuencia temporal de 10 minutos, en un espesor que abarca desde superficie y hasta 2000 m de altura, permitiendo realizar una caracterización de la evolución temporal de dichos perfiles dentro de la capa límite atmosférica. La estimación de esos perfiles permitirán además validar las parametrizaciones de la capa límite que utilizan los modelos numéricos con una mayor resolución temporal a la utilizada en trabajos previos.
 
-Como objetivos particulares esta tesis se propone desarrollar dicha metodología y aplicarla a un conjunto de casos, utilizando datos de velocidad radial obtenidos en el radar de Paraná.
+Para alcanzar el obejtivo se realizó el siguiente procedimiento: En primer lugar se determinaron las características necesarias para identificar posibles casos de estudio que permitan analizar los procesos de CLP asociados al ciclo diario. Luego se procesó los datos de radar para caso en estudio y se aplicaron los controles de calidad necesarios antes de realizar el cálculo del VAD desarrollado y validado como parte de este trabajo. Se analizó la consistencia de los resultados obtenidos y las características principales de la variación del viento a lo largo del día. Para las simulaciones numéricas con el modelo WRF se define un dominio y condiciones iniciales adecuadas para modelar un caso de estudio utilizando algunas parametrizaciones diponibles. Se comparan las simulaciones con las observaciones previamente obtenidas y se analizan algunas variables asociadas a la turbulencia. 
+
+De esta manera, este trabajo permite desarrollar una metodología para el tratamiento de observaciones no convencionales, su aplicación al estudio de los procesos de CLP y al modelado numérico de los mismos.
 
 # Metodología
 
+En esta sección se describen los datos utilizados en el trabajo y las metodologías aplicadas al análisis.
+
+## Región y casos de estudio
+
+Este trabajo centra el análisis en la región de la ciudad de Paraná donde se encuentran el Radar Doppler del INTA (Instituto Nacional de Tecnología Agropecuaria) y una estación meterológica de superficie perteneciente al SMN (Servicio Meteorológico Nacional) separados por aproximadamete 9 kilometros de distancia.
+
+La elevación de la región elegida muestra un mínimo de 5 metros sobre el nivel del mar en la cuenca del Río Paraná y un máximo de aproximadamente 110 metros sobre el nivel del mar sobre el margen sudeste de río donde ubica tanto la estación meteorológica como el radar (\autoref{fig:topografia}). La región está dominada por la presencia del río y las regiones costeras donde predominan los campos de pastizales o pasto con excepción la ciudad de Paraná (al norte), la ciudad de Santa Fé (al noreste) y pequeños conglomerados de casas. 
+
+```{r topografia, fig.cap="Topografía de la región en estudio en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Paraná, el punto rojo indica la ubicación de la estación Paraná Aero.", fig.scap="Topografía de la región en estudio en metros sobre el nivel del mar."}
+
+topo <- GetTopography(298.96, 299.95, -31.44, -32.25, resolution = 1/60, file.dir = "seudocache") %>% 
+  .[, lon := ConvertLongitude(lon, from = 360)]
+
+ggplot(topo, aes(lon, lat)) + 
+  geom_contour_fill(aes(z = h)) +
+  scale_fill_distiller(type = "seq", palette = "YlOrBr", 
+                       name = "",
+                       guide = guide_colorbar(title.position = "top", 
+                                              title.hjust = 0.5)) +
+  scale_x_continuous(name = "Longitud", limits = c(-61.04, -60.05), expand = c(0,0)) +
+  scale_y_continuous(name = "Latitud", limits = c(-32.25, -31.44), expand = c(0,0)) +
+  annotate(geom = "point", x = -60.537289, y = -31.848438, size = 2) +
+  annotate(geom = "point", x = -60.483333, y = -31.783333, size = 2, color = "red") +
+  coord_quickmap() + 
+  theme_minimal() + theme(panel.ontop = T)
+
+remove(topo)
+```
 
 
-## Casos de estudio
+### Criterios utilizados para la selección de los casos de estudio
 
-### Criterios utilizados
+Con el obejtivo analizar los procesos que ocurren en la CLP a lo largo del día es necesario identificar aquellas condiciones atmosféricas que permitan el desarrollo de la capa límite y al mismo tiene donde los datos de radar sean confliables. Por lo tanto se buscaron cumplir los siguientes criterios:
+
+* Viento moderado. En estas situaciones los datos de radar son más confiables y permiten el desarrollo de la capa límite estable nocturna [@Gassmann2001].
+* Cielos despejados. Para garantizar el calentamiento desde la superficie y el desarrollo de una capa límite mezclada.
+* Verano. Donde el calentamiento es más intenso.
+
+Las características previas se buscaron a partir del análisis de los datos de la estación meteorológica de superficie Paraná Aero provistos por el SMN y de reflextividad (dBZ) del radar de Paraná para los meses de enero de 2016 y 2017. 
+
+En el primer tipo de datos se analizó la velocidad de viento, la cobertura nubosa y la precipitación observada a cada hora. En el caso de los datos de radar se observó la presencia de ecos meteorológicos en las inmediaciones del radar (a una distancia menor a 150 km) en cada tiempo disponible (aproximadamente cada 10 minutos). Un caso de estudio posible será aquel que cumpla con las características mencionadas durante las 24 horas del día aunque es deseable que las condiciones se mantengan durante las 12 horas previas al día en estudio ya que las características de la capa estable nocturna puede ser influenciada por las características de la capa mezcalda del día anterior.
+
+### Descripción de los casos de estudio
+
+A partir de análisis previamente descripto se identificaron 3 casos de estudio que se describen a continuación.
+
+#### Caso 1: 14 de enero de 2016
+
+Nubosidad en estación y en radar. Viento. No pp. Ver sinóptica.
+
+## Descripción de los datos de radar
 
 ## Tratamiento de aliassing
 
 ## Velocity Azimuth Display (VAD)
 
-### Desarrollo matemático
+#### Desarrollo matemático
 
-### Control de calidad y criterios
+#### Control de calidad y criterios
 
-### Validación
+#### Validación
 
 ## Loess
 
