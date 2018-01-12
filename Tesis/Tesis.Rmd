@@ -107,7 +107,7 @@ En esta sección se describen los datos utilizados en el trabajo y las metodolog
 
 ## Región y casos de estudio
 
-Este trabajo centra el análisis en la región de la ciudad de Paraná donde se encuentran el Radar Doppler del INTA (Instituto Nacional de Tecnología Agropecuaria) y una estación meterológica de superficie perteneciente al SMN (Servicio Meteorológico Nacional) separados por aproximadamete 9 kilometros de distancia.
+Este trabajo centra el análisis en la región de la ciudad de Paraná (provincia de Entre Ríos, Argentina) donde se encuentran el Radar Doppler del INTA (Instituto Nacional de Tecnología Agropecuaria) y una estación meterológica de superficie perteneciente al SMN (Servicio Meteorológico Nacional) separados por aproximadamete 9 kilometros de distancia.
 
 La elevación de la región elegida muestra un mínimo de 5 metros sobre el nivel del mar en la cuenca del Río Paraná y un máximo de aproximadamente 110 metros sobre el nivel del mar sobre el margen sudeste de río donde ubica tanto la estación meteorológica como el radar (\autoref{fig:topografia}). La región está dominada por la presencia del río y las regiones costeras donde predominan los campos de pastizales o pasto con excepción la ciudad de Paraná (al norte), la ciudad de Santa Fé (al noreste) y pequeños conglomerados de casas. 
 
@@ -151,11 +151,31 @@ A partir de análisis previamente descripto se identificaron 3 casos de estudio 
 
 #### Caso 1: 14 de enero de 2016
 
-Nubosidad en estación y en radar. Viento. No pp. Ver sinóptica.
+El caso 1 abarca el perdiodo de las 00Z del 14 de enero a las 00Z del 15 de enero de 2016. A escala regional se observó un anticiclón ubicado sobre el oceano Atlántico y al este Uruguay a las 00Z de 14 de enero. Este sistema está asociado a vientos del noreste sobre el dominio en estudio. En superficie se registraron vientos débiles (menores a 2 m/s) del este y sureste en las primeras horas del periodo. En la estación meteorológica se observó nubosidad alta en las primeras horas de tipo cirroestrato que por momentos cortos cubrió el cielo. No se observaron ecos meteorológicos en la región del radar. **Que tanto afecta la nubosidad alta?**
+
+Posteriormente, a las 12Z el anticiclón se intensifica y comienza a moverse hacia el NE y en superficie se observan vientos predominantes del noreste de hasta 6.5 m/s. No se observa nubosidad y la temperatura en superficie alcanza los 32.4°C.
+
+**Humedad relativa disminuye de 85% a 35% en el periodo, no me queda clara la causa y tampoco se que tan importante puede ser esto luego**
 
 ## Descripción de los datos de radar
 
+El radar ubicado en Paraná (Provincia de Entre Ríos) emite energía electromagnética en la banda C (4 a 8 GHz) y es de doble polarización.
+La estrategia de escaneo de la atmósfera está programada para que la antena de giros en sentido horizontal de 360º y cambie de elevación sucesivamente 12 veces. El ángulo vertical varía entre 0.5° y 15.1°. El rango del radar (distancia a la que llega la señal desde la ubicación del radar) puede ser de 120, 240 y 480 km con una resolución espacial de 1 $\mathrm{km^2}$ [@Saibene2014] de acuerdo a la estrategía de escaneo.
+
+El escaneo completo se realiza cada 10 minutos, dando 144 volumenes de datos
+diarios registrando para las distintas variables como reflectividad (dBZ) y velocidad
+radial ($V_r$).
+
+En este trabajo se usaron datos de radar con un rango de 240 km y 12 ángulos de elevación para los periodos comprendidos por cada caso de estudios provistos por **XXXX INTA XXXX**
+
+Cada volumen de dato correspondiente a un tiempo de escaneo completo fue convertido al formato CfRadial con el paquete Radx C++ desarrollado por Mike Dixon (NCAR - National Center for Atmospheric Research) **CITA** para el posterior procesamiento y análisis. 
+En particular se utilizó la variable de reflectividad sin procesamiento para determinar la presencia o no de ecos meteorológicos en el dominio cercano al radar y la velocidad radial para la obtención de los perfiles de viento. 
+
 ## Tratamiento de aliassing
+
+Un problema importante al momento de utilizar los datos de velocidad radial es la contaminación por aliasing ya que afecta significativamente la calidad de los perfiles de viento finales, de acuerdo a @Gao2004 un 3% de contaminación por aliassing puede generar un error cuadratico medio del 50% en el perfil de viento medio a partir de la técnica VAD. El aliasing es la superposición de la señal de radar y ocurre cuando la velocidad real supera a la velocidad de Nyquist ($V_N$). Esto es intrinceco a las características del radar ya que depende de la frecuencia y estrategía de escaneo y en particular de la frecuencia de repetición del pulso o señal.
+
+En el caso del radar de Paraná con la estrategía de escaneo de 240km de rango, tiene una $V_N = 12 m/s$ 
 
 ## Velocity Azimuth Display (VAD)
 
