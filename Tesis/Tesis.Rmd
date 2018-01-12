@@ -8,6 +8,7 @@ output:
     number_sections: yes
     toc: yes
     toc_depth: 4
+    keep_tex: yes
   word_document:
     reference_docx: word-template.docx
     toc: yes
@@ -51,8 +52,9 @@ library(viridis)
 library(directlabels)
 library(data.table)
 library(patchwork)
+library(ncdf4)
 #source("geom_contourlabel.R")
-#source("helpfun.R")
+source("helpfun.R")
 ```
 
 \listoffigures
@@ -109,9 +111,7 @@ En esta sección se describen los datos utilizados en el trabajo y las metodolog
 
 Este trabajo centra el análisis en la región de la ciudad de Paraná (provincia de Entre Ríos, Argentina) donde se encuentran el Radar Doppler del INTA (Instituto Nacional de Tecnología Agropecuaria) y una estación meterológica de superficie perteneciente al SMN (Servicio Meteorológico Nacional) separados por aproximadamete 9 kilometros de distancia.
 
-La elevación de la región elegida muestra un mínimo de 5 metros sobre el nivel del mar en la cuenca del Río Paraná y un máximo de aproximadamente 110 metros sobre el nivel del mar sobre el margen sudeste de río donde ubica tanto la estación meteorológica como el radar (\autoref{fig:topografia}). La región está dominada por la presencia del río y las regiones costeras donde predominan los campos de pastizales o pasto con excepción la ciudad de Paraná (al norte), la ciudad de Santa Fé (al noreste) y pequeños conglomerados de casas. 
-
-```{r topografia, fig.cap="Topografía de la región en estudio en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Paraná, el punto rojo indica la ubicación de la estación Paraná Aero.", fig.scap="Topografía de la región en estudio en metros sobre el nivel del mar."}
+```{r topografia, fig.cap="Topografía de la región en estudio en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Paraná, el punto rojo indica la ubicación de la estación Paraná Aero. \\label{topografia}", fig.scap="Topografía de la región en estudio en metros sobre el nivel del mar."}
 
 topo <- GetTopography(298.96, 299.95, -31.44, -32.25, resolution = 1/60, file.dir = "seudocache") %>% 
   .[, lon := ConvertLongitude(lon, from = 360)]
@@ -132,6 +132,7 @@ ggplot(topo, aes(lon, lat)) +
 remove(topo)
 ```
 
+La elevación de la región elegida muestra un mínimo de 5 metros sobre el nivel del mar en la cuenca del Río Paraná y un máximo de aproximadamente 110 metros sobre el nivel del mar sobre el margen sudeste de río donde ubica tanto la estación meteorológica como el radar (Figura \ref{topografia}). La región está dominada por la presencia del río y las regiones costeras donde predominan los campos de pastizales o pasto con excepción la ciudad de Paraná (al norte), la ciudad de Santa Fé (al noreste) y pequeños conglomerados de casas. 
 
 ### Criterios utilizados para la selección de los casos de estudio
 
@@ -151,9 +152,9 @@ A partir de análisis previamente descripto se identificaron 3 casos de estudio 
 
 #### Caso 1: 14 de enero de 2016
 
-El caso 1 abarca el perdiodo de las 00Z del 14 de enero a las 00Z del 15 de enero de 2016. A escala regional se observó un anticiclón ubicado sobre el oceano Atlántico y al este Uruguay a las 00Z de 14 de enero. Este sistema está asociado a vientos del noreste sobre el dominio en estudio. En superficie se registraron vientos débiles (menores a 2 m/s) del este y sureste en las primeras horas del periodo. En la estación meteorológica se observó nubosidad alta en las primeras horas de tipo cirroestrato que por momentos cortos cubrió el cielo. No se observaron ecos meteorológicos en la región del radar. **Que tanto afecta la nubosidad alta?**
+El caso 1 abarca el perdiodo de las 00 UTC del 14 de enero a las 00 UTC del 15 de enero de 2016. A escala regional se observó un anticiclón ubicado sobre el oceano Atlántico y al este Uruguay a las 00 UTC de 14 de enero. Este sistema está asociado a vientos del noreste sobre el dominio en estudio. En superficie se registraron vientos débiles (menores a 2 m/s) del este y sureste en las primeras horas del periodo. En la estación meteorológica se observó nubosidad alta en las primeras horas de tipo cirroestrato que por momentos cortos cubrió el cielo. No se observaron ecos meteorológicos en la región del radar. **Que tanto afecta la nubosidad alta?**
 
-Posteriormente, a las 12Z el anticiclón se intensifica y comienza a moverse hacia el NE y en superficie se observan vientos predominantes del noreste de hasta 6.5 m/s. No se observa nubosidad y la temperatura en superficie alcanza los 32.4°C.
+Posteriormente, a las 12 UTC el anticiclón se intensifica y comienza a moverse hacia el NE y en superficie se observan vientos predominantes del noreste de hasta 6.5 m/s. No se observa nubosidad y la temperatura en superficie alcanza los 32.4°C.
 
 **Humedad relativa disminuye de 85% a 35% en el periodo, no me queda clara la causa y tampoco se que tan importante puede ser esto luego**
 
@@ -173,13 +174,102 @@ En particular se utilizó la variable de reflectividad sin procesamiento para de
 
 ## Tratamiento de aliassing
 
-Un problema importante al momento de utilizar los datos de velocidad radial es la contaminación por aliasing ya que afecta significativamente la calidad de los perfiles de viento finales, de acuerdo a @Gao2004 un 3% de contaminación por aliassing puede generar un error cuadratico medio del 50% en el perfil de viento medio a partir de la técnica VAD. El aliasing es la superposición de la señal de radar y ocurre cuando la velocidad real supera a la velocidad de Nyquist ($V_N$). Esto es intrinceco a las características del radar ya que depende de la frecuencia y estrategía de escaneo y en particular de la frecuencia de repetición del pulso o señal.
+Un problema importante al momento de utilizar los datos de velocidad radial es la contaminación por aliasing ya que afecta significativamente la calidad de los perfiles de viento finales, de acuerdo a @Gao2004 un 3% de contaminación por aliassing puede generar un error cuadratico medio del 50% en el perfil de viento medio a partir de la técnica VAD. El aliasing es la superposición de la señal de radar y ocurre cuando la velocidad real supera a la velocidad de Nyquist ($V_N$). Este parámetro es intrínceco a las características del radar ya que depende de la frecuencia y estrategía de escaneo y en particular de la frecuencia de repetición del pulso o señal que emite.
 
-En el caso del radar de Paraná con la estrategía de escaneo de 240km de rango, tiene una $V_N = 12 m/s$ 
+En el caso del radar de Paraná con la estrategía de escaneo de 240km de rango, tiene una $V_N = 6.7 m/s$ por lo que cualquier velocidad mayor se verá afectada por el aliasing. Esto puede verse en la Figura \ref{aliasing}, las regiones con aliasing se son aquellas que donde el valor de la velocidad radial salta al extremo opuesto de la escala. 
+
+Existen muchos algoritmos que buscan solucionar el problema del aliasing [por ejemplo @Lim2010 y @Haase2004] con distinto grado de exito. Una opción válida es el algoritmo de corrección de aliasing basado en regiones similares disponible en la librería PyART [@Helmus2016], este algoritmo busca regiones con velocidad radial similar y transforma el rango de la variable hasta que todas las regiones fueron corregidas de tal manera de obtener un campo continuo. El campo de velocidad radial sin aliasing obtenido utilizando este algoritmo se muestra en la Figura \ref{no-aliasing}. 
+
+A partir de la exploración visual puede observarse que el algoritmo resuelve el problema de manera satisfactoria y por esta razón se utilizará para preprocesar todos los volumenes de datos de radar.
+
+```{r aliasing, fig.cap="Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\\circ}$ y $V_N = 6.7 m/s$. Notar las escalas diferentes.", fig.subcap=c("Con aliasing \\label{aliasing}", "Sin aliasing \\label{no-aliasing}"), out.extra=" ", out.width="0.48\\textwidth"}
+
+map <- setDT(fortify(rnaturalearth::ne_states(country = "Argentina"))) %>%
+  .[, rango := range(long, lat)] %>% 
+  .[, azimut := azimuth(long, lat)]
+
+radar <- nc_open("seudocache/cfrad.20160114_060005.000_to_20160114_060431.001_INTA_Parana_SUR.nc")
+azimut <- ncvar_get(radar, 'azimuth')   
+elevacion <- ncvar_get(radar, 'elevation') 
+rango <- ncvar_get(radar, 'range')      
+V <- ncvar_get(radar, 'V')            
+Vda <- ncvar_get(radar, 'Vda')
+Vda[Vda > 99999] <- NA
+elev <- unique(elevacion)
+
+dimnames(V) <- list(rango = rango, azimut = azimut)
+radar <- setDT(melt(V, value.name = "V")) 
+radar[, elevacion := elevacion, by = rango]
+radar[, Vda := c(Vda)]
+
+radar[elevacion == elev[3] & !is.na(V), ] %>%
+  RepeatLon(., colname = "azimut") %>% 
+  ggplot(aes(azimut, rango/1000)) + 
+  geom_path(data = map[rango <= 300*1000], aes(group = group), color = "darkgray") +
+  geom_point(aes(color = V, size = rango)) +
+  scale_color_divergent() +
+  scale_size_area(max_size = 0.1) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_y_continuous(name = "Distancia al centro (Km)", breaks = c(40, 120, 180, 240), 
+                     limits = c(0, 300), expand = c(0, 0)) + 
+  guides(size = "none") +
+  coord_polar() +
+  theme_minimal() + theme(legend.position = "bottom")
+
+radar[elevacion == elev[3] & !is.na(Vda), ] %>%
+  RepeatLon(., colname = "azimut") %>% 
+  ggplot(aes(azimut, rango/1000)) + 
+  geom_path(data = map[rango <= 300*1000], aes(group = group), color = "darkgray") +
+  geom_point(aes(color = Vda, size = rango)) +
+  scale_color_divergent(name = expression(V[da])) +
+  scale_size_area(max_size = 0.1) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_y_continuous(name = "Distancia al centro (Km)", breaks = c(40, 120, 180, 240), 
+                     limits = c(0, 300), expand = c(0, 0)) + 
+  guides(size = "none") +
+  coord_polar() +
+  theme_minimal() + theme(legend.position = "bottom")
+
+#V.plot + Vda.plot
+```
+
 
 ## Velocity Azimuth Display (VAD)
 
+A medida que el radar rota en la dirección azimutal, mide la velocidad de los objetivos para cada ángulo y rango de manera continua y en función del azimut. A esto se le da el nombre de Visualización Azimutal de la Velocidad o por sus siglas en inglés VAD (por Velocity Azimuth Display, @Lhermitte1962) y se muestra en la Figura \ref{vad}. Puede observarse fácilmente que la velocidad radial media tiene un comportamiento sinusoidal. 
+
+De esta manera, la velocidad radial medida por el radar corresponde a la velocidad de un objetivo u obstaculo en el camino del haz. En situaciones de aire claro (sin nubosidad) es posible tener una medida del campo de viento dentro de la capa límite usando insectos como obstaculos. Sin embargo esta velocidad no corresponde al campo de movimiento real ya que es medida en la dirección radial siendo los valores negativos movimiento hacia el radar y valores positivos movimientos desde el radar. Mientras que el valor nulo ocurre en las regiones donde la velocidad real es perpendicular a la trayectoria del haz.
+
+A partir de este concepto distintos autores han desarrollado técnicas para obtener el perfil vertical de viento real a partir del viento radial o su gradiente con diferentes grados de complejidad que en la literatura. Estas técnicas son también son llamdas VAD (o sus derivaciones, @Browning1968; @Gao2004a; @Xu2011). Para esta tesis se desarrolló un algoritmo para el cálculo del VAD siguiendo a @Matejka1991 pero incluyendo controles de calidad específicos para asegurar la validez de los resultados.
+
 #### Desarrollo matemático
+
+El viento radial medido por el radar para un ángulo de elevación $\theta$ y rango $r$ determinado puede expresarse en función del azimuth $\phi$:
+
+$$ V_r =  v \cos(\theta) \cos(\phi) + u \cos(\theta) \sin(\phi) - w \sin(\theta)$$
+
+Donde $u$, $v$ y $w$ son las componentes del viento en coordenadas cartesianas.
+
+El algoritmo ajusta los datos de cada anillo realizando una regreción lineal con la forma $V_r = a_0 + a_1\cos \phi + b_1 \sin \phi$ **Esto es una suma de series de fourier truncadas para i = 1**
+
+Tambien se podría haber descompuesto $V_r$ en series de Fourier de orden superior para obtener otras características del viento. Pero por ahora nos quedamos con esto.
+  
+
+```{r vad, fig.cap="Velocidad radial (m/s) en función del azimut (grados) para un rango y ańgulo de elevación fijos. En color se  ajusta una función sinusoidal a los datos."}
+ggplot(radar[rango %~% 4000 & elevacion == elev[3], ], aes(azimut, Vda)) +
+  geom_line() +
+  geom_smooth(method = "lm", formula = y ~ I(sin(x*pi/180)) + I(cos(x*pi/180)), se = F, color = "#20968b") +
+  scale_y_continuous(name = "Velocidad radial (m/s)") +
+  scale_x_continuous(name = "Azimut (grados)") +
+  geom_hline(yintercept = 0) +
+  theme_minimal()
+
+```
+
+
+
+
+
 
 #### Control de calidad y criterios
 

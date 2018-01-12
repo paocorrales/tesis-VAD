@@ -1,0 +1,667 @@
+\documentclass[12pt,spanish,oneside]{book}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[inner = 3cm, outer = 2cm, top = 2.5cm, bottom = 2.5cm]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Tesis de Licenciatura},
+            pdfauthor={Paola Corrales},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[shorthands=off,main=spanish]{babel}
+\else
+  \usepackage{polyglossia}
+  \setmainlanguage[]{spanish}
+\fi
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{Tesis de Licenciatura}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+\subtitle{Desarrollo de una metodología de trabajo para caracterizar el ciclo
+diurno del viento en la capa límite atmosférica a partir de datos de
+radar meteorológico y su posterior uso para la validación de modelos.}
+  \author{Paola Corrales}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \date{}
+  \predate{}\postdate{}
+
+\linespread{1.25}
+\usepackage{subfig}
+\usepackage{hyperref}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\listoffigures
+\newpage
+
+\listoftables
+\newpage
+
+\section*{Agradecimientos}\newpage
+
+\section*{Resumen}\newpage
+
+\chapter{Introducción}\label{introduccion}
+
+La capa límite planetaria (CLP) corresponde a la porción de atmósfera
+que se encuentra directamente influenciada por la superficie y que
+responde a sus forzantes en una escala de tiempo de una hora o menos
+(Stull, 1988). Los procesos que ocurren dentro de esta capa son de suma
+importancia para entender y pronosticar la evolución de la atmósfera en
+distintas escalas espaciales y temporales. En particular estos procesos
+controlan el intercambio de energía entre la superficie y la atmósfera
+afectando, entre otras cosas, las condiciones para la ocurrencia de
+convección húmeda profunda y la intensidad de las circulaciones de
+mesoescala, que tienen un alto impacto sobre las actividades humanas.
+
+En nuestra región existen estudios que buscan caracterizar los procesos
+que ocurren en la capa límite de forma tal de poder avanzar en su
+entendimiento y su dependencia por ejemplo con las propiedades de la
+superficie o el estado de la atmósfera (Mazzeo y Gassmann, 1990; Ulke,
+2000; Gassmann y Mazzeo, 2001; Acevedo et~al., 2014; Tonti y Gassmann,
+2015).
+
+Dado que la ocurrencia de turbulencia en la capa límite planetaria se da
+en múltiples escalas espaciales y temporales, la representación de los
+procesos que ocurren dentro de ella es un desafío para los modelos
+numéricos. Actualmene los modelos de simulación regional y global no
+cuentan con la resolución necesaria para representar los procesos de la
+CLP de forma explícita, debiendo recurrir a una representación
+simplificada. De esta manera se simula numéricamente una parte del
+espectro turbulento, mientras que los procesos en la escala de subgrilla
+se resuelven a través de parametrizaciones con cierres de distinto
+orden, es decir, con diferentes niveles de aproximaciones.
+
+Existen diferentes alternativas para parametrizar los procesos de capa
+límite pero pueden clasificarse en dos grandes grupos. De acuerdo a
+Stull (1988), las parametrizaciones con clausura local determinan el
+valor de cualquier variable desconocida en cada punto a partir del valor
+o el gradiente de una variable conocida en el mismo punto; suponiendo
+que la turbulencia tiene un comportamiento análogo a la difusión
+molecular. Por otro lado las parametrizaciones con clausura no local
+asumen que la turbulencia está caracterizada por la superposición de
+torbellinos de distintas escalas que transportan las características del
+medio; y para lograr esto, el valor de la variable desconocida en un
+punto es aproximada a partir de una variable conocida en varios puntos
+en el espacio.
+
+La validación de las parametrizaciones de CLP en distintas situaciones
+sinópticas es un tema de gran interés debido a la necesidad de modelas
+los procesos de subgrilla presentes que afectan procesos en el resto de
+las escalas de variabiliad atmosférica (Xie et~al., 2012; Banks et~al.,
+2016).
+
+A nivel regional, la representación de la capa límite en los modelos
+numéricos ha recibido mucha atención en las zonas oceánicas
+(particularmente en los océanos tropicales, Wang et~al. (2004)). Sin
+embargo, existen pocos estudios acerca del desempeño de las
+parametrizaciones de capa límite en las regiones continentales (Ulke y
+Andrade, 2001; Ruiz et~al., 2010; Berri et~al., 2012; Rizza et~al.,
+2013).
+
+Uno de los principales desafíos a la hora de estudiar los procesos que
+ocurren en la capa límite o para validar cómo los modelos representan
+dichos procesos, es la disponibilidad de observaciones. Las redes de
+radiosondeos que permiten obtener perfiles de viento, temperatura y
+humedad en la capa límite miden con frecuencias temporales de entre 12 y
+24 horas (solo eventualmente cada 6 horas) lo que impide analizar la
+evolución de las características de la CLP a lo largo del día.
+
+Sin embargo los radares Doppler permiten estimar la componente radial
+del viento en un radio horizontal de hasta 240 km y a partir de esa
+información permiten reconstruir perfiles verticales de viento
+utilizando la técnica Velocity Azimuth Display (VAD).
+
+En días en los que no existen ecos producidos por hidrometeoros, los
+radares pueden detectar la velocidad del viento dentro de la capa límite
+a partir de blancos como los insectos, de acuerdo a Rennie et~al. (2010)
+estos datos podrían ser utilizados si se elimina el efecto de los ecos
+de terreno y otras observaciones erroneas. Las observaciones de radar
+están disponibles con una frecuencia temporal de hasta 5 minutos
+permitiendo obtener perfiles de viento con una resolocuón temporal mucho
+mayor.
+
+La calidad de estos perfiles ha sido comparada con los perfiles
+obtenidos a partir de radiosondeos, encontrándose en general que los
+datos obtenidos resultan adecuados para su uso en el estudio de los
+procesos de capa límite y en la verificación de modelos numéricos
+(Bousquet et~al., 2008; Salonen et~al., 2008) y en la generación de
+condiciones iniciales para pronósticos a muy corto plazo (Rennie et~al.,
+2011).
+
+Uno de los aspectos importantes a tener en cuenta en el uso de radares
+para el estudio de los perfiles de viento, es la necesidad de aplicar un
+riguroso control de calidad a los datos que permita solucionar diversos
+aspectos que pueden afectar la confiabilidad de los mismo. Entre los
+problemas más comunes se cuentan: contaminación por ecos de terreno,
+efecto de aliasing, y contaminación por blancos móviles. Estos aspectos
+deben ser abordados antes de poder utilizar los datos para estimar el
+perfil de velocidad (Holleman et~al., 2008; Rennie et~al., 2011)
+aplicando algoritmos de control de calidad (Rennie et~al., 2011; Ruiz
+et~al., 2015).
+
+La disponibilidad de la información de radar Doppler en Argentina ofrece
+un gran recurso de información para estudiar las propiedades de la capa
+límite planetaria en nuestra región y para validar la calidad de los
+modelos numéricos a la hora de representar dichas propiedades.
+
+El objetivo de esta Tesis de Licenciatura es desarrollar una metodología
+para el estudio de los procesos de capa límite a partir de los datos de
+radar y analizar el comportamiento de distintas parametrizaciones de CLP
+disponibles en el modelo Weather Research and Forecasting (WRF -
+Skamarock et~al. (2008)) al representar algunos de los procesos
+presentes a lo largo del día.
+
+Se plantea como hipótesis que los datos de viento radial obtenidos de
+información de radar permiten estimar los perfiles verticales de viento
+con una frecuencia temporal de 10 minutos, en un espesor que abarca
+desde superficie y hasta 2000 m de altura, permitiendo realizar una
+caracterización de la evolución temporal de dichos perfiles dentro de la
+capa límite atmosférica. La estimación de esos perfiles permitirán
+además validar las parametrizaciones de la capa límite que utilizan los
+modelos numéricos con una mayor resolución temporal a la utilizada en
+trabajos previos.
+
+Para alcanzar el obejtivo se realizó el siguiente procedimiento: En
+primer lugar se determinaron las características necesarias para
+identificar posibles casos de estudio que permitan analizar los procesos
+de CLP asociados al ciclo diario. Luego se procesó los datos de radar
+para caso en estudio y se aplicaron los controles de calidad necesarios
+antes de realizar el cálculo del VAD desarrollado y validado como parte
+de este trabajo. Se analizó la consistencia de los resultados obtenidos
+y las características principales de la variación del viento a lo largo
+del día. Para las simulaciones numéricas con el modelo WRF se define un
+dominio y condiciones iniciales adecuadas para modelar un caso de
+estudio utilizando algunas parametrizaciones diponibles. Se comparan las
+simulaciones con las observaciones previamente obtenidas y se analizan
+algunas variables asociadas a la turbulencia.
+
+De esta manera, este trabajo permite desarrollar una metodología para el
+tratamiento de observaciones no convencionales, su aplicación al estudio
+de los procesos de CLP y al modelado numérico de los mismos.
+
+\chapter{Metodología}\label{metodologia}
+
+En esta sección se describen los datos utilizados en el trabajo y las
+metodologías aplicadas al análisis.
+
+\section{Región y casos de estudio}\label{region-y-casos-de-estudio}
+
+Este trabajo centra el análisis en la región de la ciudad de Paraná
+(provincia de Entre Ríos, Argentina) donde se encuentran el Radar
+Doppler del INTA (Instituto Nacional de Tecnología Agropecuaria) y una
+estación meterológica de superficie perteneciente al SMN (Servicio
+Meteorológico Nacional) separados por aproximadamete 9 kilometros de
+distancia.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{Tesis_files/figure-latex/topografia-1.pdf}
+\caption{Topografía de la región en estudio en metros sobre el nivel del
+mar. El punto negro indica la ubicación del Radar INTA Paraná, el punto
+rojo indica la ubicación de la estación Paraná Aero. \label{topografia}}
+\end{figure}
+
+La elevación de la región elegida muestra un mínimo de 5 metros sobre el
+nivel del mar en la cuenca del Río Paraná y un máximo de aproximadamente
+110 metros sobre el nivel del mar sobre el margen sudeste de río donde
+ubica tanto la estación meteorológica como el radar (Figura
+\ref{topografia}). La región está dominada por la presencia del río y
+las regiones costeras donde predominan los campos de pastizales o pasto
+con excepción la ciudad de Paraná (al norte), la ciudad de Santa Fé (al
+noreste) y pequeños conglomerados de casas.
+
+\subsection{Criterios utilizados para la selección de los casos de
+estudio}\label{criterios-utilizados-para-la-seleccion-de-los-casos-de-estudio}
+
+Con el obejtivo analizar los procesos que ocurren en la CLP a lo largo
+del día es necesario identificar aquellas condiciones atmosféricas que
+permitan el desarrollo de la capa límite y al mismo tiene donde los
+datos de radar sean confliables. Por lo tanto se buscaron cumplir los
+siguientes criterios:
+
+\begin{itemize}
+\tightlist
+\item
+  Viento moderado. En estas situaciones los datos de radar son más
+  confiables y permiten el desarrollo de la capa límite estable nocturna
+  (Gassmann y Mazzeo, 2001).
+\item
+  Cielos despejados. Para garantizar el calentamiento desde la
+  superficie y el desarrollo de una capa límite mezclada.
+\item
+  Verano. Donde el calentamiento es más intenso.
+\end{itemize}
+
+Las características previas se buscaron a partir del análisis de los
+datos de la estación meteorológica de superficie Paraná Aero provistos
+por el SMN y de reflextividad (dBZ) del radar de Paraná para los meses
+de enero de 2016 y 2017.
+
+En el primer tipo de datos se analizó la velocidad de viento, la
+cobertura nubosa y la precipitación observada a cada hora. En el caso de
+los datos de radar se observó la presencia de ecos meteorológicos en las
+inmediaciones del radar (a una distancia menor a 150 km) en cada tiempo
+disponible (aproximadamente cada 10 minutos). Un caso de estudio posible
+será aquel que cumpla con las características mencionadas durante las 24
+horas del día aunque es deseable que las condiciones se mantengan
+durante las 12 horas previas al día en estudio ya que las
+características de la capa estable nocturna puede ser influenciada por
+las características de la capa mezcalda del día anterior.
+
+\subsection{Descripción de los casos de
+estudio}\label{descripcion-de-los-casos-de-estudio}
+
+A partir de análisis previamente descripto se identificaron 3 casos de
+estudio que se describen a continuación.
+
+\subsubsection{Caso 1: 14 de enero de
+2016}\label{caso-1-14-de-enero-de-2016}
+
+El caso 1 abarca el perdiodo de las 00 UTC del 14 de enero a las 00 UTC
+del 15 de enero de 2016. A escala regional se observó un anticiclón
+ubicado sobre el oceano Atlántico y al este Uruguay a las 00 UTC de 14
+de enero. Este sistema está asociado a vientos del noreste sobre el
+dominio en estudio. En superficie se registraron vientos débiles
+(menores a 2 m/s) del este y sureste en las primeras horas del periodo.
+En la estación meteorológica se observó nubosidad alta en las primeras
+horas de tipo cirroestrato que por momentos cortos cubrió el cielo. No
+se observaron ecos meteorológicos en la región del radar. \textbf{Que
+tanto afecta la nubosidad alta?}
+
+Posteriormente, a las 12 UTC el anticiclón se intensifica y comienza a
+moverse hacia el NE y en superficie se observan vientos predominantes
+del noreste de hasta 6.5 m/s. No se observa nubosidad y la temperatura
+en superficie alcanza los 32.4°C.
+
+\textbf{Humedad relativa disminuye de 85\% a 35\% en el periodo, no me
+queda clara la causa y tampoco se que tan importante puede ser esto
+luego}
+
+\section{Descripción de los datos de
+radar}\label{descripcion-de-los-datos-de-radar}
+
+El radar ubicado en Paraná (Provincia de Entre Ríos) emite energía
+electromagnética en la banda C (4 a 8 GHz) y es de doble polarización.
+La estrategia de escaneo de la atmósfera está programada para que la
+antena de giros en sentido horizontal de 360º y cambie de elevación
+sucesivamente 12 veces. El ángulo vertical varía entre 0.5° y 15.1°. El
+rango del radar (distancia a la que llega la señal desde la ubicación
+del radar) puede ser de 120, 240 y 480 km con una resolución espacial de
+1 \(\mathrm{km^2}\) (Saibene et~al., 2014) de acuerdo a la estrategía de
+escaneo.
+
+El escaneo completo se realiza cada 10 minutos, dando 144 volumenes de
+datos diarios registrando para las distintas variables como
+reflectividad (dBZ) y velocidad radial (\(V_r\)).
+
+En este trabajo se usaron datos de radar con un rango de 240 km y 12
+ángulos de elevación para los periodos comprendidos por cada caso de
+estudios provistos por \textbf{XXXX INTA XXXX}
+
+Cada volumen de dato correspondiente a un tiempo de escaneo completo fue
+convertido al formato CfRadial con el paquete Radx C++ desarrollado por
+Mike Dixon (NCAR - National Center for Atmospheric Research)
+\textbf{CITA} para el posterior procesamiento y análisis. En particular
+se utilizó la variable de reflectividad sin procesamiento para
+determinar la presencia o no de ecos meteorológicos en el dominio
+cercano al radar y la velocidad radial para la obtención de los perfiles
+de viento.
+
+\section{Tratamiento de aliassing}\label{tratamiento-de-aliassing}
+
+Un problema importante al momento de utilizar los datos de velocidad
+radial es la contaminación por aliasing ya que afecta significativamente
+la calidad de los perfiles de viento finales, de acuerdo a Gao y
+Droegemeier (2004) un 3\% de contaminación por aliassing puede generar
+un error cuadratico medio del 50\% en el perfil de viento medio a partir
+de la técnica VAD. El aliasing es la superposición de la señal de radar
+y ocurre cuando la velocidad real supera a la velocidad de Nyquist
+(\(V_N\)). Este parámetro es intrínceco a las características del radar
+ya que depende de la frecuencia y estrategía de escaneo y en particular
+de la frecuencia de repetición del pulso o señal que emite.
+
+En el caso del radar de Paraná con la estrategía de escaneo de 240km de
+rango, tiene una \(V_N = 6.7 m/s\) por lo que cualquier velocidad mayor
+se verá afectada por el aliasing. Esto puede verse en la Figura
+\ref{aliasing}, las regiones con aliasing se son aquellas que donde el
+valor de la velocidad radial salta al extremo opuesto de la escala.
+
+Existen muchos algoritmos que buscan solucionar el problema del aliasing
+(por ejemplo Lim y Sun, 2010, y @Haase2004) con distinto grado de exito.
+Una opción válida es el algoritmo de corrección de aliasing basado en
+regiones similares disponible en la librería PyART ({\textbf{???}}),
+este algoritmo busca regiones con velocidad radial similar y transforma
+el rango de la variable hasta que todas las regiones fueron corregidas
+de tal manera de obtener un campo continuo. El campo de velocidad radial
+sin aliasing obtenido utilizando este algoritmo se muestra en la Figura
+\ref{no-aliasing}.
+
+A partir de la exploración visual puede observarse que el algoritmo
+resuelve el problema de manera satisfactoria y por esta razón se
+utilizará para preprocesar todos los volumenes de datos de radar.
+
+\begin{figure}
+\subfloat[Con aliasing \label{aliasing}\label{fig:aliasing1}]{\includegraphics[width=0.48\textwidth, ]{Tesis_files/figure-latex/aliasing-1} }\subfloat[Sin aliasing \label{no-aliasing}\label{fig:aliasing2}]{\includegraphics[width=0.48\textwidth, ]{Tesis_files/figure-latex/aliasing-2} }\caption{Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\circ}$ y $V_N = 6.7 m/s$. Notar las escalas diferentes.}\label{fig:aliasing}
+\end{figure}
+
+\section{Velocity Azimuth Display
+(VAD)}\label{velocity-azimuth-display-vad}
+
+A medida que el radar rota en la dirección azimutal, mide la velocidad
+de los objetivos para cada ángulo y rango de manera continua y en
+función del azimut. A esto se le da el nombre de Visualización Azimutal
+de la Velocidad o por sus siglas en inglés VAD (por Velocity Azimuth
+Display, ({\textbf{???}})) y se muestra en la Figura \ref{vad}. Puede
+observarse fácilmente que la velocidad radial media tiene un
+comportamiento sinusoidal.
+
+De esta manera, la velocidad radial medida por el radar corresponde a la
+velocidad de un objetivo u obstaculo en el camino del haz. En
+situaciones de aire claro (sin nubosidad) es posible tener una medida
+del campo de viento dentro de la capa límite usando insectos como
+obstaculos. Sin embargo esta velocidad no corresponde al campo de
+movimiento real ya que es medida en la dirección radial siendo los
+valores negativos movimiento hacia el radar y valores positivos
+movimientos desde el radar. Mientras que el valor nulo ocurre en las
+regiones donde la velocidad real es perpendicular a la trayectoria del
+haz.
+
+A partir de este concepto distintos autores han desarrollado técnicas
+para obtener el perfil vertical de viento real a partir del viento
+radial o su gradiente con diferentes grados de complejidad que en la
+literatura. Estas técnicas son también son llamdas VAD (o sus
+derivaciones, Browning y Wexler (1968); Gao et~al. (2004); Xu et~al.
+(2011)). Para esta tesis se desarrolló un algoritmo para el cálculo del
+VAD siguiendo a Matejka y Srivastava (1991) pero incluyendo controles de
+calidad específicos para asegurar la validez de los resultados.
+
+\subsubsection{Desarrollo matemático}\label{desarrollo-matematico}
+
+El viento radial medido por el radar para un ángulo de elevación
+\(\theta\) y rango \(r\) determinado puede expresarse en función del
+azimuth \(\phi\):
+
+\[ V_r =  v \cos(\theta) \cos(\phi) + u \cos(\theta) \sin(\phi) - w \sin(\theta)\]
+
+Donde \(u\), \(v\) y \(w\) son las componentes del viento en coordenadas
+cartesianas.
+
+El algoritmo ajusta los datos de cada anillo realizando una regreción
+lineal con la forma \(V_r = a_0 + a_1\cos \phi + b_1 \sin \phi\)
+\textbf{Esto es una suma de series de fourier truncadas para i = 1}
+
+Tambien se podría haber descompuesto \(V_r\) en series de Fourier de
+orden superior para obtener otras características del viento. Pero por
+ahora nos quedamos con esto.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{Tesis_files/figure-latex/vad-1.pdf}
+\caption{Velocidad radial (m/s) en función del azimut (grados) para un
+rango y ańgulo de elevación fijos. En color se ajusta una función
+sinusoidal a los datos.}
+\end{figure}
+
+\subsubsection{Control de calidad y
+criterios}\label{control-de-calidad-y-criterios}
+
+\subsubsection{Validación}\label{validacion}
+
+\section{Loess}\label{loess}
+
+\section{Detección del LLJ}\label{deteccion-del-llj}
+
+\section{Tratamiento de la
+turbulencia}\label{tratamiento-de-la-turbulencia}
+
+\section{Modelo de Oscilación
+Inercial}\label{modelo-de-oscilacion-inercial}
+
+\section{WRF}\label{wrf}
+
+\subsection{Parametrizaciones}\label{parametrizaciones}
+
+\chapter{Resultados}\label{resultados}
+
+\section{Análisis descriptivo de los
+casos}\label{analisis-descriptivo-de-los-casos}
+
+\subsection{caracteristicas generales y
+sinopticas}\label{caracteristicas-generales-y-sinopticas}
+
+\section{Análisis de los VAD
+obtenidos}\label{analisis-de-los-vad-obtenidos}
+
+\section{Análisis de la turbulencia}\label{analisis-de-la-turbulencia}
+
+\section{Análisis cualitativo de la oscilación
+inercial}\label{analisis-cualitativo-de-la-oscilacion-inercial}
+
+\section{Analisis de las corridas y comparación con
+obs}\label{analisis-de-las-corridas-y-comparacion-con-obs}
+
+\chapter{Conclusiones}\label{conclusiones}
+
+\chapter*{Referencias}\label{referencias}
+\addcontentsline{toc}{chapter}{Referencias}
+
+\hypertarget{refs}{}
+\hypertarget{ref-Acevedo2014}{}
+Acevedo, O.C., Costa, F.D., Oliveira, P.E.S., Puhales, F.S., Degrazia,
+G.A., y Roberti, D.R., 2014. The Influence of Submeso Processes on
+Stable Boundary Layer Similarity Relationships. Journal of the
+Atmospheric Sciences, 71, 1, 207-225.
+
+\hypertarget{ref-Banks2016}{}
+Banks, R.F., Tiana-Alsina, J., Baldasano, J.M., Rocadenbosch, F.,
+Papayannis, A., Solomos, S., y Tzanis, C.G., 2016. Sensitivity of
+boundary-layer variables to PBL schemes in the WRF model based on
+surface meteorological observations, lidar, and radiosondes during the
+HygrA-CD campaign. Atmospheric Research, 176-177, 185-201.
+
+\hypertarget{ref-Berri2012}{}
+Berri, G.J., Nuin, J.S.G., Sraibman, L., y Bertossa, G., 2012.
+Verification of a Synthesized Method for the Calculation of Low-Level
+Climatological Wind Fields Using a Mesoscale Boundary-Layer Model.
+Boundary-Layer Meteorology, 142, 2, 329-337.
+
+\hypertarget{ref-Bousquet2008}{}
+Bousquet, O., Montmerle, T., y Tabary, P., 2008. Using operationally
+synthesized multiple-Doppler winds for high resolution horizontal wind
+forecast verification. Geophysical Research Letters, 35, 10, 1-6.
+
+\hypertarget{ref-Browning1968}{}
+Browning, K.A., y Wexler, R., 1968. The Determination of Kinematic
+Properties of a Wind Field Using Doppler Radar.
+
+\hypertarget{ref-Gao2004}{}
+Gao, J., y Droegemeier, K., 2004. A variational technique for dealiasing
+Doppler radial velocity data. Journal of Applied Meteorology, 43, 1990,
+934-940.
+
+\hypertarget{ref-Gao2004a}{}
+Gao, J., Droegemeier, K.K., Gong, J., y Xu, Q., 2004. A Method for
+Retrieving Mean Horizontal Wind Profiles from Single-Doppler Radar
+Observations Contaminated by Aliasing. Monthly Weather Review, 132,
+1982, 1399.
+
+\hypertarget{ref-Gassmann2001}{}
+Gassmann, M.I., y Mazzeo, N.A., 2001. Nocturnal stable boundary layer
+height model and its applications. Atmospheric Research, 47, 159-247.
+
+\hypertarget{ref-Haase2004}{}
+Haase, G., y Landelius, T., 2004. Dealiasing of Doppler radar velocities
+using a torus mapping. Journal of Atmospheric and Oceanic Technology,
+21, 10, 1566-1573.
+
+\hypertarget{ref-Holleman2008}{}
+Holleman, I., Gasteren, H. van, y Bouten, W., 2008. Quality assessment
+of weather radar wind profiles during bird migration. Journal of
+Atmospheric and Oceanic Technology, 25, 12, 2188-2198.
+
+\hypertarget{ref-Lim2010}{}
+Lim, E., y Sun, J., 2010. A Velocity dealiasing technique using rapidly
+updated analysis from a four-dimensional variational doppler radar data
+assimilation system. Journal of Atmospheric and Oceanic Technology, 27,
+7, 1140-1152.
+
+\hypertarget{ref-Matejka1991}{}
+Matejka, T., y Srivastava, R.C., 1991. An Improved Version of the
+Extended Velocity Azimuthh Display Analysis of Single-Doppler Radar
+Data. Journal of Atmospheric and Oceanic Technology, 8, 4, 453-466.
+
+\hypertarget{ref-Mazzeo1990}{}
+Mazzeo, N.A., y Gassmann, M.I., 1990. Mixing heights and wind direction
+analysis for urban and suburban areas of Buenos Aires city. Energy and
+Buildings, 15, 3-4, 333-337.
+
+\hypertarget{ref-Rennie2010}{}
+Rennie, S.J., Illingworth, A.J., Dance, S.L., y Ballard, S.P., 2010. The
+accuracy of Doppler radar wind retrievals using insects as targets.
+Meteorological Applications, 17, 4, 419-432.
+
+\hypertarget{ref-Rennie2011}{}
+Rennie, S.J., Dance, S.L., Illingworth, A.J., Ballard, S.P., y Simonin,
+D., 2011. 3D-Var assimilation of insect-derived Doppler radar radial
+winds in convective cases using a high resolution model.
+\(\backslash\)Mwr, 139, 4, 1148-1163.
+
+\hypertarget{ref-Rizza2013}{}
+Rizza, U., Miglietta, M.M., Acevedo, O.C., Anabor, V., Degrazia, G.A.,
+Goulart, A.G., y Zimmerman, H.R., 2013. Large-eddy simulation of the
+planetary boundary layer under baroclinic conditions during daytime and
+sunset turbulence. Meteorological Applications, 20, 1, 56-71.
+
+\hypertarget{ref-Ruiz2010}{}
+Ruiz, J.J., Saulo, C., y Nogués-Paegle, J., 2010. WRF Model Sensitivity
+to Choice of Parameterization over South America: Validation against
+Surface Variables. Monthly Weather Review, 138, 8, 3342-3355.
+
+\hypertarget{ref-Ruiz2015}{}
+Ruiz, J.J., Miyoshi, T., Satoh, S., y Ushio, T., 2015. A Quality Control
+Algorithm for the Osaka Phased Array Weather Radar. Sola, 11, 0, 48-52.
+
+\hypertarget{ref-Saibene2014}{}
+Saibene, Y.B., Banchero, S., y Pampa, L., 2014. Desarrollo y uso de
+herramientas libres para la explotación de datos de los radares
+meteorológicos del INTA. En pp. 74-86.
+
+\hypertarget{ref-Salonen2008}{}
+Salonen, K., Järvinen, H., Järvenoja, S., Niemelä, S., y Eresmaa, R.,
+2008. Doppler radar radial wind data in NWP model validation.
+Meteorological Applications, 15, 97-102.
+
+\hypertarget{ref-Skamarock2008}{}
+Skamarock, W., Klemp, J., Dudhi, J., Gill, D., Barker, D., Duda, M.,
+Huang, X.-Y., Wang, W., y Powers, J., 2008. A Description of the
+Advanced Research WRF Version 3.
+
+\hypertarget{ref-Stull1988}{}
+Stull, R.B., 1988. An Introduction to Boundary Layer Meteorology,
+Primera Ed., Kluwer Academic Publishers, p. 670.
+
+\hypertarget{ref-Tonti2015}{}
+Tonti, N.E., y Gassmann, M.I., 2015. Variabilidad del parámetro de
+rugosidad sobre una cobertura vegetal. Meteorologica, 40, 2, 59-72.
+
+\hypertarget{ref-Ulke2000}{}
+Ulke, A.G., 2000. New turbulent parameterization for a dispersion model
+in the atmospheric boundary layer. Atmospheric Environment, 34, 7,
+1029-1042.
+
+\hypertarget{ref-Ulke2001}{}
+Ulke, A.G., y Andrade, M.F., 2001. Modeling urban air pollution in Sao
+Paulo, Brazil: Sensitivity of model predicted concentrations to
+different turbulence parameterizations. Atmospheric Environment, 35, 10,
+1747-1763.
+
+\hypertarget{ref-Wang2004}{}
+Wang, Y., Xie, S.-P., Xu, H., y Wang, B., 2004. Regional Model
+Simulations of Marine Boundary Layer Clouds over the Southeast Pacific
+off South America. Part I: Control Experiment*. Monthly Weather Review,
+132, 1, 274-296.
+
+\hypertarget{ref-Xie2012}{}
+Xie, B., Fung, J.C.H., Chan, A., y Lau, A., 2012. Evaluation of nonlocal
+and local planetary boundary layer schemes in the WRF model. Journal of
+Geophysical Research Atmospheres, 117, 12, 1-26.
+
+\hypertarget{ref-Xu2011}{}
+Xu, Q., Nai, K., Wei, L., Zhang, P., Liu, S., y Parrish, D., 2011. A
+VAD-based dealiasing method for radar velocity data quality control.
+Journal of Atmospheric and Oceanic Technology, 28, 1, 50-62.
+
+
+\end{document}

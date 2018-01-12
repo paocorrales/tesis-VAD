@@ -18,7 +18,6 @@ source("helpfun.R")
 vad_20160113 <- read.vad("../../20160113_240/vda*")
 vad_20160114 <- read.vad("../../20160114_240/vda*") 
 
-
 vad_20170120 <- read.vad("../../20170120_240/vda*") 
 vad_20170121 <- read.vad("../../20170121_240/vda*") 
 
@@ -33,7 +32,7 @@ vad_20160116 <- read.vad("../../20160116_240/vda*")
 #Plots
 
 dia <- rbind(vad_20170120, vad_20170121)
-dia <- vad_20160114
+dia <- vad_20160107
 perfiles <- subset(dia, ht < 1.0 & minute(date_time) == 00 & hour(date_time) %in% c(06,18))
 tiempos <- subset(dia, minute(date_time) == 0)
 
