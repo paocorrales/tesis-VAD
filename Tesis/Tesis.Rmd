@@ -21,6 +21,7 @@ header-includes:
   - \linespread{1.25}
   - \usepackage{subfig}
   - \usepackage{hyperref}
+#  - \usepackage{mathtools}
 lang: es-AR
 link-citation: yes
 fontsize: 12pt
@@ -111,8 +112,7 @@ En esta sección se describen los datos utilizados en el trabajo y las metodolog
 
 Este trabajo centra el análisis en la región de la ciudad de Paraná (provincia de Entre Ríos, Argentina) donde se encuentran el Radar Doppler del INTA (Instituto Nacional de Tecnología Agropecuaria) y una estación meterológica de superficie perteneciente al SMN (Servicio Meteorológico Nacional) separados por aproximadamete 9 kilometros de distancia.
 
-```{r topografia, fig.cap="Topografía de la región en estudio en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Paraná, el punto rojo indica la ubicación de la estación Paraná Aero. \\label{topografia}", fig.scap="Topografía de la región en estudio en metros sobre el nivel del mar."}
-
+```{r topografia, fig.cap="Topografía de la región en estudio en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Paraná, el punto rojo indica la ubicación de la estación Paraná Aero. \\label{topografia}", fig.scap="Topografía de la región en estudio en metros sobre el nivel del mar.", out.width="0.75\\textwidth", fig.align='center'}
 topo <- GetTopography(298.96, 299.95, -31.44, -32.25, resolution = 1/60, file.dir = "seudocache") %>% 
   .[, lon := ConvertLongitude(lon, from = 360)]
 
@@ -138,9 +138,9 @@ La elevación de la región elegida muestra un mínimo de 5 metros sobre el nive
 
 Con el obejtivo analizar los procesos que ocurren en la CLP a lo largo del día es necesario identificar aquellas condiciones atmosféricas que permitan el desarrollo de la capa límite y al mismo tiene donde los datos de radar sean confliables. Por lo tanto se buscaron cumplir los siguientes criterios:
 
-* Viento moderado. En estas situaciones los datos de radar son más confiables y permiten el desarrollo de la capa límite estable nocturna [@Gassmann2001].
-* Cielos despejados. Para garantizar el calentamiento desde la superficie y el desarrollo de una capa límite mezclada.
-* Verano. Donde el calentamiento es más intenso.
+* **Viento moderado.** En estas situaciones los datos de radar son más confiables y permiten el desarrollo de la capa límite estable nocturna [@Gassmann2001].
+* **Cielos despejados.** Para garantizar el calentamiento desde la superficie y el desarrollo de una capa límite mezclada.
+* **Verano.** Donde el calentamiento es más intenso.
 
 Las características previas se buscaron a partir del análisis de los datos de la estación meteorológica de superficie Paraná Aero provistos por el SMN y de reflextividad (dBZ) del radar de Paraná para los meses de enero de 2016 y 2017. 
 
@@ -178,7 +178,7 @@ Un problema importante al momento de utilizar los datos de velocidad radial es l
 
 En el caso del radar de Paraná con la estrategía de escaneo de 240km de rango, tiene una $V_N = 6.7 m/s$ por lo que cualquier velocidad mayor se verá afectada por el aliasing. Esto puede verse en la Figura \ref{aliasing}, las regiones con aliasing se son aquellas que donde el valor de la velocidad radial salta al extremo opuesto de la escala. 
 
-Existen muchos algoritmos que buscan solucionar el problema del aliasing [por ejemplo @Lim2010 y @Haase2004] con distinto grado de exito. Una opción válida es el algoritmo de corrección de aliasing basado en regiones similares disponible en la librería PyART [@Helmus2016], este algoritmo busca regiones con velocidad radial similar y transforma el rango de la variable hasta que todas las regiones fueron corregidas de tal manera de obtener un campo continuo. El campo de velocidad radial sin aliasing obtenido utilizando este algoritmo se muestra en la Figura \ref{no-aliasing}. 
+Existen muchos algoritmos que buscan solucionar el problema del aliasing [por ejemplo @Haase2004; @Lim2010] con distinto grado de exito. Una opción válida es el algoritmo de corrección de aliasing basado en regiones similares disponible en la librería PyART [@Helmus2016], este algoritmo busca regiones con velocidad radial similar y transforma el rango de la variable hasta que todas las regiones fueron corregidas de tal manera de obtener un campo continuo. El campo de velocidad radial sin aliasing obtenido utilizando este algoritmo se muestra en la Figura \ref{no-aliasing}. 
 
 A partir de la exploración visual puede observarse que el algoritmo resuelve el problema de manera satisfactoria y por esta razón se utilizará para preprocesar todos los volumenes de datos de radar.
 
@@ -233,29 +233,11 @@ radar[elevacion == elev[3] & !is.na(Vda), ] %>%
 #V.plot + Vda.plot
 ```
 
-
 ## Velocity Azimuth Display (VAD)
 
-A medida que el radar rota en la dirección azimutal, mide la velocidad de los objetivos para cada ángulo y rango de manera continua y en función del azimut. A esto se le da el nombre de Visualización Azimutal de la Velocidad o por sus siglas en inglés VAD (por Velocity Azimuth Display, @Lhermitte1962) y se muestra en la Figura \ref{vad}. Puede observarse fácilmente que la velocidad radial media tiene un comportamiento sinusoidal. 
+A medida que el radar rota en la dirección azimutal, mide la velocidad de los objetivos para cada ángulo y rango de manera continua y en función del azimut. A esto se le da el nombre de Visualización Azimutal de la Velocidad o por sus siglas en inglés VAD (por Velocity Azimuth Display, @Lhermitte1962) y se muestra en la Figura \ref{vad}. Si el campo de viento es horizontalmente homogeneo, la velocidad radial media tiene un comportamiento sinusoidal en función del azimut. 
 
-De esta manera, la velocidad radial medida por el radar corresponde a la velocidad de un objetivo u obstaculo en el camino del haz. En situaciones de aire claro (sin nubosidad) es posible tener una medida del campo de viento dentro de la capa límite usando insectos como obstaculos. Sin embargo esta velocidad no corresponde al campo de movimiento real ya que es medida en la dirección radial siendo los valores negativos movimiento hacia el radar y valores positivos movimientos desde el radar. Mientras que el valor nulo ocurre en las regiones donde la velocidad real es perpendicular a la trayectoria del haz.
-
-A partir de este concepto distintos autores han desarrollado técnicas para obtener el perfil vertical de viento real a partir del viento radial o su gradiente con diferentes grados de complejidad que en la literatura. Estas técnicas son también son llamdas VAD (o sus derivaciones, @Browning1968; @Gao2004a; @Xu2011). Para esta tesis se desarrolló un algoritmo para el cálculo del VAD siguiendo a @Matejka1991 pero incluyendo controles de calidad específicos para asegurar la validez de los resultados.
-
-#### Desarrollo matemático
-
-El viento radial medido por el radar para un ángulo de elevación $\theta$ y rango $r$ determinado puede expresarse en función del azimuth $\phi$:
-
-$$ V_r =  v \cos(\theta) \cos(\phi) + u \cos(\theta) \sin(\phi) - w \sin(\theta)$$
-
-Donde $u$, $v$ y $w$ son las componentes del viento en coordenadas cartesianas.
-
-El algoritmo ajusta los datos de cada anillo realizando una regreción lineal con la forma $V_r = a_0 + a_1\cos \phi + b_1 \sin \phi$ **Esto es una suma de series de fourier truncadas para i = 1**
-
-Tambien se podría haber descompuesto $V_r$ en series de Fourier de orden superior para obtener otras características del viento. Pero por ahora nos quedamos con esto.
-  
-
-```{r vad, fig.cap="Velocidad radial (m/s) en función del azimut (grados) para un rango y ańgulo de elevación fijos. En color se  ajusta una función sinusoidal a los datos."}
+```{r vad, fig.cap="Velocidad radial (m/s) en función del azimut (grados) para un rango y ańgulo de elevación fijos. En color se  ajusta una función sinusoidal a los datos. \\label{vad}", out.width="0.75\\textwidth", fig.align='center'}
 ggplot(radar[rango %~% 4000 & elevacion == elev[3], ], aes(azimut, Vda)) +
   geom_line() +
   geom_smooth(method = "lm", formula = y ~ I(sin(x*pi/180)) + I(cos(x*pi/180)), se = F, color = "#20968b") +
@@ -263,17 +245,124 @@ ggplot(radar[rango %~% 4000 & elevacion == elev[3], ], aes(azimut, Vda)) +
   scale_x_continuous(name = "Azimut (grados)") +
   geom_hline(yintercept = 0) +
   theme_minimal()
-
 ```
 
+De esta manera, la velocidad radial medida por el radar corresponde a la velocidad de un objetivo u obstaculo en el camino del haz. En situaciones de aire claro (sin nubosidad) es posible tener una medida del campo de viento dentro de la capa límite usando insectos como obstaculos. Sin embargo esta velocidad no corresponde al campo de movimiento real ya que es medida en la dirección radial siendo los valores negativos movimiento hacia el radar y valores positivos movimientos desde el radar. Mientras que el valor nulo ocurre en las regiones donde la velocidad real es perpendicular a la trayectoria del haz.
 
+A partir de este concepto distintos autores han desarrollado técnicas para obtener el perfil vertical de viento real a partir del viento radial o su gradiente con diferentes grados de complejidad. Estas técnicas son también son llamdas VAD (o sus derivaciones, @Browning1968; @Matejka1991; @Gao2004a; @Xu2011).  Para esta tesis se desarrolló un algoritmo para el cálculo del VAD siguiendo a @Browning1968 pero incluyendo controles de calidad específicos para asegurar la validez de los resultados.
 
+### Desarrollo matemático
 
+El viento radial medido por el radar para un ángulo de elevación $\theta$ y rango $r$ determinado puede expresarse en función del azimuth $\phi$:
 
+\begin{equation}
+\label{eq-vr1}
+V_r =  v \cos(\theta) \cos(\phi) + u \cos(\theta) \sin(\phi) - w \sin(\theta)
+\end{equation}
 
-#### Control de calidad y criterios
+Donde $u$, $v$ y $w$ son las componentes del viento en coordenadas cartesianas.
 
-#### Validación
+La Ecuación \ref{eq-vr} puede ser expresada como suma de una serie de Fourier de la forma:
+
+\begin{equation}
+\label{eq-vr2}
+V_r =  \frac{1}{2}a_0 + \sum_{n = 1}^{\infty} (a_n \cos(n\phi) + b_n \sin(n \phi)) 
+\end{equation}
+
+Para $n=1$, los coeficientes de Fourier están asociados al viento en el centro del dominio de escaneo (con subindice 0) como:
+
+\begin{equation} \label{eq-vr3}
+a_1 = u_0 \cos(\theta) \; y \;
+b_1 = v_0 \cos(\theta) 
+\end{equation}
+
+A partir de esto es posible ajustar cada anillo de datos de radar, es decir los datos para cada $\theta$ y $r$ realizando una regreción lineal de la forma:
+
+\begin{equation}
+\label{eq-vr4}
+V_r \sim a_1\cos \phi + b_1 \sin \phi
+\end{equation}
+
+Los coeficientes $a_0$, $a_2$ y $b_2$ no incluidos en el algoritmo dan información sobre la divergencia horizontal y otras características del viento, quedando su implementación para futuros trabajos.
+
+Finalmente la velocidad y dirección del viento pueden ser calculadas a partir de los coeficientes (Ecuaciones \ref{eq-vr3}).
+
+Velocidad:
+
+\begin{equation}
+\label{eq-vr5}
+V = \frac{(a_{1}^{2} + b_{1}^{2})^{1/2}}{\cos(\theta)}
+\end{equation}
+  
+Dirección:
+
+\begin{equation}\label{eq-vr6}
+\alpha = \frac{\pi}{2}-\tan^{-1}(\frac{a_1}{b_1}) \; \; si \; b_1 < 0 
+\end{equation}
+\begin{equation}\label{eq-vr7}
+\alpha = \frac{3\pi}{2}-\tan^{-1}(\frac{a_1}{b_1}) \; \; si \; b_1 > 0
+\end{equation}
+
+El resultado de lo anterior un valor de la magnitud del viento y su dirección para cada anillo asociado a un ángulo de elevación y rango determinado. Para calcular la altura de cada anillo es necesario conocer la propagación del haz del radar. La propagación depende del indice de refracción de la atmósfera (N) y este a su vez de la densidad del aire y por lo tanto de las condiciones de temperatura y humedad del momento. Existen distintas metodologías para obtener calcular la propagación del haz del radar [@Zeng2014] que varían en su complejidad y precisión. 
+
+En el algoritmo de VAD desarrollado se aplica el modelo 4/3 del radio de la Tierra. Este modelo es utilizado por la mayoría de los programas de procesamiento de datos de radar ya que pese a su simpleza (no toma en cuenta las condiciones de la atmósfera) es aceptable para cualquier ángulo de elevación usado, alturas máximas de entre 10 y 20 km siempre que el grandiente de N esté alrededor de $-1/a$ donde $a$ es el radio de la tierra [@Doviak1993].
+
+Por otro lado se calcula la raiz del error cuadratico medio asociado a cada anillo ($rmse_a$) para estimar la diferencia entre las observaciones y el modelo estimado:
+
+\begin{equation}\label{eq-vr8}
+rmse_a = \sqrt {\sum \frac {(V_r - V_{rmod} )^2} {n-3}}
+\end{equation}
+
+donde $n$ es el número de observaciones presentes en un anillo particular.
+
+Para obtener un único perfil vertical de viento se interpola un promedio pesado del valor de las variaciones de los anillos de cada capa de atmósfera a una grilla vertical equiespaciada prestablecida. 
+
+El algoritmo identifica los datos de $V$ para cualquier rango y ángulo de elevación que se encuentran en $z \pm d/2$ donde $z$ es el punto de grilla y $d$ es la resolución espacial de la grilla vertical. Para obtener el valor promedion de de $V$ correspondiente a la altura $z$ calcula un promedio pesando la variable por el $rmse_a$ y la distancia de cada anillo al radar $r$. De esta manera los anillos con mayor error y más alejados a punto donde se está estimando la velocidad y dirección del viento tienen menor influencia en el resultado final.  
+\begin{equation}\label{eq-vr9}
+\bar{V} = \frac {\sum w_i V_i} {\sum w_i}
+\end{equation}
+
+Donde $w_i = \frac {1}{rmse_{ai} + r_i}$ y el subindice $i$ cuenta la cantida de datos para cada intervalo $z \pm d/2$. De manera análoga se calcula la dirección del viento para cada punto de grilla vertical.
+
+Finalmente se calcula el error de estimación asociado a cada punto de dos maneras:
+
+* **$rmse_1$**
+
+\begin{equation}\label{eq-vr10} 
+rmse_1 = \frac{\sigma}{\sqrt{n}}
+\end{equation}
+
+Donde $n$ es la cantidad de anillo en esa capa y  $\sigma^{2}= \frac{\sum (V_i - \bar{V})^2 /rmse_{ai}^2}{\sum 1/rmse_{ai}^2}$ con $\bar{V}$ el promedio pesado de la velocidad del viento para la capa.
+
+Este error relativo da cuenta de la distancia entre el la velocidad promedio calculada para ese nivel y el valor de cada anillo pesada por el error del anillo. De esta manera si el $rmse_{ai}$ es grande la diferencia $(V_i - \bar{V})^2$ tiene menor peso en el error del nivel. Por otro lado el denominador suma la inversa de errores de todos los anillos y por lo tanto mayores errores individuales genran un $rmse_1$ mayor. Es importante notar que $V_i$ y $\bar{V}$ no están necesariamente a la misma altura ya que $\bar{V}$ es el promedio de muchos $V_i$ dentro de una capa. 
+
+* **$rmse_2$**
+
+\begin{equation}\label{eq-vr11}
+rmse_2 = \sqrt{\frac{1}{\sum \frac{1}{rmse_{ai}^2}}}
+\end{equation}
+
+Este rmse no toma en cuenta la posible dispersión de los valores individuales de los anillos respecto del valor medio pero retiene el error cuadrático medio de cada anillo y calcula la raíz del error cuadrático medio del nivel como la suma de la inversa de los errores individuales. 
+
+### Controles de calidad de los datos
+
+El algoritmo de VAD desarrollado incluye algunos controles de calidad para evitar errores asociados a problemas intrínsecos a los datos de radar. 
+
+#### Antes del ajusta de los datos 
+
+Permiten determinar cuales son los anilos de datos válidos y eliminar posibles errores aleatorios.
+
+* **Ángulos de elevación seleccionados:** La presencia de ecos de terreno pueden generar que los campos de velocidad radial para los primeros ángulos de elevación sean muy ruidosos y sin coherencia espacial. En el otro extremo, los ángulos superiores suelen tener pocos datos válidos (es decir, no dato faltante) debido a la escasa señal cerca del tope de la capa límite y atmósfera libre en días claros. Debido a esto es posible seleccionar el rango de ángulos a ser analizados y utilizados en el cálculo del VAD.
+* **Cantidad de datos por anillo:** el algoritmo cuenta la cantidad de datos válidos por anillo y se define un porcentaje de datos faltantes respecto del total, por ejemplo 20%. Si se excede al máximo definido el anillo es descartado. De esta manera se evita la utilización de anillos donde la señal es muy débil.
+* **Hueco continuo en un anillo:** Además de los datos faltantes ubicados de manera aleatoria a lo largo de un anillo, los huecos continuos pueden ocurrir debido a la falta de señal en una determinada región. De acuerdo a @Matejka1991 esto puede generar importantes errores en el resultado final, por lo tanto cuando el hueco es mayor a 30° de azimut, el anillo se descarta.
+* **Errores aleatorios:** Los errores aleatorios producto de ruido del instrumento pueden ser eliminados utilizando un filtro pasa bajo [@Gao2004]. Este control no elimina anillos pero produce un suavizado de los datos.
+
+#### Luego del ajuste
+
+* **R cuadrado:** El $r^2$ del modelo ajustado (Ecuación \ref{eq-vr4}) permite obtener una medida de
+de la calidad de ese modelo respecto de las observaciones. A partir de la exploración de resultados preliminares se observó que la definición de un umbral mínimo para el $r^2$ permite descartar anillos que pese a no tener datos faltanes eran erroneos.
+
+### Validación
 
 ## Loess
 
