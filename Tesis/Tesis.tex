@@ -35,6 +35,7 @@
   \usepackage{polyglossia}
   \setmainlanguage[]{spanish}
 \fi
+\usepackage{longtable,booktabs}
 \usepackage{graphicx,grffile}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -102,6 +103,9 @@ radar meteorológico y su posterior uso para la validación de modelos.}
 \setcounter{tocdepth}{3}
 \tableofcontents
 }
+\renewcommand{\listtablename}{Índice de tablas} 
+\renewcommand{\tablename}{Tabla} 
+
 \listoffigures
 \newpage
 
@@ -349,6 +353,10 @@ en superficie alcanza los 32.4°C.
 \textbf{Humedad relativa disminuye de 85\% a 35\% en el periodo, no me
 queda clara la causa y tampoco se que tan importante puede ser esto
 luego}
+
+\subsubsection{Caso 2:}\label{caso-2}
+
+\subsubsection{Caso 3:}\label{caso-3}
 
 \section{Descripción de los datos de
 radar}\label{descripcion-de-los-datos-de-radar}
@@ -637,6 +645,13 @@ posibles errores aleatorios.
   claros. Debido a esto es posible seleccionar el rango de ángulos a ser
   analizados y utilizados en el cálculo del VAD.
 \item
+  \textbf{Selección del dominio de cálculo:} Otro posibilidad para
+  evitar los ecos de terreno es definir un rádio mínimo por debajo del
+  cual no se incluyen los datos para el cálculo de VAD. En el otro
+  extremo, es posible definir un radio máximo para limitar el uso de
+  datos muy lejanos al centro del volumen de escaneo. Esto es importante
+  para evitar inhomogeneidades en el campo de viento horizontal.
+\item
   \textbf{Cantidad de datos por anillo:} el algoritmo cuenta la cantidad
   de datos válidos por anillo y se define un porcentaje de datos
   faltantes respecto del total, por ejemplo 20\%. Si se excede al máximo
@@ -671,14 +686,190 @@ posibles errores aleatorios.
 
 \subsection{Validación}\label{validacion}
 
-\section{Loess}\label{loess}
+Una manera posible de validar los resultados del VAD es comparando
+cualitativa o cuantitativamente el perfil vertical de viento generado
+con los datos de un radiosondeo en el mismo momento. Debido a la
+inexistencia de sondeos en la región de Paraná se exploró la posibilidad
+de utilizar datos del Radar INTA Anguil que se encuentra en la provincia
+de La Pampa y radiosondeos de la estación del SMN Santa Rosa Aero
+(87623). i bien el radar y la estación meteorológica no están en la
+misma ubicación, se encuentran a unos 30 km de distancia y por lo tanto
+la estación está dentro del dominio de escaneo del radar. Sin embargo se
+encontró que la señal de \(V_r\) en días de cielo claro es muy pobre y
+por lo tanto no supera los controles de calidad impuestos en el
+algoritmo.
 
-\section{Detección del LLJ}\label{deteccion-del-llj}
+Pero también es posible reconstruir un campo de velocidad radial
+sintética interpolando la velocidad medida por la radiosonda utilizando
+la grilla del radar utilizando la Ecuación \ref{eq-vr1}. En este proceso
+se asume que el campo de viento tridimensional varía linealmente. Este
+campo de velocidad radial sintética \(V_{rs}\) puede ser re transformado
+a un perfil vertical de viento utilizando el VAD y comparado con el
+sondeo original.
 
-\section{Tratamiento de la
+Para este segundo método de validación se utilizaron un volumen de datos
+del Radar INTA Anguil del 05 de enero de 2016 a las 12 UTC y los datos
+del radiosondeo de la estación del SMN Santa Rosa Aero (87623) para la
+misma hora. Además, dado que el resultado de la interpolación del viento
+real da un campo homogeneo, sin errores o datos faltantes, se aplicaron
+distintas fuentes de errores para que la validación sea más realista.
+
+\subsubsection{Pruebas}\label{pruebas}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Sin datos faltantes ni errores (SE)}
+\end{itemize}
+
+Se obtiene el \(V_r\) interpolado a la grilla del radar de Anguil (con
+una estrategia de escaneo hasta 120 km de radio y 8 ángulos de
+elevación) a partir del sondeo. Como los datos de sondeo llegan hasta
+los 30 km de altura, hay información disponible para interpolar los
+datos de \(V-r\) para todos los ángulos de elevación y para cualquier
+rango. Sin embargo esto nos da muchos más datos de los disponibles
+normalmente. Es de esperar que el VAD resultante sea muy similar al
+sondeo y inicial pero esta primera validación también permite verificar
+que la transformación de \(V\) a \(V_r\) es correcta.
+
+\begin{figure}
+\subfloat[Datos de radar \label{radar}\label{fig:validacion1}]{\includegraphics[width=0.48\textwidth, ]{Tesis_files/figure-latex/validacion-1} }\subfloat[Sin errores \label{se}\label{fig:validacion2}]{\includegraphics[width=0.48\textwidth, ]{Tesis_files/figure-latex/validacion-2} }\newline\subfloat[Con errores \label{ce}\label{fig:validacion3}]{\includegraphics[width=0.48\textwidth, ]{Tesis_files/figure-latex/validacion-3} }\subfloat[Con errores + NAs \label{na}\label{fig:validacion4}]{\includegraphics[width=0.48\textwidth, ]{Tesis_files/figure-latex/validacion-4} }\caption{Velocidad radial (m/s) observada a las 12 UTC por el radar de Anguil en la elevación $1.3^{\circ}$ y la misma variable transformada a partir del sondeo de la estación Santa Rosa Aero para la misma hora \label{validacion}}\label{fig:validacion}
+\end{figure}
+
+En la Figura \ref{validacion} se puede observar el campo de \(V_r\)
+observado por el radar (izquierda) y el campo de \(V_{rs}\) obtenidos a
+partir del sondeo. Cualitativamente se observa que tanto la magnitud
+como la dirección del viento son similares pero también que el \(V_rs\)
+cubre totalmente el dominio mientras que la senal del \(V_r\) se extinge
+a los 15 km de rango. Cuantitativamente la diferencia \(V_r - V_{rs}\)
+es grande en puntos localizados pero la media absoluta es de 2.08 m/s,
+un valor razonable teniendo en cuenta que las observaciones son
+realizadas por instrumentos distintos.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Con errores aleatorios (EA)}
+\end{itemize}
+
+Para realizar una valización más realista se agregaron errores
+aleatorios al campo de \(V_{rs}\), esto además permite analizar la
+sensibilidad del algoritmo a este tipo de errores.
+
+El nuevo campo perturbado será:
+
+\begin{equation} \label{eq-vr12}
+V_{rs}'  = V_{rs} + \alpha \varepsilon(0,1)
+\end{equation}
+
+Donde \(\alpha\) es la aplitud del error y \(\varepsilon\) es un número
+aleatorio con distribución normal, \(\mu = 0\) y \(\sigma= 1\).
+
+En la Figura \ref{ce} se muestra el campo resultante utilizando
+\(\alpha = 1 m/s\), rápidamente se ve la variabilidad impuesta y también
+la disminución en la coherencia horizontal aunque se mantiene
+aproximadamente el signo de la variable en las distintas regiones.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Con errores aleatorios y datos faltantes (EA+NA)}
+\end{itemize}
+
+Otro problema importante en los datos de radar es la ausencia de señal,
+esto se ve como datos faltantes (NAs). Para analizar el efecto de los
+datos faltantes se aplicó una máscara de NAs al campo de \(V_{rs}'\) de
+tal manera que sean los mismo NAs presentes en el volumen de datos de
+radar utilizados (Figura \ref{na}).
+
+\subsubsection{Perfiles obtenidos}\label{perfiles-obtenidos}
+
+En la Figura \ref{validacion-perfiles} se muestra el perfil del sondeo
+para los primeros 3 km de altura y los perfiles calculado con VAD a
+partir de los distintos campos sintéticos. En cuanto a la magnitud no se
+ven diferencias importantes y al observar el detalle de los primeros
+1000 metros de altura, la diferencia es menor a 0.5 m/s en todos los
+casos. Tampoco se observó sensibilidad al aumento de la amplitud de
+error (no se muestra).
+
+\begin{figure}
+\includegraphics[width=0.95\textwidth, ]{Tesis_files/figure-latex/validacion-perfiles-1} \caption{Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruevas de validación a la izquierda y el detalle ampliado del máximo en niveles bajos \label{validacion-perfiles}}\label{fig:validacion-perfiles}
+\end{figure}
+
+Esto puede verificarse con el cálculo de distintos errores (Gao y
+Droegemeier, 2004): la raiz del error cuadrático medio
+(\(rms = \sqrt{ \frac{\sum (V-V_{ref})^2}{N} }\)) y el error relativo al
+rms (\(rre = \sqrt{ \frac{\sum (V-V_{ref})^2}{\sum (V_{ref})^2} }\))
+donde \(V_{ref}\) corresponde a la variable de referencia, en este caso
+el sondeo. Los resultados se muestran en la Tabla
+\ref{validacion-errores} y como puede observarse no hay un aumento
+importante al incorporar errores aleatorios y disminuye al quitar datos
+en la prueba EA+NA ya que los errores calculados son sencibles a la
+cantidad total de datos.
+
+\begin{longtable}[]{@{}lrr@{}}
+\caption{Errores calculados para las distintas pruebas de
+validación.}\tabularnewline
+\toprule
+Prueba & rms & rre\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Prueba & rms & rre\tabularnewline
+\midrule
+\endhead
+SE & 0.1613 & 0.0194\tabularnewline
+EA & 0.3020 & 0.0364\tabularnewline
+EA+NA & 0.1778 & 0.0214\tabularnewline
+\bottomrule
+\end{longtable}
+
+El efecto más importante en las pruebas de validación corresponde a la
+presencia de NAs. La falta de datos en distintas regiones para rangos a
+partir de 10 a 15 km impide el cálculo del verfil por encima de 800
+metros (con excepción de un punto a los 2000 metros de altura).
+
+\section{Consistencia temporal de las
+observaciones}\label{consistencia-temporal-de-las-observaciones}
+
+Ya que uno de los objetivos de esta tesis es estudiar la evolución del
+viento a lo largo del día, es importante asegurar cierta consistencia
+temporal en los datos. La inconsistencia temporal puede deberse a que
+cada volumen de datos no es medido de manera instantanea si no que
+demora algunos minutos. Si bien en periodos sin cambios sinópticos
+importantes no se espera variaciones bruscas del viento, es posible que
+variaciones menores a los 10 minutos (resolución temporal de los datos
+de radar) estén afectando la consistencia temporal.
+
+Para solucionar este problema se aplicó un suavizado pesado localmente o
+LOWESS (locally weighted scatterplot smoothing). LOWESS es un método de
+regresión no paramétrica y por lo tanto no es necesario asumir que los
+datos tienen algún tipo de distribución particular. Esto lo hace un
+método flexible al representar el comportamiento de los datos. Por otro
+lado la estimación para cada punto se realiza utilizando la información
+de datos vecinos. Para esto se especifica cuantos datos vecinos se
+utilizaran para estimar cada punto local como una fracción del total de
+datos.
+
+Aplicación de este método permite eliminar variaciones temporales
+bruscas entre sets de datos y mejorar la coehrencia.
+
+\textbf{Necesito mostrar como quedan los datos acá? No quiero spoilear
+los resultados}
+
+\textbf{Ver que sale del paper Cleveland, W. S. (1979) Robust locally
+weighted regression and smoothing scatterplots. J. American Statistical
+Association 74, 829--836.}
+
+\section{Tratamiento de procesos en la
+CLP}\label{tratamiento-de-procesos-en-la-clp}
+
+\subsection{Tratamiento de la
 turbulencia}\label{tratamiento-de-la-turbulencia}
 
-\section{Modelo de Oscilación
+\subsection{Detección del LLJ}\label{deteccion-del-llj}
+
+\subsection{Modelo de Oscilación
 Inercial}\label{modelo-de-oscilacion-inercial}
 
 \section{WRF}\label{wrf}

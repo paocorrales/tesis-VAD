@@ -3,48 +3,47 @@ title: "Tesis de Licenciatura"
 author: "Paola Corrales"
 date: ''
 output:
-  pdf_document:
-    latex_engine: xelatex
-    number_sections: yes
-    toc: yes
-    toc_depth: 4
-    keep_tex: yes
   word_document:
     reference_docx: word-template.docx
     toc: yes
     toc_depth: '4'
-documentclass: book
+  pdf_document:
+    keep_tex: yes
+    latex_engine: xelatex
+    number_sections: yes
+    toc: yes
+    toc_depth: 4
 classoption: oneside
-
+documentclass: book
+fontsize: 12pt
 geometry: inner = 3cm, outer = 2cm, top = 2.5cm, bottom = 2.5cm
 header-includes:
-  - \linespread{1.25}
-  - \usepackage{subfig}
-  - \usepackage{hyperref}
-#  - \usepackage{mathtools}
+- \linespread{1.25}
+- \usepackage{subfig}
+- \usepackage{hyperref}
 lang: es-AR
 link-citation: yes
-fontsize: 12pt
+csl: Bibliografia/meteorologica.csl
 subtitle: Desarrollo de una metodología de trabajo para caracterizar el ciclo diurno
   del viento en la capa límite atmosférica a partir de datos de radar meteorológico
   y su posterior uso para la validación de modelos.
 bibliography:
 - Bibliografia/papers.bib
 - Bibliografia/packages.bib
-csl: Bibliografia/meteorologica.csl
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,
-                      cache = TRUE,
+                      cache = FALSE,
                       warning = FALSE,
                       message = FALSE)
 
 knitr::write_bib(c("base", "data.table", "ggplot2", "metR"), 
                  file = "Bibliografia/packages.bib")
-
+# librerías
 library(metR)
 library(ggplot2)
+library(ggforce)
 library(lubridate)
 library(magrittr)
 library(dplyr)
@@ -56,7 +55,15 @@ library(patchwork)
 library(ncdf4)
 #source("geom_contourlabel.R")
 source("helpfun.R")
+
+# Variables útiles
+map <- setDT(fortify(rnaturalearth::ne_states(country = "Argentina"))) %>%
+  .[, rango := rrange(long, lat)] %>% 
+  .[, azimut := azimuth(long, lat)]
+
 ```
+\renewcommand{\listtablename}{Índice de tablas} 
+\renewcommand{\tablename}{Tabla} 
 
 \listoffigures
 \newpage
@@ -158,6 +165,10 @@ Posteriormente, a las 12 UTC el anticiclón se intensifica y comienza a moverse 
 
 **Humedad relativa disminuye de 85% a 35% en el periodo, no me queda clara la causa y tampoco se que tan importante puede ser esto luego**
 
+#### Caso 2:
+
+#### Caso 3:
+
 ## Descripción de los datos de radar
 
 El radar ubicado en Paraná (Provincia de Entre Ríos) emite energía electromagnética en la banda C (4 a 8 GHz) y es de doble polarización.
@@ -183,10 +194,6 @@ Existen muchos algoritmos que buscan solucionar el problema del aliasing [por ej
 A partir de la exploración visual puede observarse que el algoritmo resuelve el problema de manera satisfactoria y por esta razón se utilizará para preprocesar todos los volumenes de datos de radar.
 
 ```{r aliasing, fig.cap="Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\\circ}$ y $V_N = 6.7 m/s$. Notar las escalas diferentes.", fig.subcap=c("Con aliasing \\label{aliasing}", "Sin aliasing \\label{no-aliasing}"), out.extra=" ", out.width="0.48\\textwidth"}
-
-map <- setDT(fortify(rnaturalearth::ne_states(country = "Argentina"))) %>%
-  .[, rango := range(long, lat)] %>% 
-  .[, azimut := azimuth(long, lat)]
 
 radar <- nc_open("seudocache/cfrad.20160114_060005.000_to_20160114_060431.001_INTA_Parana_SUR.nc")
 azimut <- ncvar_get(radar, 'azimuth')   
@@ -229,8 +236,6 @@ radar[elevacion == elev[3] & !is.na(Vda), ] %>%
   guides(size = "none") +
   coord_polar() +
   theme_minimal() + theme(legend.position = "bottom")
-
-#V.plot + Vda.plot
 ```
 
 ## Velocity Azimuth Display (VAD)
@@ -245,6 +250,8 @@ ggplot(radar[rango %~% 4000 & elevacion == elev[3], ], aes(azimut, Vda)) +
   scale_x_continuous(name = "Azimut (grados)") +
   geom_hline(yintercept = 0) +
   theme_minimal()
+
+remove(list = c("radar", "V", "Vda", "azimut", "elev", "elevacion", "rango"))
 ```
 
 De esta manera, la velocidad radial medida por el radar corresponde a la velocidad de un objetivo u obstaculo en el camino del haz. En situaciones de aire claro (sin nubosidad) es posible tener una medida del campo de viento dentro de la capa límite usando insectos como obstaculos. Sin embargo esta velocidad no corresponde al campo de movimiento real ya que es medida en la dirección radial siendo los valores negativos movimiento hacia el radar y valores positivos movimientos desde el radar. Mientras que el valor nulo ocurre en las regiones donde la velocidad real es perpendicular a la trayectoria del haz.
@@ -353,6 +360,7 @@ El algoritmo de VAD desarrollado incluye algunos controles de calidad para evita
 Permiten determinar cuales son los anilos de datos válidos y eliminar posibles errores aleatorios.
 
 * **Ángulos de elevación seleccionados:** La presencia de ecos de terreno pueden generar que los campos de velocidad radial para los primeros ángulos de elevación sean muy ruidosos y sin coherencia espacial. En el otro extremo, los ángulos superiores suelen tener pocos datos válidos (es decir, no dato faltante) debido a la escasa señal cerca del tope de la capa límite y atmósfera libre en días claros. Debido a esto es posible seleccionar el rango de ángulos a ser analizados y utilizados en el cálculo del VAD.
+* **Selección del dominio de cálculo:** Otro posibilidad para evitar los ecos de terreno es definir un rádio mínimo por debajo del cual no se incluyen los datos para el cálculo de VAD. En el otro extremo, es posible definir un radio máximo para limitar el uso de datos muy lejanos al centro del volumen de escaneo. Esto es importante para evitar inhomogeneidades en el campo de viento horizontal.
 * **Cantidad de datos por anillo:** el algoritmo cuenta la cantidad de datos válidos por anillo y se define un porcentaje de datos faltantes respecto del total, por ejemplo 20%. Si se excede al máximo definido el anillo es descartado. De esta manera se evita la utilización de anillos donde la señal es muy débil.
 * **Hueco continuo en un anillo:** Además de los datos faltantes ubicados de manera aleatoria a lo largo de un anillo, los huecos continuos pueden ocurrir debido a la falta de señal en una determinada región. De acuerdo a @Matejka1991 esto puede generar importantes errores en el resultado final, por lo tanto cuando el hueco es mayor a 30° de azimut, el anillo se descarta.
 * **Errores aleatorios:** Los errores aleatorios producto de ruido del instrumento pueden ser eliminados utilizando un filtro pasa bajo [@Gao2004]. Este control no elimina anillos pero produce un suavizado de los datos.
@@ -364,13 +372,243 @@ de la calidad de ese modelo respecto de las observaciones. A partir de la explor
 
 ### Validación
 
-## Loess
+Una manera posible de validar los resultados del VAD es comparando cualitativa o cuantitativamente el perfil vertical de viento generado con los datos de un radiosondeo en el mismo momento. Debido a la inexistencia de sondeos en la región de Paraná se exploró la posibilidad de utilizar datos del Radar INTA Anguil que se encuentra en la provincia de La Pampa y radiosondeos de la estación del SMN Santa Rosa Aero (87623). i bien el radar y la estación meteorológica no están en la misma ubicación, se encuentran a unos 30 km de distancia y por lo tanto la estación está dentro del dominio de escaneo del radar. Sin embargo se encontró que la señal de $V_r$ en días de cielo claro es muy pobre y por lo tanto no supera los controles de calidad impuestos en el algoritmo. 
 
-## Detección del LLJ
+Pero también es posible reconstruir un campo de velocidad radial sintética interpolando la velocidad medida por la radiosonda utilizando la grilla del radar utilizando la Ecuación \ref{eq-vr1}. En este proceso se asume que el campo de viento tridimensional varía linealmente. Este campo de velocidad radial sintética $V_{rs}$ puede ser re transformado a un perfil vertical de viento utilizando el VAD y comparado con el sondeo original.
 
-## Tratamiento de la turbulencia
+Para este segundo método de validación se utilizaron un volumen de datos del Radar INTA Anguil del 05 de enero de 2016 a las 12 UTC y los datos del radiosondeo de la estación del SMN Santa Rosa Aero (87623) para la misma hora. 
+Además, dado que el resultado de la interpolación del viento real da un campo homogeneo, sin errores o datos faltantes, se aplicaron distintas fuentes de errores para que la validación sea más realista. 
 
-## Modelo de Oscilación Inercial
+#### Pruebas
+
+* **Sin datos faltantes ni errores (SE)**
+
+Se obtiene el $V_r$ interpolado a la grilla del radar de Anguil (con una estrategia de escaneo hasta 120 km de radio y 8 ángulos de elevación) a partir del sondeo.
+Como los datos de sondeo llegan hasta los 30 km de altura, hay información disponible para interpolar los datos de $V-r$ para todos los ángulos de elevación y para cualquier rango. Sin embargo esto nos da muchos más datos de los disponibles normalmente. Es de esperar que el VAD resultante sea muy similar al sondeo y inicial pero esta primera validación también permite verificar que la transformación de $V$ a $V_r$ es correcta. 
+
+```{r validacion, fig.cap="Velocidad radial (m/s) observada a las 12 UTC por el radar de Anguil en la elevación $1.3^{\\circ}$ y la misma variable transformada a partir del sondeo de la estación Santa Rosa Aero para la misma hora \\label{validacion}", fig.subcap=c("Datos de radar \\label{radar}", "Sin errores \\label{se}", "Con errores \\label{ce}", "Con errores + NAs \\label{na}"), out.extra=" ", out.width="0.48\\textwidth", fig.ncol = 2, fig.show="h"}
+
+radar <- nc_open("seudocache/cfrad.20160105_120423.000_to_20160105_120716.001_INTA_Anguil_SUR.nc")
+azimut <- ncvar_get(radar, 'azimuth')   
+elevacion <- ncvar_get(radar, 'elevation') 
+rango <- ncvar_get(radar, 'range')      
+Vr <- ncvar_get(radar, 'V')   
+elev <- unique(elevacion)
+
+Vrs <- read.csv("seudocache/Vr_ref_se.csv", sep = ";")
+Vrs[, 1] <- NULL
+Vrs <- as.matrix(Vrs)
+
+Vre <- read.csv("seudocache/Vr_ref_ce.csv", sep = ";")
+Vre[, 1] <- NULL
+Vre <- as.matrix(Vre)
+
+Vrena <- read.csv("seudocache/Vr_ref_na_ce.csv", sep = ";")
+Vrena[, 1] <- NULL
+Vrena <- as.matrix(Vrena)
+
+dimnames(Vr) <- list(rango = rango, azimut = azimut)
+dimnames(Vrs) <- list(azimut = azimut, rango = rango)
+dimnames(Vre) <- list(azimut = azimut, rango = rango)
+dimnames(Vrena) <- list(azimut = azimut, rango = rango)
+
+radar1 <- setDT(melt(Vr, value.name = "Vr")) 
+radar1[, elevacion := elevacion, by = rango]
+# radar1[, Vrs := c(Vrs)]
+
+radar2 <- setDT(melt(Vrs, value.name = "Vr")) 
+radar2[, elevacion := elevacion, by = rango]
+
+radar3 <- setDT(melt(Vre, value.name = "Vr")) 
+radar3[, elevacion := elevacion, by = rango]
+
+radar4 <- setDT(melt(Vrena, value.name = "Vr")) 
+radar4[, elevacion := elevacion, by = rango]
+
+radar <- radar1[radar2, on  = c("rango", "azimut", "elevacion")]
+setnames(radar, "i.Vr", "Vrs")
+radar[Vrs < -999, Vrs := NA]
+
+radar <- radar[radar3, on  = c("rango", "azimut", "elevacion")]
+setnames(radar, "i.Vr", "Vre")
+radar[Vre < -999, Vre := NA]
+
+radar <- radar[radar4, on  = c("rango", "azimut", "elevacion")]
+setnames(radar, "i.Vr", "Vrena")
+radar[Vrena < -999, Vrena := NA]
+
+radar[elevacion == elev[3] & !is.na(Vr), ] %>%
+  RepeatLon(., colname = "azimut") %>% 
+  ggplot(aes(azimut, rango/1000)) + 
+  geom_path(data = map[rango <= 300*1000], aes(group = group), 
+            color = "darkgray") +
+  geom_point(aes(color = Vr, size = rango)) +
+  scale_color_divergent(name = expression(V[r]), limits = c(-20,20)) +
+  scale_size_area(max_size = 0.1) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_y_continuous(name = "Distancia al centro (Km)", 
+                     breaks = c(10, 20, 30, 40), 
+                     limits = c(0, 50), expand = c(0, 0)) + 
+  guides(size = "none") +
+  coord_polar() +
+  theme_minimal() + theme(legend.position = "bottom")
+
+radar[elevacion == elev[3] & !is.na(Vrs), ] %>%
+  RepeatLon(., colname = "azimut") %>% 
+  ggplot(aes(azimut, rango/1000)) + 
+  geom_path(data = map[rango <= 300*1000], aes(group = group), 
+            color = "darkgray") +
+  geom_point(aes(color = Vrs, size = rango)) +
+  scale_color_divergent(name = expression(V[rs]), limits = c(-20,20)) +
+  scale_size_area(max_size = 0.1) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_y_continuous(name = "Distancia al centro (Km)",
+                     breaks = c(10, 20, 30, 40), 
+                     limits = c(0, 50), expand = c(0, 0)) + 
+  guides(size = "none") +
+  coord_polar() +
+  theme_minimal() + theme(legend.position = "bottom")
+
+radar[elevacion == elev[3] & !is.na(Vre), ] %>%
+  RepeatLon(., colname = "azimut") %>% 
+  ggplot(aes(azimut, rango/1000)) + 
+  geom_path(data = map[rango <= 300*1000], aes(group = group), 
+            color = "darkgray") +
+  geom_point(aes(color = Vre, size = rango)) +
+  scale_color_divergent(name = expression(V[rs]), limits = c(-20,20)) +
+  scale_size_area(max_size = 0.1) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_y_continuous(name = "Distancia al centro (Km)",
+                     breaks = c(10, 20, 30, 40), 
+                     limits = c(0, 50), expand = c(0, 0)) + 
+  guides(size = "none") +
+  coord_polar() +
+  theme_minimal() + theme(legend.position = "bottom")
+
+radar[elevacion == elev[3] & !is.na(Vrena), ] %>%
+  RepeatLon(., colname = "azimut") %>% 
+  ggplot(aes(azimut, rango/1000)) + 
+  geom_path(data = map[rango <= 300*1000], aes(group = group), 
+            color = "darkgray") +
+  geom_point(aes(color = Vrena, size = rango)) +
+  scale_color_divergent(name = expression(V[rs]), limits = c(-20,20)) +
+  scale_size_area(max_size = 0.1) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_y_continuous(name = "Distancia al centro (Km)",
+                     breaks = c(10, 20, 30, 40), 
+                     limits = c(0, 50), expand = c(0, 0)) + 
+  guides(size = "none") +
+  coord_polar() +
+  theme_minimal() + theme(legend.position = "bottom")
+
+remove(list = c("radar1", "radar2", "radar3", "radar4", 
+                "Vr", "Vrs", "Vre", "Vrena"))
+```
+
+En la Figura \ref{validacion} se puede observar el campo de $V_r$ observado por el radar (izquierda) y el campo de $V_{rs}$ obtenidos a partir del sondeo. Cualitativamente se observa que tanto la magnitud como la dirección del viento son similares pero también que el $V_rs$ cubre totalmente el dominio mientras que la senal del $V_r$ se extinge a los 15 km de rango. Cuantitativamente la diferencia $V_r - V_{rs}$ es grande en puntos localizados pero la media absoluta es de `r round(mean(abs(radar$Vr-radar$Vrs), na.rm = T), 2)` m/s, un valor razonable teniendo en cuenta que las observaciones son realizadas por instrumentos distintos.
+
+* **Con errores aleatorios (EA)**
+
+Para realizar una valización más realista se agregaron errores aleatorios al campo de $V_{rs}$, esto además permite analizar la sensibilidad del algoritmo a este tipo de errores.
+
+El nuevo campo perturbado será:
+
+\begin{equation} \label{eq-vr12}
+V_{rs}'  = V_{rs} + \alpha \varepsilon(0,1)
+\end{equation}
+
+Donde $\alpha$ es la aplitud del error y $\varepsilon$ es un número aleatorio con distribución normal, $\mu = 0$ y $\sigma= 1$.
+
+En la Figura \ref{ce} se muestra el campo resultante utilizando $\alpha = 1 m/s$, rápidamente se ve la variabilidad impuesta y también la disminución en la coherencia horizontal aunque se mantiene aproximadamente el signo de la variable en las distintas regiones.
+
+* **Con errores aleatorios y datos faltantes (EA+NA)**
+
+Otro problema importante en los datos de radar es la ausencia de señal, esto se ve como datos faltantes (NAs). Para analizar el efecto de los datos faltantes se aplicó una máscara de NAs al campo de $V_{rs}'$ de tal manera que sean los mismo NAs presentes en el volumen de datos de radar utilizados (Figura \ref{na}). 
+
+#### Perfiles obtenidos
+
+En la Figura \ref{validacion-perfiles} se muestra el perfil del sondeo para los primeros 3 km de altura y los perfiles calculado con VAD a partir de los distintos campos sintéticos. En cuanto a la magnitud no se ven diferencias importantes y al observar el detalle de los primeros 1000 metros de altura, la diferencia es menor a 0.5 m/s en todos los casos. Tampoco se observó sensibilidad al aumento de la amplitud de error (no se muestra).
+
+```{r validacion-perfiles, fig.cap="Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruevas de validación a la izquierda y el detalle ampliado del máximo en niveles bajos \\label{validacion-perfiles}", out.extra=" ", out.width="0.95\\textwidth", fig.show="h"}
+vad <- read.csv("seudocache/Vr_se_2016-01-05T12:04:23Z-INTA_Anguil.csv", 
+                sep = ";", dec = ".", na.strings = "-9999")
+vade <- read.csv("seudocache/Vr_ce_2016-01-05T12:04:23Z-INTA_Anguil.csv", 
+                sep = ";", dec = ".", na.strings = "-9999")
+vadena <- read.csv("seudocache/Vr_ce_na_2016-01-05T12:04:23Z-INTA_Anguil.csv", 
+                   sep = ";", dec = ".", na.strings = "-9999")
+
+sondeo <- read.csv("seudocache/sondeo.csv", sep = " ")
+sondeo$ht <- (sondeo$ht-191)/1000
+sondeo$spd <- sondeo$spd*0.5144444
+vad$sondeo_spd <- sondeo$spd[2:17]
+setDT(vad)
+
+vad[, spd_e := vade$spd] 
+vad[, spd_ena := vadena$spd] 
+vad[, .(ht, sondeo_spd, spd, spd_e, spd_ena)] %>% 
+  melt(id.vars = "ht") %>% 
+ggplot(aes(ht, value, color = variable)) +
+  geom_line()+
+  geom_point() +
+  scale_color_viridis(discrete = T, name = "Perfil", 
+                      labels = c("Sondeo", "SE", "EA", "EA+NA")) +
+  scale_x_continuous(name = "Altura (Km)") +
+  scale_y_continuous(name = "V (m/s)", breaks = seq(0, 11, by = 1)) +
+  coord_flip() +
+  facet_zoom(xy = ht < 1, zoom.size = 1) +
+  theme_minimal() 
+  
+remove(list = c("sondeo","vade", "vadena"))
+```
+
+
+Esto puede verificarse con el cálculo de distintos errores [@Gao2004]: la raiz del error cuadrático medio ($rms = \sqrt{ \frac{\sum (V-V_{ref})^2}{N} }$) y el error relativo al rms ($rre = \sqrt{ \frac{\sum (V-V_{ref})^2}{\sum (V_{ref})^2} }$) donde $V_{ref}$ corresponde a la variable de referencia, en este caso el sondeo. Los resultados se muestran en la Tabla \ref{validacion-errores} y como puede observarse no hay un aumento importante al incorporar errores aleatorios y disminuye al quitar datos en la prueba EA+NA ya que los errores calculados son sencibles a la cantidad total de datos.
+
+```{r validacion-errores}
+tmp <- melt(vad[, c("sondeo_spd", "spd", "spd_e", "spd_ena", "ht")], 
+            id.vars = "ht")
+tmp <- tmp[, .(rms = rms(value, tmp[variable == "sondeo_spd", value]),
+        rre = rre(value, tmp[variable == "sondeo_spd", value])),
+    by = variable][-1, ] %>% 
+  .[, Prueba := c("SE", "EA", "EA+NA")] %>% 
+  .[, c(4, 2, 3)]
+
+knitr::kable(tmp, digits = 4, caption = "Errores calculados para las distintas pruebas de validación.")
+```
+
+El efecto más importante en las pruebas de validación corresponde a la presencia de NAs. La falta de datos en distintas regiones para rangos a partir de 10 a 15 km impide el cálculo del verfil por encima de 800 metros (con excepción de un punto a los 2000 metros de altura).
+
+## Consistencia temporal de las observaciones
+
+Ya que uno de los objetivos de esta tesis es estudiar la evolución del viento a lo largo del día, es importante asegurar cierta consistencia temporal en los datos. La inconsistencia temporal puede deberse a que cada volumen de datos no es medido de manera instantanea si no que demora algunos minutos. Si bien en periodos sin cambios sinópticos importantes no se espera variaciones bruscas del viento, es posible que variaciones menores a los 10 minutos (resolución temporal de los datos de radar) estén afectando la consistencia temporal.
+
+Para solucionar este problema se aplicó un suavizado pesado localmente o LOWESS (locally weighted scatterplot smoothing). LOWESS es un método de regresión no paramétrica y por lo tanto no es necesario asumir que los datos tienen algún tipo de distribución particular. Esto lo hace un método flexible al representar el comportamiento de los datos. Por otro lado la estimación para cada punto se realiza utilizando la información de datos vecinos. Para esto se especifica cuantos datos vecinos se utilizaran para estimar cada punto local como una fracción del total de datos. 
+
+Aplicación de este método permite eliminar variaciones temporales bruscas entre sets de datos y mejorar la coehrencia.
+
+**Necesito mostrar como quedan los datos acá? No quiero spoilear los resultados**
+
+**Ver que sale del paper Cleveland, W. S. (1979) Robust locally weighted regression and smoothing scatterplots. J. American Statistical Association 74, 829–836.**
+
+## Tratamiento de procesos en la CLP
+
+El estudio de los procesos que ocurren en la CLP es un desafío cuando no se cuentan con datos de la turbulencia. En esta tesis se abordan procesos que pueden ser estudiados a partir de los perfiles de viento y las variables de superficie.
+
+### Determinación del estado de la turbulencia
+
+El número de Richarson permite determinar si hay turbulencia o no [citar al Stull] Definición. Definición de Ri bulk. 
+
+Como se aplica en este caso. Uso de datos de superficie, etc.
+
+### Detección del LLJ
+
+Definición, características generales. Ver Stull, Baas 2009 y Kallistratova 2011. Criterio de Bonner
+
+### Modelo de Oscilación Inercial
+
+Definición, Ekman. Hodografas
+
+### Altura de la capa límite
 
 ## WRF
 

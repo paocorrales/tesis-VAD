@@ -86,7 +86,7 @@ inside <- function(lon, lat, lon0 = -60.537289, lat0 = -31.848438, r = 40000) {
   d <= r
 }
 
-range <- function(lon, lat, lon0 = -60.537289, lat0 = -31.848438) {
+rrange <- function(lon, lat, lon0 = -60.537289, lat0 = -31.848438) {
   m <- matrix(c(lon, lat), ncol = 2)
   d <- geosphere::distGeo(m, c(lon0, lat0))
   d
@@ -145,4 +145,18 @@ u.ulke <- function(z, h, L, ust, k = 0.4, z0 = 0.05){
                           2*(atan(mu[!s]) - atan(mu0[!s])) + 
                           2*L[!s]/(33*h[!s])*(mu[!s]^3 - mu0[!s]^3))  
   uz
+}
+
+rms <- function(p, p_ref){
+  resta <- p - p_ref
+  n <- length(p)
+  rms <- sqrt(sum(resta^2, na.rm = T)/n)
+  rms
+}
+
+rre <- function(p, p_ref){
+  resta <- p - p_ref
+  n <- length(p)
+  rre = sqrt(sum(resta^2, na.rm = T)/sum(p_ref^2, na.rm = T))
+  rre
 }
