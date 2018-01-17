@@ -1,0 +1,15 @@
+base
+metR
+ggplot2
+ggforce
+lubridate
+magrittr
+dplyr
+dtplyr
+viridisLite
+viridis
+directlabels
+data.table
+patchwork
+ncdf4
+reshape2

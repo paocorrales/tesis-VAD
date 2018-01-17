@@ -30,7 +30,7 @@ read.vad <- function(path, lowess = TRUE){
     temp2$u <- -temp2$spd * sin(temp2$di*pi/180)
     temp2$v <- -temp2$spd * cos(temp2$di*pi/180)
   }
-  temp2$di <- temp2$di
+  temp2$date_time <- round_date(temp2$date_time, "minute")
   
   return(temp2)
 }
@@ -55,6 +55,56 @@ lowess.vad <- function(dataframe, span = 0.06, delta = 0){
 
 
 #=========================================================================================#
+# read.sup es una funcion que lee los archivos con los datos de superficie y los procesa 
+# para que sean utilizables. Se encarga de las unidades, de agregar la altura, etc.
+#=========================================================================================#
+
+read.sup <- function(path){
+  sup <- read.csv(path, sep = ";", na.strings = " ")
+  
+  # Ahora hay que trabajar sobre el archivo para que las variable de interés estén en las unidades 
+  # que corresponden y tengan el nivel correspondiente
+  
+  sup$intensidad <- sup$intensidad * 0.5144 #Paso de nudos a m/s
+  sup$direccion <- sup$direccion * 10 #Paso del formato synop a angulos entre 0 y 360
+  sup$ht <- 0.01 #El viento se mide a 10 metros, la temperatura a dos. 
+  
+  # Ahora la fecha y hora, miedo.
+  sup$fecha <- dmy_hm(paste0(sup$fecha, " - ", sup$hora.utc, ":00"))
+  
+  sup
+}
+
+#=========================================================================================#
+# convert.sup es una funcion que toma un data.frame con datos de superficie y lo organiza  
+# para que sea combinablecon los vad.
+#=========================================================================================#
+
+convert.sup <- function(sup){
+  keep <- c("fecha", "ht", "direccion", "intensidad")
+  sup <- sup[keep]
+  sup$u <- sup$intensidad * cos(sup$direccion*pi/180)
+  sup$v <- sup$intensidad * sin(sup$direccion*pi/180)
+  
+  cnames <- c("X", "ht", "spd", "rmse1", "rmse2", "rmse3", "di", "rings", "date_time", "u", "v")
+  
+  sup <- data.frame(X = NA, 
+                           ht = sup$ht, 
+                           spd = sup$intensidad,
+                           rmse1 = NA,
+                           rmse2 = NA,
+                           rmse3 = NA,
+                           di = sup$direccion,
+                           rings = NA,
+                           date_time = sup$fecha,
+                           u = sup$u,
+                           v = sup$v, 
+                           spd_smooth = sup$intensidad)
+  sup
+}
+
+
+#=========================================================================================#
 # ri.j calcula el número de Richarson bulk jet según Banta 2003
 # acepta parámetros con unidades el sistema internacional
 #=========================================================================================#
@@ -66,7 +116,7 @@ lowess.vad <- function(dataframe, span = 0.06, delta = 0){
 # z_max <- 300
 
 
-ri.j <- function(t_i, t_f, p_i, p_f, u_max, z_max){
+ri <- function(t_i, t_f, p_i, p_f, u_max, z_max){
   g <- 9.8
   
   tita_i <- t_i*(p_i/1000)^(-0.286)
@@ -77,8 +127,16 @@ ri.j <- function(t_i, t_f, p_i, p_f, u_max, z_max){
   return(ri)
 }
 
-
+#=========================================================================================#
+# inside:
 # Crop del dominio global para obtener un dominio circular de radio 40km centrado en el radar.
+# Mantiene solo los puntos dentro del dominio
+# 
+# rrgange y azimuth.
+# Convierten lat y lon en grilla del radar. Devuelve el rango y el azimuth.
+#=========================================================================================#
+
+
 
 inside <- function(lon, lat, lon0 = -60.537289, lat0 = -31.848438, r = 40000) {
   m <- matrix(c(lon, lat), ncol = 2)
@@ -98,7 +156,11 @@ azimuth <- function(lon, lat, lon0 = -60.537289, lat0 = -31.848438) {
   d <- ConvertLongitude(d - 180, 180)
 }
 
-# Calcula la moda de x  
+#=========================================================================================#
+# mode:
+# Calcula la moda de x
+#=========================================================================================#
+ 
 mode <- function(x, ...) {
   if (length(x) > 1) {
     d <- density(x, ...)
@@ -109,7 +171,10 @@ mode <- function(x, ...) {
 }
 
 
-# Coeficientes de difusividad Ulke 2000
+#=========================================================================================#
+# Coeficientes de difusividad y perfil de u after Ulke 2000
+# Cambia de acuerdo a la estabilidad.
+#=========================================================================================#
 
 kh.ulke <- function(z, h, L, ust, k = 0.4){
   # k <- 0.4
@@ -146,6 +211,11 @@ u.ulke <- function(z, h, L, ust, k = 0.4, z0 = 0.05){
                           2*L[!s]/(33*h[!s])*(mu[!s]^3 - mu0[!s]^3))  
   uz
 }
+
+#=========================================================================================#
+# errores:
+# rms, rre
+#=========================================================================================#
 
 rms <- function(p, p_ref){
   resta <- p - p_ref
