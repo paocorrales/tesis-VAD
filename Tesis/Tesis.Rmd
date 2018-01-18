@@ -57,10 +57,17 @@ library(ncdf4)
 source("helpfun.R")
 
 # Variables útiles
-map <- setDT(fortify(rnaturalearth::ne_states(country = "Argentina"))) %>%
+map <- setDT(fortify(rnaturalearth::ne_states(country = c("Argentina")))) %>%
   .[, rango := rrange(long, lat)] %>% 
   .[, azimut := azimuth(long, lat)]
 
+map2 <- setDT(fortify(rnaturalearth::ne_countries(country = c("Brazil", "Uruguay")))) %>%
+  .[, rango := rrange(long, lat)] %>% 
+  .[, azimut := azimuth(long, lat)]
+map <- rbind(map, map2)
+setnames(map, "long", "lon")
+
+remove(map2)
 ```
 \renewcommand{\listtablename}{Índice de tablas} 
 \renewcommand{\tablename}{Tabla} 
@@ -136,7 +143,6 @@ ggplot(topo, aes(lon, lat)) +
   annotate(geom = "point", x = -60.483333, y = -31.783333, size = 2, color = "red") +
   coord_quickmap() + 
   theme_minimal() + theme(panel.ontop = T)
-
 remove(topo)
 ```
 
@@ -638,9 +644,54 @@ El LLJ puede producirse por distintos mecanismos entre los que se pueden nombrar
 
 De acuerdo a @Blackadar1957 luego del atardecer, cuando no hay producción de turbulencia se produce un desacople de la capa mezclada y el viento tiende a acelerarse ante la ausencia de la fricción hacia el equilibrio geostrófico. Sin embargo la fuerza de Coriolis genera una oscilación inercial del viento alrededor del viento geostrófico produciendo un LLJ supergeostrófico durante el periodo estable. 
 
-Esta oscilación puede verse en la rotación del vector del viento con la altura (hodógrafa), que para el hemisferio sur será en sentido antihorario. El periodo de la oscilación inercial es de $P = 2\pi/f$, con $f$ el parámetro de Coriolis. A la latitud de Paraná $P = `r abs(round(24000/sin(-31.8)/3600, 2))` \: horas$ y por lo tanto se espera que el máximo viento ocurra para cuando se alcanza la mitad del periodo desde el atardecer [@Kallistratova2012].
+Esta oscilación puede verse en la rotación del vector del viento con la altura (hodógrafa), que para el hemisferio sur será en sentido antihorario. El periodo de la oscilación inercial es de $P = 2\pi/f$, con $f$ el parámetro de Coriolis. A la latitud de Paraná $P = `r abs(round(24000/sin(-31.8)/3600, 2))`$ horas y por lo tanto se espera que el máximo viento ocurra para cuando se alcanza la mitad del periodo desde el atardecer [@Kallistratova2012].
 
 ## WRF
+
+```{r dominio, fig.cap="Dominios utilizados. \\label{dominio}", fig.subcap=c("Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior. El punto representa la ubicación del radar. \\label{dom-modelo}", "Topografía sobre el nivel del radar. El circulo negro coresponde al dominio de análisis, de 40km de radio y centrado en el radar. \\label{dom-radar}"), out.width="0.48\\textwidth", fig.align='center', fig.sep = "\\hfill"}
+
+path <- "~/Radar/WRF/"
+hgt <- ReadNetCDF(paste(path, "caso1_YSU/hgt_YSU.nc", sep = "")) %>% 
+  .[date == "2016-01-14 21:00:00 UTC" & lev == 0.05, ]
+
+circle <- setDT(expand.grid(lon = seq(-61.04, -60.05, by = 0.001),
+                            lat = seq(-32.25, -31.44, by = 0.001)))
+circle <- circle[inside(lon, lat) == T, ]
+
+ggplot(map, aes(lon, lat)) +
+  geom_path(aes(group = group), color = "darkgray") +
+  scale_x_continuous(limits = c(-71, -50), breaks = MakeBreaks(5), 
+                     name = "Longitud", expand = c(0,0)) +
+  scale_y_continuous(limits = c(-39.5, -24), 
+                     name = "Latitud", expand = c(0,0)) +
+  annotate(geom = "rect", xmin = -66.3349, xmax = -54.8394, 
+           ymin = -36.5501, ymax = -27.0726, fill = NA, color = "black") +
+  annotate(geom = "rect", xmin = -68.0717, xmax = -53.1528, 
+           ymin = -37.9493, ymax = -25.679, fill = NA, color = "black") +
+  annotate(geom = "point", x = -60.537289, y = -31.848438, size = 1) +
+  coord_map() + 
+  theme_minimal()
+
+
+ggplot(hgt, aes(lon, lat)) + 
+  geom_contour_fill(aes(z = hgt - 75)) +
+  geom_polygon(fill = NA, color = "black", 
+               data = circle[chull(lon, lat)]) +
+  scale_fill_gradient(high = "#ffffff", low = "#252525",
+                       name = "Altura sobre el\nnivel de radar", 
+                       guide = guide_colorbar(title.position = "top", 
+                                              title.hjust = 0.5)) +
+  scale_x_continuous(name = "Longitud", limits = c(-61.04, -60.05), expand = c(0,0)) +
+  scale_y_continuous(name = "Latitud", limits = c(-32.25, -31.44), expand = c(0,0)) +
+  annotate(geom = "point", x = -60.537289, y = -31.848438, size = 2) +
+  # geom_point(data = subset(distances, inside == "TRUE")) +
+  # geom_circle(data = circle, aes(x0 = x0, y0 = y0, r = r), inherit.aes = F) +
+  coord_quickmap() +
+  theme_minimal() + theme(panel.ontop = T)
+
+remove(circle, hgt)
+```
+
 Presentación de la idea: sensibilidad del esquema de PBL 
 Dominio
 Periodo modelado

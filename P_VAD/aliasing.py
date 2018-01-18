@@ -18,7 +18,7 @@ import netCDF4
 #import LowPassFilter
 import RadarBeamPropagation
 
-path_user = '../../Radar/VAD/PARANA/20160107/240/*.nc'
+path_user = '../../Radar/VAD/PARANA/20160109/240/*.nc'
 path_user = '../../Radar/VAD/PARANA/20170128/240/cfrad.20170128_103003.000_to_20170128_103427.998_PAR_SUR.nc'
 
 FileList = np.sort(glob.glob(path_user))
@@ -120,16 +120,16 @@ for j in data_dates:
 	winddealias=pyart.correct.region_dealias.dealias_region_based(radar, interval_splits=3, interval_limits=None, skip_between_rays=100, skip_along_ray=100, centered=True, nyquist_vel=None, check_nyquist_uniform=True, gatefilter=False, rays_wrap_around=True, keep_original=False, set_limits=True, vel_field='V', corr_vel_field=None)
 
 #Modificamos el objeto radar.
-	radar.fields['Vda2'] = winddealias
-	radar.fields['Vda2']['coordinates']=radar.fields['V']['coordinates']
-	radar.fields['Vda2']['units']=radar.fields['V']['units']
-	radar.fields['Vda2']['long_name']=radar.fields['V']['long_name']
-	radar.fields['Vda2']['standard_name']=radar.fields['V']['standard_name']
+	radar.fields['Vda'] = winddealias
+	radar.fields['Vda']['coordinates']=radar.fields['V']['coordinates']
+	radar.fields['Vda']['units']=radar.fields['V']['units']
+	radar.fields['Vda']['long_name']=radar.fields['V']['long_name']
+	radar.fields['Vda']['standard_name']=radar.fields['V']['standard_name']
 
 #Agrego el viento corregido al archivo original. (por algun motivo usar write_cfradial tira un error y por el momento no pude encontrar el problema,
 #por ese motivo uso esta funcion para agregar una variable al archivo existente).
 	dataset=netCDF4.Dataset(filename,'r+',format='NETCDF4')
-	pyart.io.cfradial._create_ncvar(radar.fields['Vda2'],dataset,'Vda2',['time','range'] )
+	pyart.io.cfradial._create_ncvar(radar.fields['Vda'],dataset,'Vda',['time','range'] )
 	print filename   
 
 #%%
@@ -138,12 +138,12 @@ for j in data_dates:
 
 # Leemos los archicos .nc
 rango = '240/' #Elejimos con que rango queremos trabajar
-path_user = '../../Radar/VAD/PARANA/20160107/'
+path_user = '../../Radar/VAD/PARANA/20160109/'
 FileList = np.sort(glob.glob(path_user + rango + '*.nc'))
 
 # Parametros
 
-field  = 'Vda2'    #Nombre de la variable en el archivo de datos
+field  = 'Vda'    #Nombre de la variable en el archivo de datos
 angmin = 2        #Ángulo de elevación mínimo expresado como indice y empezando en 0
 angmax = 10       #Ángulo de elevación máximo expresado como indice
 rint   = 0.3      #Radio interior de la arandala a calcular en Km
@@ -319,7 +319,7 @@ for f in range(len(FileList)):
     rs = rs.flatten('F')
     vad = pandas.DataFrame({'spd':spd, 'rmse':rmse, 'di':di, 'rh':rh, 'ht':ht, 'elev':elev, 'a':a, 'b':b, 'rs':rs})
 
-    vad.to_csv('20160107_240/elev_vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
+    vad.to_csv('20160109_240/elev_vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
     #Muestra por pantalla la cantidad de anillos válidos para cada ángulo de elevación
     
 #%%
@@ -329,7 +329,7 @@ for f in range(len(FileList)):
     #========================
  
 #Leemos los archivos
-path_user = '20160107_240/'
+path_user = '20160109_240/'
 FileList = np.sort(glob.glob(path_user + 'elev*'))
 
 # Parámetros
@@ -391,7 +391,7 @@ for f in range(len(FileList)):
     print "Listo " + FileList[f]
     #Escribo un .csv que se guarda con la fecha y la hora del volumen de datos
     #totalvad.to_csv('20160114_240/vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
-    totalvad.to_csv('20160107_240/'+ FileList[f][18:58], sep = ';', na_rep = '-9999')
+    totalvad.to_csv('20160109_240/'+ FileList[f][18:58], sep = ';', na_rep = '-9999')
 
 
 
