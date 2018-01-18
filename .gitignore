@@ -3,4 +3,6 @@
 .RData
 .Ruserdata
 analisis_WRF/all.param.rds
-tesis/.RData
+Tesis/.RData
+Tesis/Tesis_cache
+Tesis/Tesis_files
