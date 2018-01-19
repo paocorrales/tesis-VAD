@@ -92,6 +92,17 @@ radar meteorológico y su posterior uso para la validación de modelos.}
   \date{}
   \predate{}\postdate{}
 
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage[table]{xcolor}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
 \linespread{1.25}
 \usepackage{subfig}
 \usepackage{hyperref}
@@ -644,32 +655,37 @@ posibles errores aleatorios.
   pocos datos válidos (es decir, no dato faltante) debido a la escasa
   señal cerca del tope de la capa límite y atmósfera libre en días
   claros. Debido a esto es posible seleccionar el rango de ángulos a ser
-  analizados y utilizados en el cálculo del VAD.
+  analizados y utilizados en el cálculo del VAD con el
+  \(Ángulo \; mínimo\) y el \(Ángulo \; máximo\).
 \item
   \textbf{Selección del dominio de cálculo:} Otro posibilidad para
-  evitar los ecos de terreno es definir un radio mínimo por debajo del
-  cual no se incluyen los datos para el cálculo de VAD. En el otro
-  extremo, es posible definir un radio máximo para limitar el uso de
-  datos muy lejanos al centro del volumen de escaneo. Esto es importante
-  para evitar inhomogeneidades en el campo de viento horizontal.
+  evitar los ecos de terreno es definir un \(Radio \; interior\) por
+  debajo del cual no se incluyen los datos para el cálculo de VAD. En el
+  otro extremo, es posible definir un \(Radio \; exterior\) para limitar
+  el uso de datos muy lejanos al centro del volumen de escaneo. Esto es
+  importante para evitar inhomogeneidades en el campo de viento
+  horizontal.
 \item
   \textbf{Cantidad de datos por anillo:} el algoritmo cuenta la cantidad
   de datos válidos por anillo y se define un porcentaje de datos
   faltantes respecto del total, por ejemplo 20\%. Si se excede al máximo
-  definido el anillo es descartado. De esta manera se evita la
-  utilización de anillos donde la señal es muy débil.
+  definido o \(NaN \; máximo\) el anillo es descartado. De esta manera
+  se evita la utilización de anillos donde la señal es muy débil.
 \item
   \textbf{Hueco continuo en un anillo:} Además de los datos faltantes
   ubicados de manera aleatoria a lo largo de un anillo, los huecos
   continuos pueden ocurrir debido a la falta de señal en una determinada
   región. De acuerdo a Matejka y Srivastava (1991) esto puede generar
   importantes errores en el resultado final, por lo tanto cuando el
-  hueco es mayor a 30° de azimut, el anillo se descarta.
+  hueco o \(Gap \; máximo\) es mayor a 30° de azimut, el anillo se
+  descarta.
 \item
   \textbf{Errores aleatorios:} Los errores aleatorios producto de ruido
   del instrumento pueden ser eliminados utilizando un filtro pasa bajo
   (Gao y Droegemeier, 2004). Este control no elimina anillos pero
-  produce un suavizado de los datos.
+  produce un suavizado de los datos. Es necesario definir la cantidad de
+  datos o \(Pesos\) que se utilizaran para calcular filtro en cada
+  punto.
 \end{itemize}
 
 \subsubsection{Luego del ajuste}\label{luego-del-ajuste}
@@ -797,17 +813,6 @@ error (no se muestra).
 \includegraphics[width=0.95\textwidth, ]{Tesis_files/figure-latex/validacion-perfiles-1} \caption{Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruevas de validación a la izquierda y el detalle ampliado del máximo en niveles bajos \label{validacion-perfiles}}\label{fig:validacion-perfiles}
 \end{figure}
 
-Esto puede verificarse con el cálculo de distintos errores (Gao y
-Droegemeier, 2004): la raíz del error cuadrático medio
-(\(rms = \sqrt{ \frac{\sum (V-V_{ref})^2}{N} }\)) y el error relativo al
-rms (\(rre = \sqrt{ \frac{\sum (V-V_{ref})^2}{\sum (V_{ref})^2} }\))
-donde \(V_{ref}\) corresponde a la variable de referencia, en este caso
-el sondeo. Los resultados se muestran en la Tabla
-\ref{validacion-errores} y como puede observarse no hay un aumento
-importante al incorporar errores aleatorios y disminuye al quitar datos
-en la prueba EA+NA ya que los errores calculados son sensibles a la
-cantidad total de datos.
-
 \begin{longtable}[]{@{}lrr@{}}
 \caption{Errores calculados para las distintas pruebas de
 validación.}\tabularnewline
@@ -825,10 +830,61 @@ EA+NA & 0.1778 & 0.0214\tabularnewline
 \bottomrule
 \end{longtable}
 
+Esto puede verificarse con el cálculo de distintos errores (Gao y
+Droegemeier, 2004): la raíz del error cuadrático medio
+(\(rms = \sqrt{ \frac{\sum (V-V_{ref})^2}{N} }\)) y el error relativo al
+rms (\(rre = \sqrt{ \frac{\sum (V-V_{ref})^2}{\sum (V_{ref})^2} }\))
+donde \(V_{ref}\) corresponde a la variable de referencia, en este caso
+el sondeo. Los resultados se muestran en la Tabla
+\ref{validacion-errores} y como puede observarse no hay un aumento
+importante al incorporar errores aleatorios y disminuye al quitar datos
+en la prueba EA+NA ya que los errores calculados son sensibles a la
+cantidad total de datos.
+
 El efecto más importante en las pruebas de validación corresponde a la
 presencia de NAs. La falta de datos en distintas regiones para rangos a
 partir de 10 a 15 km impide el cálculo del perfil por encima de 800
 metros (con excepción de un punto a los 2000 metros de altura).
+
+\subsection{Configuración del
+algoritmo}\label{configuracion-del-algoritmo}
+
+En la Tabla \ref{parametros} se detallan los valores utilizados en los
+distintos parámetros necesarios para el algorimo VAD que se mantuvieron
+para todos los casos de estudio.
+
+\begin{table}
+
+\caption{\label{tab:parametros}Parámetros utilizados en el cálculo del VAD y la construcción de la grilla vertical para todos los casos}
+\centering
+\begin{tabular}[t]{lll}
+\toprule
+Algoritmo & Parámetro & Valor\\
+\midrule
+ & Ángulo mínimo & 3\\
+\cmidrule{2-3}
+ & Ángulo máximo & 11\\
+\cmidrule{2-3}
+ & Radio interior & 0.3 km\\
+\cmidrule{2-3}
+ & Radio exterior & 40 km\\
+\cmidrule{2-3}
+ & NaN máximo & 72\\
+\cmidrule{2-3}
+ & Gap máximo & 30\\
+\cmidrule{2-3}
+ & Pesos & NC\\
+\cmidrule{2-3}
+\multirow{-8}{*}{\raggedright\arraybackslash VAD} & R cuadrado & 0.8\\
+\cmidrule{1-3}
+ & Altura mínima & 0.1 Km\\
+\cmidrule{2-3}
+ & Altura máxima & 3 Km\\
+\cmidrule{2-3}
+\multirow{-3}{*}{\raggedright\arraybackslash Grilla vertical} & Espaciado & 0.1 Km\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Consistencia temporal de las
 observaciones}\label{consistencia-temporal-de-las-observaciones}
@@ -976,6 +1032,28 @@ Kouznetsov, 2012).
 
 \section{WRF}\label{wrf}
 
+En este trabajo se utilizó el modelo WRF versión 3.9.1 para la
+realización de simulaciones numéricas que permitan comparar algunas de
+las parametrizaciones de CLP disponibles: YSU (Yonsei University
+Scheme), MYJ(Mellor--Yamada--Janjic) y ACM2 (Asymmetric Convection Model
+2).
+
+Las simulaciones se integraron en un dominio anidado en un sentido de
+dos niveles, el nivel superior con una resolución de 12 x 12 km y 105 x
+105 puntos de grilla y el nivel inferior con una resolución de 4 x 4 km
+y 253 x 253 puntos de grilla, ambos centrados en la ubicación del radar
+de Paraná. Como se puede ver en la Figura \ref{dom-modelo} cubre todo el
+centro y norte del país. Se utilizaron datos geográficos con 10 minutos
+de resolución para el dominio superior y 2 minutos para el dominio
+inferior.
+
+Ambos dominios tienen una grilla vertical de 42 niveles eta configurados
+de manera hipérbolo tangencial para que los primeros 15 niveles se
+ubiquen en los primeros kilómetros. La presión en el tope del modelo es
+de 100 hPa. De acuerdo a Shin et~al. (2012) se determinó que el nivel
+inferior se ubique en z = 40 metros para evitar errores en algunas
+variables de superficie asociadas a la CLP.
+
 \begin{figure}
 
 {\centering \subfloat[Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior. El punto representa la ubicación del radar. \label{dom-modelo}\label{fig:dominio1}]{\includegraphics[width=0.48\textwidth]{Tesis_files/figure-latex/dominio-1} }\hfill\subfloat[Topografía sobre el nivel del radar. El circulo negro coresponde al dominio de análisis, de 40km de radio y centrado en el radar. \label{dom-radar}\label{fig:dominio2}]{\includegraphics[width=0.48\textwidth]{Tesis_files/figure-latex/dominio-2} }
@@ -985,13 +1063,141 @@ Kouznetsov, 2012).
 \caption{Dominios utilizados. \label{dominio}}\label{fig:dominio}
 \end{figure}
 
-Presentación de la idea: sensibilidad del esquema de PBL Dominio Periodo
-modelado Niveles verticales utilizados debido al efecto sobre la altura
-de la capa límite. Parametrizaciones usadas (no PBL)
+Se realizaron simulaciones para el periodo comprendido en el Caso 1, es
+decir, entre las 0600 UTC del 13 de enero a las 0000 del 15 de enero de
+2016 en todos los casos. Las primeras 6 horas de simulación corresponden
+al ``spin up'' del modelo y las siguientes 36 horas pueden ser
+analizables. Si bien el estudio se centra en comparar las observaciones
+del 14 de enero con las simulaciones, es importante tener en cuenta que
+la capa estable nocturna puede ser muy influenciada por la capa mezclada
+del día anterior, por esta razón la simulación empieza 12 horas antes.
 
-\subsection{Parametrizaciones}\label{parametrizaciones}
+Para las condiciones iniciales para las 0600 UTC del 13 de enero de 2016
+se utilizó el Análisis Final (FNL) de National Centers for Environmental
+Prediction (NCEP) con resolución de 0.25° X 0.25° y las condiciones de
+borde fueron forzadas por los mismos datos cada 6 horas.
 
-Características principales de las parametrizaciones usadas.
+Para los procesos físicos no asociados a la CLP se usaron las siguientes
+parametrizaciones: RRTMG (Rapid Radiative Transfer Model for GCMs,
+Mlawer et~al. (1997)) para la radiación de onda larga, Dudhia (Dudhia,
+1989) para la radiación de onda corta, WSM6 (WRF Single-Moment 6-Class
+Microphysics, Hong y Jeong-Ock (2006)) para los procesos microfísicos,
+el esquema Kain-Fritsch para los procesos de convección y el modelo Noah
+de superficie (Tewari et~al., 2004).
+
+\subsection{Parametrizaciones de capa
+límite}\label{parametrizaciones-de-capa-limite}
+
+Se presentan las características generales de cada parametrización
+analizada y el esquema de capa de superficie asociado a cada una (ya que
+cada parametrización de CLP tiene una determinada parametrización de
+capa de superficie y lamentablemente no se puede utilizar una en común).
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{YSU}
+\end{itemize}
+
+El esquema YSU (Hong et~al., 2006) es un esquema no local y como
+previamente se mencionó, determina el valor de una variable no conocida
+en un punto a partir de variables conocidas en distintos puntos. Está
+configurado con una clausura de primer orden y considera la mezcla no
+local debido a torbellinos grandes agregando un término de ajuste de
+gradiente al gradiente local a cada variable de pronóstico. El esquema
+usa la parametrización de capa de superficie MM5 Monin-Obukohv
+Similarity.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{MYJ}
+\end{itemize}
+
+El esquema MYJ es un esquema local que usa una clausura de orden 1.5 y
+determina los coeficientes de difusión a partir del cálculo de la
+energía cinética de las perturbaciones pronosticada (Janjić, 1994). MYJ
+usa el esquema de capa de superficie Janjic Eta Monin--Obukhov.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{ACM2}
+\end{itemize}
+
+Este esquema es similar a YSU en el sentido de que es no local y tiene
+clausura de primer orden. Sin embargo considera un transporte no local
+hacia arriba y un transporte local hacia abajo ``capa a capa'' para las
+variables de pronóstico (Pleim, 2007). También utiliza el esquema de
+capa de superficie MM5 Monin-Obukohv Similarity.
+
+\subsection{Procesamiento de los
+datos}\label{procesamiento-de-los-datos}
+
+Las simulaciones fueron post procesadas con el módulo ARWPost donde se
+eligió una resolución vertical de 100 metros en los primeros kilómetros
+de la atmósfera de tal manera que coincida con la grilla vertical de las
+observaciones de radar. El dominio inicial fue recortado para analizar
+el disco de 40 km de radio alrededor del radar como se muestra en la
+Figura \ref{dom-radar}.
+
+El análisis del viento requiere un segundo procesamiento para
+transformar la variable a la grilla del radar y de esta manera obtener
+el perfil vertical de viento a partir del VAD y mejorar la comparación
+con las observaciones. Este procesamiento se realiza con
+\textbf{AGREGAR} a partir de las salidas no procesadas del modelo.
+
+El análisis del resto de las variables pueden hacerse tomando el dato
+del punto más cercano al radar o a partir del promedio espacial en todo
+el dominio analizado. Se explorarán ambas posibilidades para determinar
+posibles diferencias y analizar la homogeneidad espacial.
+
+\subsubsection{Coeficientes de difusividad
+turbulenta}\label{coeficientes-de-difusividad-turbulenta}
+
+Fue posible configurar el modelo para obtener algunas variables
+específicas de los esquemas de CLP como la altura de la capa límite
+estimada por cada parametrización (\(h\)), la Longitud de Monin-Obukohv
+(\(L\)), la velocidad de fricción (\(u_*\)) y el coeficiente de
+difusividad de calor (\(K_h\)).
+
+No se pudo obtener el coeficiente de difusividad de cantidad de
+movimiento (\(K_m\)) directamente desde el modelo por lo que se estimó a
+partir de la relación \(K_m = K_h \: P_r\) donde \(P_r\) es el número de
+Prandtl. Este último se determinó calculando los perfiles de los
+coeficientes de difusividad según Ulke (2000):
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Condiciones estables (\(h/L > 0\))}
+\end{itemize}
+
+\begin{equation} \label{k-1}
+K_m(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1 + 6.9\frac{h}{L}\frac{z}{h} \right)^{-1}
+\end{equation}
+
+\begin{equation} \label{k-2}
+K_h(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1 + 9.2\frac{h}{L}\frac{z}{h} \right)^{-1}
+\end{equation}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Condiciones inestables (\(h/L < 0\))}
+\end{itemize}
+
+\begin{equation} \label{k-3}
+K_m(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1 - 22\frac{h}{L}\frac{z}{h} \right)^{1/4}
+\end{equation}
+
+\begin{equation} \label{k-4}
+K_h(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1 - 13\frac{h}{L}\frac{z}{h} \right)^{1/2}
+\end{equation}
+
+Y a partir de esto se obtiene \(P_r(z) = K_m/K_h\) para obtener el
+coeficiente de difusividad de cantidad de movimientos a partir de los
+datos del modelo.
 
 \chapter{Resultados}\label{resultados}
 
@@ -1064,6 +1270,11 @@ Scatterplots. Journal of the American Statistical Association, 74, 368,
 Doviak, R.J., y Zrnić, D.S., 1993. Doppler Radar and Weather
 Observations, Segunda Ed., Academic Press, Inc., Vol. 33, p. 545.
 
+\hypertarget{ref-Dudhia1989}{}
+Dudhia, J., 1989. Numerical Study of Convection Observed during the
+Winter Monsoon Experiment Using a Mesoscale Two-Dimensional Model.
+Journal of the Atmospheric Sciences, 46, 20, 3077-3107.
+
 \hypertarget{ref-Gao2004}{}
 Gao, J., y Droegemeier, K., 2004. A variational technique for dealiasing
 Doppler radial velocity data. Journal of Applied Meteorology, 43, 1990,
@@ -1094,6 +1305,21 @@ Holleman, I., Gasteren, H. van, y Bouten, W., 2008. Quality assessment
 of weather radar wind profiles during bird migration. Journal of
 Atmospheric and Oceanic Technology, 25, 12, 2188-2198.
 
+\hypertarget{ref-Hong2006a}{}
+Hong, S.-Y., y Jeong-Ock, J.L., 2006. The WRF Single-Moment 6-Class
+Microphysics Scheme (WSM6). Journal of The Korean Meteorological
+Society, 42, 2, 129-151.
+
+\hypertarget{ref-Hong2006}{}
+Hong, S.-Y., Noh, Y., y Dudhia, J., 2006. A New Vertical Diffusion
+Package with an Explicit Treatment of Entrainment Processes. Monthly
+Weather Review, 134, 9, 2318-2341.
+
+\hypertarget{ref-Janjic1994}{}
+Janjić, Z.I., 1994. The Step-Mountain Eta Coordinate Model: Further
+Developments of the Convection, Viscous Sublayer, and Turbulence Closure
+Schemes.
+
 \hypertarget{ref-Kallistratova2012}{}
 Kallistratova, M.A., y Kouznetsov, R.D., 2012. Low-Level Jets in the
 Moscow Region in Summer and Winter Observed with a Sodar Network.
@@ -1118,6 +1344,17 @@ Data. Journal of Atmospheric and Oceanic Technology, 8, 4, 453-466.
 Mazzeo, N.A., y Gassmann, M.I., 1990. Mixing heights and wind direction
 analysis for urban and suburban areas of Buenos Aires city. Energy and
 Buildings, 15, 3-4, 333-337.
+
+\hypertarget{ref-Mlawer1997}{}
+Mlawer, E.J., Taubman, S.j., Brown, P.D., Iacono, M.J., y Clough, S.A.,
+1997. Radiative transfer for inhomogeneous atmospheres: RRTM, a
+validated correlated-k model for the longwave. Journal of Geophysical
+Research Atmospheres, 102, 14, 16663-16682.
+
+\hypertarget{ref-Pleim2007}{}
+Pleim, J.E., 2007. A combined local and nonlocal closure model for the
+atmospheric boundary layer. Part I: Model description and testing.
+Journal of Applied Meteorology and Climatology, 46, 9, 1383-1395.
 
 \hypertarget{ref-Rennie2010}{}
 Rennie, S.J., Illingworth, A.J., Dance, S.L., y Ballard, S.P., 2010. The
@@ -1155,6 +1392,11 @@ Salonen, K., Järvinen, H., Järvenoja, S., Niemelä, S., y Eresmaa, R.,
 2008. Doppler radar radial wind data in NWP model validation.
 Meteorological Applications, 15, 97-102.
 
+\hypertarget{ref-Shin2012}{}
+Shin, H.H., Hong, S.-Y., y Dudhia, J., 2012. Impacts of the Lowest Model
+Level Height on the Performance of Planetary Boundary Layer
+Parameterizations. Monthly Weather Review, 140, 2, 664-682.
+
 \hypertarget{ref-Skamarock2008}{}
 Skamarock, W., Klemp, J., Dudhi, J., Gill, D., Barker, D., Duda, M.,
 Huang, X.-Y., Wang, W., y Powers, J., 2008. A Description of the
@@ -1163,6 +1405,13 @@ Advanced Research WRF Version 3.
 \hypertarget{ref-Stull1988}{}
 Stull, R.B., 1988. An Introduction to Boundary Layer Meteorology,
 Primera Ed., Kluwer Academic Publishers, p. 670.
+
+\hypertarget{ref-Tewari2004}{}
+Tewari, M., Chen, F., Wang, W., Dudhuia, J., LeMone, M.A., Mitchell, K.,
+Ek, M., Gayno, J., Wegiel, J., y Cuenca, R.H., 2004. Implementation and
+verification of the unified NOAH land surface model in the WRF model. En
+20th conference on weather analysis and forecasting/16th conference on
+numerical weather prediction pp. 11-15.
 
 \hypertarget{ref-Tonti2015}{}
 Tonti, N.E., y Gassmann, M.I., 2015. Variabilidad del parámetro de

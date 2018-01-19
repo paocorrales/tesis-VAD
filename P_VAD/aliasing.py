@@ -18,7 +18,7 @@ import netCDF4
 #import LowPassFilter
 import RadarBeamPropagation
 
-path_user = '../../Radar/VAD/PARANA/20160109/240/*.nc'
+path_user = '../../Radar/VAD/PARANA/20160117/240/*.nc'
 path_user = '../../Radar/VAD/PARANA/20170128/240/cfrad.20170128_103003.000_to_20170128_103427.998_PAR_SUR.nc'
 
 FileList = np.sort(glob.glob(path_user))
@@ -138,7 +138,7 @@ for j in data_dates:
 
 # Leemos los archicos .nc
 rango = '240/' #Elejimos con que rango queremos trabajar
-path_user = '../../Radar/VAD/PARANA/20160109/'
+path_user = '../../Radar/VAD/PARANA/20160117/'
 FileList = np.sort(glob.glob(path_user + rango + '*.nc'))
 
 # Parametros
@@ -319,7 +319,7 @@ for f in range(len(FileList)):
     rs = rs.flatten('F')
     vad = pandas.DataFrame({'spd':spd, 'rmse':rmse, 'di':di, 'rh':rh, 'ht':ht, 'elev':elev, 'a':a, 'b':b, 'rs':rs})
 
-    vad.to_csv('20160109_240/elev_vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
+    vad.to_csv('20160117_240/elev_vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
     #Muestra por pantalla la cantidad de anillos válidos para cada ángulo de elevación
     
 #%%
@@ -329,7 +329,7 @@ for f in range(len(FileList)):
     #========================
  
 #Leemos los archivos
-path_user = '20160109_240/'
+path_user = '20160117_240/'
 FileList = np.sort(glob.glob(path_user + 'elev*'))
 
 # Parámetros
@@ -391,7 +391,7 @@ for f in range(len(FileList)):
     print "Listo " + FileList[f]
     #Escribo un .csv que se guarda con la fecha y la hora del volumen de datos
     #totalvad.to_csv('20160114_240/vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
-    totalvad.to_csv('20160109_240/'+ FileList[f][18:58], sep = ';', na_rep = '-9999')
+    totalvad.to_csv('20160117_240/'+ FileList[f][18:58], sep = ';', na_rep = '-9999')
 
 
 
@@ -466,7 +466,7 @@ for f in range(len(FileList)):
     print "Listo " + FileList[f]
     #Escribo un .csv que se guarda con la fecha y la hora del volumen de datos
     #totalvad.to_csv('20160114_240/vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
-    totalvad.to_csv('20160107_240/'+ FileList[f][18:58], sep = ';', na_rep = '-9999')
+    totalvad.to_csv('20160117_240/'+ FileList[f][18:58], sep = ';', na_rep = '-9999')
 
 
 

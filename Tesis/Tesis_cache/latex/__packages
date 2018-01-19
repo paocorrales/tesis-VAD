@@ -13,3 +13,5 @@ patchwork
 ncdf4
 reshape2
 ggforce
+knitr
+kableExtra

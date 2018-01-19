@@ -53,6 +53,8 @@ library(directlabels)
 library(data.table)
 library(patchwork)
 library(ncdf4)
+library(knitr)
+library(kableExtra)
 #source("geom_contourlabel.R")
 source("helpfun.R")
 
@@ -366,11 +368,11 @@ El algoritmo de VAD desarrollado incluye algunos controles de calidad para evita
 
 Permiten determinar cuales son los anillos de datos válidos y eliminar posibles errores aleatorios.
 
-* **Ángulos de elevación seleccionados:** La presencia de ecos de terreno pueden generar que los campos de velocidad radial para los primeros ángulos de elevación sean muy ruidosos y sin coherencia espacial. En el otro extremo, los ángulos superiores suelen tener pocos datos válidos (es decir, no dato faltante) debido a la escasa señal cerca del tope de la capa límite y atmósfera libre en días claros. Debido a esto es posible seleccionar el rango de ángulos a ser analizados y utilizados en el cálculo del VAD.
-* **Selección del dominio de cálculo:** Otro posibilidad para evitar los ecos de terreno es definir un radio mínimo por debajo del cual no se incluyen los datos para el cálculo de VAD. En el otro extremo, es posible definir un radio máximo para limitar el uso de datos muy lejanos al centro del volumen de escaneo. Esto es importante para evitar inhomogeneidades en el campo de viento horizontal.
-* **Cantidad de datos por anillo:** el algoritmo cuenta la cantidad de datos válidos por anillo y se define un porcentaje de datos faltantes respecto del total, por ejemplo 20%. Si se excede al máximo definido el anillo es descartado. De esta manera se evita la utilización de anillos donde la señal es muy débil.
-* **Hueco continuo en un anillo:** Además de los datos faltantes ubicados de manera aleatoria a lo largo de un anillo, los huecos continuos pueden ocurrir debido a la falta de señal en una determinada región. De acuerdo a @Matejka1991 esto puede generar importantes errores en el resultado final, por lo tanto cuando el hueco es mayor a 30° de azimut, el anillo se descarta.
-* **Errores aleatorios:** Los errores aleatorios producto de ruido del instrumento pueden ser eliminados utilizando un filtro pasa bajo [@Gao2004]. Este control no elimina anillos pero produce un suavizado de los datos.
+* **Ángulos de elevación seleccionados:** La presencia de ecos de terreno pueden generar que los campos de velocidad radial para los primeros ángulos de elevación sean muy ruidosos y sin coherencia espacial. En el otro extremo, los ángulos superiores suelen tener pocos datos válidos (es decir, no dato faltante) debido a la escasa señal cerca del tope de la capa límite y atmósfera libre en días claros. Debido a esto es posible seleccionar el rango de ángulos a ser analizados y utilizados en el cálculo del VAD con el $Ángulo \; mínimo$ y el $Ángulo \; máximo$.
+* **Selección del dominio de cálculo:** Otro posibilidad para evitar los ecos de terreno es definir un $Radio \; interior$ por debajo del cual no se incluyen los datos para el cálculo de VAD. En el otro extremo, es posible definir un $Radio \; exterior$ para limitar el uso de datos muy lejanos al centro del volumen de escaneo. Esto es importante para evitar inhomogeneidades en el campo de viento horizontal.
+* **Cantidad de datos por anillo:** el algoritmo cuenta la cantidad de datos válidos por anillo y se define un porcentaje de datos faltantes respecto del total, por ejemplo 20%. Si se excede al máximo definido o $NaN \; máximo$ el anillo es descartado. De esta manera se evita la utilización de anillos donde la señal es muy débil.
+* **Hueco continuo en un anillo:** Además de los datos faltantes ubicados de manera aleatoria a lo largo de un anillo, los huecos continuos pueden ocurrir debido a la falta de señal en una determinada región. De acuerdo a @Matejka1991 esto puede generar importantes errores en el resultado final, por lo tanto cuando el hueco o $Gap \; máximo$ es mayor a 30° de azimut, el anillo se descarta.
+* **Errores aleatorios:** Los errores aleatorios producto de ruido del instrumento pueden ser eliminados utilizando un filtro pasa bajo [@Gao2004]. Este control no elimina anillos pero produce un suavizado de los datos. Es necesario definir la cantidad de datos o $Pesos$ que se utilizaran para calcular filtro en cada punto.
 
 #### Luego del ajuste
 
@@ -568,9 +570,6 @@ ggplot(aes(ht, value, color = variable)) +
 remove(list = c("sondeo","vade", "vadena"))
 ```
 
-
-Esto puede verificarse con el cálculo de distintos errores [@Gao2004]: la raíz del error cuadrático medio ($rms = \sqrt{ \frac{\sum (V-V_{ref})^2}{N} }$) y el error relativo al rms ($rre = \sqrt{ \frac{\sum (V-V_{ref})^2}{\sum (V_{ref})^2} }$) donde $V_{ref}$ corresponde a la variable de referencia, en este caso el sondeo. Los resultados se muestran en la Tabla \ref{validacion-errores} y como puede observarse no hay un aumento importante al incorporar errores aleatorios y disminuye al quitar datos en la prueba EA+NA ya que los errores calculados son sensibles a la cantidad total de datos.
-
 ```{r validacion-errores}
 tmp <- melt(vad[, c("sondeo_spd", "spd", "spd_e", "spd_ena", "ht")], 
             id.vars = "ht")
@@ -580,10 +579,24 @@ tmp <- tmp[, .(rms = rms(value, tmp[variable == "sondeo_spd", value]),
   .[, Prueba := c("SE", "EA", "EA+NA")] %>% 
   .[, c(4, 2, 3)]
 
-knitr::kable(tmp, digits = 4, caption = "Errores calculados para las distintas pruebas de validación.")
+kable(tmp, digits = 4, caption = "Errores calculados para las distintas pruebas de validación.")
 ```
 
+
+Esto puede verificarse con el cálculo de distintos errores [@Gao2004]: la raíz del error cuadrático medio ($rms = \sqrt{ \frac{\sum (V-V_{ref})^2}{N} }$) y el error relativo al rms ($rre = \sqrt{ \frac{\sum (V-V_{ref})^2}{\sum (V_{ref})^2} }$) donde $V_{ref}$ corresponde a la variable de referencia, en este caso el sondeo. Los resultados se muestran en la Tabla \ref{validacion-errores} y como puede observarse no hay un aumento importante al incorporar errores aleatorios y disminuye al quitar datos en la prueba EA+NA ya que los errores calculados son sensibles a la cantidad total de datos.
+
 El efecto más importante en las pruebas de validación corresponde a la presencia de NAs. La falta de datos en distintas regiones para rangos a partir de 10 a 15 km impide el cálculo del perfil por encima de 800 metros (con excepción de un punto a los 2000 metros de altura).
+
+### Configuración del algoritmo
+
+En la Tabla \ref{parametros} se detallan los valores utilizados en los distintos parámetros necesarios para el algorimo VAD que se mantuvieron para todos los casos de estudio.
+
+```{r parametros}
+param <- read.csv("seudocache/parametros.csv", sep = ";", header = T)
+kable(param, format = "latex", booktabs = T, caption = "Parámetros utilizados en el cálculo del VAD y la construcción de la grilla vertical para todos los casos") %>% 
+  collapse_rows(1)
+```
+
 
 ## Consistencia temporal de las observaciones
 
@@ -648,6 +661,12 @@ Esta oscilación puede verse en la rotación del vector del viento con la altura
 
 ## WRF
 
+En este trabajo se utilizó el modelo WRF versión 3.9.1 para la realización de simulaciones numéricas que permitan comparar algunas de las parametrizaciones de CLP disponibles: YSU (Yonsei University Scheme), MYJ(Mellor–Yamada–Janjic) y ACM2 (Asymmetric Convection Model 2). 
+
+Las simulaciones se integraron en un dominio anidado en un sentido de dos niveles, el nivel superior con una resolución de 12 x 12 km y 105 x 105 puntos de grilla y el nivel inferior con una resolución de 4 x 4 km y 253 x 253 puntos de grilla, ambos centrados en la ubicación del radar de Paraná. Como se puede ver en la Figura \ref{dom-modelo} cubre todo el centro y norte del país. Se utilizaron datos geográficos con 10 minutos de resolución para el dominio superior y 2 minutos para el dominio inferior.
+
+Ambos dominios tienen una grilla vertical de 42 niveles eta configurados de manera hipérbolo tangencial para que los primeros 15 niveles se ubiquen en los primeros kilómetros. La presión en el tope del modelo es de 100 hPa. De acuerdo a @Shin2012 se determinó que el nivel inferior se ubique en z = 40 metros para evitar errores en algunas variables de superficie asociadas a la CLP.
+
 ```{r dominio, fig.cap="Dominios utilizados. \\label{dominio}", fig.subcap=c("Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior. El punto representa la ubicación del radar. \\label{dom-modelo}", "Topografía sobre el nivel del radar. El circulo negro coresponde al dominio de análisis, de 40km de radio y centrado en el radar. \\label{dom-radar}"), out.width="0.48\\textwidth", fig.align='center', fig.sep = "\\hfill"}
 
 path <- "~/Radar/WRF/"
@@ -692,14 +711,63 @@ ggplot(hgt, aes(lon, lat)) +
 remove(circle, hgt)
 ```
 
-Presentación de la idea: sensibilidad del esquema de PBL 
-Dominio
-Periodo modelado
-Niveles verticales utilizados debido al efecto sobre la altura de la capa límite.
-Parametrizaciones usadas (no PBL)
+Se realizaron simulaciones para el periodo comprendido en el Caso 1, es decir, entre las 0600 UTC del 13 de enero a las 0000 del 15 de enero de 2016 en todos los casos. Las primeras 6 horas de simulación corresponden al "spin up" del modelo y las siguientes 36 horas pueden ser analizables. Si bien el estudio se centra en comparar las observaciones del 14 de enero con las simulaciones, es importante tener en cuenta que la capa estable nocturna puede ser muy influenciada por la capa mezclada del día anterior, por esta razón la simulación empieza 12 horas antes.
 
-### Parametrizaciones
-Características principales de las parametrizaciones usadas.
+Para las condiciones iniciales para las 0600 UTC del 13 de enero de 2016 se utilizó el Análisis Final (FNL) de National Centers for Environmental Prediction (NCEP) con resolución de 0.25° X 0.25° y las condiciones de borde fueron forzadas por los mismos datos cada 6 horas. 
+
+Para los procesos físicos no asociados a la CLP se usaron las siguientes parametrizaciones: RRTMG (Rapid Radiative Transfer Model for GCMs, @Mlawer1997) para la radiación de onda larga, Dudhia [@Dudhia1989]  para la radiación de onda corta, WSM6 (WRF Single-Moment 6-Class Microphysics,  @Hong2006a) para los procesos microfísicos, el esquema Kain-Fritsch para los procesos de convección y el modelo Noah de superficie [@Tewari2004].
+
+### Parametrizaciones de capa límite
+
+Se presentan las características generales de cada parametrización analizada y el esquema de capa de superficie asociado a cada una (ya que cada parametrización de CLP tiene una determinada parametrización de capa de superficie y lamentablemente no se puede utilizar una en común).
+
+* **YSU**
+
+El esquema YSU [@Hong2006] es un esquema no local y como previamente se mencionó, determina el valor de una variable no conocida en un punto a partir de variables conocidas en distintos puntos. Está configurado con una clausura de primer orden y considera la mezcla no local debido a torbellinos grandes agregando un término de ajuste de gradiente al gradiente local a cada variable de pronóstico. El esquema usa la parametrización de capa de superficie MM5 Monin-Obukohv Similarity.
+
+* **MYJ**
+
+El esquema MYJ es un esquema local que usa una clausura de orden 1.5 y determina los coeficientes de difusión a partir del cálculo de la energía cinética de las perturbaciones pronosticada [@Janjic1994]. MYJ usa el esquema de capa de superficie Janjic Eta Monin–Obukhov.
+
+* **ACM2**
+
+Este esquema es similar a YSU en el sentido de que es no local y  tiene clausura de primer orden. Sin embargo considera un transporte no local hacia arriba y un transporte local hacia abajo "capa a capa" para las variables de pronóstico [@Pleim2007]. También utiliza el esquema de capa de superficie MM5 Monin-Obukohv Similarity.
+
+### Procesamiento de los datos
+
+Las simulaciones fueron post procesadas con el módulo ARWPost donde se eligió una resolución vertical de 100 metros en los primeros kilómetros de la atmósfera de tal manera que coincida con la grilla vertical de las observaciones de radar. El dominio inicial fue recortado para analizar el disco de 40 km de radio alrededor del radar como se muestra en la Figura \ref{dom-radar}.
+
+El análisis del viento requiere un segundo procesamiento para transformar la variable a la grilla del radar y de esta manera obtener el perfil vertical de viento a partir del VAD y mejorar la comparación con las observaciones. Este procesamiento se realiza con **AGREGAR** a partir de las salidas no procesadas del modelo.
+
+El análisis del resto de las variables pueden hacerse tomando el dato del punto más cercano al radar o a partir del promedio espacial en todo el dominio analizado. Se explorarán ambas posibilidades para determinar posibles diferencias y analizar la homogeneidad espacial.
+
+#### Coeficientes de difusividad turbulenta
+
+Fue posible configurar el modelo para obtener algunas variables específicas de los esquemas de CLP como la altura de la capa límite estimada por cada parametrización ($h$), la Longitud de Monin-Obukohv ($L$), la velocidad de fricción ($u_*$) y el coeficiente de difusividad de calor ($K_h$). 
+
+No se pudo obtener el coeficiente de difusividad de cantidad de movimiento ($K_m$) directamente desde el modelo por lo que se estimó a partir de la relación $K_m = K_h \: P_r$ donde $P_r$ es el número de Prandtl. Este último se determinó calculando los perfiles de los coeficientes de difusividad según @Ulke2000:
+
+* **Condiciones estables ($h/L > 0$)**
+
+\begin{equation} \label{k-1}
+K_m(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1 + 6.9\frac{h}{L}\frac{z}{h} \right)^{-1}
+\end{equation}
+
+\begin{equation} \label{k-2}
+K_h(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1 + 9.2\frac{h}{L}\frac{z}{h} \right)^{-1}
+\end{equation}
+
+* **Condiciones inestables ($h/L < 0$)**
+
+\begin{equation} \label{k-3}
+K_m(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1 - 22\frac{h}{L}\frac{z}{h} \right)^{1/4}
+\end{equation}
+
+\begin{equation} \label{k-4}
+K_h(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1 - 13\frac{h}{L}\frac{z}{h} \right)^{1/2}
+\end{equation}
+
+Y a partir de esto se obtiene $P_r(z) = K_m/K_h$ para obtener el coeficiente de difusividad de cantidad de movimientos a partir de los datos del modelo.
 
 # Resultados
 

@@ -138,7 +138,7 @@ Sin embargo se observa que esto no ocurre y que existen regiones donde el signo 
 
 
 ```{r L-espacial, fig.cap="Porcentaje de veces que el valor local de L (izquierda) y el flujo vertical de calor (derecha) tiene signo distinto a la moda para todo el periodo analizado, se muestran los valores mayores al 5% (colores) y topografía del dominio (contornos)."}
-L <- caso.YSU[, La := L*mode(L), by = .(date)] %>% 
+L <- copy(caso.YSU)[, La := L*mode(L), by = .(date)] %>% 
   .[, .(mean = mean(La < 0)), by = .(lon, lat)] %>% 
   .[mean > 0.05, ] %>% 
   .[, var := "L"]
@@ -250,7 +250,7 @@ group_by(all.k, param, lev, regimen) %>%
 
 ```{r kh_norm, fig.cap="Coeficiente de difusividad de calor Kh* = Kh/khu* promediado sobre el regimen estable (izquierda) y el regimen inestable (derecha) de la capa límite para los distintos esquemas analizados."}
 
-all.k[, `:=`(kh.u_norm = kh.u/(ust*0.4*pblh),
+all.k <- all.k[, `:=`(kh.u_norm = kh.u/(ust*0.4*pblh),
              km.u_norm = km.u/(ust*0.4*pblh),
            lev_norm = lev/pblh),
     by = .(param, regimen)] %>% 
@@ -258,12 +258,12 @@ all.k[, `:=`(kh.u_norm = kh.u/(ust*0.4*pblh),
         kh.u_norm = approx(lev_norm, kh.u_norm, xout = seq(0, 1, by = 0.1))$y,
         km.u_norm = approx(lev_norm, km.u_norm, xout = seq(0, 1, by = 0.1))$y), 
     by = .(param, regimen, date)] %>% 
-  .[, lapply(.SD, mean, na.rm = T), by = .(param, lev_norm, regimen), .SDcols = -"date"] %>% 
+  .[, lapply(.SD, mean, na.rm = T), by = .(param, lev_norm, regimen), .SDcols = -"date"]
   # group_by(param, lev_norm, regimen) %>% 
   # summarise(Kh.u_norm = mean(kh.u_norm, na.rm = T), Km.u_norm = mean(km.u_norm, na.rm = T)) %>% 
   # ungroup() %>%
   #.[Kh.u > 0 & Km.u > 0, ] %>% 
-  ggplot(aes(lev_norm, kh.u_norm)) + 
+ggplot(all.k, aes(lev_norm, kh.u_norm)) + 
   geom_line(aes(color = as.factor(param))) +
   scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
   scale_y_continuous(name = expression(paste(K[h], "*"))) +
@@ -271,7 +271,17 @@ all.k[, `:=`(kh.u_norm = kh.u/(ust*0.4*pblh),
   facet_wrap(~regimen, scales = "free") +
   #labs(title = "Perfiles a partir del promedio del dominio") +
   coord_flip() +
-  theme_minimal()
+  theme_minimal() +
+ggplot(all.k, aes(lev_norm, km.u_norm)) + 
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[m], "*"))) +
+  scale_x_continuous(name = "z/h") +
+  facet_wrap(~regimen, scales = "free") +
+  #labs(title = "Perfiles a partir del promedio del dominio") +
+  coord_flip() +
+  theme_minimal() +
+  plot_layout(ncol = 1)
 ```
 
 

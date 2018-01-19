@@ -1,0 +1,12 @@
+Algoritmo;Parámetro;Valor
+VAD;Ángulo mínimo;3
+VAD;Ángulo máximo;11
+VAD;Radio interior ;0.3 km
+VAD;Radio exterior;40 km
+VAD;NaN máximo;72
+VAD;Gap máximo;30
+VAD;Pesos;NC
+VAD;R cuadrado;0.8
+Grilla vertical;Altura mínima;0.1 Km
+Grilla vertical;Altura máxima;3 Km
+Grilla vertical;Espaciado;0.1 Km
