@@ -103,6 +103,8 @@ radar meteorológico y su posterior uso para la validación de modelos.}
 \usepackage{pdflscape}
 \usepackage{tabu}
 \usepackage{threeparttable}
+\usepackage[normalem]{ulem}
+
 \linespread{1.25}
 \usepackage{subfig}
 \usepackage{hyperref}
@@ -914,8 +916,7 @@ bruscas entre sets de datos y mejorar la coherencia.
 \textbf{Necesito mostrar como quedan los datos acá? No quiero spoilear
 los resultados}
 
-\section{Tratamiento de procesos en la
-CLP}\label{tratamiento-de-procesos-en-la-clp}
+\section{Procesos asociados a la CLP}\label{procesos-asociados-a-la-clp}
 
 El estudio de los procesos que ocurren en la CLP es un desafío cuando no
 se cuentan con datos de la turbulencia. En esta tesis se abordan
@@ -991,7 +992,7 @@ viento.
 \textbf{Ver si resulta lo de usar dBZ o si se puede hacer algo con la
 altura de la capa mezclada}
 
-\subsection{Detección del LLJ}\label{deteccion-del-llj}
+\subsection{Descripción del LLJ}\label{descripcion-del-llj}
 
 El Jet nocturno de capas cajas o LLJ (Low Level Jet) es un fenómeno de
 mesoescala caracterizado por por una corriente fuerte de viento con
@@ -1022,8 +1023,8 @@ equilibrio geostrófico. Sin embargo la fuerza de Coriolis genera una
 oscilación inercial del viento alrededor del viento geostrófico
 produciendo un LLJ supergeostrófico durante el periodo estable.
 
-Esta oscilación puede verse en la rotación del vector del viento con la
-altura (hodógrafa), que para el hemisferio sur será en sentido
+Esta oscilación puede verse en la rotación del vector del viento a lo
+largo del tiempo. Para el hemisferio sur ésta rotación será en sentido
 antihorario. El periodo de la oscilación inercial es de \(P = 2\pi/f\),
 con \(f\) el parámetro de Coriolis. A la latitud de Paraná \(P = 17.79\)
 horas y por lo tanto se espera que el máximo viento ocurra para cuando
@@ -1056,7 +1057,7 @@ variables de superficie asociadas a la CLP.
 
 \begin{figure}
 
-{\centering \subfloat[Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior. El punto representa la ubicación del radar. \label{dom-modelo}\label{fig:dominio1}]{\includegraphics[width=0.48\textwidth]{Tesis_files/figure-latex/dominio-1} }\hfill\subfloat[Topografía sobre el nivel del radar. El circulo negro coresponde al dominio de análisis, de 40km de radio y centrado en el radar. \label{dom-radar}\label{fig:dominio2}]{\includegraphics[width=0.48\textwidth]{Tesis_files/figure-latex/dominio-2} }
+{\centering \subfloat[Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior. El punto representa la ubicación del radar. \label{dom-modelo}\label{fig:dominio1}]{\includegraphics[width=0.48\textwidth]{Tesis_files/figure-latex/dominio-1} }\hfill\subfloat[Topografía sobre el nivel del terreno respecto de la ubicación del radar. El circulo negro corresponde al dominio de análisis, de 40km de radio y centrado en el radar. \label{dom-radar}\label{fig:dominio2}]{\includegraphics[width=0.48\textwidth]{Tesis_files/figure-latex/dominio-2} }
 
 }
 
@@ -1081,9 +1082,9 @@ Para los procesos físicos no asociados a la CLP se usaron las siguientes
 parametrizaciones: RRTMG (Rapid Radiative Transfer Model for GCMs,
 Mlawer et~al. (1997)) para la radiación de onda larga, Dudhia (Dudhia,
 1989) para la radiación de onda corta, WSM6 (WRF Single-Moment 6-Class
-Microphysics, Hong y Jeong-Ock (2006)) para los procesos microfísicos,
-el esquema Kain-Fritsch para los procesos de convección y el modelo Noah
-de superficie (Tewari et~al., 2004).
+Microphysics, Hong y Lim (2006)) para los procesos microfísicos, el
+esquema Kain-Fritsch para los procesos de convección y el modelo Noah de
+superficie (Tewari et~al., 2004).
 
 \subsection{Parametrizaciones de capa
 límite}\label{parametrizaciones-de-capa-limite}
@@ -1143,17 +1144,18 @@ Figura \ref{dom-radar}.
 
 El análisis del viento requiere un segundo procesamiento para
 transformar la variable a la grilla del radar y de esta manera obtener
-el perfil vertical de viento a partir del VAD y mejorar la comparación
-con las observaciones. Este procesamiento se realiza con
+el perfil vertical de viento a partir del VAD y de esa manera, mejorar
+la comparación con las observaciones. Este procesamiento se realiza con
 \textbf{AGREGAR} a partir de las salidas no procesadas del modelo.
 
 El análisis del resto de las variables pueden hacerse tomando el dato
 del punto más cercano al radar o a partir del promedio espacial en todo
 el dominio analizado. Se explorarán ambas posibilidades para determinar
-posibles diferencias y analizar la homogeneidad espacial.
+posibles diferencias y analizar la homogeneidad espacial de las
+variables.
 
-\subsubsection{Coeficientes de difusividad
-turbulenta}\label{coeficientes-de-difusividad-turbulenta}
+\subsection{Tratamiento de variables asociadas a la
+CLP}\label{tratamiento-de-variables-asociadas-a-la-clp}
 
 Fue posible configurar el modelo para obtener algunas variables
 específicas de los esquemas de CLP como la altura de la capa límite
@@ -1161,11 +1163,37 @@ estimada por cada parametrización (\(h\)), la Longitud de Monin-Obukohv
 (\(L\)), la velocidad de fricción (\(u_*\)) y el coeficiente de
 difusividad de calor (\(K_h\)).
 
-No se pudo obtener el coeficiente de difusividad de cantidad de
-movimiento (\(K_m\)) directamente desde el modelo por lo que se estimó a
-partir de la relación \(K_m = K_h \: P_r\) donde \(P_r\) es el número de
-Prandtl. Este último se determinó calculando los perfiles de los
-coeficientes de difusividad según Ulke (2000):
+\subsubsection{Cálculo de la altura de la
+CLP}\label{calculo-de-la-altura-de-la-clp}
+
+Si bien cada parametrización estima la altura de la CLP, esta estimación
+es distinta en cada esquema. YSU calcula el número de Richarson Bulk
+desde superficie y determina \(h\) como la altura a la cual \(R_b\)
+alcanza un valor cŕitico: cero para el régimen inestable y 0.25 para el
+regimen estable (Hong et~al., 2006). ACM2 utiliza el mismo valor crítico
+del \(R_b\) pero en los casos inestables el cálculo del número de
+Richarson se realiza para la capa de entremezcla entre la CLP y la
+atmósfera libre (Pleim, 2007). Por otro lado el esquema MYJ diagnostica
+la altura de la CLP como la altura a la cual la energía cinética
+turbulenta alcanza un valor prescripto en \(0.1 m^2/s^2\) (Janjić,
+1994).
+
+Esto hace que la comparación entre las distintas parametrizaciones no
+sea del todo válida. Por esta razón además de utilizar el valor de \(h\)
+para cada parametrización, en el caso de la capa estable nocturna se
+estimará la altura de la capa a partir de la altura a la que ocurre el
+máximo de viento siguiendo la metodología utilizada para la
+observaciones (Sección \ref{sec-pbh}) y realizar una mejor comparación.
+
+\subsubsection{Coeficientes de difusividad
+turbulenta}\label{coeficientes-de-difusividad-turbulenta}
+
+Si bien se obtuvo el valor de \(K_h\) para cada punto de grilla y cada
+tiempo, no fue posible obtener el coeficiente de difusividad de cantidad
+de movimiento (\(K_m\)) directamente desde el modelo por lo que se
+estimó a partir de la relación \(K_m = K_h \: P_r\) donde \(P_r\) es el
+número de Prandtl. Este último se determinó calculando los perfiles de
+los coeficientes de difusividad según Ulke (2000):
 
 \begin{itemize}
 \tightlist
@@ -1200,6 +1228,10 @@ coeficiente de difusividad de cantidad de movimientos a partir de los
 datos del modelo.
 
 \chapter{Resultados}\label{resultados}
+
+\begin{figure}
+\subfloat[Magnitud del viento. \label{caso1-spd}\label{fig:campo-caso11}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso1-1} }\newline\subfloat[Dirección. \label{caso1-dir}\label{fig:campo-caso12}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso1-2} }\caption{Magnitud del viento y dirección correspondiente al Caso 1 (14/01/2016) obtenidas procesados con VAD \label{campo-caso1}}\label{fig:campo-caso1}
+\end{figure}
 
 \section{Análisis descriptivo de los
 casos}\label{analisis-descriptivo-de-los-casos}
@@ -1306,9 +1338,8 @@ of weather radar wind profiles during bird migration. Journal of
 Atmospheric and Oceanic Technology, 25, 12, 2188-2198.
 
 \hypertarget{ref-Hong2006a}{}
-Hong, S.-Y., y Jeong-Ock, J.L., 2006. The WRF Single-Moment 6-Class
-Microphysics Scheme (WSM6). Journal of The Korean Meteorological
-Society, 42, 2, 129-151.
+Hong, S., y Lim, J., 2006. The WRF single-moment 6-class microphysics
+scheme (WSM6).
 
 \hypertarget{ref-Hong2006}{}
 Hong, S.-Y., Noh, Y., y Dudhia, J., 2006. A New Vertical Diffusion

@@ -69,6 +69,8 @@ map2 <- setDT(fortify(rnaturalearth::ne_countries(country = c("Brazil", "Uruguay
 map <- rbind(map, map2)
 setnames(map, "long", "lon")
 
+text.height <- (297 - 50)/25.4
+
 remove(map2)
 ```
 \renewcommand{\listtablename}{Índice de tablas} 
@@ -449,8 +451,8 @@ radar[Vrena < -999, Vrena := NA]
 radar[elevacion == elev[3] & !is.na(Vr), ] %>%
   RepeatLon(., colname = "azimut") %>% 
   ggplot(aes(azimut, rango/1000)) + 
-  geom_path(data = map[rango <= 300*1000], aes(group = group), 
-            color = "darkgray") +
+  # geom_path(data = map[rango <= 300*1000], aes(group = group), 
+  #           color = "darkgray") +
   geom_point(aes(color = Vr, size = rango)) +
   scale_color_divergent(name = expression(V[r]), limits = c(-20,20)) +
   scale_size_area(max_size = 0.1) +
@@ -465,8 +467,8 @@ radar[elevacion == elev[3] & !is.na(Vr), ] %>%
 radar[elevacion == elev[3] & !is.na(Vrs), ] %>%
   RepeatLon(., colname = "azimut") %>% 
   ggplot(aes(azimut, rango/1000)) + 
-  geom_path(data = map[rango <= 300*1000], aes(group = group), 
-            color = "darkgray") +
+  # geom_path(data = map[rango <= 300*1000], aes(group = group), 
+  #           color = "darkgray") +
   geom_point(aes(color = Vrs, size = rango)) +
   scale_color_divergent(name = expression(V[rs]), limits = c(-20,20)) +
   scale_size_area(max_size = 0.1) +
@@ -481,8 +483,8 @@ radar[elevacion == elev[3] & !is.na(Vrs), ] %>%
 radar[elevacion == elev[3] & !is.na(Vre), ] %>%
   RepeatLon(., colname = "azimut") %>% 
   ggplot(aes(azimut, rango/1000)) + 
-  geom_path(data = map[rango <= 300*1000], aes(group = group), 
-            color = "darkgray") +
+  # geom_path(data = map[rango <= 300*1000], aes(group = group), 
+  #           color = "darkgray") +
   geom_point(aes(color = Vre, size = rango)) +
   scale_color_divergent(name = expression(V[rs]), limits = c(-20,20)) +
   scale_size_area(max_size = 0.1) +
@@ -497,8 +499,8 @@ radar[elevacion == elev[3] & !is.na(Vre), ] %>%
 radar[elevacion == elev[3] & !is.na(Vrena), ] %>%
   RepeatLon(., colname = "azimut") %>% 
   ggplot(aes(azimut, rango/1000)) + 
-  geom_path(data = map[rango <= 300*1000], aes(group = group), 
-            color = "darkgray") +
+  # geom_path(data = map[rango <= 300*1000], aes(group = group), 
+  #           color = "darkgray") +
   geom_point(aes(color = Vrena, size = rango)) +
   scale_color_divergent(name = expression(V[rs]), limits = c(-20,20)) +
   scale_size_area(max_size = 0.1) +
@@ -608,7 +610,7 @@ Aplicación de este método permite eliminar variaciones temporales bruscas entr
 
 **Necesito mostrar como quedan los datos acá? No quiero spoilear los resultados**
 
-## Tratamiento de procesos en la CLP
+## Procesos asociados a la CLP
 
 El estudio de los procesos que ocurren en la CLP es un desafío cuando no se cuentan con datos de la turbulencia. En esta tesis se abordan procesos que pueden ser estudiados a partir de los perfiles de viento y las variables de superficie.
 
@@ -647,7 +649,7 @@ Teniendo en cuenta los datos disponibles se determinará la altura de la capa es
 
 **Ver si resulta lo de usar dBZ o si se puede hacer algo con la altura de la capa mezclada**
 
-### Detección del LLJ
+### Descripción del LLJ
 
 El Jet nocturno de capas cajas o LLJ (Low Level Jet) es un fenómeno de mesoescala caracterizado por por una corriente fuerte de viento con máximos de entre 10 y 20 m/s que se localiza en los primeros cientos de metros de altura [@Stull1988]. Su extensión vertical es poca pero horizontalmente puede extenderse por cientos de kilómetros. De acuerdo a @Vera2006 en la región de Paraná el LLJ es observado frecuentemente en la estación de verano entre las 00 y las 06 UTC.
 
@@ -657,7 +659,7 @@ El LLJ puede producirse por distintos mecanismos entre los que se pueden nombrar
 
 De acuerdo a @Blackadar1957 luego del atardecer, cuando no hay producción de turbulencia se produce un desacople de la capa mezclada y el viento tiende a acelerarse ante la ausencia de la fricción hacia el equilibrio geostrófico. Sin embargo la fuerza de Coriolis genera una oscilación inercial del viento alrededor del viento geostrófico produciendo un LLJ supergeostrófico durante el periodo estable. 
 
-Esta oscilación puede verse en la rotación del vector del viento con la altura (hodógrafa), que para el hemisferio sur será en sentido antihorario. El periodo de la oscilación inercial es de $P = 2\pi/f$, con $f$ el parámetro de Coriolis. A la latitud de Paraná $P = `r abs(round(24000/sin(-31.8)/3600, 2))`$ horas y por lo tanto se espera que el máximo viento ocurra para cuando se alcanza la mitad del periodo desde el atardecer [@Kallistratova2012].
+Esta oscilación puede verse en la rotación del vector del viento a lo largo del tiempo. Para el hemisferio sur ésta rotación será en sentido antihorario. El periodo de la oscilación inercial es de $P = 2\pi/f$, con $f$ el parámetro de Coriolis. A la latitud de Paraná $P = `r abs(round(24000/sin(-31.8)/3600, 2))`$ horas y por lo tanto se espera que el máximo viento ocurra para cuando se alcanza la mitad del periodo desde el atardecer [@Kallistratova2012].
 
 ## WRF
 
@@ -667,7 +669,7 @@ Las simulaciones se integraron en un dominio anidado en un sentido de dos nivele
 
 Ambos dominios tienen una grilla vertical de 42 niveles eta configurados de manera hipérbolo tangencial para que los primeros 15 niveles se ubiquen en los primeros kilómetros. La presión en el tope del modelo es de 100 hPa. De acuerdo a @Shin2012 se determinó que el nivel inferior se ubique en z = 40 metros para evitar errores en algunas variables de superficie asociadas a la CLP.
 
-```{r dominio, fig.cap="Dominios utilizados. \\label{dominio}", fig.subcap=c("Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior. El punto representa la ubicación del radar. \\label{dom-modelo}", "Topografía sobre el nivel del radar. El circulo negro coresponde al dominio de análisis, de 40km de radio y centrado en el radar. \\label{dom-radar}"), out.width="0.48\\textwidth", fig.align='center', fig.sep = "\\hfill"}
+```{r dominio, fig.cap="Dominios utilizados. \\label{dominio}", fig.subcap=c("Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior. El punto representa la ubicación del radar. \\label{dom-modelo}", "Topografía sobre el nivel del terreno respecto de la ubicación del radar. El circulo negro corresponde al dominio de análisis, de 40km de radio y centrado en el radar. \\label{dom-radar}"), out.width="0.48\\textwidth", fig.align='center', fig.sep = "\\hfill"}
 
 path <- "~/Radar/WRF/"
 hgt <- ReadNetCDF(paste(path, "caso1_YSU/hgt_YSU.nc", sep = "")) %>% 
@@ -693,7 +695,7 @@ ggplot(map, aes(lon, lat)) +
 
 
 ggplot(hgt, aes(lon, lat)) + 
-  geom_contour_fill(aes(z = hgt - 75)) +
+  geom_contour_fill(aes(z = hgt - 73)) +
   geom_polygon(fill = NA, color = "black", 
                data = circle[chull(lon, lat)]) +
   scale_fill_gradient(high = "#ffffff", low = "#252525",
@@ -737,15 +739,23 @@ Este esquema es similar a YSU en el sentido de que es no local y  tiene clausura
 
 Las simulaciones fueron post procesadas con el módulo ARWPost donde se eligió una resolución vertical de 100 metros en los primeros kilómetros de la atmósfera de tal manera que coincida con la grilla vertical de las observaciones de radar. El dominio inicial fue recortado para analizar el disco de 40 km de radio alrededor del radar como se muestra en la Figura \ref{dom-radar}.
 
-El análisis del viento requiere un segundo procesamiento para transformar la variable a la grilla del radar y de esta manera obtener el perfil vertical de viento a partir del VAD y mejorar la comparación con las observaciones. Este procesamiento se realiza con **AGREGAR** a partir de las salidas no procesadas del modelo.
+El análisis del viento requiere un segundo procesamiento para transformar la variable a la grilla del radar y de esta manera obtener el perfil vertical de viento a partir del VAD y de esa manera, mejorar la comparación con las observaciones. Este procesamiento se realiza con **AGREGAR** a partir de las salidas no procesadas del modelo.
 
-El análisis del resto de las variables pueden hacerse tomando el dato del punto más cercano al radar o a partir del promedio espacial en todo el dominio analizado. Se explorarán ambas posibilidades para determinar posibles diferencias y analizar la homogeneidad espacial.
+El análisis del resto de las variables pueden hacerse tomando el dato del punto más cercano al radar o a partir del promedio espacial en todo el dominio analizado. Se explorarán ambas posibilidades para determinar posibles diferencias y analizar la homogeneidad espacial de las variables.
 
-#### Coeficientes de difusividad turbulenta
+### Tratamiento de variables asociadas a la CLP
 
 Fue posible configurar el modelo para obtener algunas variables específicas de los esquemas de CLP como la altura de la capa límite estimada por cada parametrización ($h$), la Longitud de Monin-Obukohv ($L$), la velocidad de fricción ($u_*$) y el coeficiente de difusividad de calor ($K_h$). 
 
-No se pudo obtener el coeficiente de difusividad de cantidad de movimiento ($K_m$) directamente desde el modelo por lo que se estimó a partir de la relación $K_m = K_h \: P_r$ donde $P_r$ es el número de Prandtl. Este último se determinó calculando los perfiles de los coeficientes de difusividad según @Ulke2000:
+#### Cálculo de la altura de la CLP
+
+Si bien cada parametrización estima la altura de la CLP, esta estimación es distinta en cada esquema. YSU calcula el número de Richarson Bulk desde superficie y determina $h$ como la altura a la cual  $R_b$ alcanza un valor cŕitico: cero para el régimen inestable y 0.25 para el regimen estable [@Hong2006]. ACM2 utiliza el mismo valor crítico del $R_b$ pero en los casos inestables el cálculo del número de Richarson se realiza para la capa de entremezcla entre la CLP y la atmósfera libre [@Pleim2007]. Por otro lado el esquema MYJ diagnostica la altura de la CLP como la altura a la cual la energía cinética turbulenta alcanza un valor prescripto en $0.1 m^2/s^2$ [@Janjic1994].
+
+Esto hace que la comparación entre las distintas parametrizaciones no sea del todo válida. Por esta razón además de utilizar el valor de $h$ para cada parametrización, en el caso de la capa estable nocturna se estimará la altura de la capa a partir de la altura a la que ocurre el máximo de viento siguiendo la metodología utilizada para la observaciones (Sección \ref{sec-pbh}) y realizar una mejor comparación.
+
+#### Coeficientes de difusividad turbulenta
+
+Si bien se obtuvo el valor de $K_h$ para cada punto de grilla y cada tiempo, no fue posible obtener el coeficiente de difusividad de cantidad de movimiento ($K_m$) directamente desde el modelo por lo que se estimó a partir de la relación $K_m = K_h \: P_r$ donde $P_r$ es el número de Prandtl. Este último se determinó calculando los perfiles de los coeficientes de difusividad según @Ulke2000:
 
 * **Condiciones estables ($h/L > 0$)**
 
@@ -769,7 +779,95 @@ K_h(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1
 
 Y a partir de esto se obtiene $P_r(z) = K_m/K_h$ para obtener el coeficiente de difusividad de cantidad de movimientos a partir de los datos del modelo.
 
+```{r remove-metodologia}
+remove("param", "radar", "tmp", "vad")
+```
+
+
 # Resultados
+
+```{r leo-vad}
+superficie <- read.sup("seudocache/superficie.csv")
+sup_vad <- convert.sup(superficie)
+
+# Caso 1 - 14/01/2016
+vad_20160114 <- read.vad("../../20160114_240/vda*")  
+vad_20160114 <- rbind(subset(sup_vad, 
+                             day(date_time) == 14), vad_20160114)
+
+# Caso 2 - 21/01/2016
+vad_20160121 <- read.vad("../../20160121_240/vda*")  
+vad_20160121 <- rbind(subset(sup_vad, 
+                             day(date_time) == 21), vad_20160121)
+
+# Caso 3 - 20/01/2017
+vad_20170120 <- read.vad("../../20170120_240/vda*")  
+vad_20170120 <- rbind(subset(sup_vad, 
+                             day(date_time) == 20), vad_20170120)
+remove(sup_vad)
+```
+
+```{r campo-caso1, fig.cap="Magnitud del viento y dirección correspondiente al Caso 1 (14/01/2016) obtenidas procesados con VAD \\label{campo-caso1}", fig.subcap=c("Magnitud del viento. \\label{caso1-spd}", "Dirección. \\label{caso1-dir}"), out.width="0.98\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
+vad_20160114[ht > 0.02] %>% 
+  ggplot(aes(date_time, ht)) + 
+  geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
+  scale_color_viridis(name = "Magnitud\ndel viento", direction = 1,
+                      breaks = seq(0, 16, 2), limits = c(0, 16), 
+                      guide = guide_colorbar(order = 1)) + 
+  geom_point(data = subset(vad_20160114, rmse1 > 0.5), 
+             aes(size = rmse1), 
+             shape = 1, color = "grey25") +
+  geom_point(data = subset(vad_20160114, rmse2 > 0.5),
+             aes(size = rmse2), 
+             shape = 4, color = "grey25") +
+  scale_size(name = "Error", guide = guide_legend(order = 2)) +
+  scale_x_datetime(name = "Tiempo (UTC)", date_breaks = "3 hour",
+                   date_labels = "%H UTC", expand = c(0,0)) +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2), 
+                     expand = c(0,0)) +
+  theme_minimal()
+
+vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth)] %>% 
+  ggplot(aes(date_time, ht)) +
+  geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
+             scale = 0.007, start = -90, direction = -1) +
+  # geom_point(data = subset(vad_20160114, rmse1 > 0.5), 
+  #            aes(size = rmse1), 
+  #            shape = 1, color = "grey25") +
+  # geom_point(data = subset(vad_20160114, rmse2 > 0.5),
+  #            aes(size = rmse2), 
+  #            shape = 4, color = "grey25") +
+  scale_color_viridis(name = "Magnitud\ndel viento", 
+                      breaks = seq(0, 16, 2), limits = c(0, 16)) +
+  scale_size_continuous(range = c(0, 5), guide = "none") +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2)) + 
+  scale_x_datetime(name = "Tiempo (UTC)", 
+                   date_breaks = "3 hour", date_labels = "%H UTC", 
+                   expand = c(0,0)) +
+  theme_minimal() 
+```
+
+```{r eval=FALSE, include=FALSE}
+vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth) & ht > 0.02] %>% 
+  ggplot(aes(date_time, ht)) +
+  geom_contour(aes(z = spd_smooth), binwidth = 1, color = "darkgrey") +
+  geom_point(data = subset(vad_20160114, rmse1 > 0.5), 
+             aes(size = rmse1), 
+             shape = 1, color = "grey25") +
+  geom_point(data = subset(vad_20160114, rmse2 > 0.5),
+             aes(size = rmse2), 
+             shape = 4, color = "grey25") +
+  geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
+             scale = 0.007, start = -90, direction = -1) +
+  scale_size_continuous(range = c(0, 5), name = "Error") +
+  scale_color_viridis(name = "Magnitud\ndel viento") +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2)) + 
+  scale_x_datetime(name = "Tiempo (UTC)", 
+                   date_breaks = "3 hour", date_labels = "%H UTC", 
+                   expand = c(0,0)) +
+  theme_minimal() 
+```
+
 
 ## Análisis descriptivo de los casos
 ###caracteristicas generales y sinopticas

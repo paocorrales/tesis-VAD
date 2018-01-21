@@ -31,6 +31,7 @@ read.vad <- function(path, lowess = TRUE){
     temp2$v <- -temp2$spd * cos(temp2$di*pi/180)
   }
   temp2$date_time <- round_date(temp2$date_time, "minute")
+  setDT(temp2)
   
   return(temp2)
 }
@@ -60,7 +61,7 @@ lowess.vad <- function(dataframe, span = 0.06, delta = 0){
 #=========================================================================================#
 
 read.sup <- function(path){
-  sup <- read.csv(path, sep = ";", na.strings = " ")
+  sup <- read.csv(path, sep = ",", na.strings = " ")
   
   # Ahora hay que trabajar sobre el archivo para que las variable de interés estén en las unidades 
   # que corresponden y tengan el nivel correspondiente
