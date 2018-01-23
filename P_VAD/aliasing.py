@@ -18,11 +18,11 @@ import netCDF4
 #import LowPassFilter
 import RadarBeamPropagation
 
-path_user = '../../Radar/VAD/PARANA/20160121/240/*.nc'
+path_user = '../../../../Radar/VAD/PARANA/caso1ysu/*.nc'
 path_user = '../../Radar/VAD/PARANA/20170128/240/cfrad.20170128_103003.000_to_20170128_103427.998_PAR_SUR.nc'
 
 FileList = np.sort(glob.glob(path_user))
-file2read=FileList[101]
+file2read=FileList[2]
 
 # Creamos el objeto "radar"
 radar = pyart.io.read(file2read)
@@ -40,7 +40,7 @@ fig = plt.figure(figsize=[20,15])
 
 ax = fig.add_subplot(211,aspect=1.0)
 
-display.plot_ppi('dBZ', sweep=2, 
+display.plot_ppi('V', sweep=2, 
                  axislabels=(xlabel,ylabel),
                  cmap='seismic',
                  #vmin=-20, vmax=20,
@@ -58,11 +58,11 @@ fig = plt.figure(figsize=[20,15])
 
 ax = fig.add_subplot(212,aspect=1.0)
 
-display.plot_ppi('V', sweep=2, 
+display.plot_ppi('V_model', sweep=2, 
                  axislabels=(xlabel,ylabel),
                  cmap='seismic',
                  #vmin=-20, vmax=20,
-                 colorbar_label='V')
+                 colorbar_label='V_model')
 
 display.plot_range_rings([240],lw=1.0,col='k',ls='-')
 display.plot_range_rings([10,20,40],lw=0.5,col='k',ls='-')
@@ -138,12 +138,12 @@ for j in data_dates:
 
 # Leemos los archicos .nc
 rango = '240/' #Elejimos con que rango queremos trabajar
-path_user = '../../Radar/VAD/PARANA/20160121/'
-FileList = np.sort(glob.glob(path_user + rango + '*.nc'))
+path_user = '../../../../Radar/VAD/PARANA/caso1ysu/'
+FileList = np.sort(glob.glob(path_user + '*.nc'))
 
 # Parametros
 
-field  = 'Vda'    #Nombre de la variable en el archivo de datos
+field  = 'V_model'    #Nombre de la variable en el archivo de datos
 angmin = 2        #Ángulo de elevación mínimo expresado como indice y empezando en 0
 angmax = 10       #Ángulo de elevación máximo expresado como indice
 rint   = 0.3      #Radio interior de la arandala a calcular en Km
@@ -319,7 +319,7 @@ for f in range(len(FileList)):
     rs = rs.flatten('F')
     vad = pandas.DataFrame({'spd':spd, 'rmse':rmse, 'di':di, 'rh':rh, 'ht':ht, 'elev':elev, 'a':a, 'b':b, 'rs':rs})
 
-    vad.to_csv('20160121_240/elev_vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
+    vad.to_csv('../../caso1ysu_240/elev_vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
     #Muestra por pantalla la cantidad de anillos válidos para cada ángulo de elevación
     
 #%%
@@ -329,7 +329,7 @@ for f in range(len(FileList)):
     #========================
  
 #Leemos los archivos
-path_user = '20160121_240/'
+path_user = '../../caso1ysu_240/'
 FileList = np.sort(glob.glob(path_user + 'elev*'))
 
 # Parámetros
@@ -388,12 +388,12 @@ for f in range(len(FileList)):
         totalvad.di[l] = di_wavg
         totalvad.rings[l] = ringpl
 
-    print "Listo " + FileList[f]
+    
     #Escribo un .csv que se guarda con la fecha y la hora del volumen de datos
     #totalvad.to_csv('20160114_240/vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
-    totalvad.to_csv('20160121_240/'+ FileList[f][18:58], sep = ';', na_rep = '-9999')
+    totalvad.to_csv('../../caso1ysu_240/'+ FileList[f][24:64], sep = ';', na_rep = '-9999')
 
-
+    print "Listo " + FileList[f]
 
 
 #%%

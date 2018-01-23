@@ -19,31 +19,31 @@ vad_20160113 <- read.vad("../../20160113_240/vda*")
 vad_20160114 <- read.vad("../../20160114_240/vda*") 
 
 vad_20170120 <- read.vad("../../20170120_240/vda*") 
-vad_20170121 <- read.vad("../../20170121_240/vda*") 
 
-vad_20160116 <- read.vad("../../20160116_240/vda*")
+
 vad_20160123 <- read.vad("../../20160123_240/vda*") 
 vad_20160122 <- read.vad("../../20160122_240/vda*") 
 vad_20160121 <- read.vad("../../20160121_240/vda*")
 
-vad_20160115 <- read.vad("../../20160115_240/vda*")
-vad_20160116 <- read.vad("../../20160116_240/vda*")
+
+
+vad_caso1ysu <- read.vad("../../caso1ysu_240/vda*")
 
 #Plots
 
 dia <- rbind(vad_20170120, vad_20170121)
-dia <- vad_20160121
-perfiles <- subset(dia, ht < 1.0 & minute(date_time) == 00 & hour(date_time) %in% c(06,18))
+dia <- vad_20170120
+perfiles <- subset(dia, ht < 1.0 & minute(date_time) == 00 & hour(date_time) %in% c(06,12, 18))
 tiempos <- subset(dia, minute(date_time) == 0)
 
 # Campo de viento con errores
 ggplot(dia, aes(date_time, ht)) + 
   geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
- # geom_contour(data = vad_20160114, aes(z = spd)) +
+  #geom_contour(data = vad_20160114, aes(z = spd)) +
   scale_color_distiller(name = "Velocidad", type = "seq", palette = 8, direction = 1) + 
   geom_point(data = subset(dia, rmse1 > 0.5), aes(size = rmse1), shape = 1, color = "black") +
   geom_point(data = subset(dia, rmse2 > 0.5), aes(size = rmse2), shape = 4, color = "grey25") +
-  ylim(c(0,2)) + xlab("Tiempo") + 
+  #ylim(c(0,2)) + xlab("Tiempo") + 
   ylab("Altura (km)") + 
   labs(title = paste0("Campo de viento para el ", as.Date(dia$date_time[1]))) +
   theme_minimal()
@@ -58,7 +58,7 @@ ggplot(perfiles, aes(ht, spd, color = as.factor(hour(date_time)))) +
   xlab("Altura (Km)") + 
   labs(title = paste0("Perfiles de viento para el ", as.Date(dia$date_time[1]))) +
   theme_minimal()
-#ggsave(paste0("Perfiles_", as.Date(dia$date_time[1]), ".png"), device = "png", path = "fig")
+ggsave(paste0("Perfiles_", as.Date(dia$date_time[1]), ".png"), device = "png", path = "fig")
 
 # Dirección del viento
 
@@ -96,7 +96,7 @@ ggsave(paste0("Hodografa_horaria_", as.Date(dia$date_time[1]), ".png"), device =
 
 # Hodógrafa
 
-ggplot(subset(tiempos, ht %in% c(0.01, 0.3, 1.0)), aes(u, v,  color = as.factor(ht))) +
+ggplot(subset(tiempos, ht %in% c(0.1, 0.3, 1.0)), aes(u, v,  color = as.factor(ht))) +
   geom_point(aes(x = ifelse(hour(date_time) != 0, u, NA)), size = 1) +
   geom_point(aes(x = ifelse(hour(date_time) == 0, u, NA)), shape = 17, size = 3) +
   geom_path() +

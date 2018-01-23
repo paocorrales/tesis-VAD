@@ -807,6 +807,10 @@ vad_20170120 <- rbind(subset(sup_vad,
 remove(sup_vad)
 ```
 
+## Análisis de las observaciones de radar procesadas con VAD
+
+### Magnitud y velocidad del viento
+
 ```{r campo-caso1, fig.cap="Magnitud del viento y dirección correspondiente al Caso 1 (14/01/2016) obtenidas procesados con VAD \\label{campo-caso1}", fig.subcap=c("Magnitud del viento. \\label{caso1-spd}", "Dirección. \\label{caso1-dir}"), out.width="0.98\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
 vad_20160114[ht > 0.02] %>% 
   ggplot(aes(date_time, ht)) + 
@@ -847,7 +851,7 @@ vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   theme_minimal() 
 ```
 
-```{r eval=FALSE, include=FALSE}
+```{r opcion-simplificada, eval=FALSE, include=FALSE}
 vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth) & ht > 0.02] %>% 
   ggplot(aes(date_time, ht)) +
   geom_contour(aes(z = spd_smooth), binwidth = 1, color = "darkgrey") +
@@ -868,14 +872,29 @@ vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth) & ht > 0.02] %>%
   theme_minimal() 
 ```
 
+### Características de la capa límite
 
-## Análisis descriptivo de los casos
-###caracteristicas generales y sinopticas
-##Análisis de los VAD obtenidos
-##Análisis de la turbulencia
-##Análisis cualitativo de la oscilación inercial
-##Analisis de las corridas y comparación con obs
+Ri vs time + umáx/zmáx vs time + pblh en la capa estable 
+Honografas en altura día/noche  -> Ekman
+#### Oscilación inercial
+Hodografas a lo largo del tiempo -> osiclación inercial
 
+Tendencias?
+
+##Analisis de las simulaciones y comparación con observaciones de radar
+
+### Magnitud y dirección del viento
+
+Campos (mag) + diferencia
+Algo para la dirección, tal vez lo mismo
+Perfiles
+### Características de la capa límite
+L
+Oscilacion inercial
+#### Altura de la capa límite
+Comparación entre simulaciones y observaciones
+Gráfico de dispersión para analizar la altura obtenida con umax
+#### Coeficientes de difusividad turbulenta
 # Conclusiones
 
 # Referencias
