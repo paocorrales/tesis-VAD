@@ -786,24 +786,30 @@ remove("param", "radar", "tmp", "vad")
 
 # Resultados
 
+## Descripción de los casos de estudio
+
 ```{r leo-vad}
-superficie <- read.sup("seudocache/superficie.csv")
+superficie <- setDT(read.sup("seudocache/superficie.csv"))
 sup_vad <- convert.sup(superficie)
 
 # Caso 1 - 14/01/2016
 vad_20160114 <- read.vad("../../20160114_240/vda*")  
 vad_20160114 <- rbind(subset(sup_vad, 
                              day(date_time) == 14), vad_20160114)
+vad_20160114[, caso := "Caso 1"]
 
 # Caso 2 - 21/01/2016
 vad_20160121 <- read.vad("../../20160121_240/vda*")  
 vad_20160121 <- rbind(subset(sup_vad, 
                              day(date_time) == 21), vad_20160121)
+vad_20160121[, caso := "Caso 2"]
 
-# Caso 3 - 20/01/2017
-vad_20170120 <- read.vad("../../20170120_240/vda*")  
-vad_20170120 <- rbind(subset(sup_vad, 
-                             day(date_time) == 20), vad_20170120)
+# Caso 3 - 23/01/2016
+vad_20160123 <- read.vad("../../20160123_240/vda*")  
+vad_20160123 <- rbind(subset(sup_vad, 
+                             day(date_time) == 23), vad_20160123)
+vad_20160123[, caso := "Caso 3"]
+
 remove(sup_vad)
 ```
 
@@ -826,7 +832,7 @@ vad_20160114[ht > 0.02] %>%
              shape = 4, color = "grey25") +
   scale_size(name = "Error", guide = guide_legend(order = 2)) +
   scale_x_datetime(name = "Tiempo (UTC)", date_breaks = "3 hour",
-                   date_labels = "%H UTC", expand = c(0,0)) +
+                   date_labels = "%H:%M", expand = c(0,0)) +
   scale_y_continuous(name = "Altura (km)", limits = c(0,2), 
                      expand = c(0,0)) +
   theme_minimal()
@@ -841,13 +847,12 @@ vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   # geom_point(data = subset(vad_20160114, rmse2 > 0.5),
   #            aes(size = rmse2), 
   #            shape = 4, color = "grey25") +
-  scale_color_viridis(name = "Magnitud\ndel viento", 
+  scale_color_viridis(name = "Velocidad\ndel viento", 
                       breaks = seq(0, 16, 2), limits = c(0, 16)) +
   scale_size_continuous(range = c(0, 5), guide = "none") +
   scale_y_continuous(name = "Altura (km)", limits = c(0,2)) + 
-  scale_x_datetime(name = "Tiempo (UTC)", 
-                   date_breaks = "3 hour", date_labels = "%H UTC", 
-                   expand = c(0,0)) +
+  scale_x_datetime(name = "Hora (UTC)", 
+                   date_breaks = "3 hour", date_labels = "%H:%M") +
   theme_minimal() 
 ```
 
@@ -872,12 +877,186 @@ vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth) & ht > 0.02] %>%
   theme_minimal() 
 ```
 
+```{r campo-caso2, fig.cap="Magnitud del viento y dirección correspondiente al Caso 2 (21/01/2016) obtenidas procesados con VAD \\label{campo-caso1}", fig.subcap=c("Magnitud del viento. \\label{caso2-spd}", "Dirección. \\label{caso2-dir}"), out.width="0.98\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
+vad_20160121[ht > 0.02] %>% 
+  ggplot(aes(date_time, ht)) + 
+  geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
+  scale_color_viridis(name = "Magnitud\ndel viento", direction = 1,
+                      breaks = seq(0, 16, 2), limits = c(0, 16), 
+                      guide = guide_colorbar(order = 1)) + 
+  geom_point(data = subset(vad_20160121, rmse1 > 0.5), 
+             aes(size = rmse1), 
+             shape = 1, color = "grey25") +
+  geom_point(data = subset(vad_20160121, rmse2 > 0.5),
+             aes(size = rmse2), 
+             shape = 4, color = "grey25") +
+  scale_size(name = "Error", guide = guide_legend(order = 2)) +
+  scale_x_datetime(name = "Tiempo (UTC)", date_breaks = "3 hour",
+                   date_labels = "%H:%M", expand = c(0,0)) +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2), 
+                     expand = c(0,0)) +
+  theme_minimal()
+
+vad_20160121[minute(date_time) == 0 & !is.na(spd_smooth)] %>% 
+  ggplot(aes(date_time, ht)) +
+  geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
+             scale = 0.007, start = -90, direction = -1) +
+  # geom_point(data = subset(vad_20160121, rmse1 > 0.5), 
+  #            aes(size = rmse1), 
+  #            shape = 1, color = "grey25") +
+  # geom_point(data = subset(vad_20160121, rmse2 > 0.5),
+  #            aes(size = rmse2), 
+  #            shape = 4, color = "grey25") +
+  scale_color_viridis(name = "Velocidad\ndel viento", 
+                      breaks = seq(0, 16, 2), limits = c(0, 16)) +
+  scale_size_continuous(range = c(0, 5), guide = "none") +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2)) + 
+  scale_x_datetime(name = "Hora (UTC)", 
+                   date_breaks = "3 hour", date_labels = "%H:%M") +
+  theme_minimal() 
+```
+
+```{r campo-caso3, fig.cap="Magnitud del viento y dirección correspondiente al Caso 3 (23/01/2016) obtenidas procesados con VAD \\label{campo-caso3}", fig.subcap=c("Magnitud del viento. \\label{caso1-spd}", "Dirección. \\label{caso3-dir}"), out.width="0.98\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
+vad_20160123[ht > 0.02] %>% 
+  ggplot(aes(date_time, ht)) + 
+  geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
+  scale_color_viridis(name = "Magnitud\ndel viento", direction = 1,
+                      breaks = seq(0, 16, 2), limits = c(0, 16), 
+                      guide = guide_colorbar(order = 1)) + 
+  geom_point(data = subset(vad_20160123, rmse1 > 0.5), 
+             aes(size = rmse1), 
+             shape = 1, color = "grey25") +
+  geom_point(data = subset(vad_20160123, rmse2 > 0.5),
+             aes(size = rmse2), 
+             shape = 4, color = "grey25") +
+  scale_size(name = "Error", guide = guide_legend(order = 2)) +
+  scale_x_datetime(name = "Tiempo (UTC)", date_breaks = "3 hour",
+                   date_labels = "%H:%M", expand = c(0,0)) +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2), 
+                     expand = c(0,0)) +
+  theme_minimal()
+
+vad_20160123[minute(date_time) == 0 & !is.na(spd_smooth)] %>% 
+  ggplot(aes(date_time, ht)) +
+  geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
+             scale = 0.007, start = -90, direction = -1) +
+  # geom_point(data = subset(vad_20160123, rmse1 > 0.5), 
+  #            aes(size = rmse1), 
+  #            shape = 1, color = "grey25") +
+  # geom_point(data = subset(vad_20160123, rmse2 > 0.5),
+  #            aes(size = rmse2), 
+  #            shape = 4, color = "grey25") +
+  scale_color_viridis(name = "Velocidad\ndel viento", 
+                      breaks = seq(0, 16, 2), limits = c(0, 16)) +
+  scale_size_continuous(range = c(0, 5), guide = "none") +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2)) + 
+  scale_x_datetime(name = "Hora (UTC)", 
+                   date_breaks = "3 hour", date_labels = "%H:%M") +
+  theme_minimal() 
+```
+
+```{r perfiles}
+gdata <- rbindlist(list(vad_20160114, vad_20160121, vad_20160123)) %>% 
+  .[minute(date_time) == 00 & hour(date_time) %in% c(06, 17) & ht < 2 &
+      !is.na(spd_smooth)] 
+ggplot(gdata, aes(ht, spd_smooth, color = as.factor(hour(date_time)))) +
+  geom_line() +
+  geom_rug(data = gdata[minute(date_time) == 00 & hour(date_time) == 6][, maxspd := max(spd_smooth, na.rm = T), by = caso][spd_smooth == maxspd]) +
+  geom_rug(data = gdata[minute(date_time) == 00 & hour(date_time) == 6 & ht > 0.5][, minspd := min(spd_smooth, na.rm = T), by = caso][spd_smooth == minspd]) +
+  coord_flip() +
+  scale_color_viridis(name="Hora UTC", discrete = T) + 
+  scale_y_continuous(name = "V (m/s)") + 
+  scale_x_continuous(name = "Altura (Km)", breaks = seq(0, 2, 0.5),
+                     limits = c(0, 2)) + 
+  facet_wrap(~caso) + 
+  theme_minimal()
+```
+
+
 ### Características de la capa límite
 
-Ri vs time + umáx/zmáx vs time + pblh en la capa estable 
-Honografas en altura día/noche  -> Ekman
+```{r make-ri}
+sup_20160114 <- superficie[day(fecha) == 14]
+ri_20160114 <- create.ri(vad_20160114, sup_20160114$fecha, sup_20160114$temp, sup_20160114$presion_estacion, 27.7, 1002.6)
+ri_20160114[, caso := "Caso 1"]
+
+sup_20160121 <- superficie[day(fecha) == 21]
+ri_20160121 <- create.ri(vad_20160121, sup_20160121$fecha, sup_20160121$temp, sup_20160121$presion_estacion, 35.7, 1001.8)
+ri_20160121[, caso := "Caso 2"]
+
+sup_20160123 <- superficie[day(fecha) == 23]
+ri_20160123 <- create.ri(vad_20160123, sup_20160123$fecha, sup_20160123$temp, sup_20160123$presion_estacion, 34.2, 998.8)
+ri_20160123[, caso := "Caso 3"]
+
+ri_vad <- rbindlist(list(ri_20160114, ri_20160121, ri_20160123))
+ri_vad[, hora := day(date_time)]
+
+remove(sup_20160114, sup_20160121, sup_20160123, 
+            ri_20160114, ri_20160121, ri_20160123)
+```
+
+
+```{r estable-vad, fig.cap="Series de tiempo de algunas característicad de la capa estable nocturna para todos los casos. \\label{estable-vad}", fig.subcap=c("Altura de la capa estable \\label{h-vad}", "Cortante (u\\_max/z\\_max) \\label{cortante-vad}", "Número de Richardson \\label{ri}"), fig.ncol=1, fig.height=0.28*text.height}
+ri_vad$hora <- ri_vad$date_time
+day(ri_vad$hora) = 14
+lim <- as.POSIXct(c(as_datetime("2016-01-14 00:00:00"), as_datetime("2016-01-14 12:00:00")))
+   
+ri_vad[hour(hora) %between% c(0, 12)] %>% 
+  .[(caso == "Caso 1" & hora %between% c(as_datetime("2016-01-14 03:50:00"), as_datetime("2016-01-14 09:40:00"))) | 
+    (caso == "Caso 2" & hora %between% c(as_datetime("2016-01-14 04:00:00"), as_datetime("2016-01-14 10:50:00"))) |
+    (caso == "Caso 3" & hora %between% c(as_datetime("2016-01-14 02:00:00"), as_datetime("2016-01-14 09:30:00")))] %>% 
+  ggplot(aes(hora, z_max)) +
+  geom_line(aes(color = caso)) +
+  scale_color_viridis(name = "Casos", discrete = T) +
+  scale_y_continuous(name = "h (Km)") +
+  scale_x_datetime(name = "Hora UTC", limits = lim) +
+  coord_cartesian(ylim = c(0, 0.8)) + 
+  theme_minimal()
+
+ri_vad[hour(hora) %between% c(0, 12)] %>% 
+  .[(caso == "Caso 1" & hora %between% c(as_datetime("2016-01-14 03:50:00"), as_datetime("2016-01-14 09:40:00"))) |
+    (caso == "Caso 2" & hora %between% c(as_datetime("2016-01-14 04:00:00"), as_datetime("2016-01-14 10:50:00"))) |
+    (caso == "Caso 3" & hora %between% c(as_datetime("2016-01-14 02:00:00"), as_datetime("2016-01-14 09:30:00")))] %>%
+  ggplot(aes(hora, u_max/z_max)) +
+  geom_line(aes(color = caso)) +
+  scale_color_viridis(name = "Casos", discrete = T) +
+  scale_y_continuous(name = "u_max/z_max (s-1)") +
+  scale_x_datetime(name = "Hora UTC", limits = lim) +
+  theme_minimal()
+
+ri_vad[hour(hora) %between% c(0, 12)] %>% 
+  ggplot(aes(hora, ri)) +
+  annotate(geom = "rect", 
+           xmin = as_datetime("2016-01-14 03:50:00"),
+           xmax = as_datetime("2016-01-14 09:40:00"), 
+           ymin = -Inf, ymax = Inf, 
+           color = "#440154",
+           fill = "#440154", alpha = 0.1) +
+  annotate(geom = "rect", xmin = as_datetime("2016-01-14 04:00:00"),
+           xmax = as_datetime("2016-01-14 10:50:00"), 
+           ymin = -Inf, ymax = Inf, 
+           color = "#21908c",
+           fill = "#21908c", alpha = 0.1) +
+    annotate(geom = "rect", xmin = as_datetime("2016-01-14 02:00:00"),
+           xmax = as_datetime("2016-01-14 09:30:00"), 
+           ymin = -Inf, ymax = Inf, 
+           color = "#fde725",
+           fill = "#fde725", alpha = 0.1) +
+  geom_point(aes(color = caso)) +
+  scale_color_viridis(name = "Casos", discrete = T) +
+  geom_hline(yintercept = 1, color = "darkgray") +
+  scale_y_continuous(name = "Richardson") +
+  scale_x_datetime(name = "Hora UTC", limits = lim) +
+  theme_minimal()
+```
+
+
+
+<!-- Ri vs time + umáx/zmáx vs time + pblh en la capa estable  -->
+<!-- Honografas en altura día/noche  -> Ekman -->
+
 #### Oscilación inercial
-Hodografas a lo largo del tiempo -> osiclación inercial
+<!-- Hodografas a lo largo del tiempo -> osiclación inercial -->
 
 Tendencias?
 

@@ -13,6 +13,15 @@ ri_20160114$t_i <- 27.7+273.15 #21 UTC 13/01/2017
 ri_20160114$p_i <- 1003.3
 
 sup_20160114 <- read.sup("seudocache/parana2016.csv")
+sup <- read.csv("seudocache/parana2016.csv", sep = ";")
+sup$intensidad <- sup$intensidad * 0.5144 #Paso de nudos a m/s
+sup$direccion <- sup$direccion * 10 #Paso del formato synop a angulos entre 0 y 360
+sup$ht <- 0.01 #El viento se mide a 10 metros, la temperatura a dos. 
+
+# Ahora la fecha y hora, miedo.
+sup$fecha <- dmy_hm(paste0(sup$fecha, " - ", sup$hora.utc, ":00"))
+
+sup_20160114 <- sup
 
 temp_sup <- approxfun(sup_20160114$hora.utc, sup_20160114$temp)
 ri_20160114$t_f <- approx(sup_20160114$fecha, sup_20160114$temp, xout = ri_20160114$date_time)$y + 273
@@ -75,7 +84,7 @@ selectmax <- function(spd, ht) {
 ri_20160123 <- vad_20160123 %>% 
   group_by(date_time) %>% 
   summarise(u_max = max(spd_smooth, na.rm = T), 
-            z_max = selectmax(spd_smooth, ht))
+            z_max = ht[which.max(spd_smooth)])
 
 
 ri_20160123$t_i <- 34.2+273.15

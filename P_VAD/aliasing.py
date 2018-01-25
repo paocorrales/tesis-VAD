@@ -142,7 +142,7 @@ path_user = '../../../../Radar/VAD/PARANA/caso1ysu/'
 FileList = np.sort(glob.glob(path_user + '*.nc'))
 
 # Parametros
-
+@Jo
 field  = 'V_model'    #Nombre de la variable en el archivo de datos
 angmin = 2        #Ángulo de elevación mínimo expresado como indice y empezando en 0
 angmax = 10       #Ángulo de elevación máximo expresado como indice

@@ -1,0 +1,31 @@
+\select@language {spanish}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Topografía de la región en estudio en metros sobre el nivel del mar.}}{12}{figure.caption.6}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\circ }$ y $V_N = 6.7 m/s$. Notar las escalas diferentes.\relax }}{16}{figure.caption.7}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Con aliasing }}}{16}{subfigure.2.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Sin aliasing }}}{16}{subfigure.2.2}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Velocidad radial (m/s) en función del azimut (grados) para un rango y ańgulo de elevación fijos. En color se ajusta una función sinusoidal a los datos. \relax }}{16}{figure.caption.8}
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Velocidad radial (m/s) observada a las 12 UTC por el radar de Anguil en la elevación $1.3^{\circ }$ y la misma variable transformada a partir del sondeo de la estación Santa Rosa Aero para la misma hora \relax }}{23}{figure.caption.9}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Datos de radar }}}{23}{subfigure.4.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Sin errores }}}{23}{subfigure.4.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Con errores }}}{23}{subfigure.4.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Con errores + NAs }}}{23}{subfigure.4.4}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruevas de validación a la izquierda y el detalle ampliado del máximo en niveles bajos \relax }}{24}{figure.caption.10}
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Dominios utilizados. \relax }}{29}{figure.caption.12}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior. El punto representa la ubicación del radar. }}}{29}{subfigure.6.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Topografía sobre el nivel del terreno respecto de la ubicación del radar. El circulo negro corresponde al dominio de análisis, de 40km de radio y centrado en el radar. }}}{29}{subfigure.6.2}
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Magnitud del viento y dirección correspondiente al Caso 1 (14/01/2016) obtenidas procesados con VAD \relax }}{34}{figure.caption.13}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Magnitud del viento. }}}{34}{subfigure.1.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Dirección. }}}{34}{subfigure.1.2}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Magnitud del viento y dirección correspondiente al Caso 2 (21/01/2016) obtenidas procesados con VAD \relax }}{35}{figure.caption.14}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Magnitud del viento. }}}{35}{subfigure.2.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Dirección. }}}{35}{subfigure.2.2}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Magnitud del viento y dirección correspondiente al Caso 3 (23/01/2016) obtenidas procesados con VAD \relax }}{36}{figure.caption.15}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Magnitud del viento. }}}{36}{subfigure.3.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Dirección. }}}{36}{subfigure.3.2}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Series de tiempo de algunas característicad de la capa estable nocturna para todos los casos. \relax }}{39}{figure.caption.16}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Altura de la capa estable }}}{39}{subfigure.4.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Cortante (umax zmax) }}}{39}{subfigure.4.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Número de Richardson }}}{39}{subfigure.4.3}

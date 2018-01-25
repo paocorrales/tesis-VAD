@@ -82,8 +82,7 @@ read.sup <- function(path){
 #=========================================================================================#
 
 convert.sup <- function(sup){
-  keep <- c("fecha", "ht", "direccion", "intensidad")
-  sup <- sup[keep]
+  sup <- sup[, .(fecha, ht, direccion, intensidad)]
   sup$u <- sup$intensidad * cos(sup$direccion*pi/180)
   sup$v <- sup$intensidad * sin(sup$direccion*pi/180)
   
@@ -126,6 +125,28 @@ ri <- function(t_i, t_f, p_i, p_f, u_max, z_max){
   tita_m <- (tita_i + tita_f)/2
   ri<- (g * (tita_i - tita_f)/z_max) / (tita_m * (u_max/z_max)^2)
   return(ri)
+}
+
+#=========================================================================================#
+# crea un data frame para trabajar con el número de Richarson bulk jet según Banta 2003
+# requiere datos iniciales.
+#=========================================================================================#
+
+create.ri <- function(vad, date.sup, temp.sup, p.sup, ti, pi){
+  ri_x <- vad %>% 
+    group_by(date_time) %>% 
+    summarise(u_max = max(spd_smooth, na.rm = T), 
+              z_max = ht[which.max(spd_smooth)]) %>% 
+    as.data.table()
+  
+  ri_x[, `:=`(t_i = ti + 273.15, 
+              p_i = pi,
+              t_f = approx(date.sup, temp.sup, xout = ri_x$date_time)$y + 273.15,
+              p_f = approx(date.sup, p.sup, xout = ri_x$date_time)$y)]
+  
+  
+  ri_x[, ri := ri(t_i, t_f, p_i, p_f, u_max, z_max*1000)]
+  ri_x
 }
 
 #=========================================================================================#

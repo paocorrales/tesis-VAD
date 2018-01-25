@@ -1,0 +1,39 @@
+\BOOKMARK [0][-]{chapter.1}{Introducción}{}% 1
+\BOOKMARK [0][-]{chapter.2}{Metodología}{}% 2
+\BOOKMARK [1][-]{section.2.1}{Región y casos de estudio}{chapter.2}% 3
+\BOOKMARK [2][-]{subsection.2.1.1}{Criterios utilizados para la selección de los casos de estudio}{section.2.1}% 4
+\BOOKMARK [2][-]{subsection.2.1.2}{Descripción de los casos de estudio}{section.2.1}% 5
+\BOOKMARK [3][-]{subsubsection.2.1.2.1}{Caso\0401:\04014\040de\040enero\040de\0402016}{subsection.2.1.2}% 6
+\BOOKMARK [3][-]{subsubsection.2.1.2.2}{Caso\0402:}{subsection.2.1.2}% 7
+\BOOKMARK [3][-]{subsubsection.2.1.2.3}{Caso\0403:}{subsection.2.1.2}% 8
+\BOOKMARK [1][-]{section.2.2}{Descripción de los datos de radar}{chapter.2}% 9
+\BOOKMARK [1][-]{section.2.3}{Tratamiento\040de\040aliasing}{chapter.2}% 10
+\BOOKMARK [1][-]{section.2.4}{Velocity\040Azimuth\040Display\040\(VAD\)}{chapter.2}% 11
+\BOOKMARK [2][-]{subsection.2.4.1}{Desarrollo matemático}{section.2.4}% 12
+\BOOKMARK [2][-]{subsection.2.4.2}{Controles\040de\040calidad\040de\040los\040datos}{section.2.4}% 13
+\BOOKMARK [3][-]{subsubsection.2.4.2.1}{Antes\040del\040ajusta\040de\040los\040datos}{subsection.2.4.2}% 14
+\BOOKMARK [3][-]{subsubsection.2.4.2.2}{Luego\040del\040ajuste}{subsection.2.4.2}% 15
+\BOOKMARK [2][-]{subsection.2.4.3}{Validación}{section.2.4}% 16
+\BOOKMARK [3][-]{subsubsection.2.4.3.1}{Pruebas}{subsection.2.4.3}% 17
+\BOOKMARK [3][-]{subsubsection.2.4.3.2}{Perfiles\040obtenidos}{subsection.2.4.3}% 18
+\BOOKMARK [2][-]{subsection.2.4.4}{Configuración del algoritmo}{section.2.4}% 19
+\BOOKMARK [1][-]{section.2.5}{Consistencia\040temporal\040de\040las\040observaciones}{chapter.2}% 20
+\BOOKMARK [1][-]{section.2.6}{Procesos\040asociados\040a\040la\040CLP}{chapter.2}% 21
+\BOOKMARK [2][-]{subsection.2.6.1}{Determinación del estado de la turbulencia}{section.2.6}% 22
+\BOOKMARK [2][-]{subsection.2.6.2}{Altura de la capa límite }{section.2.6}% 23
+\BOOKMARK [2][-]{subsection.2.6.3}{Descripción del LLJ}{section.2.6}% 24
+\BOOKMARK [1][-]{section.2.7}{WRF}{chapter.2}% 25
+\BOOKMARK [2][-]{subsection.2.7.1}{Parametrizaciones de capa límite}{section.2.7}% 26
+\BOOKMARK [2][-]{subsection.2.7.2}{Procesamiento\040de\040los\040datos}{section.2.7}% 27
+\BOOKMARK [2][-]{subsection.2.7.3}{Tratamiento\040de\040variables\040asociadas\040a\040la\040CLP}{section.2.7}% 28
+\BOOKMARK [3][-]{subsubsection.2.7.3.1}{Cálculo de la altura de la CLP}{subsection.2.7.3}% 29
+\BOOKMARK [3][-]{subsubsection.2.7.3.2}{Coeficientes\040de\040difusividad\040turbulenta}{subsection.2.7.3}% 30
+\BOOKMARK [0][-]{chapter.3}{Resultados}{}% 31
+\BOOKMARK [1][-]{section.3.1}{Descripción de los casos de estudio}{chapter.3}% 32
+\BOOKMARK [1][-]{section.3.2}{Análisis de las observaciones de radar procesadas con VAD}{chapter.3}% 33
+\BOOKMARK [2][-]{subsection.3.2.1}{Magnitud\040y\040velocidad\040del\040viento}{section.3.2}% 34
+\BOOKMARK [2][-]{subsection.3.2.2}{Características de la capa límite}{section.3.2}% 35
+\BOOKMARK [3][-]{subsubsection.3.2.2.1}{Oscilación inercial}{subsection.3.2.2}% 36
+\BOOKMARK [1][-]{section.3.3}{Analisis de las simulaciones y comparación con observaciones de radar}{chapter.3}% 37
+\BOOKMARK [2][-]{subsection.3.3.1}{Magnitud y dirección del viento}{section.3.3}% 38
+\BOOKMARK [0][-]{chapter*.17}{Referencias}{}% 39
