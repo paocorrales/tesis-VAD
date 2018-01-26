@@ -32,7 +32,7 @@ bibliography:
 - Bibliografia/packages.bib
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, cache = FALSE}
 knitr::opts_chunk$set(echo = FALSE,
                       cache = TRUE,
                       warning = FALSE,
@@ -793,6 +793,7 @@ remove("param", "radar", "tmp", "vad")
 ## Descripción de los casos de estudio
 
 ```{r leo-vad}
+
 superficie <- setDT(read.sup("seudocache/superficie.csv"))
 sup_vad <- convert.sup(superficie)
 
@@ -960,7 +961,6 @@ vad_20160123[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
 ```
 
 ```{r perfiles, fig.cap="Perfil de viento observado por el radar a las 0600 y las 1700 UTC y el $rmse_2$ calculado en sombreado para cada caso. El valor en superficie corresponde a lo observado por la estación meteorógica. \\label{perfiles-horarios}", out.width="0.95\\textwidth", fig.align='center'}
-
 gdata <- rbindlist(list(vad_20160114, vad_20160121, vad_20160123)) %>% 
   .[minute(date_time) == 00 & hour(date_time) %in% c(06, 17) & ht < 2 &
       !is.na(spd_smooth)] 
