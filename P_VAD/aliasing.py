@@ -18,7 +18,7 @@ import netCDF4
 #import LowPassFilter
 import RadarBeamPropagation
 
-path_user = '../../../../Radar/VAD/PARANA/caso1ysu/*.nc'
+path_user = '../../../../Radar/VAD/PARANA/caso1myj/*.nc'
 path_user = '../../Radar/VAD/PARANA/20170128/240/cfrad.20170128_103003.000_to_20170128_103427.998_PAR_SUR.nc'
 
 FileList = np.sort(glob.glob(path_user))
@@ -138,11 +138,11 @@ for j in data_dates:
 
 # Leemos los archicos .nc
 rango = '240/' #Elejimos con que rango queremos trabajar
-path_user = '../../../../Radar/VAD/PARANA/caso1ysu/'
+path_user = '../../../../Radar/VAD/PARANA/caso1myj/'
 FileList = np.sort(glob.glob(path_user + '*.nc'))
 
 # Parametros
-@Jo
+
 field  = 'V_model'    #Nombre de la variable en el archivo de datos
 angmin = 2        #Ángulo de elevación mínimo expresado como indice y empezando en 0
 angmax = 10       #Ángulo de elevación máximo expresado como indice
@@ -319,7 +319,7 @@ for f in range(len(FileList)):
     rs = rs.flatten('F')
     vad = pandas.DataFrame({'spd':spd, 'rmse':rmse, 'di':di, 'rh':rh, 'ht':ht, 'elev':elev, 'a':a, 'b':b, 'rs':rs})
 
-    vad.to_csv('../../caso1ysu_240/elev_vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
+    vad.to_csv('../../caso1myj_240/elev_vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
     #Muestra por pantalla la cantidad de anillos válidos para cada ángulo de elevación
     
 #%%
@@ -329,7 +329,7 @@ for f in range(len(FileList)):
     #========================
  
 #Leemos los archivos
-path_user = '../../caso1ysu_240/'
+path_user = '../../caso1myj_240/'
 FileList = np.sort(glob.glob(path_user + 'elev*'))
 
 # Parámetros
@@ -391,7 +391,7 @@ for f in range(len(FileList)):
     
     #Escribo un .csv que se guarda con la fecha y la hora del volumen de datos
     #totalvad.to_csv('20160114_240/vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
-    totalvad.to_csv('../../caso1ysu_240/'+ FileList[f][24:64], sep = ';', na_rep = '-9999')
+    totalvad.to_csv('../../caso1myj_240/'+ FileList[f][24:64], sep = ';', na_rep = '-9999')
 
     print "Listo " + FileList[f]
 

@@ -27,5 +27,9 @@
 \contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Dirección. }}}{36}{subfigure.3.2}
 \contentsline {figure}{\numberline {3.4}{\ignorespaces Series de tiempo de algunas característicad de la capa estable nocturna para todos los casos. \relax }}{39}{figure.caption.16}
 \contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Altura de la capa estable }}}{39}{subfigure.4.1}
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Cortante (umax zmax) }}}{39}{subfigure.4.2}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Cortante (u\_max/z\_max) }}}{39}{subfigure.4.2}
 \contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Número de Richardson }}}{39}{subfigure.4.3}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Variación del vector del viento en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 0600 UTC. El triángulo marca el nivel inferior (z = 100 m) \relax }}{40}{figure.caption.17}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (0000 UTC). \relax }}{40}{figure.caption.18}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Datos observados en la estación meteorológica. }}}{40}{subfigure.6.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Datos observados por el radar }}}{40}{subfigure.6.2}

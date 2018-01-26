@@ -44,6 +44,7 @@ knitr::write_bib(c("base", "data.table", "ggplot2", "metR"),
 library(metR)
 library(ggplot2)
 library(ggforce)
+library(ggrepel)
 library(lubridate)
 library(magrittr)
 library(dplyr)
@@ -955,7 +956,7 @@ vad_20160123[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   theme_minimal() 
 ```
 
-```{r perfiles}
+```{r perfiles, fig.cap="COMPLETAR"}
 gdata <- rbindlist(list(vad_20160114, vad_20160121, vad_20160123)) %>% 
   .[minute(date_time) == 00 & hour(date_time) %in% c(06, 17) & ht < 2 &
       !is.na(spd_smooth)] 
@@ -996,7 +997,7 @@ remove(sup_20160114, sup_20160121, sup_20160123,
 ```
 
 
-```{r estable-vad, fig.cap="Series de tiempo de algunas característicad de la capa estable nocturna para todos los casos. \\label{estable-vad}", fig.subcap=c("Altura de la capa estable \\label{h-vad}", "Cortante (u\\_max/z\\_max) \\label{cortante-vad}", "Número de Richardson \\label{ri}"), fig.ncol=1, fig.height=0.28*text.height}
+```{r estable-vad, fig.cap="Series de tiempo de algunas característicad de la capa estable nocturna para todos los casos. \\label{estable-vad}", fig.subcap=c("Altura de la capa estable \\label{h-vad}", "Cortante (u\\_max/z\\_max) \\label{cortante-vad}", "Número de Richardson \\label{ri}"), fig.ncol=1, fig.height=0.25*text.height}
 ri_vad$hora <- ri_vad$date_time
 day(ri_vad$hora) = 14
 lim <- as.POSIXct(c(as_datetime("2016-01-14 00:00:00"), as_datetime("2016-01-14 12:00:00")))
@@ -1055,8 +1056,73 @@ ri_vad[hour(hora) %between% c(0, 12)] %>%
 <!-- Ri vs time + umáx/zmáx vs time + pblh en la capa estable  -->
 <!-- Honografas en altura día/noche  -> Ekman -->
 
+```{r hodografa-horaria, fig.cap="Variación del vector del viento en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 0600 UTC. El triángulo marca el nivel inferior (z = 100 m) \\label{hodografa-h}", fig.align='center', out.width="0.75\\textwidth"}
+gdata <- rbindlist(list(vad_20160114, vad_20160121, vad_20160123)) %>% 
+  .[minute(date_time) == 00 & hour(date_time) %in% c(06) &
+      !is.na(spd_smooth) & ht > 0.02 & ht <= 3] 
+ggplot(gdata, aes(u, v,  color = caso)) +
+  geom_hline(yintercept = 0, color = "darkgrey") +
+  geom_vline(xintercept = 0, color = "darkgrey") +
+  geom_point(data=subset(gdata, ht != 0.1), size = 1) +
+  geom_point(data=subset(gdata, ht == 0.1), shape = 17, size = 3) +
+  geom_path() +
+  scale_color_viridis(name="Casos", discrete = T) + 
+  scale_x_continuous(name = "u (m/s)") + 
+  scale_y_continuous(name = "v (m/s)") +
+  coord_equal() +
+  theme_minimal() 
+```
+
+
 #### Oscilación inercial
 <!-- Hodografas a lo largo del tiempo -> osiclación inercial -->
+
+```{r hodografa-nivel, fig.cap="Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (0000 UTC). \\label{hodografa-n}", fig.subcap=c("Datos observados en la estación meteorológica. \\label{hodo-nivel1}", "Datos observados por el radar \\label{hodo-nivel2}"), out.width="0.95\\textwidth", fig.ncol=1, fig.align='center', fig.height=0.25*text.height}
+gdata <- rbindlist(list(vad_20160114, vad_20160121, vad_20160123)) %>%
+  .[, hora := hour(date_time)] %>% 
+  .[ht %in% c(0.01) & !is.na(spd_smooth) & 
+      minute(date_time) == 00 & hora < 18] 
+ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
+  geom_hline(yintercept = 0, color = "darkgrey") +
+  geom_vline(xintercept = 0, color = "darkgrey") +
+  geom_point(aes(x = ifelse(hour(date_time) != 0, u, NA)), size = 1) +
+  geom_point(aes(x = ifelse(hour(date_time) %in% c(0,6,12), u, NA)),
+             size = 2) +
+  geom_point(aes(x = ifelse(hour(date_time) == 0, u, NA)), shape = 15,
+             size = 3) +
+  geom_path() +
+  geom_text_repel(aes(label = JumpBy(hora, 6, fill = NA)), 
+                  data = gdata[ht != 1]) +
+  scale_color_manual(name="Altura", values = c("#231151", "#d3436e", "#feba80")) + 
+  scale_x_continuous(name = "u (m/s)") + 
+  scale_y_continuous(name = "v (m/s)") +
+  coord_equal() +
+  facet_wrap(~caso) +
+  theme_minimal() 
+
+gdata <- rbindlist(list(vad_20160114, vad_20160121, vad_20160123)) %>%
+  .[, hora := hour(date_time)] %>% 
+  .[ht %in% c(0.3, 1) & !is.na(spd_smooth) & 
+      minute(date_time) == 00 & hora <= 18] 
+ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
+  geom_hline(yintercept = 0, color = "darkgrey") +
+  geom_vline(xintercept = 0, color = "darkgrey") +
+  geom_point(aes(x = ifelse(hour(date_time) != 0, u, NA)), size = 1) +
+  geom_point(aes(x = ifelse(hour(date_time) %in% c(0,6,12), u, NA)),
+             size = 2) +
+  geom_point(aes(x = ifelse(hour(date_time) == 0, u, NA)), shape = 15,
+             size = 3) +
+  geom_path() +
+  geom_text_repel(aes(label = JumpBy(hora, 6, fill = NA)), 
+                  data = gdata[ht != 1]) +
+  scale_color_manual(name="Altura", values = c("#d3436e", "#feba80")) + 
+  scale_x_continuous(name = "u (m/s)") + 
+  scale_y_continuous(name = "v (m/s)") +
+  coord_equal() +
+  facet_wrap(~caso) +
+  theme_minimal()
+#c("#180f3e", "#f1605d", "#fd9567")) + 
+```
 
 Tendencias?
 
