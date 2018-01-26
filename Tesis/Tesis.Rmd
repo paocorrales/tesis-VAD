@@ -72,6 +72,8 @@ setnames(map, "long", "lon")
 
 text.height <- (297 - 50)/25.4
 
+color_manual <- c("#231151", "#d3436e", "#feba80")
+
 remove(map2)
 ```
 \renewcommand{\listtablename}{Índice de tablas} 
@@ -337,6 +339,7 @@ donde $n$ es el número de observaciones presentes en un anillo particular.
 Para obtener un único perfil vertical de viento se interpola un promedio pesado del valor de las variaciones de los anillos de cada capa de atmósfera a una grilla vertical equiespaciada preestablecida. 
 
 El algoritmo identifica los datos de $V$ para cualquier rango y ángulo de elevación que se encuentran en $z \pm d/2$ donde $z$ es el punto de grilla y $d$ es la resolución espacial de la grilla vertical. Para obtener el valor promedio de de $V$ correspondiente a la altura $z$ calcula un promedio pesando la variable por el $rmse_a$ y la distancia de cada anillo al radar $r$. De esta manera los anillos con mayor error y más alejados a punto donde se está estimando la velocidad y dirección del viento tienen menor influencia en el resultado final.  
+
 \begin{equation}\label{eq-vr9}
 \bar{V} = \frac {\sum w_i V_i} {\sum w_i}
 \end{equation}
@@ -382,7 +385,7 @@ Permiten determinar cuales son los anillos de datos válidos y eliminar posibles
 * **R cuadrado:** El $r^2$ del modelo ajustado (Ecuación \ref{eq-vr4}) permite obtener una medida de
 de la calidad de ese modelo respecto de las observaciones. A partir de la exploración de resultados preliminares se observó que la definición de un umbral mínimo para el $r^2$ permite descartar anillos que pese a no tener datos faltantes eran erróneos.
 
-### Validación
+### Validación del algoritmo
 
 Una manera posible de validar los resultados del VAD es comparando cualitativa o cuantitativamente el perfil vertical de viento generado con los datos de un radiosondeo en el mismo momento. Debido a la inexistencia de sondeos en la región de Paraná se exploró la posibilidad de utilizar datos del Radar INTA Anguil que se encuentra en la provincia de La Pampa y radiosondeos de la estación del SMN Santa Rosa Aero (87623). i bien el radar y la estación meteorológica no están en la misma ubicación, se encuentran a unos 30 km de distancia y por lo tanto la estación está dentro del dominio de escaneo del radar. Sin embargo se encontró que la señal de $V_r$ en días de cielo claro es muy pobre y por lo tanto no supera los controles de calidad impuestos en el algoritmo. 
 
@@ -582,7 +585,7 @@ tmp <- tmp[, .(rms = rms(value, tmp[variable == "sondeo_spd", value]),
   .[, Prueba := c("SE", "EA", "EA+NA")] %>% 
   .[, c(4, 2, 3)]
 
-kable(tmp, digits = 4, caption = "Errores calculados para las distintas pruebas de validación.")
+kable(tmp, digits = 4, caption = "Errores calculados para las distintas pruebas de validación. \\label{validacion-errores}")
 ```
 
 
@@ -596,7 +599,7 @@ En la Tabla \ref{parametros} se detallan los valores utilizados en los distintos
 
 ```{r parametros}
 param <- read.csv("seudocache/parametros.csv", sep = ";", header = T)
-kable(param, format = "latex", booktabs = T, caption = "Parámetros utilizados en el cálculo del VAD y la construcción de la grilla vertical para todos los casos") %>% 
+kable(param, format = "latex", booktabs = T, caption = "Parámetros utilizados en el cálculo del VAD y la construcción de la grilla vertical para todos los casos. \\label{parametros}") %>% 
   collapse_rows(1)
 ```
 
@@ -818,7 +821,7 @@ remove(sup_vad)
 
 ### Magnitud y velocidad del viento
 
-```{r campo-caso1, fig.cap="Magnitud del viento y dirección correspondiente al Caso 1 (14/01/2016) obtenidas procesados con VAD \\label{campo-caso1}", fig.subcap=c("Magnitud del viento. \\label{caso1-spd}", "Dirección. \\label{caso1-dir}"), out.width="0.98\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
+```{r campo-caso1, fig.cap="Magnitud del viento y dirección correspondiente al Caso 1 (14/01/2016) observados por el radar y procesados con VAD \\label{campo-caso1}", fig.subcap=c("Magnitud del viento. \\label{caso1-spd}", "Dirección. \\label{caso1-dir}"), out.width="0.98\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
 vad_20160114[ht > 0.02] %>% 
   ggplot(aes(date_time, ht)) + 
   geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
@@ -878,7 +881,7 @@ vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth) & ht > 0.02] %>%
   theme_minimal() 
 ```
 
-```{r campo-caso2, fig.cap="Magnitud del viento y dirección correspondiente al Caso 2 (21/01/2016) obtenidas procesados con VAD \\label{campo-caso1}", fig.subcap=c("Magnitud del viento. \\label{caso2-spd}", "Dirección. \\label{caso2-dir}"), out.width="0.98\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
+```{r campo-caso2, fig.cap="Magnitud del viento y dirección correspondiente al Caso 2 (21/01/2016) observados por el radar y procesados con VAD \\label{campo-caso2}", fig.subcap=c("Magnitud del viento. \\label{caso2-spd}", "Dirección. \\label{caso2-dir}"), out.width="0.98\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
 vad_20160121[ht > 0.02] %>% 
   ggplot(aes(date_time, ht)) + 
   geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
@@ -917,7 +920,7 @@ vad_20160121[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   theme_minimal() 
 ```
 
-```{r campo-caso3, fig.cap="Magnitud del viento y dirección correspondiente al Caso 3 (23/01/2016) obtenidas procesados con VAD \\label{campo-caso3}", fig.subcap=c("Magnitud del viento. \\label{caso1-spd}", "Dirección. \\label{caso3-dir}"), out.width="0.98\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
+```{r campo-caso3, fig.cap="Magnitud del viento y dirección correspondiente al Caso 3 (23/01/2016) observados por el radar y procesados con VAD \\label{campo-caso3}", fig.subcap=c("Magnitud del viento. \\label{caso3-spd}", "Dirección. \\label{caso3-dir}"), out.width="0.98\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
 vad_20160123[ht > 0.02] %>% 
   ggplot(aes(date_time, ht)) + 
   geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
@@ -956,7 +959,8 @@ vad_20160123[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   theme_minimal() 
 ```
 
-```{r perfiles, fig.cap="COMPLETAR"}
+```{r perfiles, fig.cap="Perfil de viento observado por el radar a las 0600 y las 1700 UTC y el $rmse_2$ calculado en sombreado para cada caso. El valor en superficie corresponde a lo observado por la estación meteorógica. \\label{perfiles-horarios}", out.width="0.95\\textwidth", fig.align='center'}
+
 gdata <- rbindlist(list(vad_20160114, vad_20160121, vad_20160123)) %>% 
   .[minute(date_time) == 00 & hour(date_time) %in% c(06, 17) & ht < 2 &
       !is.na(spd_smooth)] 
@@ -964,8 +968,12 @@ ggplot(gdata, aes(ht, spd_smooth, color = as.factor(hour(date_time)))) +
   geom_line() +
   geom_rug(data = gdata[minute(date_time) == 00 & hour(date_time) == 6][, maxspd := max(spd_smooth, na.rm = T), by = caso][spd_smooth == maxspd]) +
   geom_rug(data = gdata[minute(date_time) == 00 & hour(date_time) == 6 & ht > 0.5][, minspd := min(spd_smooth, na.rm = T), by = caso][spd_smooth == minspd]) +
+  geom_ribbon(aes(ymin = spd_smooth - rmse2, ymax = spd_smooth + rmse2,
+              fill = as.factor(hour(date_time))), 
+              alpha = 0.5, color = NA) +
   coord_flip() +
-  scale_color_viridis(name="Hora UTC", discrete = T) + 
+  scale_color_manual(name="Hora UTC", values = color_manual) + 
+  scale_fill_manual(name="Hora UTC", values = color_manual) +
   scale_y_continuous(name = "V (m/s)") + 
   scale_x_continuous(name = "Altura (Km)", breaks = seq(0, 2, 0.5),
                      limits = c(0, 2)) + 
@@ -1053,11 +1061,9 @@ ri_vad[hour(hora) %between% c(0, 12)] %>%
 
 
 
-<!-- Ri vs time + umáx/zmáx vs time + pblh en la capa estable  -->
-<!-- Honografas en altura día/noche  -> Ekman -->
-
 ```{r hodografa-horaria, fig.cap="Variación del vector del viento en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 0600 UTC. El triángulo marca el nivel inferior (z = 100 m) \\label{hodografa-h}", fig.align='center', out.width="0.75\\textwidth"}
-gdata <- rbindlist(list(vad_20160114, vad_20160121, vad_20160123)) %>% 
+
+gdata <- rbind(vad_20160114, vad_20160121, vad_20160123) %>% 
   .[minute(date_time) == 00 & hour(date_time) %in% c(06) &
       !is.na(spd_smooth) & ht > 0.02 & ht <= 3] 
 ggplot(gdata, aes(u, v,  color = caso)) +
@@ -1075,10 +1081,11 @@ ggplot(gdata, aes(u, v,  color = caso)) +
 
 
 #### Oscilación inercial
-<!-- Hodografas a lo largo del tiempo -> osiclación inercial -->
+
 
 ```{r hodografa-nivel, fig.cap="Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (0000 UTC). \\label{hodografa-n}", fig.subcap=c("Datos observados en la estación meteorológica. \\label{hodo-nivel1}", "Datos observados por el radar \\label{hodo-nivel2}"), out.width="0.95\\textwidth", fig.ncol=1, fig.align='center', fig.height=0.25*text.height}
-gdata <- rbindlist(list(vad_20160114, vad_20160121, vad_20160123)) %>%
+gdata <- rbind(vad_20160114, vad_20160121, vad_20160123)
+gdata <- as.data.table(gdata) %>%
   .[, hora := hour(date_time)] %>% 
   .[ht %in% c(0.01) & !is.na(spd_smooth) & 
       minute(date_time) == 00 & hora < 18] 
@@ -1100,7 +1107,7 @@ ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
   facet_wrap(~caso) +
   theme_minimal() 
 
-gdata <- rbindlist(list(vad_20160114, vad_20160121, vad_20160123)) %>%
+gdata <- as.data.table(rbind(vad_20160114, vad_20160121, vad_20160123)) %>%
   .[, hora := hour(date_time)] %>% 
   .[ht %in% c(0.3, 1) & !is.na(spd_smooth) & 
       minute(date_time) == 00 & hora <= 18] 
@@ -1121,7 +1128,8 @@ ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
   coord_equal() +
   facet_wrap(~caso) +
   theme_minimal()
-#c("#180f3e", "#f1605d", "#fd9567")) + 
+
+remove(gdata, vad_20160121, vad_20160123)
 ```
 
 Tendencias?
@@ -1129,6 +1137,149 @@ Tendencias?
 ##Analisis de las simulaciones y comparación con observaciones de radar
 
 ### Magnitud y dirección del viento
+
+```{r read-WRF-VAD}
+# YSU
+vad_caso1ysu <- read.vad("../../caso1ysu_240/vda*")
+vad_caso1ysu[, caso := "YSU"]
+
+#MYJ
+vad_caso1myj <- read.vad("../../caso1myj_240/vda*")
+vad_caso1myj[, caso := "MYJ"]
+
+#ACM2
+vad_caso1acm <- read.vad("../../caso1acm_240/vda*")
+vad_caso1acm[, caso := "ACM2"]
+
+
+vad_20160114[, caso := "Obs"]
+```
+
+
+```{r vad-modelo-spd, fig.cap="Magnitud del viento observada por el radar y simulada utilizando distintas parametrizaciones para el Caso 1 (14/01/2016) y posteriormente procesados con VAD \\label{modelo-spd}", out.width="0.98\\textwidth", fig.align='center'}
+
+gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
+gdata[, caso2 := factor(caso,
+                       levels = c("Obs", "YSU", "MYJ", "ACM2"),
+                       ordered = T)]
+gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_datetime("2016-01-15 00:00:00")) ] %>% 
+  ggplot(aes(date_time, ht)) + 
+  geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
+  scale_color_viridis(name = "Magnitud\ndel viento", direction = 1,
+                      breaks = seq(0, 18, 2), limits = c(0, 19),
+                      guide = guide_colorbar(order = 1)) + 
+  # geom_point(data = subset(gdata, rmse1 > 0.5),
+  #            aes(size = rmse1),
+  #            shape = 1, color = "grey25") +
+  # geom_point(data = subset(gdata, rmse2 > 0.5),
+  #            aes(size = rmse2),
+  #            shape = 4, color = "grey25") +
+  # scale_size(name = "Error", guide = guide_legend(order = 2)) +
+  scale_x_datetime(name = "Tiempo (UTC)", date_breaks = "3 hour",
+                   date_labels = "%H:%M", expand = c(0,0)) +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2), 
+                     expand = c(0,0)) +
+  facet_wrap(~caso2) +
+  theme_minimal()
+
+```
+
+```{r vad-modelo-dir, fig.cap="Dirección del viento observada por el radar y simulada utilizando distintas parametrizaciones para el Caso 1 (14/01/2016) y posteriormente procesados con VAD \\label{modelo-dir}", out.width="0.98\\textwidth", fig.align='center'}
+
+gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
+gdata[, caso2 := factor(caso,
+                       levels = c("Obs", "YSU", "MYJ", "ACM2"),
+                       ordered = T)]
+gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_datetime("2016-01-15 00:00:00")) & minute(date_time) == 0 & !is.na(spd_smooth) ] %>% 
+  ggplot(aes(date_time, ht)) +
+  geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
+             scale = 0.005, start = -90, direction = -1) +
+  # geom_point(data = subset(vad_20160114, rmse1 > 0.5), 
+  #            aes(size = rmse1), 
+  #            shape = 1, color = "grey25") +
+  # geom_point(data = subset(vad_20160114, rmse2 > 0.5),
+  #            aes(size = rmse2), 
+  #            shape = 4, color = "grey25") +
+  scale_color_viridis(name = "Velocidad\ndel viento", 
+                      breaks = seq(0, 18, 2), limits = c(0, 19)) +
+  scale_size_continuous(range = c(0, 5), guide = "none") +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2)) + 
+  scale_x_datetime(name = "Hora (UTC)", 
+                   date_breaks = "3 hour", date_labels = "%H:%M") +
+  facet_wrap(~caso2) +
+  theme_minimal() 
+
+```
+
+
+```{r}
+gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm))
+
+gdata <- gdata[vad_20160114[, .(date_time, ht, spd_obs = spd_smooth, u_obs = u, v_obs = v)], 
+      on = c("date_time", "ht")] %>% 
+  .[, dif_spd := spd_obs - spd_smooth] %>% 
+  .[, dif_u := u_obs - u] %>%
+  .[, dif_v := v_obs - v] %>% 
+  .[, dif_di := atan2(u, v)*180/pi] %>% 
+  .[, caso2 := factor(caso,
+                       levels = c("Obs", "YSU", "MYJ", "ACM2"),
+                       ordered = T)]
+
+gdata[ht > 0.02] %>% 
+  ggplot(aes(date_time, ht)) + 
+  geom_contour(aes(z = dif_spd, color = ..level..), binwidth = 1) +
+  scale_color_divergent(name = "Magnitud\ndel viento", 
+                      #breaks = seq(0, 18, 2), limits = c(0, 19),
+                      guide = guide_colorbar(order = 1)) + 
+  # geom_point(data = subset(gdata, rmse1 > 0.5),
+  #            aes(size = rmse1),
+  #            shape = 1, color = "grey25") +
+  # geom_point(data = subset(gdata, rmse2 > 0.5),
+  #            aes(size = rmse2),
+  #            shape = 4, color = "grey25") +
+  # scale_size(name = "Error", guide = guide_legend(order = 2)) +
+  scale_x_datetime(name = "Tiempo (UTC)", date_breaks = "3 hour",
+                   date_labels = "%H:%M", expand = c(0,0)) +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2), 
+                     expand = c(0,0)) +
+  facet_wrap(~caso2, ncol = 1) +
+  theme_minimal()
+
+gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>% 
+  ggplot(aes(date_time, ht)) + 
+  # geom_tile(aes(z = dif_di, fill = dif_di), binwidth = 1) +
+  # scale_fill_divergent(name = "Dirección\ndel viento", 
+  #                     #breaks = seq(0, 18, 2), limits = c(0, 19),
+  #                     guide = guide_colorbar(order = 1)) + 
+  # geom_point(data = subset(gdata, rmse1 > 0.5),
+  #            aes(size = rmse1),
+  #            shape = 1, color = "grey25") +
+  # geom_point(data = subset(gdata, rmse2 > 0.5),
+  #            aes(size = rmse2),
+  #            shape = 4, color = "grey25") +
+  # scale_size(name = "Error", guide = guide_legend(order = 2)) +
+  geom_arrow(aes(mag = dif_spd, angle = dif_di, color = dif_di),
+             scale = 0.01, start = -90, direction = -1) +
+  scale_color_divergent(name = "Dirección\ndel viento") +
+  scale_x_datetime(name = "Tiempo (UTC)", date_breaks = "3 hour",
+                   date_labels = "%H:%M", expand = c(0,0)) +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2), 
+                     expand = c(0,0)) +
+  facet_wrap(~caso2, ncol = 1) +
+  theme_minimal()
+
+
+```
+
+```{r eval=FALSE, include=FALSE}
+gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
+gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_datetime("2016-01-15 00:00:00")) & minute(date_time) == 0] %>% 
+  dcast(., ht + date_time ~ caso, value.var = "di") %>% 
+  ggplot(aes(Obs, YSU)) +
+  geom_point()
+```
+
+
 
 Campos (mag) + diferencia
 Algo para la dirección, tal vez lo mismo

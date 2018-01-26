@@ -83,17 +83,17 @@ read.sup <- function(path){
 
 convert.sup <- function(sup){
   sup <- sup[, .(fecha, ht, direccion, intensidad)]
-  sup$u <- sup$intensidad * cos(sup$direccion*pi/180)
-  sup$v <- sup$intensidad * sin(sup$direccion*pi/180)
+  sup$u <- - sup$intensidad * sin(sup$direccion*pi/180)
+  sup$v <- - sup$intensidad * cos(sup$direccion*pi/180)
   
   cnames <- c("X", "ht", "spd", "rmse1", "rmse2", "rmse3", "di", "rings", "date_time", "u", "v")
   
   sup <- data.frame(X = NA, 
                            ht = sup$ht, 
                            spd = sup$intensidad,
-                           rmse1 = NA,
-                           rmse2 = NA,
-                           rmse3 = NA,
+                           rmse1 = 0.514444/2,
+                           rmse2 = 0.514444/2,
+                           rmse3 = 0.514444/2,
                            di = sup$direccion,
                            rings = NA,
                            date_time = sup$fecha,

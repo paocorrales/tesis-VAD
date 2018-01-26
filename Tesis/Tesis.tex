@@ -579,7 +579,7 @@ obtener el valor promedio de de \(V\) correspondiente a la altura \(z\)
 calcula un promedio pesando la variable por el \(rmse_a\) y la distancia
 de cada anillo al radar \(r\). De esta manera los anillos con mayor
 error y más alejados a punto donde se está estimando la velocidad y
-dirección del viento tienen menor influencia en el resultado final.\\
+dirección del viento tienen menor influencia en el resultado final.
 
 \begin{equation}\label{eq-vr9}
 \bar{V} = \frac {\sum w_i V_i} {\sum w_i}
@@ -703,7 +703,7 @@ posibles errores aleatorios.
   datos faltantes eran erróneos.
 \end{itemize}
 
-\subsection{Validación}\label{validacion}
+\subsection{Validación del algoritmo}\label{validacion-del-algoritmo}
 
 Una manera posible de validar los resultados del VAD es comparando
 cualitativa o cuantitativamente el perfil vertical de viento generado
@@ -816,8 +816,8 @@ error (no se muestra).
 \end{figure}
 
 \begin{longtable}[]{@{}lrr@{}}
-\caption{Errores calculados para las distintas pruebas de
-validación.}\tabularnewline
+\caption{Errores calculados para las distintas pruebas de validación.
+\label{validacion-errores}}\tabularnewline
 \toprule
 Prueba & rms & rre\tabularnewline
 \midrule
@@ -857,7 +857,7 @@ para todos los casos de estudio.
 
 \begin{table}
 
-\caption{\label{tab:parametros}Parámetros utilizados en el cálculo del VAD y la construcción de la grilla vertical para todos los casos}
+\caption{\label{tab:parametros}Parámetros utilizados en el cálculo del VAD y la construcción de la grilla vertical para todos los casos. \label{parametros}}
 \centering
 \begin{tabular}[t]{lll}
 \toprule
@@ -1239,21 +1239,24 @@ VAD}\label{analisis-de-las-observaciones-de-radar-procesadas-con-vad}
 viento}\label{magnitud-y-velocidad-del-viento}
 
 \begin{figure}
-\subfloat[Magnitud del viento. \label{caso1-spd}\label{fig:campo-caso11}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso1-1} }\newline\subfloat[Dirección. \label{caso1-dir}\label{fig:campo-caso12}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso1-2} }\caption{Magnitud del viento y dirección correspondiente al Caso 1 (14/01/2016) obtenidas procesados con VAD \label{campo-caso1}}\label{fig:campo-caso1}
+\subfloat[Magnitud del viento. \label{caso1-spd}\label{fig:campo-caso11}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso1-1} }\newline\subfloat[Dirección. \label{caso1-dir}\label{fig:campo-caso12}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso1-2} }\caption{Magnitud del viento y dirección correspondiente al Caso 1 (14/01/2016) observados por el radar y procesados con VAD \label{campo-caso1}}\label{fig:campo-caso1}
 \end{figure}
 
 \begin{figure}
-\subfloat[Magnitud del viento. \label{caso2-spd}\label{fig:campo-caso21}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso2-1} }\newline\subfloat[Dirección. \label{caso2-dir}\label{fig:campo-caso22}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso2-2} }\caption{Magnitud del viento y dirección correspondiente al Caso 2 (21/01/2016) obtenidas procesados con VAD \label{campo-caso1}}\label{fig:campo-caso2}
+\subfloat[Magnitud del viento. \label{caso2-spd}\label{fig:campo-caso21}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso2-1} }\newline\subfloat[Dirección. \label{caso2-dir}\label{fig:campo-caso22}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso2-2} }\caption{Magnitud del viento y dirección correspondiente al Caso 2 (21/01/2016) observados por el radar y procesados con VAD \label{campo-caso2}}\label{fig:campo-caso2}
 \end{figure}
 
 \begin{figure}
-\subfloat[Magnitud del viento. \label{caso1-spd}\label{fig:campo-caso31}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso3-1} }\newline\subfloat[Dirección. \label{caso3-dir}\label{fig:campo-caso32}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso3-2} }\caption{Magnitud del viento y dirección correspondiente al Caso 3 (23/01/2016) obtenidas procesados con VAD \label{campo-caso3}}\label{fig:campo-caso3}
+\subfloat[Magnitud del viento. \label{caso3-spd}\label{fig:campo-caso31}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso3-1} }\newline\subfloat[Dirección. \label{caso3-dir}\label{fig:campo-caso32}]{\includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/campo-caso3-2} }\caption{Magnitud del viento y dirección correspondiente al Caso 3 (23/01/2016) observados por el radar y procesados con VAD \label{campo-caso3}}\label{fig:campo-caso3}
 \end{figure}
 
 \begin{figure}
-\centering
-\includegraphics{Tesis_files/figure-latex/perfiles-1.pdf}
-\caption{COMPLETAR}
+
+{\centering \includegraphics[width=0.95\textwidth]{Tesis_files/figure-latex/perfiles-1} 
+
+}
+
+\caption{Perfil de viento observado por el radar a las 0600 y las 1700 UTC y el $rmse_2$ calculado en sombreado para cada caso. El valor en superficie corresponde a lo observado por la estación meteorógica. \label{perfiles-horarios}}\label{fig:perfiles}
 \end{figure}
 
 \subsection{Características de la capa
@@ -1290,6 +1293,27 @@ radar}\label{analisis-de-las-simulaciones-y-comparacion-con-observaciones-de-rad
 
 \subsection{Magnitud y dirección del
 viento}\label{magnitud-y-direccion-del-viento}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/vad-modelo-spd-1} 
+
+}
+
+\caption{Magnitud del viento observada por el radar y simulada utilizando distintas parametrizaciones para el Caso 1 (14/01/2016) y posteriormente procesados con VAD \label{modelo-spd}}\label{fig:vad-modelo-spd}
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/vad-modelo-dir-1} 
+
+}
+
+\caption{Dirección del viento observada por el radar y simulada utilizando distintas parametrizaciones para el Caso 1 (14/01/2016) y posteriormente procesados con VAD \label{modelo-dir}}\label{fig:vad-modelo-dir}
+\end{figure}
+
+\includegraphics{Tesis_files/figure-latex/unnamed-chunk-1-1.pdf}
+\includegraphics{Tesis_files/figure-latex/unnamed-chunk-1-2.pdf}
 
 Campos (mag) + diferencia Algo para la dirección, tal vez lo mismo
 Perfiles \#\#\# Características de la capa límite L Oscilacion inercial

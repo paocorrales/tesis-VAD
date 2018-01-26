@@ -29,10 +29,11 @@ vad_20160121 <- read.vad("../../20160121_240/vda*")
 
 vad_caso1ysu <- read.vad("../../caso1ysu_240/vda*")
 vad_caso1myj <- read.vad("../../caso1myj_240/vda*")
+vad_caso1acm <- read.vad("../../caso1acm_240/vda*")
 #Plots
 
 dia <- rbind(vad_20170120, vad_20170121)
-dia <- vad_caso1myj
+dia <- vad_caso1ysu
 perfiles <- subset(dia, ht < 1.0 & minute(date_time) == 00 & hour(date_time) %in% c(06,12, 18))
 tiempos <- subset(dia, minute(date_time) == 0)
 
