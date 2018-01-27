@@ -1263,7 +1263,7 @@ viento}\label{magnitud-y-velocidad-del-viento}
 límite}\label{caracteristicas-de-la-capa-limite}
 
 \begin{figure}
-\subfloat[Altura de la capa estable \label{h-vad}\label{fig:estable-vad1}]{\includegraphics{Tesis_files/figure-latex/estable-vad-1} }\newline\subfloat[Cortante (u\_max/z\_max) \label{cortante-vad}\label{fig:estable-vad2}]{\includegraphics{Tesis_files/figure-latex/estable-vad-2} }\newline\subfloat[Número de Richardson \label{ri}\label{fig:estable-vad3}]{\includegraphics{Tesis_files/figure-latex/estable-vad-3} }\caption{Series de tiempo de algunas característicad de la capa estable nocturna para todos los casos. \label{estable-vad}}\label{fig:estable-vad}
+\subfloat[Altura de la capa estable \label{h-vad}\label{fig:estable-vad1}]{\includegraphics{Tesis_files/figure-latex/estable-vad-1} }\newline\subfloat[Cortante (u\_max/z\_max) \label{cortante-vad}\label{fig:estable-vad2}]{\includegraphics{Tesis_files/figure-latex/estable-vad-2} }\newline\subfloat[Número de Richardson \label{ri}\label{fig:estable-vad3}]{\includegraphics{Tesis_files/figure-latex/estable-vad-3} }\caption{Series de tiempo de la altura de la capa límite, cortante vertical y el número de Richarsdon en la capa estable nocturna para todos los casos de estudio. En a) y b) se muestra solo el período donde se observa el LLJ, en c) el período en cada caso se encuentra sombreado. \label{estable-vad}}\label{fig:estable-vad}
 \end{figure}
 
 \begin{figure}
@@ -1309,17 +1309,110 @@ viento}\label{magnitud-y-direccion-del-viento}
 
 }
 
-\caption{Dirección del viento observada por el radar y simulada utilizando distintas parametrizaciones para el Caso 1 (14/01/2016) y posteriormente procesados con VAD \label{modelo-dir}}\label{fig:vad-modelo-dir}
+\caption{Dirección del viento observada por el radar y simulada utilizando distintas parametrizaciones para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \label{modelo-dir}}\label{fig:vad-modelo-dir}
 \end{figure}
 
-\includegraphics{Tesis_files/figure-latex/unnamed-chunk-1-1.pdf}
-\includegraphics{Tesis_files/figure-latex/unnamed-chunk-1-2.pdf}
+\begin{figure}
+\subfloat[Magnitud del viento \label{dif-spd}\label{fig:diferencia1}]{\includegraphics{Tesis_files/figure-latex/diferencia-1} }\subfloat[Dirección del viento \label{dif-dir}\label{fig:diferencia2}]{\includegraphics{Tesis_files/figure-latex/diferencia-2} }\caption{diferencia \label{dif}}\label{fig:diferencia}
+\end{figure}
 
-Campos (mag) + diferencia Algo para la dirección, tal vez lo mismo
-Perfiles \#\#\# Características de la capa límite L Oscilacion inercial
-\#\#\#\# Altura de la capa límite Comparación entre simulaciones y
-observaciones Gráfico de dispersión para analizar la altura obtenida con
-umax \#\#\#\# Coeficientes de difusividad turbulenta \# Conclusiones
+Perfiles \#\#\# Estructura de la capa límite
+
+\subsubsection{Análisis de la homogeneidad espacial en las variables de
+estabilidad}\label{analisis-de-la-homogeneidad-espacial-en-las-variables-de-estabilidad}
+
+Para determinar la validez del promedio espacial de cada variable en el
+dominio en estudio es importante analizar la variabilidad de la misma
+espacial y temporalmente.
+
+En el caso de la Longitud de Monin-Obukhov (\(L\)) se analizó el
+procentaje de veces que el valor local tenía signo distinto a la moda
+calculada para todo el dominio y cada tiempo de simulación. Esto es
+importante ya que el signo de L debe manetenerte positivo para el
+regimen estable y negativo para el regimen inestable a lo largo del
+dominio.
+
+Sin embargo se observa que esto no ocurre y que existen regiones donde
+el signo de L es más 40\% de las veces distinto a la moda del dominio.
+Esto puede estar relacionado la variación en la altura del terreno o a
+la presencia del río y zonas con suelos saturados donde los flujos
+verticales de calor (\(f_{\theta}\)) tengan un comportamiento contrario
+al suelo seco.
+
+\textbackslash{}begin\{figure\}
+\includegraphics[width=0.48\textwidth]{Tesis_files/figure-latex/L-espacial-1}
+\textbackslash{}caption\{Porcentaje de veces que el valor local de L (a)
+y el flujo vertical de calor (b) tiene signo distinto a la moda para
+todo el periodo analizado, se muestran los valores mayores al 5\%
+(colores) y topografía del dominio (contornos). Simulación con la
+parametrización YSU. \label{L-esp}\}\label{fig:L-espacial}
+\textbackslash{}end\{figure\} Entonces nos quedamos con el análsis en un
+punto cercano al radar que además no presenta gran variabilidad respecto
+de la región circundante.
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.98\textwidth]{Tesis_files/figure-latex/L-parm-1} 
+
+}
+
+\caption{Longitud de Monin Obukhov (m) en función del tiempo y para cada parametrización. \label{L-param}}\label{fig:L-parm}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{Tesis_files/figure-latex/kh_wrf-1.pdf}
+\caption{Coeficiente de difusividad de calor Kh (m-2 s-1) promediado
+sobre el regimen estable (izquierda) y el regimen inestable (derecha) de
+la capa límite para los distintos esquemas analizados.}
+\end{figure}
+
+L Oscilacion inercial \#\#\#\# Altura de la capa límite Comparación
+entre simulaciones y observaciones Gráfico de dispersión para analizar
+la altura obtenida con umax \#\#\#\# Coeficientes de difusividad
+turbulenta
+
+\begin{figure}
+\centering
+\includegraphics{Tesis_files/figure-latex/kh_ulke-1.pdf}
+\caption{Coeficiente de difusividad de calor Kh (m-2 s-1) promediado
+sobre el regimen estable (izquierda) y el regimen inestable (derecha) de
+la capa límite para los distintos esquemas analizados.}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics{Tesis_files/figure-latex/kh_norm-1.pdf}
+\caption{Coeficiente de difusividad de calor Kh* = Kh/khu* promediado
+sobre el regimen estable (izquierda) y el regimen inestable (derecha) de
+la capa límite para los distintos esquemas analizados.}
+\end{figure}
+
+\includegraphics{Tesis_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\begin{longtable}[]{@{}llrrrrr@{}}
+\toprule
+param & regimen & h\_norm & L\_norm & ust\_norm & Pr & hL\tabularnewline
+\midrule
+\endhead
+YSU & estable & 368.6713 & 45.30290 & 0.2911110 & 1.3278002 &
+8.137918\tabularnewline
+YSU & inestable & 1563.1427 & -35.07287 & 0.6019572 & 0.2595942 &
+-44.568430\tabularnewline
+MYJ & estable & 273.6321 & 84.66978 & 0.3134422 & 1.3240502 &
+3.231757\tabularnewline
+MYJ & inestable & 1569.4922 & -95.79171 & 0.6198216 & 0.3381030 &
+-16.384425\tabularnewline
+ACM2 & estable & 199.3203 & 45.30290 & 0.2696756 & 1.3278002 &
+4.399725\tabularnewline
+ACM2 & inestable & 1871.8766 & -35.07287 & 0.6054872 & 0.2595942 &
+-53.371071\tabularnewline
+\bottomrule
+\end{longtable}
+
+\includegraphics{Tesis_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\chapter{Conclusiones}\label{conclusiones}
 
 \chapter*{Referencias}\label{referencias}
 \addcontentsline{toc}{chapter}{Referencias}
