@@ -1,35 +1,51 @@
 \select@language {spanish}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces Topografía de la región en estudio en metros sobre el nivel del mar.}}{12}{figure.caption.6}
-\contentsline {figure}{\numberline {2.2}{\ignorespaces Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\circ }$ y $V_N = 6.7 m/s$. Notar las escalas diferentes.\relax }}{16}{figure.caption.7}
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Con aliasing }}}{16}{subfigure.2.1}
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Sin aliasing }}}{16}{subfigure.2.2}
-\contentsline {figure}{\numberline {2.3}{\ignorespaces Velocidad radial (m/s) en función del azimut (grados) para un rango y ańgulo de elevación fijos. En color se ajusta una función sinusoidal a los datos. \relax }}{16}{figure.caption.8}
-\contentsline {figure}{\numberline {2.4}{\ignorespaces Velocidad radial (m/s) observada a las 12 UTC por el radar de Anguil en la elevación $1.3^{\circ }$ y la misma variable transformada a partir del sondeo de la estación Santa Rosa Aero para la misma hora \relax }}{23}{figure.caption.9}
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Datos de radar }}}{23}{subfigure.4.1}
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Sin errores }}}{23}{subfigure.4.2}
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Con errores }}}{23}{subfigure.4.3}
-\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Con errores + NAs }}}{23}{subfigure.4.4}
-\contentsline {figure}{\numberline {2.5}{\ignorespaces Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruevas de validación a la izquierda y el detalle ampliado del máximo en niveles bajos \relax }}{24}{figure.caption.10}
-\contentsline {figure}{\numberline {2.6}{\ignorespaces Dominios utilizados. \relax }}{29}{figure.caption.12}
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior. El punto representa la ubicación del radar. }}}{29}{subfigure.6.1}
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Topografía sobre el nivel del terreno respecto de la ubicación del radar. El circulo negro corresponde al dominio de análisis, de 40km de radio y centrado en el radar. }}}{29}{subfigure.6.2}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Topografía de la región en estudio en metros sobre el nivel del mar.}}{14}{figure.caption.6}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\circ }$ y $V_N = 6.7 m/s$. Notar las escalas diferentes.\relax }}{18}{figure.caption.7}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Con aliasing }}}{18}{subfigure.2.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Sin aliasing }}}{18}{subfigure.2.2}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Velocidad radial (m/s) en función del azimut (grados) para un rango y ańgulo de elevación fijos. En color se ajusta una función sinusoidal a los datos. \relax }}{18}{figure.caption.8}
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Velocidad radial (m/s) observada a las 12 UTC por el radar de Anguil en la elevación $1.3^{\circ }$ y la misma variable transformada a partir del sondeo de la estación Santa Rosa Aero para la misma hora \relax }}{25}{figure.caption.9}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Datos de radar }}}{25}{subfigure.4.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Sin errores }}}{25}{subfigure.4.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Con errores }}}{25}{subfigure.4.3}
+\contentsline {subfigure}{\numberline {(d)}{\ignorespaces {Con errores + NAs }}}{25}{subfigure.4.4}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruevas de validación a la izquierda y el detalle ampliado del máximo en niveles bajos \relax }}{26}{figure.caption.10}
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Dominios utilizados. \relax }}{31}{figure.caption.12}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior. El punto representa la ubicación del radar. }}}{31}{subfigure.6.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Topografía sobre el nivel del terreno respecto de la ubicación del radar. El circulo negro corresponde al dominio de análisis, de 40km de radio y centrado en el radar. }}}{31}{subfigure.6.2}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Magnitud del viento y dirección correspondiente al Caso 1 (14/01/2016) obtenidas procesados con VAD \relax }}{34}{figure.caption.13}
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Magnitud del viento. }}}{34}{subfigure.1.1}
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Dirección. }}}{34}{subfigure.1.2}
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Magnitud del viento y dirección correspondiente al Caso 2 (21/01/2016) obtenidas procesados con VAD \relax }}{35}{figure.caption.14}
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Magnitud del viento. }}}{35}{subfigure.2.1}
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Dirección. }}}{35}{subfigure.2.2}
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Magnitud del viento y dirección correspondiente al Caso 3 (23/01/2016) obtenidas procesados con VAD \relax }}{36}{figure.caption.15}
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Magnitud del viento. }}}{36}{subfigure.3.1}
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Dirección. }}}{36}{subfigure.3.2}
-\contentsline {figure}{\numberline {3.4}{\ignorespaces Series de tiempo de algunas característicad de la capa estable nocturna para todos los casos. \relax }}{39}{figure.caption.16}
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Altura de la capa estable }}}{39}{subfigure.4.1}
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Cortante (u\_max/z\_max) }}}{39}{subfigure.4.2}
-\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Número de Richardson }}}{39}{subfigure.4.3}
-\contentsline {figure}{\numberline {3.5}{\ignorespaces Variación del vector del viento en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 0600 UTC. El triángulo marca el nivel inferior (z = 100 m) \relax }}{40}{figure.caption.17}
-\contentsline {figure}{\numberline {3.6}{\ignorespaces Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (0000 UTC). \relax }}{40}{figure.caption.18}
-\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Datos observados en la estación meteorológica. }}}{40}{subfigure.6.1}
-\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Datos observados por el radar }}}{40}{subfigure.6.2}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Magnitud y dirección del viento correspondiente al Caso 1 (14/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \relax }}{36}{figure.caption.13}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Magnitud del viento. }}}{36}{subfigure.1.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Dirección. }}}{36}{subfigure.1.2}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Magnitud y dirección del viento correspondiente al Caso 2 (21/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \relax }}{37}{figure.caption.14}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Magnitud del viento. }}}{37}{subfigure.2.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Dirección. }}}{37}{subfigure.2.2}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Magnitud y dirección del viento correspondiente al Caso 3 (23/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \relax }}{38}{figure.caption.15}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Magnitud del viento. }}}{38}{subfigure.3.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Dirección. }}}{38}{subfigure.3.2}
+\contentsline {figure}{\numberline {3.4}{\ignorespaces Perfil de viento observado por el radar a las 0600 y las 1700 UTC y el $rmse_2$ en cada punto (sombreado) para los tres casos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. Los valores en superficie fueron obtenidos a partir de los datos del la estación meteorógica Paraná Aero. \relax }}{39}{figure.caption.16}
+\contentsline {figure}{\numberline {3.5}{\ignorespaces Series de tiempo de la altura de la capa límite, cortante vertical y el número de Richarsdon en la capa estable nocturna para todos los casos de estudio. En a) y b) se muestra solo el período donde se observa el LLJ, en c) el período en cada caso se encuentra sombreado. \relax }}{40}{figure.caption.17}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Altura de la capa estable }}}{40}{subfigure.5.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Cortante ($u_{máx}/z_{máx}$) }}}{40}{subfigure.5.2}
+\contentsline {subfigure}{\numberline {(c)}{\ignorespaces {Número de Richardson }}}{40}{subfigure.5.3}
+\contentsline {figure}{\numberline {3.6}{\ignorespaces Variación del vector del viento en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 0600 UTC. El triángulo marca el nivel inferior y los círculos grandes se ubican cada 500 metros. \relax }}{41}{figure.caption.18}
+\contentsline {figure}{\numberline {3.7}{\ignorespaces Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (0000 UTC). \relax }}{42}{figure.caption.19}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Datos observados en la estación meteorológica. }}}{42}{subfigure.7.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Datos observados por el radar. }}}{42}{subfigure.7.2}
+\contentsline {figure}{\numberline {3.8}{\ignorespaces Magnitud del viento observada por el radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \relax }}{43}{figure.caption.20}
+\contentsline {figure}{\numberline {3.9}{\ignorespaces Dirección del viento observada por el radar(Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \relax }}{44}{figure.caption.21}
+\contentsline {figure}{\numberline {3.10}{\ignorespaces Diferencia entre las observaciones y cada simulación correspondiente al Caso 1. \relax }}{45}{figure.caption.22}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {Magnitud del viento }}}{45}{subfigure.10.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {Dirección del viento }}}{45}{subfigure.10.2}
+\contentsline {figure}{\numberline {3.11}{\ignorespaces Perfil de viento observado por el radar a las 0600 y las 1700 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \relax }}{46}{figure.caption.23}
+\contentsline {figure}{\numberline {3.12}{\ignorespaces Porcentaje de veces que el valor local de L (a) y el flujo vertical de calor (b) tiene signo distinto a la moda del dominio calculada en todo el periodo analizado. Se muestran los valores mayores al 5\% (colores) y topografía del dominio (contornos). Datos de la simulación YSU. \relax }}{47}{figure.caption.24}
+\contentsline {figure}{\numberline {3.13}{\ignorespaces Longitud de Monin Obukhov (m) en función del tiempo, para cada simulación. \relax }}{48}{figure.caption.25}
+\contentsline {figure}{\numberline {3.14}{\ignorespaces Coeficiente de difusividad de calor $K_h$ ($m^2/s$) promediado para todo el período estable (izquierda) y el período inestable (derecha) de la capa límite en todas las simulaciones. \relax }}{49}{figure.caption.26}
+\contentsline {figure}{\numberline {3.15}{\ignorespaces BORRADOR - Coeficiente de difusividad de calor $K_h$ ($m^2/s$) promediado sobre el período estable (izquierda) y el período inestable (derecha) de la capa límite calculados a partir de los modelos propuestos por Ulke 2000 \relax }}{50}{figure.caption.27}
+\contentsline {figure}{\numberline {3.16}{\ignorespaces Coeficiente de difusividad normalizados calculados a partir de los modelos propuestos por Ulke 2000 y promediados sobre en período estable (izquierda) y el período inestable (derecha) de la capa límite. \relax }}{51}{figure.caption.28}
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {$K_h* = K_h/khu_*$ }}}{51}{subfigure.16.1}
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {$K_m* = K_m/khu_*$ }}}{51}{subfigure.16.2}
+\contentsline {figure}{\numberline {3.17}{\ignorespaces Variación del número de Prandtl calculado a partir del modelo propuesto por Ulke 2000 con las variables de cada simulación y promediado en cada periodo. \relax }}{52}{figure.caption.29}
+\addvspace {10\p@ }

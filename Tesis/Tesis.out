@@ -13,7 +13,7 @@
 \BOOKMARK [2][-]{subsection.2.4.2}{Controles\040de\040calidad\040de\040los\040datos}{section.2.4}% 13
 \BOOKMARK [3][-]{subsubsection.2.4.2.1}{Antes\040del\040ajusta\040de\040los\040datos}{subsection.2.4.2}% 14
 \BOOKMARK [3][-]{subsubsection.2.4.2.2}{Luego\040del\040ajuste}{subsection.2.4.2}% 15
-\BOOKMARK [2][-]{subsection.2.4.3}{Validación}{section.2.4}% 16
+\BOOKMARK [2][-]{subsection.2.4.3}{Validación del algoritmo}{section.2.4}% 16
 \BOOKMARK [3][-]{subsubsection.2.4.3.1}{Pruebas}{subsection.2.4.3}% 17
 \BOOKMARK [3][-]{subsubsection.2.4.3.2}{Perfiles\040obtenidos}{subsection.2.4.3}% 18
 \BOOKMARK [2][-]{subsection.2.4.4}{Configuración del algoritmo}{section.2.4}% 19
@@ -36,4 +36,8 @@
 \BOOKMARK [3][-]{subsubsection.3.2.2.1}{Oscilación inercial}{subsection.3.2.2}% 36
 \BOOKMARK [1][-]{section.3.3}{Analisis de las simulaciones y comparación con observaciones de radar}{chapter.3}% 37
 \BOOKMARK [2][-]{subsection.3.3.1}{Magnitud y dirección del viento}{section.3.3}% 38
-\BOOKMARK [0][-]{chapter*.19}{Referencias}{}% 39
+\BOOKMARK [2][-]{subsection.3.3.2}{Estructura de la capa límite}{section.3.3}% 39
+\BOOKMARK [3][-]{subsubsection.3.3.2.1}{Análisis de la homogeneidad espacial en las variables de estabilidad}{subsection.3.3.2}% 40
+\BOOKMARK [3][-]{subsubsection.3.3.2.2}{Coeficientes\040de\040difusividad\040turbulenta}{subsection.3.3.2}% 41
+\BOOKMARK [0][-]{chapter.4}{Conclusiones}{}% 42
+\BOOKMARK [0][-]{chapter*.31}{Referencias}{}% 43

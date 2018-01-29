@@ -822,7 +822,7 @@ remove(sup_vad)
 
 ### Magnitud y velocidad del viento
 
-```{r campo-caso1, fig.cap="Magnitud del viento y dirección correspondiente al Caso 1 (14/01/2016) observados por el radar y procesados con VAD \\label{campo-caso1}", fig.subcap=c("Magnitud del viento. \\label{caso1-spd}", "Dirección. \\label{caso1-dir}"), out.width="0.98\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
+```{r campo-caso1, fig.cap="Magnitud y dirección del viento  correspondiente al Caso 1 (14/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \\label{campo-caso1}", fig.subcap=c("Magnitud del viento. \\label{caso1-spd}", "Dirección. \\label{caso1-dir}"), out.width="0.95\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
 vad_20160114[ht > 0.02] %>% 
   ggplot(aes(date_time, ht)) + 
   geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
@@ -882,7 +882,7 @@ vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth) & ht > 0.02] %>%
   theme_minimal() 
 ```
 
-```{r campo-caso2, fig.cap="Magnitud del viento y dirección correspondiente al Caso 2 (21/01/2016) observados por el radar y procesados con VAD \\label{campo-caso2}", fig.subcap=c("Magnitud del viento. \\label{caso2-spd}", "Dirección. \\label{caso2-dir}"), out.width="0.98\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
+```{r campo-caso2, fig.cap="Magnitud y dirección del viento  correspondiente al Caso 2 (21/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \\label{campo-caso2}", fig.subcap=c("Magnitud del viento. \\label{caso2-spd}", "Dirección. \\label{caso2-dir}"), out.width="0.95\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
 vad_20160121[ht > 0.02] %>% 
   ggplot(aes(date_time, ht)) + 
   geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
@@ -921,7 +921,7 @@ vad_20160121[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   theme_minimal() 
 ```
 
-```{r campo-caso3, fig.cap="Magnitud del viento y dirección correspondiente al Caso 3 (23/01/2016) observados por el radar y procesados con VAD \\label{campo-caso3}", fig.subcap=c("Magnitud del viento. \\label{caso3-spd}", "Dirección. \\label{caso3-dir}"), out.width="0.98\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
+```{r campo-caso3, fig.cap="Magnitud y dirección del viento  correspondiente al Caso 3 (23/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \\label{campo-caso3}", fig.subcap=c("Magnitud del viento. \\label{caso3-spd}", "Dirección. \\label{caso3-dir}"), out.width="0.95\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
 vad_20160123[ht > 0.02] %>% 
   ggplot(aes(date_time, ht)) + 
   geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
@@ -960,7 +960,7 @@ vad_20160123[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   theme_minimal() 
 ```
 
-```{r perfiles, fig.cap="Perfil de viento observado por el radar a las 0600 y las 1700 UTC y el $rmse_2$ calculado en sombreado para cada caso. El valor en superficie corresponde a lo observado por la estación meteorógica. \\label{perfiles-horarios}", out.width="0.95\\textwidth", fig.align='center'}
+```{r perfiles, fig.cap="Perfil de viento observado por el radar a las 0600 y las 1700 UTC y el $rmse_2$ en cada punto (sombreado) para los tres casos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. Los valores en superficie fueron obtenidos a partir de los datos del la estación meteorógica Paraná Aero. \\label{perfiles-horarios}", out.width="0.95\\textwidth", fig.align='center'}
 gdata <- rbindlist(list(vad_20160114, vad_20160121, vad_20160123)) %>% 
   .[minute(date_time) == 00 & hour(date_time) %in% c(06, 17) & ht < 2 &
       !is.na(spd_smooth)] 
@@ -1005,7 +1005,7 @@ remove(sup_20160114, sup_20160121, sup_20160123,
 ```
 
 
-```{r estable-vad, fig.cap="Series de tiempo de la altura de la capa límite, cortante vertical y el número de Richarsdon en la capa estable nocturna para todos los casos de estudio. En a) y b) se muestra solo el período donde se observa el LLJ, en c) el período en cada caso se encuentra sombreado. \\label{estable-vad}", fig.subcap=c("Altura de la capa estable \\label{h-vad}", "Cortante (u\\_max/z\\_max) \\label{cortante-vad}", "Número de Richardson \\label{ri}"), fig.ncol=1, fig.height=0.24*text.height}
+```{r estable-vad, fig.cap="Series de tiempo de la altura de la capa límite, cortante vertical y el número de Richarsdon en la capa estable nocturna para todos los casos de estudio. En a) y b) se muestra solo el período donde se observa el LLJ, en c) el período en cada caso se encuentra sombreado. \\label{estable-vad}", fig.subcap=c("Altura de la capa estable \\label{h-vad}", "Cortante ($u_{máx}/z_{máx}$) \\label{cortante-vad}", "Número de Richardson \\label{ri}"), fig.ncol=1, fig.height=0.24*text.height}
 ri_vad$hora <- ri_vad$date_time
 day(ri_vad$hora) = 14
 lim <- as.POSIXct(c(as_datetime("2016-01-14 00:00:00"), as_datetime("2016-01-14 12:00:00")))
@@ -1029,7 +1029,7 @@ ri_vad[hour(hora) %between% c(0, 12)] %>%
   ggplot(aes(hora, u_max/z_max)) +
   geom_line(aes(color = caso)) +
   scale_color_viridis(name = "Casos", discrete = T) +
-  scale_y_continuous(name = "u_max/z_max (s-1)") +
+  scale_y_continuous(name = expression(paste(u[máx]/z[max], " (1/s)"))) +
   scale_x_datetime(name = NULL, limits = lim) +
   theme_minimal()
 
@@ -1054,14 +1054,14 @@ ri_vad[hour(hora) %between% c(0, 12)] %>%
   geom_point(aes(color = caso)) +
   scale_color_viridis(name = "Casos", discrete = T) +
   geom_hline(yintercept = 1, color = "darkgray") +
-  scale_y_continuous(name = "Richardson") +
+  scale_y_continuous(name = "Ri") +
   scale_x_datetime(name = "Hora UTC", limits = lim) +
   theme_minimal()
 ```
 
 
 
-```{r hodografa-horaria, fig.cap="Variación del vector del viento en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 0600 UTC. El triángulo marca el nivel inferior (z = 100 m) \\label{hodografa-h}", fig.align='center', out.width="0.75\\textwidth"}
+```{r hodografa-horaria, fig.cap="Variación del vector del viento en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 0600 UTC. El triángulo marca el nivel inferior y los círculos grandes se ubican cada 500 metros. \\label{hodografa-h}", fig.align='center', out.width="0.75\\textwidth"}
 
 gdata <- rbind(vad_20160114, vad_20160121, vad_20160123) %>% 
   .[minute(date_time) == 00 & hour(date_time) %in% c(06) &
@@ -1070,6 +1070,8 @@ ggplot(gdata, aes(u, v,  color = caso)) +
   geom_hline(yintercept = 0, color = "darkgrey") +
   geom_vline(xintercept = 0, color = "darkgrey") +
   geom_point(data=subset(gdata, ht != 0.1), size = 1) +
+  geom_point(aes(x = ifelse(ht %in% seq(0.1, 3.0, 0.5), u, NA)),
+             size = 2) +
   geom_point(data=subset(gdata, ht == 0.1), shape = 17, size = 3) +
   geom_path() +
   scale_color_viridis(name="Casos", discrete = T) + 
@@ -1083,7 +1085,8 @@ ggplot(gdata, aes(u, v,  color = caso)) +
 #### Oscilación inercial
 
 
-```{r hodografa-nivel, fig.cap="Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (0000 UTC). \\label{hodografa-n}", fig.subcap=c("Datos observados en la estación meteorológica. \\label{hodo-nivel1}", "Datos observados por el radar \\label{hodo-nivel2}"), out.width="0.95\\textwidth", fig.ncol=1, fig.align='center', fig.height=0.25*text.height}
+```{r hodografa-nivel, fig.cap="Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (0000 UTC). \\label{hodografa-n}", fig.subcap=c("Datos observados en la estación meteorológica. \\label{hodo-nivel1}", "Datos observados por el radar. \\label{hodo-nivel2}"), out.width="0.95\\textwidth", fig.ncol=1, fig.align='center', fig.height=0.25*text.height}
+
 gdata <- rbind(vad_20160114, vad_20160121, vad_20160123)
 gdata <- as.data.table(gdata) %>%
   .[, hora := hour(date_time)] %>% 
@@ -1132,8 +1135,6 @@ ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
 remove(gdata, vad_20160121, vad_20160123)
 ```
 
-Tendencias?
-
 ##Analisis de las simulaciones y comparación con observaciones de radar
 
 ### Magnitud y dirección del viento
@@ -1152,11 +1153,11 @@ vad_caso1acm <- read.vad("../../caso1acm_240/vda*")
 vad_caso1acm[, caso := "ACM2"]
 
 
-vad_20160114[, caso := "Obs"]
+vad_20160114 <- vad_20160114[, caso := "Obs"]
 ```
 
 
-```{r vad-modelo-spd, fig.cap="Magnitud del viento observada por el radar y simulada utilizando distintas parametrizaciones para el Caso 1 (14/01/2016) y posteriormente procesados con VAD \\label{modelo-spd}", out.width="0.98\\textwidth", fig.align='center'}
+```{r vad-modelo-spd, fig.cap="Magnitud del viento observada por el radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-spd}", out.width="0.95\\textwidth", fig.align='center'}
 
 gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 gdata[, caso2 := factor(caso,
@@ -1184,7 +1185,7 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_d
 
 ```
 
-```{r vad-modelo-dir, fig.cap="Dirección del viento observada por el radar y simulada utilizando distintas parametrizaciones para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-dir}", out.width="0.98\\textwidth", fig.align='center'}
+```{r vad-modelo-dir, fig.cap="Dirección del viento observada por el radar(Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-dir}", out.width="0.95\\textwidth", fig.align='center'}
 
 gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 gdata[, caso2 := factor(caso,
@@ -1212,7 +1213,8 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_d
 ```
 
 
-```{r diferencia, fig.cap="diferencia \\label{dif}", fig.subcap=c("Magnitud del viento \\label{dif-spd}", "Dirección del viento \\label{dif-dir}"), fig.ncol=2}
+```{r diferencia, fig.cap="Diferencia entre las observaciones y cada simulación  correspondiente al Caso 1. \\label{dif}", fig.subcap=c("Magnitud del viento \\label{dif-spd}", "Dirección del viento \\label{dif-dir}"), out.width="0.48\\textwidth", fig.height=0.70*text.height, fig.ncol=2}
+
 gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 
 gdata <- gdata[vad_20160114[, .(date_time, ht, spd_obs = spd_smooth, u_obs = u, v_obs = v)], 
@@ -1269,7 +1271,7 @@ gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>%
   theme_minimal()
 ```
 
-```{r eval=FALSE, include=FALSE}
+```{r perfiles-mod, fig.cap="Perfil de viento observado por el radar a las 0600 y las 1700 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \\label{perfiles-modelo}", out.width="0.95\\textwidth", fig.align='center'}
 gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 gdata[, caso2 := factor(caso,
                        levels = c("Obs", "YSU", "MYJ", "ACM2"),
@@ -1295,19 +1297,18 @@ gdata[, caso2 := factor(caso,
 
 
 
-Perfiles
 ### Estructura de la capa límite
 
 #### Análisis de la homogeneidad espacial en las variables de estabilidad
 
 Para determinar la validez del promedio espacial de cada variable en el dominio en estudio es importante analizar la variabilidad de la misma espacial y temporalmente.
 
-En el caso de la Longitud de Monin-Obukhov ($L$) se analizó el procentaje de veces que el valor local tenía signo distinto a la moda calculada para todo el dominio y cada tiempo de simulación. Esto es importante ya que el signo de L debe manetenerte positivo para el regimen estable y negativo para el regimen inestable a lo largo del dominio. 
+En el caso de la Longitud de Monin-Obukhov ($L$) se analizó el procentaje de veces que el valor local tenía signo distinto a la moda calculada para todo el dominio y cada tiempo de simulación. Esto es importante ya que el signo de $L$ marca la diferencia entre el regimen estable y el regimen inestable y por lo tanto debe mantenerse en el dominio. 
 
-Sin embargo se observa que esto no ocurre y que existen regiones donde el signo de L es más 40% de las veces distinto a la moda del dominio. Esto puede estar relacionado la variación en la altura del terreno o a la presencia del río y zonas con suelos saturados donde los flujos verticales de calor ($f_{\theta}$) tengan un comportamiento contrario al suelo seco.
+En la Figura \ref{L-espacial} se muestra el porcentaje de veces que el valor de L en cada punto de grilla tiene signo distinto a la moda calculada en todo el dominio y el período analizado. Se observa que que existen regiones donde el signo de $L$ es dsitnto a la moda del dominio más del 40% de las veces. Esto puede estar relacionado la variación de la altura del terreno (Figura \ref{topografia}) o a la presencia del río y zonas con suelos saturados donde los flujos verticales de calor ($F_{\theta}$) pueden tener un comportamiento contrario al suelo seco. Esto último se observa en la Figura \ref{L-espacial}, donde se muestra que las regiones donde el porcentaje de veces que el valor de $F_{\theta}$ tiene un signo distinto a la moda es alto coincide con las regiones donde se encuentra el río. 
 
 
-```{r L-espacial, fig.cap="Porcentaje de veces que el valor local de L (a) y el flujo vertical de calor (b) tiene signo distinto a la moda para todo el periodo analizado, se muestran los valores mayores al 5% (colores) y topografía del dominio (contornos). Simulación con la parametrización YSU. \\label{L-esp}", fig.subcap=c("a \\label{L}", "b \\label{hfx}"), out.width="0.48\\textwidth", fig.ncol=2}
+```{r L-espacial, fig.cap="Porcentaje de veces que el valor local de L (a) y el flujo vertical de calor (b) tiene signo distinto a la moda del dominio calculada en todo el periodo analizado. Se muestran los valores mayores al 5\\% (colores) y topografía del dominio (contornos). Datos de la simulación YSU. \\label{L-esp}", out.width="0.95\\textwidth", fig.align='center'}
 
 path <- "~/Radar/WRF/"
 hgt <- ReadNetCDF(paste(path, "caso1_YSU/hgt_YSU.nc", sep = "")) %>% 
@@ -1319,7 +1320,6 @@ L.YSU <- ReadNetCDF(paste(path,"caso1_YSU/l_YSU.nc", sep = "")) %>%
   .[, L := l[1], by = .(date, lon, lat, param)] %>% 
   .[date %between% as.POSIXct(c("2016-01-13 22:00:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
   .[inside(lon, lat) == T, ]
-
 
 L <- copy(L.YSU)[, La := L*mode(L), by = .(date)] %>% 
   .[, .(mean = mean(La < 0)), by = .(lon, lat)] %>% 
@@ -1341,7 +1341,7 @@ hfx <- hfx.YSU[lev == -25, hfxa := hfx*mode(hfx), by = .(date)] %>%
 rbind(L, hfx) %>% 
   .[, var := factor(var, levels = c("L", "hfx"), labels = c("L", "F[theta]"))] %>% 
   ggplot(aes(lon, lat)) +
-  geom_tile(aes(fill = mean)) +
+  geom_tile(aes(fill = mean*100)) +
   geom_contour(data = hgt, aes(z = hgt), 
                color = "darkgrey") +
   scale_fill_viridis(name = "", guide = guide_colorbar(title.position = "top", 
@@ -1370,7 +1370,7 @@ caso.YSU <- ReadNetCDF(paste(path,"caso1_YSU/spd_YSU.nc", sep = "")) %>%
          param = "YSU") %>% 
   .[, lev := lev*1000 - 75] %>% 
   .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>% 
-  .[, regimen := ifelse(L <= 0, "inestable", "estable")] %>% 
+  .[, regimen := ifelse(L <= 0, "Inestable", "Estable")] %>% 
   .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
   .[inside(lon, lat) == T] %>% 
   .[lev > -25,]
@@ -1383,7 +1383,7 @@ caso.MYJ <- ReadNetCDF(paste(path,"caso1_MYJ/spd_MYJ.nc", sep = "")) %>%
          param = "MYJ") %>% 
   .[, lev := lev*1000 - 75] %>% 
   .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>% 
-  .[, regimen := ifelse(L <= 0, "inestable", "estable")] %>% 
+  .[, regimen := ifelse(L <= 0, "Inestable", "Estable")] %>% 
   .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
   .[inside(lon, lat) == T] %>% 
   .[lev > -25,]
@@ -1396,69 +1396,73 @@ caso.ACM2 <- ReadNetCDF(paste(path,"caso1_ACM2/spd_ACM2.nc", sep = "")) %>%
          param = "ACM2") %>% 
   .[, lev := lev*1000 - 75] %>% 
   .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>% 
-  .[, regimen := ifelse(L <= 0, "inestable", "estable")] %>% 
+  .[, regimen := ifelse(L <= 0, "Inestable", "Estable")] %>% 
   .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
   .[inside(lon, lat) == T] %>% 
   .[lev > -25,]
 
 all.pbl <- rbind(caso.YSU, caso.MYJ, caso.ACM2) %>% 
-  .[lat %~% -31.8484 & lon %~% -60.5372]
+  .[lat %~% -31.8484 & lon %~% -60.5372] %>% 
+  .[, param :=  factor(param,
+                       levels = c("YSU", "MYJ", "ACM2"),
+                       ordered = T)]
 
 remove(list = c("caso.YSU", "caso.MYJ", "caso.ACM2"))
 ```
 
-```{r L-parm, fig.cap="Longitud de Monin Obukhov (m) en función del tiempo y para cada parametrización. \\label{L-param}", out.width="0.98\\textwidth", fig.align='center'}
+```{r L-parm, fig.cap="Longitud de Monin Obukhov (m) en función del tiempo, para cada simulación. \\label{L-param}", out.width="0.95\\textwidth", fig.align='center'}
+
 ggplot(all.pbl, aes(date, L)) +
   geom_point(aes(color = regimen)) +
-  geom_hline(yintercept = 0) +
+  geom_hline(yintercept = 0, color = "darkgrey") +
   scale_color_manual(name = "Regimen", values = color_manual) +
-  scale_y_continuous(name = "L (m)") +
-  scale_x_datetime(name = "Hora (UTC)", date_breaks = "6 hours", date_labels = "%H") +
+  scale_y_continuous(name = "L (m)", breaks = seq(-400, 300, 50)) +
+  scale_x_datetime(name = "Hora (UTC)", 
+                   date_breaks = "6 hours", 
+                   date_labels = "%H") +
   facet_wrap(~param) +
   theme_minimal() 
-  
-  # ggplot(all.pbl[param == "MYJ"], aes(date, pblh)) +
-  # geom_point(aes(color = regimen)) +
-  # #facet_wrap(~param) +
-  # annotate(geom = "vline", xintercept = as.POSIXct("2016-01-14 09:00:00")) +
-  # theme_minimal()
-  # 
+
 ```
 
-```{r kh_wrf, fig.cap="Coeficiente de difusividad de calor Kh (m-2 s-1) promediado sobre el regimen estable (izquierda) y el regimen inestable (derecha) de la capa límite para los distintos esquemas analizados."}
-group_by(all.pbl, param, lev, regimen) %>% 
-  summarise(Kh = mean(exchh, na.rm = T)) %>% 
-  ungroup() %>% 
-  ggplot(aes(lev, Kh)) + 
-  geom_line(aes(color = as.factor(param))) +
-  scale_color_viridis(name = "Metodología",discrete = T, option = "viridis") +
-  scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
-  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)", limits = c(0, 1500)) +
-  facet_wrap(~regimen, scales = "free") +
-  #labs(title = "Perfiles a partir del promedio del dominio") +
-  coord_flip() +
-  theme_minimal()
-```
 
 L
 Oscilacion inercial
 #### Altura de la capa límite
 Comparación entre simulaciones y observaciones
 Gráfico de dispersión para analizar la altura obtenida con umax
+
 #### Coeficientes de difusividad turbulenta
 
-
-```{r}
+```{r make-ulke}
 all.pbl <- all.pbl[, c("kh.u", "km.u", "u.u") := .(
   kh.ulke(lev, pblh, L, ust),
   km.ulke(lev, pblh, L, ust),
   u.ulke(lev, pblh, L, ust))] %>% 
   .[, Pr := km.u/kh.u]
-
-
 ```
 
-```{r kh_ulke, fig.cap="Coeficiente de difusividad de calor Kh (m-2 s-1) promediado sobre el regimen estable (izquierda) y el regimen inestable (derecha) de la capa límite para los distintos esquemas analizados."}
+Coeficiente de difusividad de calor que sale del WRF
+
+
+```{r kh_wrf, fig.cap="BORRADOR - Coeficiente de difusividad de calor $K_h$ ($m^2/s$) promediado para todo el período estable (izquierda) y el período inestable (derecha) de la capa límite en todas las simulaciones. \\label{kh_wrf}", fig.align='center', out.width="0.95\\textwidth"}
+
+group_by(all.pbl, param, lev, regimen) %>% 
+  summarise(Kh = mean(exchh, na.rm = T)) %>% 
+  ungroup() %>% 
+  ggplot(aes(lev, Kh)) + 
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Metodología",discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[h], " (", m^2/s, ")"))) +
+  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)", 
+                     limits = c(0, 1500)) +
+  facet_wrap(~regimen, scales = "free") +
+  coord_flip() +
+  theme_minimal()
+```
+
+
+```{r kh_ulke, fig.cap="BORRADOR - Coeficiente de difusividad de calor $K_h$ ($m^2/s$) promediado sobre el período estable (izquierda) y el período inestable (derecha) de la capa límite calculados a partir de los modelos propuestos por Ulke 2000 \\label{kh-ulke}", fig.align='center', out.width="0.95\\textwidth"}
 
 group_by(all.pbl, param, lev, regimen) %>% 
   summarise(Kh.u = mean(kh.u, na.rm = T), Km.u = mean(km.u, na.rm = T)) %>% 
@@ -1468,7 +1472,7 @@ group_by(all.pbl, param, lev, regimen) %>%
   ggplot(aes(lev, Kh.u)) + 
   geom_line(aes(color = as.factor(param))) +
   scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
-  scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
+  scale_y_continuous(name = expression(paste(K[h], " (", m^2/s, ")"))) +
   scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)") +
   facet_wrap(~regimen, scales = "free") +
   #labs(title = "Perfiles a partir del promedio del dominio") +
@@ -1476,21 +1480,18 @@ group_by(all.pbl, param, lev, regimen) %>%
   theme_minimal()
 ```
 
-```{r kh_norm, fig.cap="Coeficiente de difusividad de calor Kh* = Kh/khu* promediado sobre el regimen estable (izquierda) y el regimen inestable (derecha) de la capa límite para los distintos esquemas analizados."}
+```{r k_norm, fig.cap="Coeficiente de difusividad normalizados calculados a partir de los modelos propuestos por Ulke 2000 y promediados sobre en período estable (izquierda) y el período inestable (derecha) de la capa límite. \\label{kh-ulke}", fig.subcap=c("$K_h* = K_h/khu_*$ \\label{kh-norm}", "$K_m* = K_m/khu_*$ \\label{km-norm}"), fig.align='center', fig.height=0.40*text.height, out.width="0.95\\textwidth", fig.ncol=1}
 
 all.pbl_norm <- all.pbl[, `:=`(kh.u_norm = kh.u/(ust*0.4*pblh),
-             km.u_norm = km.u/(ust*0.4*pblh),
-           lev_norm = lev/pblh),
-    by = .(param, regimen)] %>% 
+             km.u_norm = km.u/(ust*0.4*pblh), 
+             lev_norm = lev/pblh), 
+             by = .(param, regimen)] %>% 
   .[, .(lev_norm = seq(0, 1, by = 0.1),
         kh.u_norm = approx(lev_norm, kh.u_norm, xout = seq(0, 1, by = 0.1))$y,
         km.u_norm = approx(lev_norm, km.u_norm, xout = seq(0, 1, by = 0.1))$y), 
     by = .(param, regimen, date)] %>% 
   .[, lapply(.SD, mean, na.rm = T), by = .(param, lev_norm, regimen), .SDcols = -"date"]
-  # group_by(param, lev_norm, regimen) %>% 
-  # summarise(Kh.u_norm = mean(kh.u_norm, na.rm = T), Km.u_norm = mean(km.u_norm, na.rm = T)) %>% 
-  # ungroup() %>%
-  #.[Kh.u > 0 & Km.u > 0, ] %>% 
+
 ggplot(all.pbl_norm, aes(lev_norm, kh.u_norm)) + 
   geom_line(aes(color = as.factor(param))) +
   scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
@@ -1499,7 +1500,8 @@ ggplot(all.pbl_norm, aes(lev_norm, kh.u_norm)) +
   facet_wrap(~regimen, scales = "free") +
   #labs(title = "Perfiles a partir del promedio del dominio") +
   coord_flip() +
-  theme_minimal() +
+  theme_minimal() 
+
 ggplot(all.pbl_norm, aes(lev_norm, km.u_norm)) + 
   geom_line(aes(color = as.factor(param))) +
   scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
@@ -1508,13 +1510,11 @@ ggplot(all.pbl_norm, aes(lev_norm, km.u_norm)) +
   facet_wrap(~regimen, scales = "free") +
   #labs(title = "Perfiles a partir del promedio del dominio") +
   coord_flip() +
-  theme_minimal() +
-  plot_layout(ncol = 1)
+  theme_minimal()
 ```
 
 
-
-```{r}
+```{r pr, fig.cap="Variación del número de Prandtl calculado a partir del modelo propuesto por Ulke 2000 con las variables de cada simulación y promediado en cada periodo. \\label{Pr}", fig.align='center', out.width="0.95\\textwidth"}
 group_by(all.pbl, param, lev, regimen) %>%
   summarise(Pr = mean(Pr, na.rm = T)) %>%
 ungroup() %>%
@@ -1529,22 +1529,45 @@ ggplot(aes(lev, Pr)) +
   theme_minimal()
 ```
 
-```{r}
+```{r tabla-clp}
 hL <- group_by(all.pbl, param, regimen) %>% 
-  summarise(h_norm = mean(pblh, na.rm = T), 
-            L_norm = mean(L, na.rm = T), 
-            ust_norm = mean(ust, na.rm = T),
-            Pr =  mean(Pr, na.rm = T)) %>% 
-  .[, hL := h_norm/L_norm]
-knitr::kable(hL)
+  summarise(h_mean = mean(pblh, na.rm = T), 
+            L_mean = mean(L, na.rm = T), 
+            ust_mean = mean(ust, na.rm = T),
+            Pr_mean =  mean(Pr, na.rm = T)) %>% 
+  .[, hL := h_mean/L_mean]
+
+names(hL) <-  c("Simulación", "Regimen", "$\\overline{h}$", "$\\overline{L}$", "$\\overline{u*}$", "$\\overline{Pr}$", "$h/L$")
+
+names(hL)[3] <- paste0(names(hL)[3], footnote_marker_number(1, "latex"))
+names(hL)[4] <- paste0(names(hL)[4], footnote_marker_number(2, "latex"))
+names(hL)[5] <- paste0(names(hL)[5], footnote_marker_number(3, "latex"))
+names(hL)[6] <- paste0(names(hL)[6], footnote_marker_number(4, "latex"))
+
+kable(hL, "latex",
+      caption = "Parámetros característicos de la capa límite para cada simulación y regimen, promediados para todo el periodo y todo el perfil (en los casos que corresponda).", 
+      escape = F,
+      booktabs = T,
+      digits = c(0,0,2,2,4,2,2)) %>% 
+  kable_styling(full_width = F) %>% 
+  footnote(general_title = "Nota",
+           escape = F,
+           number = c("Altura de la CLP promediada.",
+                      "Longitud de Monin Obukhov promediada.",
+                      "Velocidad de fricción promediada.",
+                      "Número de Prandtl promediado."))
+
+
+# col.names = c("Simulación", "Regimen", "$\\overline{h}$", "$\\overline{L}$", "$\\overline{u*}$", "$\\overline{Pr}$", "h/L")
 ```
 
-```{r}
+```{r k_ulke_wrf, fig.cap="Coeficientes de difusividad promediados para todo el período estable (izquierda) y el período inestable (derecha) de la capa límite en todas las simulaciones. \\label{kh_wrf}", fig.subcap=c("Calor $K_h$ ($m^2/s$). \\label{kh-wrf}", "Moviento $K_m$ ($m^2/s$). \\label{km-wrf-ulke}"), fig.align='center', out.width="0.98\\textwidth", fig.ncol=1, fig.height=0.40*text.height}
+
 all.pbl <- all.pbl[, exchm := Pr*exchh]
 d <- group_by(all.pbl, param, lev, regimen) %>% 
   summarise(Kh.m = mean(exchh, na.rm = T), Km.m = mean(exchm, na.rm = T)) %>% 
   ungroup()
-  #.[Kh.m > 0 & Km.m > 0, ] %>% 
+
 ggplot(d, aes(lev, Kh.m)) + 
   geom_line(aes(color = as.factor(param))) +
   scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
@@ -1553,8 +1576,9 @@ ggplot(d, aes(lev, Kh.m)) +
   facet_wrap(~regimen, scales = "free") +
   #labs(title = "Perfiles a partir del promedio del dominio") +
   coord_flip() +
-  theme_minimal() +
-  ggplot(d, aes(lev, Km.m)) + 
+  theme_minimal() 
+
+ggplot(d, aes(lev, Km.m)) + 
   geom_line(aes(color = as.factor(param))) +
   scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
   scale_y_continuous(name = expression(paste(K[m], " (", m^2,s^{-1}, ")"))) +
@@ -1562,8 +1586,7 @@ ggplot(d, aes(lev, Kh.m)) +
   facet_wrap(~regimen, scales = "free") +
   #labs(title = "Perfiles a partir del promedio del dominio") +
   coord_flip() +
-  theme_minimal() +
-  plot_layout(ncol = 1)
+  theme_minimal() 
   
 remove("d")
 ```
