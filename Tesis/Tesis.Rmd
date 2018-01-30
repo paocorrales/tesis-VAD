@@ -71,8 +71,11 @@ map <- rbind(map, map2)
 setnames(map, "long", "lon")
 
 text.height <- (297 - 50)/25.4
+text.width <- (210 - 50)/25.4
 
 color_manual <- c("#231151", "#d3436e", "#feba80")
+
+path <- "~/Radar/WRF/"
 
 remove(map2)
 ```
@@ -133,7 +136,7 @@ En esta sección se describen los datos utilizados en el trabajo y las metodolog
 
 Este trabajo centra el análisis en la región de la ciudad de Paraná (provincia de Entre Ríos, Argentina) donde se encuentran el Radar Doppler del INTA (Instituto Nacional de Tecnología Agropecuaria) y una estación meteorológica de superficie perteneciente al SMN (Servicio Meteorológico Nacional) separados por aproximadamente 9 kilómetros de distancia.
 
-```{r topografia, fig.cap="Topografía de la región en estudio en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Paraná, el punto rojo indica la ubicación de la estación Paraná Aero. \\label{topografia}", fig.scap="Topografía de la región en estudio en metros sobre el nivel del mar.", out.width="0.75\\textwidth", fig.align='center'}
+```{r topografia, fig.cap="Topografía de la región en estudio en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Paraná, el punto rojo indica la ubicación de la estación Paraná Aero. \\label{topografia}", fig.scap="Topografía de la región en estudio en metros sobre el nivel del mar.", fig.width=0.75*text.width, fig.align='center'}
 topo <- GetTopography(298.96, 299.95, -31.44, -32.25, resolution = 1/60, file.dir = "seudocache") %>% 
   .[, lon := ConvertLongitude(lon, from = 360)]
 
@@ -207,7 +210,7 @@ Existen muchos algoritmos que buscan solucionar el problema del aliasing [por ej
 
 A partir de la exploración visual puede observarse que el algoritmo resuelve el problema de manera satisfactoria y por esta razón se utilizará para preprocesar todos los volúmenes de datos de radar.
 
-```{r aliasing, fig.cap="Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\\circ}$ y $V_N = 6.7 m/s$. Notar las escalas diferentes.", fig.subcap=c("Con aliasing \\label{aliasing}", "Sin aliasing \\label{no-aliasing}"), out.extra=" ", out.width="0.48\\textwidth"}
+```{r aliasing, fig.cap="Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\\circ}$ y $V_N = 6.7 m/s$. Notar las escalas diferentes.", fig.subcap=c("Con aliasing \\label{aliasing}", "Sin aliasing \\label{no-aliasing}"), out.extra=" ", fig.width=0.48*text.width}
 
 radar <- nc_open("seudocache/cfrad.20160114_060005.000_to_20160114_060431.001_INTA_Parana_SUR.nc")
 azimut <- ncvar_get(radar, 'azimuth')   
@@ -256,7 +259,7 @@ radar[elevacion == elev[3] & !is.na(Vda), ] %>%
 
 A medida que el radar rota en la dirección azimutal, mide la velocidad de los objetivos para cada ángulo y rango de manera continua y en función del azimut. A esto se le da el nombre de Visualización Azimutal de la Velocidad o por sus siglas en inglés VAD (por Velocity Azimuth Display, @Lhermitte1962) y se muestra en la Figura \ref{vad}. Si el campo de viento es horizontalmente homogéneo, la velocidad radial media tiene un comportamiento sinusoidal en función del azimut. 
 
-```{r vad, fig.cap="Velocidad radial (m/s) en función del azimut (grados) para un rango y ańgulo de elevación fijos. En color se  ajusta una función sinusoidal a los datos. \\label{vad}", out.width="0.75\\textwidth", fig.align='center'}
+```{r vad, fig.cap="Velocidad radial (m/s) en función del azimut (grados) para un rango y ańgulo de elevación fijos. En color se  ajusta una función sinusoidal a los datos. \\label{vad}", fig.width=0.75*text.width, fig.align='center'}
 ggplot(radar[rango %~% 4000 & elevacion == elev[3], ], aes(azimut, Vda)) +
   geom_line() +
   geom_smooth(method = "lm", formula = y ~ I(sin(x*pi/180)) + I(cos(x*pi/180)), se = F, color = "#20968b") +
@@ -401,7 +404,7 @@ Además, dado que el resultado de la interpolación del viento real da un campo 
 Se obtiene el $V_r$ interpolado a la grilla del radar de Anguil (con una estrategia de escaneo hasta 120 km de radio y 8 ángulos de elevación) a partir del sondeo.
 Como los datos de sondeo llegan hasta los 30 km de altura, hay información disponible para interpolar los datos de $V-r$ para todos los ángulos de elevación y para cualquier rango. Sin embargo esto nos da muchos más datos de los disponibles normalmente. Es de esperar que el VAD resultante sea muy similar al sondeo y inicial pero esta primera validación también permite verificar que la transformación de $V$ a $V_r$ es correcta. 
 
-```{r validacion, fig.cap="Velocidad radial (m/s) observada a las 12 UTC por el radar de Anguil en la elevación $1.3^{\\circ}$ y la misma variable transformada a partir del sondeo de la estación Santa Rosa Aero para la misma hora \\label{validacion}", fig.subcap=c("Datos de radar \\label{radar}", "Sin errores \\label{se}", "Con errores \\label{ce}", "Con errores + NAs \\label{na}"), out.extra=" ", out.width="0.48\\textwidth", fig.ncol = 2, fig.show="h"}
+```{r validacion, fig.cap="Velocidad radial (m/s) observada a las 12 UTC por el radar de Anguil en la elevación $1.3^{\\circ}$ y la misma variable transformada a partir del sondeo de la estación Santa Rosa Aero para la misma hora \\label{validacion}", fig.subcap=c("Datos de radar \\label{radar}", "Sin errores \\label{se}", "Con errores \\label{ce}", "Con errores + NAs \\label{na}"), out.extra=" ", fig.width=0.48*text.width, fig.ncol = 2, fig.show="h"}
 
 radar <- nc_open("seudocache/cfrad.20160105_120423.000_to_20160105_120716.001_INTA_Anguil_SUR.nc")
 azimut <- ncvar_get(radar, 'azimuth')   
@@ -544,7 +547,7 @@ Otro problema importante en los datos de radar es la ausencia de señal, esto se
 
 En la Figura \ref{validacion-perfiles} se muestra el perfil del sondeo para los primeros 3 km de altura y los perfiles calculado con VAD a partir de los distintos campos sintéticos. En cuanto a la magnitud no se ven diferencias importantes y al observar el detalle de los primeros 1000 metros de altura, la diferencia es menor a 0.5 m/s en todos los casos. Tampoco se observó sensibilidad al aumento de la amplitud de error (no se muestra).
 
-```{r validacion-perfiles, fig.cap="Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruevas de validación a la izquierda y el detalle ampliado del máximo en niveles bajos \\label{validacion-perfiles}", out.extra=" ", out.width="0.95\\textwidth", fig.show="h"}
+```{r validacion-perfiles, fig.cap="Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruevas de validación a la izquierda y el detalle ampliado del máximo en niveles bajos \\label{validacion-perfiles}", out.extra=" ", fig.width=0.95*text.width, fig.show="h"}
 vad <- read.csv("seudocache/Vr_se_2016-01-05T12:04:23Z-INTA_Anguil.csv", 
                 sep = ";", dec = ".", na.strings = "-9999")
 vade <- read.csv("seudocache/Vr_ce_2016-01-05T12:04:23Z-INTA_Anguil.csv", 
@@ -673,9 +676,8 @@ Las simulaciones se integraron en un dominio anidado en un sentido de dos nivele
 
 Ambos dominios tienen una grilla vertical de 42 niveles eta configurados de manera hipérbolo tangencial para que los primeros 15 niveles se ubiquen en los primeros kilómetros. La presión en el tope del modelo es de 100 hPa. De acuerdo a @Shin2012 se determinó que el nivel inferior se ubique en z = 40 metros para evitar errores en algunas variables de superficie asociadas a la CLP.
 
-```{r dominio, fig.cap="Dominios utilizados. \\label{dominio}", fig.subcap=c("Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior. El punto representa la ubicación del radar. \\label{dom-modelo}", "Topografía sobre el nivel del terreno respecto de la ubicación del radar. El circulo negro corresponde al dominio de análisis, de 40km de radio y centrado en el radar. \\label{dom-radar}"), out.width="0.48\\textwidth", fig.align='center', fig.sep = "\\hfill"}
+```{r dominio, fig.cap="Dominios utilizados. \\label{dominio}", fig.subcap=c("Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior. El punto representa la ubicación del radar. \\label{dom-modelo}", "Topografía sobre el nivel del terreno respecto de la ubicación del radar. El circulo negro corresponde al dominio de análisis, de 40km de radio y centrado en el radar. \\label{dom-radar}"), fig.width=0.48*text.width, fig.align='center', fig.sep = "\\hfill"}
 
-path <- "~/Radar/WRF/"
 hgt <- ReadNetCDF(paste(path, "caso1_YSU/hgt_YSU.nc", sep = "")) %>% 
   .[date == "2016-01-14 21:00:00 UTC" & lev == 0.05, ]
 
@@ -822,7 +824,7 @@ remove(sup_vad)
 
 ### Magnitud y velocidad del viento
 
-```{r campo-caso1, fig.cap="Magnitud y dirección del viento  correspondiente al Caso 1 (14/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \\label{campo-caso1}", fig.subcap=c("Magnitud del viento. \\label{caso1-spd}", "Dirección. \\label{caso1-dir}"), out.width="0.95\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
+```{r campo-caso1, fig.cap="Magnitud y dirección del viento  correspondiente al Caso 1 (14/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \\label{campo-caso1}", fig.subcap=c("Magnitud del viento. \\label{caso1-spd}", "Dirección. \\label{caso1-dir}"), fig.width=0.95*text.width, fig.height=0.4*text.height, fig.ncol=1}
 vad_20160114[ht > 0.02] %>% 
   ggplot(aes(date_time, ht)) + 
   geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
@@ -882,7 +884,7 @@ vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth) & ht > 0.02] %>%
   theme_minimal() 
 ```
 
-```{r campo-caso2, fig.cap="Magnitud y dirección del viento  correspondiente al Caso 2 (21/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \\label{campo-caso2}", fig.subcap=c("Magnitud del viento. \\label{caso2-spd}", "Dirección. \\label{caso2-dir}"), out.width="0.95\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
+```{r campo-caso2, fig.cap="Magnitud y dirección del viento  correspondiente al Caso 2 (21/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \\label{campo-caso2}", fig.subcap=c("Magnitud del viento. \\label{caso2-spd}", "Dirección. \\label{caso2-dir}"), fig.width=0.95*text.width, fig.height=0.4*text.height, fig.ncol=1}
 vad_20160121[ht > 0.02] %>% 
   ggplot(aes(date_time, ht)) + 
   geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
@@ -921,7 +923,7 @@ vad_20160121[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   theme_minimal() 
 ```
 
-```{r campo-caso3, fig.cap="Magnitud y dirección del viento  correspondiente al Caso 3 (23/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \\label{campo-caso3}", fig.subcap=c("Magnitud del viento. \\label{caso3-spd}", "Dirección. \\label{caso3-dir}"), out.width="0.95\\textwidth", fig.height=0.4*text.height, fig.ncol=1}
+```{r campo-caso3, fig.cap="Magnitud y dirección del viento  correspondiente al Caso 3 (23/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \\label{campo-caso3}", fig.subcap=c("Magnitud del viento. \\label{caso3-spd}", "Dirección. \\label{caso3-dir}"), fig.width=0.95*text.width, fig.height=0.4*text.height, fig.ncol=1}
 vad_20160123[ht > 0.02] %>% 
   ggplot(aes(date_time, ht)) + 
   geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
@@ -960,7 +962,7 @@ vad_20160123[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   theme_minimal() 
 ```
 
-```{r perfiles, fig.cap="Perfil de viento observado por el radar a las 0600 y las 1700 UTC y el $rmse_2$ en cada punto (sombreado) para los tres casos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. Los valores en superficie fueron obtenidos a partir de los datos del la estación meteorógica Paraná Aero. \\label{perfiles-horarios}", out.width="0.95\\textwidth", fig.align='center'}
+```{r perfiles, fig.cap="Perfil de viento observado por el radar a las 0600 y las 1700 UTC y el $rmse_2$ en cada punto (sombreado) para los tres casos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. Los valores en superficie fueron obtenidos a partir de los datos del la estación meteorógica Paraná Aero. \\label{perfiles-horarios}", fig.width=0.95*text.width, fig.align='center'}
 gdata <- rbindlist(list(vad_20160114, vad_20160121, vad_20160123)) %>% 
   .[minute(date_time) == 00 & hour(date_time) %in% c(06, 17) & ht < 2 &
       !is.na(spd_smooth)] 
@@ -1061,7 +1063,7 @@ ri_vad[hour(hora) %between% c(0, 12)] %>%
 
 
 
-```{r hodografa-horaria, fig.cap="Variación del vector del viento en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 0600 UTC. El triángulo marca el nivel inferior y los círculos grandes se ubican cada 500 metros. \\label{hodografa-h}", fig.align='center', out.width="0.75\\textwidth"}
+```{r hodografa-horaria, fig.cap="Variación del vector del viento en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 0600 UTC. El triángulo marca el nivel inferior y los círculos grandes se ubican cada 500 metros. \\label{hodografa-h}", fig.align='center', fig.width=0.75*text.width}
 
 gdata <- rbind(vad_20160114, vad_20160121, vad_20160123) %>% 
   .[minute(date_time) == 00 & hour(date_time) %in% c(06) &
@@ -1085,7 +1087,7 @@ ggplot(gdata, aes(u, v,  color = caso)) +
 #### Oscilación inercial
 
 
-```{r hodografa-nivel, fig.cap="Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (0000 UTC). \\label{hodografa-n}", fig.subcap=c("Datos observados en la estación meteorológica. \\label{hodo-nivel1}", "Datos observados por el radar. \\label{hodo-nivel2}"), out.width="0.95\\textwidth", fig.ncol=1, fig.align='center', fig.height=0.25*text.height}
+```{r hodografa-nivel, fig.cap="Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (0000 UTC). \\label{hodografa-n}", fig.subcap=c("Datos observados en la estación meteorológica. \\label{hodo-nivel1}", "Datos observados por el radar. \\label{hodo-nivel2}"), fig.width=0.95*text.width, fig.ncol=1, fig.align='center', fig.height=0.25*text.height}
 
 gdata <- rbind(vad_20160114, vad_20160121, vad_20160123)
 gdata <- as.data.table(gdata) %>%
@@ -1157,7 +1159,7 @@ vad_20160114 <- vad_20160114[, caso := "Obs"]
 ```
 
 
-```{r vad-modelo-spd, fig.cap="Magnitud del viento observada por el radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-spd}", out.width="0.95\\textwidth", fig.align='center'}
+```{r vad-modelo-spd, fig.cap="Magnitud del viento observada por el radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-spd}", fig.width=0.95*text.width, fig.align='center'}
 
 gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 gdata[, caso2 := factor(caso,
@@ -1185,7 +1187,7 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_d
 
 ```
 
-```{r vad-modelo-dir, fig.cap="Dirección del viento observada por el radar(Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-dir}", out.width="0.95\\textwidth", fig.align='center'}
+```{r vad-modelo-dir, fig.cap="Dirección del viento observada por el radar(Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-dir}", fig.width=0.95*text.width, fig.align='center'}
 
 gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 gdata[, caso2 := factor(caso,
@@ -1213,7 +1215,7 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_d
 ```
 
 
-```{r diferencia, fig.cap="Diferencia entre las observaciones y cada simulación  correspondiente al Caso 1. \\label{dif}", fig.subcap=c("Magnitud del viento \\label{dif-spd}", "Dirección del viento \\label{dif-dir}"), out.width="0.48\\textwidth", fig.height=0.70*text.height, fig.ncol=2}
+```{r diferencia, fig.cap="Diferencia entre las observaciones y cada simulación  correspondiente al Caso 1. \\label{dif}", fig.subcap=c("Magnitud del viento \\label{dif-spd}", "Dirección del viento \\label{dif-dir}"), fig.width=0.48*text.width, fig.height=0.70*text.height, fig.ncol=2}
 
 gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 
@@ -1271,7 +1273,12 @@ gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>%
   theme_minimal()
 ```
 
-```{r perfiles-mod, fig.cap="Perfil de viento observado por el radar a las 0600 y las 1700 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \\label{perfiles-modelo}", out.width="0.95\\textwidth", fig.align='center'}
+
+### Estructura de la capa límite
+
+#### Oscilacion inercial y LLJ
+
+```{r perfiles-mod, fig.cap="Perfil de viento observado por el radar a las 0600 y las 1700 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \\label{perfiles-modelo}", fig.width=0.95*text.width, fig.align='center'}
 gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 gdata[, caso2 := factor(caso,
                        levels = c("Obs", "YSU", "MYJ", "ACM2"),
@@ -1295,9 +1302,36 @@ gdata[, caso2 := factor(caso,
   theme_minimal()
 ```
 
+```{r hodografa-wrf, fig.cap="Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 4 horas) y el cuadrado marca el primer tiempo (0000 UTC). \\label{hodografa-wrf}", fig.width=0.95*text.width, fig.align='center'}
 
+gdata <- rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm)
+gdata <- as.data.table(gdata) %>%
+  .[, hora := hour(date_time)] %>% 
+  .[minute(date_time) == 00 & hora < 18] %>% 
+  .[, caso2 := factor(caso,
+                       levels = c("Obs", "YSU", "MYJ", "ACM2"),
+                       ordered = T)] 
 
-### Estructura de la capa límite
+gdata[ht %in% c(0.3, 0.5, 1.0) & !is.na(spd_smooth)] %>% 
+  ggplot(aes(u, v,  color = caso2)) +
+  geom_hline(yintercept = 0, color = "darkgrey") +
+  geom_vline(xintercept = 0, color = "darkgrey") +
+  geom_point(aes(x = ifelse(hour(date_time) != 0, u, NA)), size = 1) +
+  geom_point(aes(x = ifelse(hour(date_time) %in% c(0,4,8,12,16), u, NA)),
+             size = 2) +
+  geom_point(aes(x = ifelse(hour(date_time) == 0, u, NA)), shape = 15,
+             size = 3) +
+  geom_path() +
+  # geom_text_repel(aes(label = JumpBy(hora, 6, fill = NA)), 
+  #                  data = gdata[ht %in% c(0.3, 0.5, 1.0)]) +
+  scale_color_manual(name="Altura", values = c("black", viridis_pal()(3))) + 
+  scale_x_continuous(name = "u (m/s)") + 
+  scale_y_continuous(name = "v (m/s)") +
+  coord_equal() +
+  facet_wrap(~ht) +
+  theme_minimal() 
+
+```
 
 #### Análisis de la homogeneidad espacial en las variables de estabilidad
 
@@ -1308,9 +1342,8 @@ En el caso de la Longitud de Monin-Obukhov ($L$) se analizó el procentaje de ve
 En la Figura \ref{L-espacial} se muestra el porcentaje de veces que el valor de L en cada punto de grilla tiene signo distinto a la moda calculada en todo el dominio y el período analizado. Se observa que que existen regiones donde el signo de $L$ es dsitnto a la moda del dominio más del 40% de las veces. Esto puede estar relacionado la variación de la altura del terreno (Figura \ref{topografia}) o a la presencia del río y zonas con suelos saturados donde los flujos verticales de calor ($F_{\theta}$) pueden tener un comportamiento contrario al suelo seco. Esto último se observa en la Figura \ref{L-espacial}, donde se muestra que las regiones donde el porcentaje de veces que el valor de $F_{\theta}$ tiene un signo distinto a la moda es alto coincide con las regiones donde se encuentra el río. 
 
 
-```{r L-espacial, fig.cap="Porcentaje de veces que el valor local de L (a) y el flujo vertical de calor (b) tiene signo distinto a la moda del dominio calculada en todo el periodo analizado. Se muestran los valores mayores al 5\\% (colores) y topografía del dominio (contornos). Datos de la simulación YSU. \\label{L-esp}", out.width="0.95\\textwidth", fig.align='center'}
+```{r L-espacial, fig.cap="Porcentaje de veces que el valor local de L (a) y el flujo vertical de calor (b) tiene signo distinto a la moda del dominio calculada en todo el periodo analizado. Se muestran los valores mayores al 5\\% (colores) y topografía del dominio (contornos). Datos de la simulación YSU. \\label{L-esp}", fig.width=0.95*text.width, fig.align='center'}
 
-path <- "~/Radar/WRF/"
 hgt <- ReadNetCDF(paste(path, "caso1_YSU/hgt_YSU.nc", sep = "")) %>% 
   .[date == "2016-01-14 21:00:00 UTC" & lev == 0.05, ]
 
@@ -1359,6 +1392,8 @@ remove(hfx, hfx.YSU, L, L.YSU)
 
 ```
 Entonces nos quedamos con el análsis en un punto cercano al radar que además no presenta gran variabilidad respecto de la región circundante.
+
+
 
 ```{r leo-pbl}
 
@@ -1410,7 +1445,7 @@ all.pbl <- rbind(caso.YSU, caso.MYJ, caso.ACM2) %>%
 remove(list = c("caso.YSU", "caso.MYJ", "caso.ACM2"))
 ```
 
-```{r L-parm, fig.cap="Longitud de Monin Obukhov (m) en función del tiempo, para cada simulación. \\label{L-param}", out.width="0.95\\textwidth", fig.align='center'}
+```{r L-parm, fig.cap="Longitud de Monin Obukhov (m) en función del tiempo, para cada simulación. \\label{L-param}", fig.width=0.95*text.width, fig.align='center'}
 
 ggplot(all.pbl, aes(date, L)) +
   geom_point(aes(color = regimen)) +
@@ -1426,9 +1461,43 @@ ggplot(all.pbl, aes(date, L)) +
 ```
 
 
-L
-Oscilacion inercial
 #### Altura de la capa límite
+
+
+```{r pblh-wrf, fig.cap="Altura de la capa límite en cada silumación. \\label{pblh-wrf}", fig.subcap=c("Estimada directamente por cada esquema de CLP. \\label{pblh}", "Comparación entre la altura calculada por cada esquema y la estimada a partir de la altura del viento máximo (sólo período estable). \\label{pblh-spd}"), fig.width=0.48*text.width, fig.align='center', fig.sep = "\\hfill"}
+
+all.pbl[lev < 30] %>%
+  ggplot(aes(date, pblh)) +
+  geom_vline(xintercept = as_datetime("2016-01-14 09:40:00"), 
+             color = "darkgray") +
+  geom_line(aes(color = param), linetype = 1) +
+  scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
+  scale_y_continuous(name = "Altura de la capa límite (m)", limits = c(0, 4000)) +
+  scale_x_datetime(name = "Hora UTC",
+                   date_breaks = "4 hours", 
+                   date_labels = "%H") +
+  theme_minimal() 
+
+all.pbl[lev < 2500 & L >=0 , .(pblh = pblh[1], pblh.spd = lev[which.max(spd)], L = L[1]), by = .(date, param)] %>%   .[!is.na(pblh), ] %>% 
+  ggplot(aes(pblh, pblh.spd)) +
+  geom_abline(slope = 1, intercept = 0) +
+  geom_point(aes(color = param)) +
+  scale_color_viridis(name = "Simulación", discrete = T) +
+  scale_x_continuous(name = "h") +
+  scale_y_continuous(name = expression(h[máx])) +
+  theme_minimal()
+```
+
+```{r}
+a <- all.pbl[lev < 2500 & L >=0 , .(pblh = pblh[1], pblh.spd = lev[which.max(spd)], L = L[1]), by = .(date, param)] %>%   .[!is.na(pblh), ] 
+
+group_by(a, param) %>% 
+  summarise(cor = cor(pblh, pblh.spd)) %>% 
+  kable(digits = 4)
+  
+```
+
+
 Comparación entre simulaciones y observaciones
 Gráfico de dispersión para analizar la altura obtenida con umax
 
@@ -1445,7 +1514,7 @@ all.pbl <- all.pbl[, c("kh.u", "km.u", "u.u") := .(
 Coeficiente de difusividad de calor que sale del WRF
 
 
-```{r kh_wrf, fig.cap="BORRADOR - Coeficiente de difusividad de calor $K_h$ ($m^2/s$) promediado para todo el período estable (izquierda) y el período inestable (derecha) de la capa límite en todas las simulaciones. \\label{kh_wrf}", fig.align='center', out.width="0.95\\textwidth"}
+```{r kh_wrf, fig.cap="BORRADOR - Coeficiente de difusividad de calor $K_h$ ($m^2/s$) promediado para todo el período estable (izquierda) y el período inestable (derecha) de la capa límite en todas las simulaciones. \\label{kh_wrf}", fig.align='center', fig.width=0.95*text.width}
 
 group_by(all.pbl, param, lev, regimen) %>% 
   summarise(Kh = mean(exchh, na.rm = T)) %>% 
@@ -1462,7 +1531,7 @@ group_by(all.pbl, param, lev, regimen) %>%
 ```
 
 
-```{r kh_ulke, fig.cap="BORRADOR - Coeficiente de difusividad de calor $K_h$ ($m^2/s$) promediado sobre el período estable (izquierda) y el período inestable (derecha) de la capa límite calculados a partir de los modelos propuestos por Ulke 2000 \\label{kh-ulke}", fig.align='center', out.width="0.95\\textwidth"}
+```{r kh_ulke, fig.cap="BORRADOR - Coeficiente de difusividad de calor $K_h$ ($m^2/s$) promediado sobre el período estable (izquierda) y el período inestable (derecha) de la capa límite calculados a partir de los modelos propuestos por Ulke 2000 \\label{kh-ulke}", fig.align='center', fig.width=0.95*text.width}
 
 group_by(all.pbl, param, lev, regimen) %>% 
   summarise(Kh.u = mean(kh.u, na.rm = T), Km.u = mean(km.u, na.rm = T)) %>% 
@@ -1480,7 +1549,7 @@ group_by(all.pbl, param, lev, regimen) %>%
   theme_minimal()
 ```
 
-```{r k_norm, fig.cap="Coeficiente de difusividad normalizados calculados a partir de los modelos propuestos por Ulke 2000 y promediados sobre en período estable (izquierda) y el período inestable (derecha) de la capa límite. \\label{kh-ulke}", fig.subcap=c("$K_h* = K_h/khu_*$ \\label{kh-norm}", "$K_m* = K_m/khu_*$ \\label{km-norm}"), fig.align='center', fig.height=0.40*text.height, out.width="0.95\\textwidth", fig.ncol=1}
+```{r k_norm, fig.cap="Coeficiente de difusividad normalizados calculados a partir de los modelos propuestos por Ulke 2000 y promediados sobre en período estable (izquierda) y el período inestable (derecha) de la capa límite. \\label{kh-ulke}", fig.subcap=c("$K_h* = K_h/khu_*$ \\label{kh-norm}", "$K_m* = K_m/khu_*$ \\label{km-norm}"), fig.align='center', fig.height=0.40*text.height, fig.width=0.95*text.width, fig.ncol=1}
 
 all.pbl_norm <- all.pbl[, `:=`(kh.u_norm = kh.u/(ust*0.4*pblh),
              km.u_norm = km.u/(ust*0.4*pblh), 
@@ -1514,7 +1583,7 @@ ggplot(all.pbl_norm, aes(lev_norm, km.u_norm)) +
 ```
 
 
-```{r pr, fig.cap="Variación del número de Prandtl calculado a partir del modelo propuesto por Ulke 2000 con las variables de cada simulación y promediado en cada periodo. \\label{Pr}", fig.align='center', out.width="0.95\\textwidth"}
+```{r pr, fig.cap="Variación del número de Prandtl calculado a partir del modelo propuesto por Ulke 2000 con las variables de cada simulación y promediado en cada periodo. \\label{Pr}", fig.align='center', fig.width=0.95*text.width}
 group_by(all.pbl, param, lev, regimen) %>%
   summarise(Pr = mean(Pr, na.rm = T)) %>%
 ungroup() %>%
@@ -1561,7 +1630,7 @@ kable(hL, "latex",
 # col.names = c("Simulación", "Regimen", "$\\overline{h}$", "$\\overline{L}$", "$\\overline{u*}$", "$\\overline{Pr}$", "h/L")
 ```
 
-```{r k_ulke_wrf, fig.cap="Coeficientes de difusividad promediados para todo el período estable (izquierda) y el período inestable (derecha) de la capa límite en todas las simulaciones. \\label{kh_wrf}", fig.subcap=c("Calor $K_h$ ($m^2/s$). \\label{kh-wrf}", "Moviento $K_m$ ($m^2/s$). \\label{km-wrf-ulke}"), fig.align='center', out.width="0.98\\textwidth", fig.ncol=1, fig.height=0.40*text.height}
+```{r k_ulke_wrf, fig.cap="Coeficientes de difusividad promediados para todo el período estable (izquierda) y el período inestable (derecha) de la capa límite en todas las simulaciones. \\label{kh_wrf}", fig.subcap=c("Calor $K_h$ ($m^2/s$). \\label{kh-wrf}", "Moviento $K_m$ ($m^2/s$). \\label{km-wrf-ulke}"), fig.align='center', fig.width=0.98*text.width, fig.ncol=1, fig.height=0.40*text.height}
 
 all.pbl <- all.pbl[, exchm := Pr*exchh]
 d <- group_by(all.pbl, param, lev, regimen) %>% 
