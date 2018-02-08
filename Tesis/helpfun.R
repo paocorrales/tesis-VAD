@@ -69,6 +69,11 @@ read.sup <- function(path){
   sup$intensidad <- sup$intensidad * 0.5144 #Paso de nudos a m/s
   sup$direccion <- sup$direccion * 10 #Paso del formato synop a angulos entre 0 y 360
   sup$ht <- 0.01 #El viento se mide a 10 metros, la temperatura a dos. 
+  sup$r <- exp(17.625*sup$tempd/(243.04 + sup$tempd))/exp(17.625*sup$temp/(243.04 + sup$temp))
+  sup$es <- 6.11*exp(-2500000/461*(1/(sup$temp+273.15)-1/273.15))
+  sup$e <- sup$r*sup$es
+  sup$w <- 0.622*sup$e/(sup$presion_estacion-sup$e)
+  sup$q <- sup$w/(sup$w+1)
   
   # Ahora la fecha y hora, miedo.
   sup$fecha <- dmy_hm(paste0(sup$fecha, " - ", sup$hora.utc, ":00"))
@@ -236,7 +241,7 @@ u.ulke <- function(z, h, L, ust, k = 0.4, z0 = 0.05){
 
 #=========================================================================================#
 # errores:
-# rms, rre
+# rms, rre, bias, rmse, rmsens
 #=========================================================================================#
 
 rms <- function(p, p_ref){
@@ -251,4 +256,30 @@ rre <- function(p, p_ref){
   n <- length(p)
   rre = sqrt(sum(resta^2, na.rm = T)/sum(p_ref^2, na.rm = T))
   rre
+}
+
+
+bias.f <- function(mod, obs){
+  
+  N <- length(mod)
+  resta <- mod - obs
+  bias <- sum(resta, na.rm = T)/N
+  bias
+}
+
+rmse.f <- function(mod, obs){
+  
+  N <- length(mod)
+  resta <- mod - obs
+  rmse <- sqrt(sum(resta^2, na.rm = T)/N)
+  rmse
+}
+
+rmsens.f <- function(mod, obs, bias){
+  
+  N <- length(mod)
+  bias <- rep(bias, len = N)
+  resta <- mod - obs - bias
+  rmsens <- sqrt(sum(resta^2, na.rm = T)/N)
+  rmsens
 }

@@ -1,0 +1,7 @@
+---
+title: "Resumen"
+output: pdf_document
+---
+
+
+De esta manera, este trabajo permite desarrollar una metodología para el tratamiento de observaciones no convencionales, su aplicación al estudio de los procesos de CLP y al modelado numérico de los mismos.

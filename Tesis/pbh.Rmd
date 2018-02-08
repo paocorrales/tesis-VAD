@@ -6,7 +6,8 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE)
 
 # librerías
 library(metR)
@@ -50,53 +51,92 @@ ReadRadar <- function(file) {
   Rp <- 4*R/3
   radar[, ht := sqrt((rango^2)+(Rp^2)+2*rango*Rp*sin(pi*elevacion/180))-Rp ]
   radar[elevacion < 6 & ht < 5000]
-  radar
-}
-
-files <- Sys.glob("~/Radar/VAD/PARANA/20160114/Prueba/*.nc")
-radar <- rbindlist(lapply(files, ReadRadar))
-
-elev <- unique(radar$elevacion)
-R <- 6371.0*1000 #km
-Rp <- 4*R/3
-
-radar[, ht := sqrt((rango^2)+(Rp^2)+2*rango*Rp*sin(pi*elevacion/180))-Rp ]
-
-
-radar[elevacion == elev[3] & !is.na(dbz), ] %>%
-  RepeatLon(., colname = "azimut") %>% 
-  ggplot(aes(azimut, rango/1000)) + 
-  geom_path(data = map[rango <= 300*1000], aes(group = group), color = "darkgray") +
-  geom_point(aes(color = dbz, size = rango)) +
-  #scale_color_divergent() +
-  scale_size_area(max_size = 0.1) +
-  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
-  scale_y_continuous(name = "Distancia al centro (Km)", breaks = c(40, 120, 180, 240), 
-                     limits = c(0, 300), expand = c(0, 0)) + 
-  guides(size = "none") +
-  coord_polar() +
-  theme_minimal() + theme(legend.position = "bottom") +
-  facet_wrap(~date)
-```
-
-```{r}
-# Interpolo a una grilla regular
-
-ht_reg <- seq(0, 10000, by = 100)
-radar[, naN := sum(!is.na(dbz)), by = .(azimut, elevacion, date)]
-reg <- radar[naN > 3, .(ht_reg = ht_reg,
+  
+  
+  ht_reg <- seq(0, 10000, by = 100)
+  radar[, NNa := sum(!is.na(dbz)), by = .(azimut, elevacion, date)]
+  reg <- radar[NNa > 3, .(ht_reg = ht_reg,
                  dbz_reg = approx(ht, dbz, xout = ht_reg)$y), 
         by = .(azimut, elevacion, date)] %>% 
-  .[elevacion < 6, mean(dbz_reg, na.rm = T), 
-    by = .(ht_reg, date)] 
+  .[elevacion < 6, .(dbz = mean(dbz_reg, na.rm = T)), 
+    by = .(ht_reg, date, elevacion)] 
+  reg
+}
 
-  ggplot(reg, aes(ht_reg, V1)) +
-    #geom_line(aes(color = factor(elevacion))) +
-    geom_line() +
-    scale_color_viridis(name = "Elevación", discrete = T) +
-    coord_flip() + 
-    xlim(c(0,3500)) +
-    scale_y_continuous(name = "dBZ") +
-    facet_wrap(~date)
+files <- Sys.glob("~/Radar/VAD/PARANA/20160114/240/*.nc")
+radar <- rbindlist(lapply(files, ReadRadar))
+
+files <- Sys.glob("~/Radar/VAD/PARANA/20160114/Prueba/*.nc")
+radar2 <- rbindlist(lapply(files, ReadRadar))
+rad <- rbind(radar, radar2)
+
+# radar[elevacion == elev[3] & !is.na(dbz), ] %>%
+#   RepeatLon(., colname = "azimut") %>% 
+#   ggplot(aes(azimut, rango/1000)) + 
+#   geom_path(data = map[rango <= 300*1000], aes(group = group), color = "darkgray") +
+#   geom_point(aes(color = dbz, size = rango)) +
+#   #scale_color_divergent() +
+#   scale_size_area(max_size = 0.1) +
+#   scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+#   scale_y_continuous(name = "Distancia al centro (Km)", breaks = c(40, 120, 180, 240), 
+#                      limits = c(0, 300), expand = c(0, 0)) + 
+#   guides(size = "none") +
+#   coord_polar() +
+#   theme_minimal() + theme(legend.position = "bottom") +
+#   facet_wrap(~date)
+```
+
+
+```{r dbz1, fig.cap="Variación de dBZ con la altura a lo largo de un día (14/01/2016) para distintos ángulos de elevación. La línea negra corresponde a -5 dBZ"}
+ggplot(radar, aes(date, ht_reg)) +
+  geom_contour(aes(z = dbz, color = ..level..)) +
+  geom_contour(aes(z = dbz), breaks = -5, color = "black") +
+  scale_color_viridis(name = "dBZ") +
+  scale_y_continuous(limits = c(0, 3000)) +
+  facet_wrap(~elevacion) +
+  theme_minimal()
+```
+
+
+```{r dbz2, fig.cap="Idem gráfico anterior pero solo para 5 grados y geom_tile (similar a los contornos pero rellena cada pixel con el valor de la variable)."}
+elev <- unique(radar$elevacion)
+radar[elevacion == elev[8]] %>%
+ggplot(aes(date, ht_reg)) +
+  #geom_line(aes(color = factor(elevacion))) +
+  geom_tile(aes(fill = dbz)) +
+  scale_fill_viridis(name = "dBZ") +
+  scale_y_continuous(limits = c(0, 3000)) +
+  facet_wrap(~elevacion) +
+  theme_minimal()
     
 ```
+
+```{r dbz3, fig.cap="Agrego en negro la estimación de la altura de la capa límite hecha por cada esquema."}
+elev <- unique(radar$elevacion)
+all.pbl <- readRDS("pblh")
+
+radar[elevacion == elev[8]] %>% 
+  ggplot(aes(date, ht_reg)) +
+  #geom_line(aes(color = factor(elevacion))) +
+  geom_contour(aes(z = dbz, color = ..level..)) +
+  scale_color_viridis(name = "dBZ") +
+  geom_point(data=all.pbl, aes(date, pblh, shape = param)) +
+  scale_y_continuous(limits = c(0, 3000)) +
+  theme_minimal()
+    
+```
+
+
+
+
+```{r dbz4, fig.cap="Agrego algunos tiempos previos y posteriores."}
+
+
+ggplot(rad[elevacion == elev[8]], aes(date, ht_reg)) +
+  geom_contour(aes(z = dbz, color = ..level..)) +
+  scale_color_viridis(name = "dBZ") +
+  #geom_point(data=all.pbl[lev == 25], aes(date, pblh, shape = param)) +
+  scale_y_continuous(limits = c(0, 3000)) +
+  theme_minimal()
+```
+

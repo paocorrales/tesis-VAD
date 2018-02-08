@@ -83,9 +83,7 @@
   \title{Tesis de Licenciatura}
   \pretitle{\vspace{\droptitle}\centering\huge}
   \posttitle{\par}
-\subtitle{Desarrollo de una metodología de trabajo para caracterizar el ciclo
-diurno del viento en la capa límite atmosférica a partir de datos de
-radar meteorológico y su posterior uso para la validación de modelos.}
+\subtitle{Validación de parametrizaciones de capa límite utilizando datos de radar}
   \author{Paola Corrales}
   \preauthor{\centering\large\emph}
   \postauthor{\par}
@@ -108,6 +106,7 @@ radar meteorológico y su posterior uso para la validación de modelos.}
 \linespread{1.25}
 \usepackage{subfig}
 \usepackage{hyperref}
+\usepackage[textsize=tiny]{todonotes}
 
 \begin{document}
 \maketitle
@@ -116,6 +115,8 @@ radar meteorológico y su posterior uso para la validación de modelos.}
 \setcounter{tocdepth}{3}
 \tableofcontents
 }
+nocite: \textbar{} Amante y Eakins (2009)
+
 \renewcommand{\listtablename}{Índice de tablas} 
 \renewcommand{\tablename}{Tabla} 
 
@@ -134,50 +135,59 @@ radar meteorológico y su posterior uso para la validación de modelos.}
 La capa límite planetaria (CLP) corresponde a la porción de atmósfera
 que se encuentra directamente influenciada por la superficie y que
 responde a sus forzantes en una escala de tiempo de una hora o menos
-(Stull, 1988). Los procesos que ocurren dentro de esta capa son de suma
-importancia para entender y pronosticar la evolución de la atmósfera en
-distintas escalas espaciales y temporales. En particular estos procesos
-controlan el intercambio de energía entre la superficie y la atmósfera
-afectando, entre otras cosas, las condiciones para la ocurrencia de
-convección húmeda profunda y la intensidad de las circulaciones de
-mesoescala, que tienen un alto impacto sobre las actividades humanas.
+(Stull, 1988). Dentro de esta capa el flujo se encuentra en estado
+turbulento y por lo tanto los movimientos del aire son aleatorios.
+Debido a que la capa límite es forzada por las características de la
+superfice terretre (por su temperatura, humedad y otros) su evolución
+sigue un ciclo con variabilidad diaria.
 
-En nuestra región existen estudios que buscan caracterizar los procesos
-que ocurren en la capa límite de forma tal de poder avanzar en su
-entendimiento y su dependencia por ejemplo con las propiedades de la
-superficie o el estado de la atmósfera (Mazzeo y Gassmann, 1990; Ulke,
-2000; Gassmann y Mazzeo, 2001; Acevedo et~al., 2014; Tonti y Gassmann,
-2015).
+Los procesos que ocurren dentro de esta capa son de suma importancia
+para entender y pronosticar la evolución de la tropopausa en distintas
+escalas espaciales y temporales. En particular estos procesos controlan
+el intercambio de energía entre la superficie y la atmósfera afectando,
+entre otras cosas, las condiciones para la ocurrencia de convección
+húmeda profunda y la intensidad de las circulaciones de mesoescala,
+originando eventos meteorológicos que pueden tener un alto impacto sobre
+las actividades humanas.
+
+En nuestra región existen estudios que buscan caracterizar la evolución
+y los procesos que ocurren en la capa límite de forma tal de poder
+avanzar en su entendimiento y su dependencia por ejemplo con las
+propiedades de la superficie o el estado de la atmósfera (Mazzeo y
+Gassmann, 1990; Ulke, 2000; Gassmann y Mazzeo, 2001; Acevedo et~al.,
+2014; Tonti y Gassmann, 2015).
 
 Dado que la ocurrencia de turbulencia en la capa límite planetaria se da
 en múltiples escalas espaciales y temporales, la representación de los
 procesos que ocurren dentro de ella es un desafío para los modelos
-numéricos. Actualmene los modelos de simulación regional y global no
+numéricos. Actualmente los modelos de simulación regional y global no
 cuentan con la resolución necesaria para representar los procesos de la
 CLP de forma explícita, debiendo recurrir a una representación
 simplificada. De esta manera se simula numéricamente una parte del
 espectro turbulento, mientras que los procesos en la escala de subgrilla
-se resuelven a través de parametrizaciones con cierres de distinto
-orden, es decir, con diferentes niveles de aproximaciones.
+se resuelven a través de parametrizaciones con cierres de distinto orden
+(Stull, 1988), es decir, con diferentes niveles de aproximaciones.
 
 Existen diferentes alternativas para parametrizar los procesos de capa
 límite pero pueden clasificarse en dos grandes grupos. De acuerdo a
 Stull (1988), las parametrizaciones con clausura local determinan el
 valor de cualquier variable desconocida en cada punto a partir del valor
 o el gradiente de una variable conocida en el mismo punto; suponiendo
-que la turbulencia tiene un comportamiento análogo a la difusión
-molecular. Por otro lado las parametrizaciones con clausura no local
-asumen que la turbulencia está caracterizada por la superposición de
-torbellinos de distintas escalas que transportan las características del
-medio; y para lograr esto, el valor de la variable desconocida en un
+que la difusión turbulenta tiene un comportamiento análogo al de la
+difusión molecular. Por otro lado las parametrizaciones con clausura no
+local asumen que la turbulencia está caracterizada por la superposición
+de torbellinos de distintas escalas que transportan las características
+del medio; y para lograr esto, el valor de la variable desconocida en un
 punto es aproximada a partir de una variable conocida en varios puntos
 en el espacio.
 
-La validación de las parametrizaciones de CLP en distintas situaciones
-sinópticas es un tema de gran interés debido a la necesidad de modelar
-los procesos de subgrilla presentes que afectan procesos en el resto de
-las escalas de variabilidad atmosférica (Xie et~al., 2012; Banks et~al.,
-2016).
+La validación de las diferentes parametrizaciones de CLP en distintas
+situaciones sinópticas es un tema de gran interés debido a la necesidad
+de modelar los procesos de subgrilla presentes que afectan procesos en
+el resto de las escalas de variabilidad atmosférica (Zhang y Zheng,
+2004; Hu et~al., 2010; Xie et~al., 2012; Banks et~al., 2016).
+
+\todo[inline]{Ver: https://www.hindawi.com/journals/amete/2016/2812978/ (regional)}
 
 A nivel regional, la representación de la capa límite en los modelos
 numéricos ha recibido mucha atención en las zonas oceánicas
@@ -192,22 +202,23 @@ ocurren en la capa límite o para validar cómo los modelos representan
 dichos procesos, es la disponibilidad de observaciones. Las redes de
 radiosondeos que permiten obtener perfiles de viento, temperatura y
 humedad en la capa límite miden con frecuencias temporales de entre 12 y
-24 horas (solo eventualmente cada 6 horas) lo que impide analizar la
-evolución de las características de la CLP a lo largo del día.
+24 horas (solo eventualmente cada 6 horas) lo que dificulta la
+posibilidad de analizar la evolución de las características de la CLP a
+lo largo del día.
 
 Sin embargo los radares Doppler permiten estimar la componente radial
 del viento en un radio horizontal de hasta 240 km y a partir de esa
-información permiten reconstruir perfiles verticales de viento
-utilizando la técnica Velocity Azimuth Display (VAD).
+información reconstruir perfiles verticales de viento utilizando la
+técnica Velocity Azimuth Display (VAD).
 
 En días en los que no existen ecos producidos por hidrometeoros, los
-radares pueden detectar la velocidad del viento dentro de la capa límite
-a partir de blancos como los insectos, de acuerdo a Rennie et~al. (2010)
-estos datos podrían ser utilizados si se elimina el efecto de los ecos
-de terreno y otras observaciones erróneas. Las observaciones de radar
-están disponibles con una frecuencia temporal de hasta 5 minutos
-permitiendo obtener perfiles de viento con una resoloción temporal mucho
-mayor.
+radares pueden detectar el viento dentro de la capa límite a partir de
+blancos como los insectos. De acuerdo a Rennie et~al. (2010) estos datos
+podrían ser utilizados si se elimina el efecto de los ecos de terreno y
+otras observaciones erróneas. Las observaciones de radar están
+disponibles con una frecuencia temporal de hasta 5 minutos permitiendo
+obtener perfiles de viento con una resolución temporal mucho mayor que
+la de los radiosondeos.
 
 La calidad de estos perfiles ha sido comparada con los perfiles
 obtenidos a partir de radiosondeos, encontrándose en general que los
@@ -220,7 +231,7 @@ condiciones iniciales para pronósticos a muy corto plazo (Rennie et~al.,
 Uno de los aspectos importantes a tener en cuenta en el uso de radares
 para el estudio de los perfiles de viento, es la necesidad de aplicar un
 riguroso control de calidad a los datos que permita solucionar diversos
-aspectos que pueden afectar la confiabilidad de los mismo. Entre los
+aspectos que pueden afectar la confiabilidad de los mismos. Entre los
 problemas más comunes se cuentan: contaminación por ecos de terreno,
 efecto de aliasing, y contaminación por blancos móviles. Estos aspectos
 deben ser abordados antes de poder utilizar los datos para estimar el
@@ -235,43 +246,48 @@ modelos numéricos a la hora de representar dichas propiedades.
 
 El objetivo de esta Tesis de Licenciatura es desarrollar una metodología
 para el estudio de los procesos de capa límite a partir de los datos de
-radar y analizar el comportamiento de distintas parametrizaciones de CLP
+radar y analizar el comportamiento de tres parametrizaciones de CLP
 disponibles en el modelo Weather Research and Forecasting (WRF -
 Skamarock et~al. (2008)) al representar algunos de los procesos
-presentes a lo largo del día.
+presentes en uno de los casos de estudio seleccionados.
 
 Se plantea como hipótesis que los datos de viento radial obtenidos de
-información de radar permiten estimar los perfiles verticales de viento
-con una frecuencia temporal de 10 minutos, en un espesor que abarca
-desde superficie y hasta 2000 m de altura, permitiendo realizar una
-caracterización de la evolución temporal de dichos perfiles dentro de la
-capa límite atmosférica. La estimación de esos perfiles permitirán
-además validar las parametrizaciones de la capa límite que utilizan los
-modelos numéricos con una mayor resolución temporal a la utilizada en
+información de radar permiten realizar buenas estimaciones de los
+perfiles verticales de viento con una frecuencia temporal de hasta 5
+minutos, en un espesor que abarca desde los 100 metros desde la
+superficie y hasta 2000 o 3000 m de altura dependiendo de la altura de
+la capa límite, la presencia de nubes y otras condiciones. La alta
+frecuencia de información observacional ofrece la posibilidad de
+caracterizar la evolución temporal de dichos perfiles dentro de la capa
+límite atmosférica. La estimación de esos perfiles permitirán además
+validar las parametrizaciones de la capa límite que utilizan los modelos
+numéricos con una mayor resolución temporal y espacial a la utilizada en
 trabajos previos.
-
-Para alcanzar el objetivo se realizó el siguiente procedimiento: En
-primer lugar se determinaron las características necesarias para
-identificar posibles casos de estudio que permitan analizar los procesos
-de CLP asociados al ciclo diario. Luego se procesó los datos de radar
-para caso en estudio y se aplicaron los controles de calidad necesarios
-antes de realizar el cálculo del VAD desarrollado y validado como parte
-de este trabajo. Se analizó la consistencia de los resultados obtenidos
-y las características principales de la variación del viento a lo largo
-del día. Para las simulaciones numéricas con el modelo WRF se define un
-dominio y condiciones iniciales adecuadas para modelar un caso de
-estudio utilizando algunas parametrizaciones disponibles. Se comparan
-las simulaciones con las observaciones previamente obtenidas y se
-analizan algunas variables asociadas a la turbulencia.
-
-De esta manera, este trabajo permite desarrollar una metodología para el
-tratamiento de observaciones no convencionales, su aplicación al estudio
-de los procesos de CLP y al modelado numérico de los mismos.
 
 \chapter{Metodología}\label{metodologia}
 
-En esta sección se describen los datos utilizados en el trabajo y las
-metodologías aplicadas al análisis.
+Para alcanzar el objetivo de este trabajo se realizó el siguiente
+procedimiento: en primer lugar se determinaron las características
+necesarias para identificar posibles casos de estudio que permitan
+analizar los procesos de CLP asociados al ciclo diario. Luego se procesó
+los datos de radar para caso en estudio y se aplicaron los controles de
+calidad necesarios antes de realizar el cálculo del VAD desarrollado y
+validado como parte de este trabajo. Se analizó la consistencia de los
+resultados obtenidos y las características principales de la variación
+del viento a lo largo del día. Para las simulaciones numéricas con el
+modelo WRF se define un dominio y condiciones iniciales adecuadas para
+modelar un caso de estudio utilizando algunas parametrizaciones
+disponibles. Se comparan las simulaciones con las observaciones
+previamente obtenidas y se analizan algunas variables asociadas a la
+turbulencia.
+
+\todo[inline]{Ver que de todo esto queda}
+
+En esta sección se describen los datos utilizados en el trabajo, la
+metodología desarrollada para analizar la información de radar Doppler
+en una estación de nuestro país y las simulaciones de la capa límite
+planetaria con un modelo regional para validar a partir de los datos
+producidos los esquemas de capa límite.
 
 \section{Región y casos de estudio}\label{region-y-casos-de-estudio}
 
@@ -288,11 +304,11 @@ distancia.
 
 }
 
-\caption[Topografía de la región en estudio en metros sobre el nivel del mar.]{Topografía de la región en estudio en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Paraná, el punto rojo indica la ubicación de la estación Paraná Aero. \label{topografia}}\label{fig:topografia}
+\caption[Topografía de la región en estudio en metros sobre el nivel del mar.]{Topografía de la región en estudio en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Paraná, el punto rojo indica la ubicación de la estación Paraná Aero. Datos ETOPO1 1 Arc-Minute Global Relief Model NOAA (Amante y Eakins, 2009). \label{topografia}}\label{fig:topografia}
 \end{figure}
 
 La elevación de la región elegida muestra un mínimo de 5 metros sobre el
-nivel del mar en la cuenca del Río Paraná y un máximo de aproximadamente
+nivel del mar en el lecho del río Paraná y un máximo de aproximadamente
 110 metros sobre el nivel del mar sobre el margen sudeste de río donde
 ubica tanto la estación meteorológica como el radar (Figura
 \ref{topografia}). La región está dominada por la presencia del río y
@@ -300,14 +316,16 @@ las regiones costeras donde predominan los campos de pastizales o pasto
 con excepción la ciudad de Paraná (al norte), la ciudad de Santa Fé (al
 noreste) y pequeños conglomerados de casas.
 
-\subsection{Criterios utilizados para la selección de los casos de
-estudio}\label{criterios-utilizados-para-la-seleccion-de-los-casos-de-estudio}
+\subsection{\texorpdfstring{Criterios utilizados para la selección de
+los casos de estudio
+\label{sec-criterios}}{Criterios utilizados para la selección de los casos de estudio }}\label{criterios-utilizados-para-la-seleccion-de-los-casos-de-estudio}
 
-Con el objetivo analizar los procesos que ocurren en la CLP a lo largo
-del día es necesario identificar aquellas condiciones atmosféricas que
-permitan el desarrollo de la capa límite y al mismo tiene donde los
-datos de radar sean confiables. Por lo tanto se buscaron cumplir los
-siguientes criterios:
+Se determinaron distintos criterios que permitan identificar casos donde
+se observe el desarrollo de la CLP en condiciones nominales, es decir,
+mucho sol, poca nubosidad, stull.
+
+Al mismo tiempo se buscaron situaciones donde los datos de radar son
+confiables. Los criterios seleccionados son los siguientes:
 
 \begin{itemize}
 \tightlist
@@ -337,39 +355,6 @@ horas del día aunque es deseable que las condiciones se mantengan
 durante las 12 horas previas al día en estudio ya que las
 características de la capa estable nocturna puede ser influenciada por
 las características de la capa mezclada del día anterior.
-
-\subsection{Descripción de los casos de
-estudio}\label{descripcion-de-los-casos-de-estudio}
-
-A partir de análisis previamente descripto se identificaron 3 casos de
-estudio que se describen a continuación.
-
-\subsubsection{Caso 1: 14 de enero de
-2016}\label{caso-1-14-de-enero-de-2016}
-
-El caso 1 abarca el periodo de las 00 UTC del 14 de enero a las 00 UTC
-del 15 de enero de 2016. A escala regional se observó un anticiclón
-ubicado sobre el océano Atlántico y al este Uruguay a las 00 UTC de 14
-de enero. Este sistema está asociado a vientos del noreste sobre el
-dominio en estudio. En superficie se registraron vientos débiles
-(menores a 2 m/s) del este y sureste en las primeras horas del periodo.
-En la estación meteorológica se observó nubosidad alta en las primeras
-horas de tipo cirroestrato que por momentos cortos cubrió el cielo. No
-se observaron ecos meteorológicos en la región del radar. \textbf{Que
-tanto afecta la nubosidad alta?}
-
-Posteriormente, a las 12 UTC el anticiclón se intensifica y comienza a
-moverse hacia el NE y en superficie se observan vientos predominantes
-del noreste de hasta 6.5 m/s. No se observa nubosidad y la temperatura
-en superficie alcanza los 32.4°C.
-
-\textbf{Humedad relativa disminuye de 85\% a 35\% en el periodo, no me
-queda clara la causa y tampoco se que tan importante puede ser esto
-luego}
-
-\subsubsection{Caso 2:}\label{caso-2}
-
-\subsubsection{Caso 3:}\label{caso-3}
 
 \section{Descripción de los datos de
 radar}\label{descripcion-de-los-datos-de-radar}
@@ -641,8 +626,8 @@ El algoritmo de VAD desarrollado incluye algunos controles de calidad
 para evitar errores asociados a problemas intrínsecos a los datos de
 radar.
 
-\subsubsection{Antes del ajusta de los
-datos}\label{antes-del-ajusta-de-los-datos}
+\subsubsection{Antes del ajuste de los
+datos}\label{antes-del-ajuste-de-los-datos}
 
 Permiten determinar cuales son los anillos de datos válidos y eliminar
 posibles errores aleatorios.
@@ -733,7 +718,8 @@ misma hora. Además, dado que el resultado de la interpolación del viento
 real da un campo homogéneo, sin errores o datos faltantes, se aplicaron
 distintas fuentes de errores para que la validación sea más realista.
 
-\subsubsection{Pruebas}\label{pruebas}
+\subsubsection{Pruebas de validación para distintos errores y datos
+faltantes}\label{pruebas-de-validacion-para-distintos-errores-y-datos-faltantes}
 
 \begin{itemize}
 \tightlist
@@ -1230,7 +1216,121 @@ datos del modelo.
 \chapter{Resultados}\label{resultados}
 
 \section{Descripción de los casos de
-estudio}\label{descripcion-de-los-casos-de-estudio-1}
+estudio}\label{descripcion-de-los-casos-de-estudio}
+
+A partir de los criterios establecidos en la Sección \ref{sec-criterios}
+se identificaron tres casos de estudio cuyas características principales
+se describen a continuación.
+
+\subsection{Caso 1: 14 de enero de
+2016}\label{caso-1-14-de-enero-de-2016}
+
+El caso 1 abarca el periodo de las 00 UTC del 14 de enero a las 00 UTC
+del 15 de enero de 2016. De acuerdo a la Figura \ref{hgt-caso1} donde se
+muestra la altura geopotencial en 1000 hPa para dos momentos, se observó
+un anticiclón ubicado sobre el océano Atlántico y al este Uruguay a las
+00 UTC de 14 de enero. Este sistema está asociado a vientos del norte
+sobre el dominio en estudio. En superficie se registraron vientos
+débiles (menores a 2 m/s) del este y sureste en las primeras horas del
+periodo. En la estación meteorológica se observó nubosidad en niveles
+altos en las primeras horas de tipo \emph{cirrostratus} que por momentos
+cortos cubrió parcialmente el cielo. No se observaron ecos
+meteorológicos en la región del radar. Si bien la presencia de nubosidad
+puede afectar la evolución de la capa límite en este caso no se observan
+variaciones en la temperatura fuera de lo normal para cada momento del
+período (Figura \ref{meteo1}).
+
+Posteriormente, a las 12 UTC el anticiclón se intensificó y comenzó a
+moverse hacia el NE mientras que en superficie se observaronn vientos
+predominantes del noreste de hasta 6.5 m/s. No se observó nubosidad y la
+temperatura en superficie alcanzó los 32.4°C. El aumento de humedad
+específica observado alrededor de las 12 UTC coincidió con el el momento
+donde se registraron vientos del sector norte y noreste.
+
+\begin{figure}
+
+{\centering \includegraphics{Tesis_files/figure-latex/hgt-caso1-1} 
+
+}
+
+\caption{Altura geopotencial en 1000 hPa para las 00 y las 12 UTC del 14 de enero de 2016 (Caso 1). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD). \label{hgt-caso1}}\label{fig:hgt-caso1}
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics{Tesis_files/figure-latex/meteo-caso1-1} 
+
+}
+
+\caption{Variables de superficie observadas por la estación meteorológica Paraná el 14 de enero de 2016. La región sombreada corresponde a al período donde se observa nubosidad (ver texto). Datos Servicio Meteorológico Nacional \label{meteo1}}\label{fig:meteo-caso1}
+\end{figure}
+
+\subsection{Caso 2: 21 de enero de
+2016}\label{caso-2-21-de-enero-de-2016}
+
+El caso 2 comprende el período entre las 00 UTC del 21 de enero a las 00
+UTC del 22 de enero de 2016. A escala regional a las 00 UTC (Figura
+\ref{hgt-caso2}) se observó un anticiclón ubicado sobre el oceano
+Atlántico frente a la costa de Argentina, mientrás que en el centro del
+país se observó una región de baja presión. De acuerdo a los datos de la
+estación meteorológica en las primeras horas del día el viento estuvo en
+calma y llegando a los 2 m/s en algunos momentos. La dirección
+predominante fue del E y SE en algnas horas. En cuanto a la nubosidad,
+en las primeras cuatro horas se observó nubosidad de tipo
+\emph{cirrostratus} que no cubrió la totalidad del cielo en ningún
+momento. No no afectó el descenso de temperatura durante las horas
+nocturnas.
+
+Posteriormente a las 12 UTC del mismo día el anticiclón se debilitó y se
+desplazó hacia el noreste. El viento en superfie fue de predominante del
+N a partir de esa hora con máximos de hasta 5.5 m/s. Esta situación
+generó un aumento de la humedad específica proveniente del norte con un
+máximo luego de las 14 UTC. Entre las 09 y las 16 UTC se observó
+nubosidad tipo \emph{cirro} que no llegó a cubrir la totalidad del
+cielo. Esta nubosidad no afectó de manera observarble la temperatura en
+superficie que llegó a 35.4°C. En las observaciones del radar no se vió
+nubosidad en las inmediaciones.
+
+\begin{figure}
+
+{\centering \includegraphics{Tesis_files/figure-latex/hgt-caso2-1} 
+
+}
+
+\caption{Idem Figura \ref{hgt-caso1} pero para el Caso 2 - 21 de enero de 2016. \label{hgt-caso2}}\label{fig:hgt-caso2}
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics{Tesis_files/figure-latex/meteo-caso2-1} 
+
+}
+
+\caption{Idem Figura \ref{meteo1} pero para el Caso 2 - 21 de enero de 2016. \label{meteo2}}\label{fig:meteo-caso2}
+\end{figure}
+
+\subsection{Caso 3: 23 de enero de
+2016}\label{caso-3-23-de-enero-de-2016}
+
+El caso
+
+\begin{figure}
+
+{\centering \includegraphics{Tesis_files/figure-latex/hgt-caso3-1} 
+
+}
+
+\caption{Idem Figura \ref{hgt-caso1} pero para el Caso 3 - 23 de enero de 2016. \label{hgt-caso3}}\label{fig:hgt-caso3}
+\end{figure}
+
+\begin{figure}
+
+{\centering \includegraphics{Tesis_files/figure-latex/meteo-caso3-1} 
+
+}
+
+\caption{Idem Figura \ref{meteo1} pero para el Caso 3 - 23 de enero de 2016. \label{meteo3}}\label{fig:meteo-caso3}
+\end{figure}
 
 \section{Análisis de las observaciones de radar procesadas con
 VAD}\label{analisis-de-las-observaciones-de-radar-procesadas-con-vad}
@@ -1314,6 +1414,55 @@ viento}\label{magnitud-y-direccion-del-viento}
 \subfloat[Magnitud del viento \label{dif-spd}\label{fig:diferencia1}]{\includegraphics{Tesis_files/figure-latex/diferencia-1} }\subfloat[Dirección del viento \label{dif-dir}\label{fig:diferencia2}]{\includegraphics{Tesis_files/figure-latex/diferencia-2} }\caption{Diferencia entre las observaciones y cada simulación  correspondiente al Caso 1. \label{dif}}\label{fig:diferencia}
 \end{figure}
 
+\begin{verbatim}
+##        X   ht      spd        rmse1      rmse2        rmse3        di
+##    1: NA 0.01 2.057600 0.2572220000 0.25722200 0.2572220000  180.0000
+##    2: NA 0.01 1.543200 0.2572220000 0.25722200 0.2572220000  180.0000
+##    3: NA 0.01 2.057600 0.2572220000 0.25722200 0.2572220000  180.0000
+##    4: NA 0.01 1.543200 0.2572220000 0.25722200 0.2572220000  140.0000
+##    5: NA 0.01 1.028800 0.2572220000 0.25722200 0.2572220000  140.0000
+##   ---                                                                
+## 6850: 24 2.50 5.429779 0.0089544215 0.14533761 0.0037452008  170.7101
+## 6851: 25 2.60 5.835130 0.0063044028 0.13655252 0.0034459227  173.6304
+## 6852: 26 2.70 5.942833 0.0015540471 0.13804612 0.0012583302  176.8996
+## 6853: 27 2.80 5.920468 0.0003955304 0.07298726 0.0002673013 -178.3682
+## 6854: 28 2.90 5.935402 0.0001334264 0.06026626 0.0000924450 -173.0059
+##       rings           date_time             u         v spd_smooth caso
+##    1:    NA 2016-01-14 00:00:00 -2.519833e-16 2.0576000   2.057600  Obs
+##    2:    NA 2016-01-14 01:00:00 -1.889875e-16 1.5432000   1.543200  Obs
+##    3:    NA 2016-01-14 02:00:00 -2.519833e-16 2.0576000   2.057600  Obs
+##    4:    NA 2016-01-14 03:00:00 -9.919498e-01 1.1821598   1.543200  Obs
+##    5:    NA 2016-01-14 04:00:00 -6.612999e-01 0.7881065   1.028800  Obs
+##   ---                                                                  
+## 6850:     7 2016-01-14 09:40:00 -8.878111e-01 5.4275635   5.499696 ACM2
+## 6851:     5 2016-01-14 09:40:00 -6.557730e-01 5.8745266   5.911015 ACM2
+## 6852:     3 2016-01-14 09:40:00 -3.254704e-01 6.0088232   6.017631 ACM2
+## 6853:     4 2016-01-14 09:40:00  1.703003e-01 5.9779022   5.980328 ACM2
+## 6854:     4 2016-01-14 09:40:00  7.265620e-01 5.9224478   5.966848 ACM2
+\end{verbatim}
+
+\includegraphics{Tesis_files/figure-latex/errores-wrf-1.pdf}
+\includegraphics{Tesis_files/figure-latex/errores-wrf-2.pdf}
+
+\begin{longtable}[]{@{}lrrrrrr@{}}
+\caption{E}\tabularnewline
+\toprule
+caso & bias & rmse & rmsens & bias & rmse & rmsens\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+caso & bias & rmse & rmsens & bias & rmse & rmsens\tabularnewline
+\midrule
+\endhead
+YSU & -0.7725 & 2.0505 & 1.8435 & -0.8565 & 75.7751 &
+75.7778\tabularnewline
+MYJ & -0.5586 & 2.1714 & 2.0510 & -3.6791 & 75.2449 &
+75.1873\tabularnewline
+ACM2 & -0.8768 & 2.0938 & 1.8496 & 0.1284 & 74.6525 &
+74.6737\tabularnewline
+\bottomrule
+\end{longtable}
+
 \subsection{Estructura de la capa
 límite}\label{estructura-de-la-capa-limite}
 
@@ -1391,7 +1540,7 @@ límite}\label{altura-de-la-capa-limite-1}
 
 \begin{figure}
 
-{\centering \subfloat[Estimada directamente por cada esquema de CLP. \label{pblh}\label{fig:pblh-wrf1}]{\includegraphics{Tesis_files/figure-latex/pblh-wrf-1} }\hfill\subfloat[Comparación entre la altura calculada por cada esquema y la estimada a partir de la altura del viento máximo (sólo período estable). \label{pblh-spd}\label{fig:pblh-wrf2}]{\includegraphics{Tesis_files/figure-latex/pblh-wrf-2} }
+{\centering \subfloat[Estimada directamente por cada esquema de CLP. \label{pblh}\label{fig:pblh-wrf1}]{\includegraphics{Tesis_files/figure-latex/pblh-wrf-1} }\newline\subfloat[Comparación entre la altura calculada por cada esquema y la estimada a partir de la altura del viento máximo (sólo período estable). \label{pblh-spd}\label{fig:pblh-wrf2}]{\includegraphics{Tesis_files/figure-latex/pblh-wrf-2} }
 
 }
 
@@ -1496,6 +1645,10 @@ G.A., y Roberti, D.R., 2014. The Influence of Submeso Processes on
 Stable Boundary Layer Similarity Relationships. Journal of the
 Atmospheric Sciences, 71, 1, 207-225.
 
+\hypertarget{ref-Amante2009}{}
+Amante, C., y Eakins, B.W., 2009. ETOPO1 1 Arc-Minute Global Relief
+Model: Procedures, Data Sources and Analysis.
+
 \hypertarget{ref-Banks2016}{}
 Banks, R.F., Tiana-Alsina, J., Baldasano, J.M., Rocadenbosch, F.,
 Papayannis, A., Solomos, S., y Tzanis, C.G., 2016. Sensitivity of
@@ -1579,6 +1732,11 @@ scheme (WSM6).
 Hong, S.-Y., Noh, Y., y Dudhia, J., 2006. A New Vertical Diffusion
 Package with an Explicit Treatment of Entrainment Processes. Monthly
 Weather Review, 134, 9, 2318-2341.
+
+\hypertarget{ref-Hu2010}{}
+Hu, X.M., Nielsen-Gammon, J.W., y Zhang, F., 2010. Evaluation of three
+planetary boundary layer schemes in the WRF model. Journal of Applied
+Meteorology and Climatology, 49, 9, 1831-1844.
 
 \hypertarget{ref-Janjic1994}{}
 Janjić, Z.I., 1994. The Step-Mountain Eta Coordinate Model: Further
@@ -1719,6 +1877,11 @@ Journal of Atmospheric and Oceanic Technology, 28, 1, 50-62.
 Zeng, Y., Blahak, U., Neuper, M., y Jerger, D., 2014. Radar beam tracing
 methods based on atmospheric refractive index. Journal of Atmospheric
 and Oceanic Technology, 31, 12, 2650-2670.
+
+\hypertarget{ref-Zhang2004}{}
+Zhang, D.-L., y Zheng, W.-Z., 2004. Diurnal Cycles of Surface Winds and
+Temperatures as Simulated by Five Boundary Layer Parameterizations.
+Journal of Applied Meteorology, 43, 1, 157-169.
 
 
 \end{document}

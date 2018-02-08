@@ -21,17 +21,19 @@ header-includes:
 - \linespread{1.25}
 - \usepackage{subfig}
 - \usepackage{hyperref}
+- \usepackage[textsize=tiny]{todonotes}
 lang: es-AR
 link-citation: yes
 csl: Bibliografia/meteorologica.csl
-subtitle: Desarrollo de una metodología de trabajo para caracterizar el ciclo diurno
-  del viento en la capa límite atmosférica a partir de datos de radar meteorológico
-  y su posterior uso para la validación de modelos.
+subtitle: Validación de parametrizaciones de capa límite utilizando datos de radar 
 bibliography:
 - Bibliografia/papers.bib
 - Bibliografia/packages.bib
 ---
 
+nocite: | 
+  @Amante2009
+  
 ```{r setup, include=FALSE, cache = FALSE}
 knitr::opts_chunk$set(echo = FALSE,
                       cache = TRUE,
@@ -70,6 +72,9 @@ map2 <- setDT(fortify(rnaturalearth::ne_countries(country = c("Brazil", "Uruguay
 map <- rbind(map, map2)
 setnames(map, "long", "lon")
 
+mapa <- setDT(fortify(rnaturalearth::ne_countries(continent = c("South America", "North America"))))
+setnames(mapa, "long", "lon")
+
 text.height <- (297 - 50)/25.4
 text.width <- (210 - 50)/25.4
 
@@ -96,47 +101,51 @@ remove(map2)
 
 # Introducción
 
-La capa límite planetaria (CLP) corresponde a la porción de atmósfera que se encuentra directamente influenciada por la superficie y que responde a sus forzantes en una escala de tiempo de una hora o menos [@Stull1988]. Los procesos que ocurren dentro de esta capa son de suma importancia para entender y pronosticar la evolución de la atmósfera en distintas escalas espaciales y temporales. En particular estos procesos controlan el intercambio de energía entre la superficie y la atmósfera afectando, entre otras cosas, las condiciones para la ocurrencia de convección húmeda profunda y la intensidad de las circulaciones de mesoescala, que tienen un alto impacto sobre las actividades humanas.
+La capa límite planetaria (CLP) corresponde a la porción de atmósfera que se encuentra directamente influenciada por la superficie y que responde a sus forzantes en una escala de tiempo de una hora o menos [@Stull1988]. Dentro de esta capa el flujo se encuentra en estado turbulento y por lo tanto los movimientos del aire son aleatorios. Debido a que la capa límite es forzada por las características de la superfice terretre (por su temperatura, humedad y otros) su evolución sigue un ciclo con variabilidad diaria.
 
-En nuestra región existen estudios que buscan caracterizar los procesos que ocurren en la capa límite de forma tal de poder avanzar en su entendimiento y su dependencia por ejemplo con las propiedades de la superficie o el estado de la atmósfera [@Mazzeo1990; @Ulke2000; @Gassmann2001; @Acevedo2014; @Tonti2015].
+Los procesos que ocurren dentro de esta capa son de suma importancia para entender y pronosticar la evolución de la tropopausa en distintas escalas espaciales y temporales. En particular estos procesos controlan el intercambio de energía entre la superficie y la atmósfera afectando, entre otras cosas, las condiciones para la ocurrencia de convección húmeda profunda y la intensidad de las circulaciones de mesoescala, originando eventos meteorológicos que pueden tener un alto impacto sobre las actividades humanas.
 
-Dado que la ocurrencia de turbulencia en la  capa límite planetaria se da en múltiples escalas espaciales y temporales, la representación de los procesos que ocurren dentro de ella es un desafío para los modelos numéricos. Actualmene los modelos de simulación regional y global no cuentan con la resolución necesaria para representar los procesos de la CLP de forma explícita, debiendo recurrir a una representación simplificada. De esta manera se simula numéricamente una parte del espectro turbulento, mientras que los procesos en la escala de subgrilla se resuelven a través de parametrizaciones con cierres de distinto orden, es decir, con diferentes niveles de aproximaciones. 
+En nuestra región existen estudios que buscan caracterizar la evolución y los procesos que ocurren en la capa límite de forma tal de poder avanzar en su entendimiento y su dependencia por ejemplo con las propiedades de la superficie o el estado de la atmósfera [@Mazzeo1990; @Ulke2000; @Gassmann2001; @Acevedo2014; @Tonti2015].
 
-Existen diferentes alternativas para parametrizar los procesos de capa límite pero pueden clasificarse en dos grandes grupos. De acuerdo a @Stull1988, las parametrizaciones con clausura local determinan el valor de cualquier variable desconocida en cada punto a partir del valor o el gradiente de una variable conocida en el mismo punto; suponiendo que la turbulencia tiene un comportamiento análogo a la difusión molecular. Por otro lado las parametrizaciones con clausura no local asumen que la turbulencia está caracterizada por la superposición de torbellinos de distintas escalas que transportan las características del medio; y para lograr esto, el valor de la variable desconocida en un punto es aproximada a partir de una variable conocida en varios puntos en el espacio. 
+Dado que la ocurrencia de turbulencia en la capa límite planetaria se da en múltiples escalas espaciales y temporales, la representación de los procesos que ocurren dentro de ella es un desafío para los modelos numéricos. Actualmente los modelos de simulación regional y global no cuentan con la resolución necesaria para representar los procesos de la CLP de forma explícita, debiendo recurrir a una representación simplificada. De esta manera se simula numéricamente una parte del espectro turbulento, mientras que los procesos en la escala de subgrilla se resuelven a través de parametrizaciones con cierres de distinto orden [@Stull1988], es decir, con diferentes niveles de aproximaciones. 
 
-La validación de las parametrizaciones de CLP en distintas situaciones sinópticas es un tema de gran interés debido a la necesidad de modelar los procesos de subgrilla presentes que afectan procesos en el resto de las escalas de variabilidad atmosférica [@Xie2012; @Banks2016]. 
+Existen diferentes alternativas para parametrizar los procesos de capa límite pero pueden clasificarse en dos grandes grupos. De acuerdo a @Stull1988, las parametrizaciones con clausura local determinan el valor de cualquier variable desconocida en cada punto a partir del valor o el gradiente de una variable conocida en el mismo punto; suponiendo que la difusión turbulenta tiene un comportamiento análogo al de la difusión molecular. Por otro lado las parametrizaciones con clausura no local asumen que la turbulencia está caracterizada por la superposición de torbellinos de distintas escalas que transportan las características del medio; y para lograr esto, el valor de la variable desconocida en un punto es aproximada a partir de una variable conocida en varios puntos en el espacio. 
+
+La validación de las diferentes parametrizaciones de CLP en distintas situaciones sinópticas es un tema de gran interés debido a la necesidad de modelar los procesos de subgrilla presentes que afectan procesos en el resto de las escalas de variabilidad atmosférica [@Zhang2004; @Hu2010; @Xie2012; @Banks2016]. 
+
+\todo[inline]{Ver: https://www.hindawi.com/journals/amete/2016/2812978/ (regional)}
 
 A nivel regional, la representación de la capa límite en los modelos numéricos ha recibido mucha atención en las zonas oceánicas (particularmente en los océanos tropicales, @Wang2004). Sin embargo, existen pocos estudios acerca del desempeño de las parametrizaciones de capa límite en las regiones continentales [@Ulke2001; @Ruiz2010; @Berri2012; @Rizza2013].
 
-Uno de los principales desafíos a la hora de estudiar los procesos que ocurren en la capa límite o para validar cómo los modelos representan dichos procesos, es la disponibilidad de observaciones. Las redes de radiosondeos que permiten obtener perfiles de viento, temperatura y humedad en la capa límite miden con frecuencias temporales de entre 12 y 24 horas (solo eventualmente cada 6 horas) lo que impide analizar la evolución de las características de la CLP a lo largo del día.
+Uno de los principales desafíos a la hora de estudiar los procesos que ocurren en la capa límite o para validar cómo los modelos representan dichos procesos, es la disponibilidad de observaciones. Las redes de radiosondeos que permiten obtener perfiles de viento, temperatura y humedad en la capa límite miden con frecuencias temporales de entre 12 y 24 horas (solo eventualmente cada 6 horas) lo que dificulta la posibilidad de analizar la evolución de las características de la CLP a lo largo del día.
 
-Sin embargo los radares Doppler permiten estimar la componente radial del viento en un radio horizontal de hasta 240 km y a partir de esa información permiten reconstruir perfiles verticales de viento utilizando la técnica Velocity Azimuth Display (VAD). 
+Sin embargo los radares Doppler permiten estimar la componente radial del viento en un radio horizontal de hasta 240 km y a partir de esa información reconstruir perfiles verticales de viento utilizando la técnica Velocity Azimuth Display (VAD). 
 
-En días en los que no existen ecos producidos por hidrometeoros, los radares pueden detectar la velocidad del viento dentro de la capa límite a partir de blancos como los insectos, de acuerdo a @Rennie2010 estos datos podrían ser utilizados si se elimina el efecto de los ecos de terreno y otras observaciones erróneas. Las observaciones de radar están disponibles con una frecuencia temporal de hasta 5 minutos permitiendo obtener perfiles de viento con una resoloción temporal mucho mayor. 
+En días en los que no existen ecos producidos por hidrometeoros, los radares pueden detectar el viento dentro de la capa límite a partir de blancos como los insectos. De acuerdo a @Rennie2010 estos datos podrían ser utilizados si se elimina el efecto de los ecos de terreno y otras observaciones erróneas. Las observaciones de radar están disponibles con una frecuencia temporal de hasta 5 minutos permitiendo obtener perfiles de viento con una resolución temporal mucho mayor que la de los radiosondeos. 
 
 La calidad de estos perfiles ha sido comparada con los perfiles obtenidos a partir de radiosondeos, encontrándose en general que los datos obtenidos resultan adecuados para su uso en el estudio de los procesos de capa límite y en la verificación de modelos numéricos [@Bousquet2008; @Salonen2008] y en la generación de condiciones iniciales para pronósticos a muy corto plazo [@Rennie2011].
 
-Uno de los aspectos importantes a tener en cuenta en el uso de radares para el estudio de los perfiles de viento, es la necesidad de aplicar un riguroso control de calidad a los datos  que permita solucionar diversos aspectos que pueden afectar la confiabilidad de los mismo. Entre los problemas más comunes se cuentan: contaminación por ecos de terreno, efecto de aliasing, y contaminación por blancos móviles. Estos aspectos deben ser abordados antes de poder utilizar los datos para estimar el perfil de velocidad [@Holleman2008; @Rennie2011] aplicando algoritmos de control de calidad [@Ruiz2015; @Rennie2011].
+Uno de los aspectos importantes a tener en cuenta en el uso de radares para el estudio de los perfiles de viento, es la necesidad de aplicar un riguroso control de calidad a los datos  que permita solucionar diversos aspectos que pueden afectar la confiabilidad de los mismos. Entre los problemas más comunes se cuentan: contaminación por ecos de terreno, efecto de aliasing, y contaminación por blancos móviles. Estos aspectos deben ser abordados antes de poder utilizar los datos para estimar el perfil de velocidad [@Holleman2008; @Rennie2011] aplicando algoritmos de control de calidad [@Ruiz2015; @Rennie2011].
 
 La disponibilidad de la información de radar Doppler en Argentina ofrece un gran recurso de información para estudiar las propiedades de la capa límite planetaria en nuestra región y para validar la calidad de los modelos numéricos a la hora de representar dichas propiedades.
 
-El objetivo de esta Tesis de Licenciatura es desarrollar una metodología para el estudio de los procesos de capa límite a partir de los datos de radar y analizar el comportamiento de distintas parametrizaciones de CLP disponibles en el modelo Weather Research and Forecasting (WRF - @Skamarock2008) al representar algunos de los procesos presentes a lo largo del día. 
+El objetivo de esta Tesis de Licenciatura es desarrollar una metodología para el estudio de los procesos de capa límite a partir de los datos de radar y analizar el comportamiento de tres parametrizaciones de CLP disponibles en el modelo Weather Research and Forecasting (WRF - @Skamarock2008) al representar algunos de los procesos presentes en uno de los casos de estudio seleccionados. 
 
-Se plantea como hipótesis que los datos de viento radial obtenidos de información de radar permiten estimar los perfiles verticales de viento con una frecuencia temporal de 10 minutos, en un espesor que abarca desde superficie y hasta 2000 m de altura, permitiendo realizar una caracterización de la evolución temporal de dichos perfiles dentro de la capa límite atmosférica. La estimación de esos perfiles permitirán además validar las parametrizaciones de la capa límite que utilizan los modelos numéricos con una mayor resolución temporal a la utilizada en trabajos previos.
-
-Para alcanzar el objetivo se realizó el siguiente procedimiento: En primer lugar se determinaron las características necesarias para identificar posibles casos de estudio que permitan analizar los procesos de CLP asociados al ciclo diario. Luego se procesó los datos de radar para caso en estudio y se aplicaron los controles de calidad necesarios antes de realizar el cálculo del VAD desarrollado y validado como parte de este trabajo. Se analizó la consistencia de los resultados obtenidos y las características principales de la variación del viento a lo largo del día. Para las simulaciones numéricas con el modelo WRF se define un dominio y condiciones iniciales adecuadas para modelar un caso de estudio utilizando algunas parametrizaciones disponibles. Se comparan las simulaciones con las observaciones previamente obtenidas y se analizan algunas variables asociadas a la turbulencia. 
-
-De esta manera, este trabajo permite desarrollar una metodología para el tratamiento de observaciones no convencionales, su aplicación al estudio de los procesos de CLP y al modelado numérico de los mismos.
+Se plantea como hipótesis que los datos de viento radial obtenidos de información de radar permiten realizar buenas estimaciones de los perfiles verticales de viento con una frecuencia temporal de hasta 5 minutos, en un espesor que abarca desde los 100 metros desde la superficie y hasta 2000 o 3000 m de altura dependiendo de la altura de la capa límite, la presencia de nubes y otras condiciones. La alta frecuencia de información observacional ofrece la posibilidad de caracterizar la evolución temporal de dichos perfiles dentro de la capa límite atmosférica. La estimación de esos perfiles permitirán además validar las parametrizaciones de la capa límite que utilizan los modelos numéricos con una mayor resolución temporal y espacial a la utilizada en trabajos previos.
 
 # Metodología
 
-En esta sección se describen los datos utilizados en el trabajo y las metodologías aplicadas al análisis.
+Para alcanzar el objetivo de este trabajo se realizó el siguiente procedimiento: en primer lugar se determinaron las características necesarias para identificar posibles casos de estudio que permitan analizar los procesos de CLP asociados al ciclo diario. Luego se procesó los datos de radar para caso en estudio y se aplicaron los controles de calidad necesarios antes de realizar el cálculo del VAD desarrollado y validado como parte de este trabajo. Se analizó la consistencia de los resultados obtenidos y las características principales de la variación del viento a lo largo del día. Para las simulaciones numéricas con el modelo WRF se define un dominio y condiciones iniciales adecuadas para modelar un caso de estudio utilizando algunas parametrizaciones disponibles. Se comparan las simulaciones con las observaciones previamente obtenidas y se analizan algunas variables asociadas a la turbulencia. 
+
+\todo[inline]{Ver que de todo esto queda}
+
+En esta sección se describen los datos utilizados en el trabajo, la metodología desarrollada para analizar la información de radar Doppler en una estación de nuestro país y las simulaciones de la capa límite planetaria  con un modelo regional para validar a partir de los datos producidos los esquemas de capa límite. 
 
 ## Región y casos de estudio
 
 Este trabajo centra el análisis en la región de la ciudad de Paraná (provincia de Entre Ríos, Argentina) donde se encuentran el Radar Doppler del INTA (Instituto Nacional de Tecnología Agropecuaria) y una estación meteorológica de superficie perteneciente al SMN (Servicio Meteorológico Nacional) separados por aproximadamente 9 kilómetros de distancia.
 
-```{r topografia, fig.cap="Topografía de la región en estudio en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Paraná, el punto rojo indica la ubicación de la estación Paraná Aero. \\label{topografia}", fig.scap="Topografía de la región en estudio en metros sobre el nivel del mar.", fig.width=0.75*text.width, fig.align='center'}
+```{r topografia, fig.cap="Topografía de la región en estudio en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Paraná, el punto rojo indica la ubicación de la estación Paraná Aero. Datos ETOPO1 1 Arc-Minute Global Relief Model NOAA (Amante y Eakins, 2009). \\label{topografia}", fig.scap="Topografía de la región en estudio en metros sobre el nivel del mar.", fig.width=0.75*text.width, fig.align='center'}
 topo <- GetTopography(298.96, 299.95, -31.44, -32.25, resolution = 1/60, file.dir = "seudocache") %>% 
   .[, lon := ConvertLongitude(lon, from = 360)]
 
@@ -156,11 +165,13 @@ ggplot(topo, aes(lon, lat)) +
 remove(topo)
 ```
 
-La elevación de la región elegida muestra un mínimo de 5 metros sobre el nivel del mar en la cuenca del Río Paraná y un máximo de aproximadamente 110 metros sobre el nivel del mar sobre el margen sudeste de río donde ubica tanto la estación meteorológica como el radar (Figura \ref{topografia}). La región está dominada por la presencia del río y las regiones costeras donde predominan los campos de pastizales o pasto con excepción la ciudad de Paraná (al norte), la ciudad de Santa Fé (al noreste) y pequeños conglomerados de casas. 
+La elevación de la región elegida muestra un mínimo de 5 metros sobre el nivel del mar en el lecho del río Paraná y un máximo de aproximadamente 110 metros sobre el nivel del mar sobre el margen sudeste de río donde ubica tanto la estación meteorológica como el radar (Figura \ref{topografia}). La región está dominada por la presencia del río y las regiones costeras donde predominan los campos de pastizales o pasto con excepción la ciudad de Paraná (al norte), la ciudad de Santa Fé (al noreste) y pequeños conglomerados de casas. 
 
-### Criterios utilizados para la selección de los casos de estudio
+### Criterios utilizados para la selección de los casos de estudio \label{sec-criterios}
 
-Con el objetivo analizar los procesos que ocurren en la CLP a lo largo del día es necesario identificar aquellas condiciones atmosféricas que permitan el desarrollo de la capa límite y al mismo tiene donde los datos de radar sean confiables. Por lo tanto se buscaron cumplir los siguientes criterios:
+Se determinaron distintos criterios que permitan identificar casos donde se observe el desarrollo de la CLP en condiciones nominales, es decir, mucho sol, poca nubosidad, stull.
+
+Al mismo tiempo se buscaron situaciones donde los datos de radar son confiables. Los criterios seleccionados son los siguientes:
 
 * **Viento moderado.** En estas situaciones los datos de radar son más confiables y permiten el desarrollo de la capa límite estable nocturna [@Gassmann2001].
 * **Cielos despejados.** Para garantizar el calentamiento desde la superficie y el desarrollo de una capa límite mezclada.
@@ -169,22 +180,6 @@ Con el objetivo analizar los procesos que ocurren en la CLP a lo largo del día 
 Las características previas se buscaron a partir del análisis de los datos de la estación meteorológica de superficie Paraná Aero provistos por el SMN y de reflectividad (dBZ) del radar de Paraná para los meses de enero de 2016 y 2017. 
 
 En el primer tipo de datos se analizó la velocidad de viento, la cobertura nubosa y la precipitación observada a cada hora. En el caso de los datos de radar se observó la presencia de ecos meteorológicos en las inmediaciones del radar (a una distancia menor a 150 km) en cada tiempo disponible (aproximadamente cada 10 minutos). Un caso de estudio posible será aquel que cumpla con las características mencionadas durante las 24 horas del día aunque es deseable que las condiciones se mantengan durante las 12 horas previas al día en estudio ya que las características de la capa estable nocturna puede ser influenciada por las características de la capa mezclada del día anterior.
-
-### Descripción de los casos de estudio
-
-A partir de análisis previamente descripto se identificaron 3 casos de estudio que se describen a continuación.
-
-#### Caso 1: 14 de enero de 2016
-
-El caso 1 abarca el periodo de las 00 UTC del 14 de enero a las 00 UTC del 15 de enero de 2016. A escala regional se observó un anticiclón ubicado sobre el océano Atlántico y al este Uruguay a las 00 UTC de 14 de enero. Este sistema está asociado a vientos del noreste sobre el dominio en estudio. En superficie se registraron vientos débiles (menores a 2 m/s) del este y sureste en las primeras horas del periodo. En la estación meteorológica se observó nubosidad alta en las primeras horas de tipo cirroestrato que por momentos cortos cubrió el cielo. No se observaron ecos meteorológicos en la región del radar. **Que tanto afecta la nubosidad alta?**
-
-Posteriormente, a las 12 UTC el anticiclón se intensifica y comienza a moverse hacia el NE y en superficie se observan vientos predominantes del noreste de hasta 6.5 m/s. No se observa nubosidad y la temperatura en superficie alcanza los 32.4°C.
-
-**Humedad relativa disminuye de 85% a 35% en el periodo, no me queda clara la causa y tampoco se que tan importante puede ser esto luego**
-
-#### Caso 2:
-
-#### Caso 3:
 
 ## Descripción de los datos de radar
 
@@ -373,7 +368,7 @@ Este rmse no toma en cuenta la posible dispersión de los valores individuales d
 
 El algoritmo de VAD desarrollado incluye algunos controles de calidad para evitar errores asociados a problemas intrínsecos a los datos de radar. 
 
-#### Antes del ajusta de los datos 
+#### Antes del ajuste de los datos 
 
 Permiten determinar cuales son los anillos de datos válidos y eliminar posibles errores aleatorios.
 
@@ -397,7 +392,7 @@ Pero también es posible reconstruir un campo de velocidad radial sintética int
 Para este segundo método de validación se utilizaron un volumen de datos del Radar INTA Anguil del 05 de enero de 2016 a las 12 UTC y los datos del radiosondeo de la estación del SMN Santa Rosa Aero (87623) para la misma hora. 
 Además, dado que el resultado de la interpolación del viento real da un campo homogéneo, sin errores o datos faltantes, se aplicaron distintas fuentes de errores para que la validación sea más realista. 
 
-#### Pruebas
+#### Pruebas de validación para distintos errores y datos faltantes
 
 * **Sin datos faltantes ni errores (SE)**
 
@@ -705,16 +700,17 @@ ggplot(hgt, aes(lon, lat)) +
   geom_polygon(fill = NA, color = "black", 
                data = circle[chull(lon, lat)]) +
   scale_fill_gradient(high = "#ffffff", low = "#252525",
-                       name = "Altura sobre el\nnivel de radar", 
-                       guide = guide_colorbar(title.position = "top", 
-                                              title.hjust = 0.5)) +
+                       name = "Altura sobre el\nnivel de terreno", 
+                       guide = guide_colorbar(title.hjust = 0.5)) +
   scale_x_continuous(name = "Longitud", limits = c(-61.04, -60.05), expand = c(0,0)) +
   scale_y_continuous(name = "Latitud", limits = c(-32.25, -31.44), expand = c(0,0)) +
   annotate(geom = "point", x = -60.537289, y = -31.848438, size = 2) +
   # geom_point(data = subset(distances, inside == "TRUE")) +
   # geom_circle(data = circle, aes(x0 = x0, y0 = y0, r = r), inherit.aes = F) +
   coord_quickmap() +
-  theme_minimal() + theme(panel.ontop = T)
+  theme_minimal() + theme(panel.ontop = T, 
+                          legend.position="bottom", 
+                          legend.box = "horizontal")
 
 remove(circle, hgt)
 ```
@@ -794,6 +790,163 @@ remove("param", "radar", "tmp", "vad")
 
 ## Descripción de los casos de estudio
 
+A partir de los criterios establecidos en la Sección \ref{sec-criterios} se identificaron tres casos de estudio cuyas características principales se describen a continuación.
+
+### Caso 1: 14 de enero de 2016
+
+
+El caso 1 abarca el periodo de las 00 UTC del 14 de enero a las 00 UTC del 15 de enero de 2016. De acuerdo a la Figura \ref{hgt-caso1} donde se muestra la altura geopotencial en 1000 hPa para dos momentos, se observó un anticiclón ubicado sobre el océano Atlántico y al este Uruguay a las 00 UTC de 14 de enero. Este sistema está asociado a vientos del norte sobre el dominio en estudio. En superficie se registraron vientos débiles (menores a 2 m/s) del este y sureste en las primeras horas del periodo. En la estación meteorológica se observó nubosidad en niveles altos en las primeras horas de tipo *cirrostratus* que por momentos cortos cubrió parcialmente el cielo. No se observaron ecos meteorológicos en la región del radar. Si bien la presencia de nubosidad puede afectar la evolución de la capa límite en este caso no se observan variaciones en la temperatura fuera de lo normal para cada momento del período (Figura \ref{meteo1}).
+
+Posteriormente, a las 12 UTC el anticiclón se intensificó y comenzó a moverse hacia el NE mientras que en superficie se observaronn vientos predominantes del noreste de hasta 6.5 m/s. No se observó nubosidad y la temperatura en superficie alcanzó los 32.4°C. El aumento de humedad específica observado alrededor de las 12 UTC coincidió con el el momento donde se registraron vientos del sector norte y noreste.
+
+```{r hgt-caso1, fig.cap="Altura geopotencial en 1000 hPa para las 00 y las 12 UTC del 14 de enero de 2016 (Caso 1). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD). \\label{hgt-caso1}", fig.align='center', fig.width=0.75*text.width}
+
+geop <- ReadNetCDF("seudocache/caso1_hgt.nc")
+
+geop[date %in% c(as_datetime("2016-01-14 00:00:00 UTC"), as_datetime("2016-01-14 12:00:00 UTC"))] %>% 
+  ggplot(aes(ConvertLongitude(lon, 360), lat)) +
+  geom_contour_fill(aes(z = hgt),  breaks = seq(-350, 150, 25)) +
+  geom_contour(aes(z = hgt), color = "black", size = 0.1, 
+               breaks = seq(-350, 150, 25)) +
+  geom_text_contour(aes(z = hgt, label = ..level..), size = 2, 
+                    breaks = seq(-350, 150, 25)) +
+  scale_fill_distiller(name = NULL, type = "seq", palette = "YlOrRd", 
+                       guide =  "none") +
+  geom_path(data = mapa, aes(group = group), color = "black", size = 0.2) +
+  scale_x_continuous(name = "Longitud", limits = c(-100, -20), expand = c(0,0)) +
+  scale_y_continuous(name = "Latitud", limits = c(-60, 20), expand = c(0,0)) +
+  coord_quickmap() +
+  facet_wrap(~date, 
+             labeller = labeller(date = c("2016-01-14 00:00:00" = "00 UTC", "2016-01-14 12:00:00" = "12 UTC"))) +
+  theme_minimal() +theme(panel.ontop = T, panel.grid = element_line(linetype = 3))
+
+```
+
+```{r meteo-caso1, fig.cap="Variables de superficie observadas por la estación meteorológica Paraná el 14 de enero de 2016. La región sombreada corresponde a al período donde se observa nubosidad (ver texto). Datos Servicio Meteorológico Nacional \\label{meteo1}", fig.align='center', fig.width=0.75*text.width, fig.height=0.3*text.height}
+
+superficie <- setDT(read.sup("seudocache/superficie.csv"))
+superficie[day(fecha) == 14, .(fecha, temp, q)] %>% 
+  melt(id.vars = "fecha") %>% 
+  ggplot(aes(fecha, value)) +
+  annotate(geom = "rect", 
+           xmin = as_datetime("2016-01-14 00:00:00"),
+           xmax = as_datetime("2016-01-14 04:00:00"), 
+           ymin = -Inf, ymax = Inf,
+           fill = "darkgrey", alpha = 0.2) +
+  facet_wrap(~variable, ncol = 1, scales = "free", 
+             labeller = labeller(variable = c("temp" = "T", "q" = "q"))) +
+  geom_line() +
+  scale_x_datetime(name = "Hora (UTC)", date_breaks = "3 hour",
+                   date_labels = "%H:%M", expand = c(0,0)) +
+  scale_y_continuous(name = NULL) +
+  theme_minimal()
+```
+
+
+### Caso 2: 21 de enero de 2016
+
+El caso 2 comprende el período entre las 00 UTC del 21 de enero a las 00 UTC del 22 de enero de 2016. A escala regional a las 00 UTC (Figura \ref{hgt-caso2}) se observó un anticiclón ubicado sobre el oceano Atlántico frente a la costa de Argentina, mientrás que en el centro del país se observó una región de baja presión. De acuerdo a los datos de la estación meteorológica en las primeras horas del día el viento estuvo en calma y llegando a los 2 m/s en algunos momentos. La dirección predominante fue del E y SE en algnas horas. En cuanto a la nubosidad, en las primeras cuatro horas se observó nubosidad de tipo *cirrostratus* que no cubrió la totalidad del cielo en ningún momento. No no afectó el descenso de temperatura durante las horas nocturnas.
+
+Posteriormente a las 12 UTC del mismo día el anticiclón se debilitó y se desplazó hacia el noreste. El viento en superfie fue de predominante del N a partir de esa hora con máximos de hasta 5.5 m/s. Esta situación generó un aumento de la humedad específica proveniente del norte con un máximo luego de las 14 UTC. Entre las 09 y las 16 UTC se observó nubosidad tipo *cirro* que no llegó a cubrir la totalidad del cielo. Esta nubosidad no afectó de manera observarble la temperatura en superficie que llegó  a 35.4°C. En las observaciones del radar no se vió nubosidad en las inmediaciones.
+
+```{r hgt-caso2, fig.cap="Idem Figura \\ref{hgt-caso1} pero para el Caso 2 - 21 de enero de 2016. \\label{hgt-caso2}", fig.align='center', fig.width=0.75*text.width}
+
+geop <- ReadNetCDF("seudocache/caso2_hgt.nc")
+
+geop[date %in% c(as_datetime("2016-01-21 00:00:00 UTC"), as_datetime("2016-01-21 12:00:00 UTC"))] %>% 
+  ggplot(aes(ConvertLongitude(lon, 360), lat)) +
+  geom_contour_fill(aes(z = hgt),  breaks = seq(-350, 150, 25)) +
+  geom_contour(aes(z = hgt), color = "black", size = 0.1, 
+               breaks = seq(-350, 150, 25)) +
+  geom_text_contour(aes(z = hgt, label = ..level..), size = 2, 
+                    breaks = seq(-350, 150, 25)) +
+  scale_fill_distiller(name = NULL, type = "seq", palette = "YlOrRd", 
+                       guide =  "none") +
+  geom_path(data = mapa, aes(group = group), color = "black", size = 0.2) +
+  scale_x_continuous(name = "Longitud", limits = c(-100, -20), expand = c(0,0)) +
+  scale_y_continuous(name = "Latitud", limits = c(-60, 20), expand = c(0,0)) +
+  coord_quickmap() +
+  facet_wrap(~date, 
+             labeller = labeller(date = c("2016-01-21 00:00:00" = "00 UTC", "2016-01-21 12:00:00" = "12 UTC"))) +
+  theme_minimal() +theme(panel.ontop = T, panel.grid = element_line(linetype = 3))
+
+```
+
+```{r meteo-caso2, fig.cap="Idem Figura \\ref{meteo1} pero para el Caso 2 - 21 de enero de 2016. \\label{meteo2}", fig.align='center', fig.width=0.75*text.width, fig.height=0.3*text.height}
+
+superficie[day(fecha) == 21, .(fecha, temp, q)] %>% 
+  melt(id.vars = "fecha") %>% 
+  ggplot(aes(fecha, value)) +
+  annotate(geom = "rect", 
+           xmin = as_datetime("2016-01-21 00:00:00"),
+           xmax = as_datetime("2016-01-21 04:00:00"), 
+           ymin = -Inf, ymax = Inf,
+           fill = "darkgrey", alpha = 0.2) +
+  annotate(geom = "rect", 
+           xmin = as_datetime("2016-01-21 09:00:00"),
+           xmax = as_datetime("2016-01-21 17:00:00"), 
+           ymin = -Inf, ymax = Inf,
+           fill = "darkgrey", alpha = 0.2) +
+  facet_wrap(~variable, ncol = 1, scales = "free", 
+             labeller = labeller(variable = c("temp" = "T", "q" = "q"))) +
+  geom_line() +
+  scale_x_datetime(name = "Hora (UTC)", date_breaks = "3 hour",
+                   date_labels = "%H:%M", expand = c(0,0)) +
+  scale_y_continuous(name = NULL) +
+  theme_minimal()
+```
+
+### Caso 3: 23 de enero de 2016
+El caso 3 abarca el periodo de las 00 UTC del 23 de enero a las 00 UTC del 24 de enero de 2016. 
+
+```{r hgt-caso3, fig.cap="Idem Figura \\ref{hgt-caso1} pero para el Caso 3 - 23 de enero de 2016. \\label{hgt-caso3}", fig.align='center', fig.width=0.75*text.width}
+
+geop <- ReadNetCDF("seudocache/caso3_hgt.nc")
+
+geop[date %in% c(as_datetime("2016-01-23 00:00:00 UTC"), as_datetime("2016-01-23 12:00:00 UTC"))] %>% 
+  ggplot(aes(ConvertLongitude(lon, 360), lat)) +
+  geom_contour_fill(aes(z = hgt),  breaks = seq(-350, 150, 25)) +
+  geom_contour(aes(z = hgt), color = "black", size = 0.1, 
+               breaks = seq(-350, 150, 25)) +
+  geom_text_contour(aes(z = hgt, label = ..level..), size = 2, 
+                    breaks = seq(-350, 150, 25)) +
+  scale_fill_distiller(name = NULL, type = "seq", palette = "YlOrRd", 
+                       guide =  "none") +
+  geom_path(data = mapa, aes(group = group), color = "black", size = 0.2) +
+  scale_x_continuous(name = "Longitud", limits = c(-100, -20), expand = c(0,0)) +
+  scale_y_continuous(name = "Latitud", limits = c(-60, 20), expand = c(0,0)) +
+  coord_quickmap() +
+  facet_wrap(~date, 
+             labeller = labeller(date = c("2016-01-23 00:00:00" = "00 UTC", "2016-01-23 12:00:00" = "12 UTC"))) +
+  theme_minimal() +theme(panel.ontop = T, panel.grid = element_line(linetype = 3))
+
+```
+
+
+```{r meteo-caso3, fig.cap="Idem Figura \\ref{meteo1} pero para el Caso 3 - 23 de enero de 2016. \\label{meteo3}", fig.align='center', fig.width=0.75*text.width, fig.height=0.3*text.height}
+
+superficie[day(fecha) == 23, .(fecha, temp, q)] %>% 
+  melt(id.vars = "fecha") %>% 
+  ggplot(aes(fecha, value)) +
+  annotate(geom = "rect", 
+           xmin = as_datetime("2016-01-23 06:00:00"),
+           xmax = as_datetime("2016-01-23 09:00:00"), 
+           ymin = -Inf, ymax = Inf,
+           fill = "darkgrey", alpha = 0.2) +
+  annotate(geom = "rect", 
+           xmin = as_datetime("2016-01-23 21:00:00"),
+           xmax = as_datetime("2016-01-23 22:00:00"), 
+           ymin = -Inf, ymax = Inf,
+           fill = "darkgrey", alpha = 0.2) +
+  facet_wrap(~variable, ncol = 1, scales = "free", 
+             labeller = labeller(variable = c("temp" = "T", "q" = "q"))) +
+  geom_line() +
+  scale_x_datetime(name = "Hora (UTC)", date_breaks = "3 hour",
+                   date_labels = "%H:%M", expand = c(0,0)) +
+  scale_y_continuous(name = NULL) +
+  theme_minimal()
+```
+
 ```{r leo-vad}
 
 superficie <- setDT(read.sup("seudocache/superficie.csv"))
@@ -838,7 +991,7 @@ vad_20160114[ht > 0.02] %>%
              aes(size = rmse2), 
              shape = 4, color = "grey25") +
   scale_size(name = "Error", guide = guide_legend(order = 2)) +
-  scale_x_datetime(name = "Tiempo (UTC)", date_breaks = "3 hour",
+  scale_x_datetime(name = "Hora (UTC)", date_breaks = "3 hour",
                    date_labels = "%H:%M", expand = c(0,0)) +
   scale_y_continuous(name = "Altura (km)", limits = c(0,2), 
                      expand = c(0,0)) +
@@ -898,7 +1051,7 @@ vad_20160121[ht > 0.02] %>%
              aes(size = rmse2), 
              shape = 4, color = "grey25") +
   scale_size(name = "Error", guide = guide_legend(order = 2)) +
-  scale_x_datetime(name = "Tiempo (UTC)", date_breaks = "3 hour",
+  scale_x_datetime(name = "Hora (UTC)", date_breaks = "3 hour",
                    date_labels = "%H:%M", expand = c(0,0)) +
   scale_y_continuous(name = "Altura (km)", limits = c(0,2), 
                      expand = c(0,0)) +
@@ -937,7 +1090,7 @@ vad_20160123[ht > 0.02] %>%
              aes(size = rmse2), 
              shape = 4, color = "grey25") +
   scale_size(name = "Error", guide = guide_legend(order = 2)) +
-  scale_x_datetime(name = "Tiempo (UTC)", date_breaks = "3 hour",
+  scale_x_datetime(name = "Hora (UTC)", date_breaks = "3 hour",
                    date_labels = "%H:%M", expand = c(0,0)) +
   scale_y_continuous(name = "Altura (km)", limits = c(0,2), 
                      expand = c(0,0)) +
@@ -1048,7 +1201,7 @@ ri_vad[hour(hora) %between% c(0, 12)] %>%
            ymin = -Inf, ymax = Inf, 
            color = "#21908c",
            fill = "#21908c", alpha = 0.1) +
-    annotate(geom = "rect", xmin = as_datetime("2016-01-14 02:00:00"),
+  annotate(geom = "rect", xmin = as_datetime("2016-01-14 02:00:00"),
            xmax = as_datetime("2016-01-14 09:30:00"), 
            ymin = -Inf, ymax = Inf, 
            color = "#fde725",
@@ -1215,7 +1368,7 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_d
 ```
 
 
-```{r diferencia, fig.cap="Diferencia entre las observaciones y cada simulación  correspondiente al Caso 1. \\label{dif}", fig.subcap=c("Magnitud del viento \\label{dif-spd}", "Dirección del viento \\label{dif-dir}"), fig.width=0.48*text.width, fig.height=0.70*text.height, fig.ncol=2}
+```{r diferencia, fig.cap="Diferencia entre las observaciones y cada simulación  correspondiente al Caso 1. \\label{dif}", fig.subcap=c("Magnitud del viento \\label{dif-spd}", "Dirección del viento \\label{dif-dir}"), fig.width=0.48*text.width, fig.height=0.80*text.height, fig.ncol=2}
 
 gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 
@@ -1247,7 +1400,9 @@ gdata[ht > 0.02] %>%
   scale_y_continuous(name = "Altura (km)", limits = c(0,2), 
                      expand = c(0,0)) +
   facet_wrap(~caso2, ncol = 1) +
-  theme_minimal()
+  theme_minimal() + theme(panel.ontop = T, 
+                          legend.position="bottom", 
+                          legend.box = "horizontal")
 
 gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>% 
   ggplot(aes(date_time, ht)) + 
@@ -1270,9 +1425,76 @@ gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>%
   scale_y_continuous(name = "Altura (km)", limits = c(0,2), 
                      expand = c(0,0)) +
   facet_wrap(~caso2, ncol = 1) +
-  theme_minimal()
+  theme_minimal() + theme(panel.ontop = T, 
+                          legend.position="bottom", 
+                          legend.box = "horizontal")
 ```
 
+```{r errores-wrf}
+gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
+
+gdata[date_time %between% as.POSIXct(c("2016-01-14 00:00:00", "2016-01-14 09:40:00"), tz = "UTC"),]  
+  
+gdata[caso == "Obs", .(ht, date_time, obs = spd_smooth)] %>% 
+  .[gdata[caso != "Obs", .(ht, date_time, caso, spd_smooth)],
+    on = c("ht", "date_time")] %>% 
+  .[, .(bias = bias.f(spd_smooth, obs)), by = .(caso, ht)] %>% 
+  ggplot(aes(ht, bias)) +
+  geom_line(aes(color = caso)) + 
+  scale_color_viridis(discrete = T) +
+  coord_flip()
+
+gdata[caso == "Obs", .(ht, date_time, obs = spd_smooth)] %>% 
+  .[gdata[caso != "Obs", .(ht, date_time, caso, spd_smooth)],
+    on = c("ht", "date_time")] %>% 
+  .[, .(bias = bias.f(spd_smooth, obs)), by = .(caso, date_time)] %>% 
+  .[day(date_time) == 14] %>% 
+  ggplot(aes(date_time, bias)) +
+  geom_line(aes(color = caso)) +
+  scale_color_viridis(discrete = T)
+
+```
+
+
+```{r}
+err <- gdata[day(date_time) == 14] %>% 
+  .[caso == "Obs", .(ht, date_time, obs = spd_smooth)] %>% 
+  .[gdata[caso != "Obs", .(ht, date_time, caso, spd_smooth)],
+    on = c("ht", "date_time")] %>% 
+  .[, .(bias = bias.f(spd_smooth, obs),
+        rmse = rmse.f(spd_smooth, obs)), by = .(caso)]
+
+bias <- err[, bias]
+err2 <- gdata[day(date_time) == 14] %>%   
+  .[caso == "Obs", .(ht, date_time, obs = spd_smooth)] %>% 
+  .[gdata[caso != "Obs", .(ht, date_time, caso, spd_smooth)],
+    on = c("ht", "date_time")] %>% 
+  .[, .(rmsens = rmsens.f(spd_smooth, obs, bias)), by = .(caso)]
+
+error <- cbind(err, err2)
+error[,4] <- NULL
+
+
+
+err <- gdata[day(date_time) == 14] %>% 
+  .[caso == "Obs", .(ht, date_time, obs = di)] %>% 
+  .[gdata[caso != "Obs", .(ht, date_time, caso, di)],
+    on = c("ht", "date_time")] %>% 
+  .[, .(bias = bias.f(di, obs),
+        rmse = rmse.f(di, obs)), by = .(caso)]
+
+bias <- err[, bias]
+err2 <- gdata[day(date_time) == 14] %>%   
+  .[caso == "Obs", .(ht, date_time, obs = di)] %>% 
+  .[gdata[caso != "Obs", .(ht, date_time, caso, di)],
+    on = c("ht", "date_time")] %>% 
+  .[, .(rmsens = rmsens.f(di, obs, bias)), by = .(caso)]
+
+err <- cbind(err, err2)
+err[,c(1,4)] <- NULL
+error <- cbind(error, err)
+kable(error, digits = 4, caption = "E")
+```
 
 ### Estructura de la capa límite
 
@@ -1442,6 +1664,8 @@ all.pbl <- rbind(caso.YSU, caso.MYJ, caso.ACM2) %>%
                        levels = c("YSU", "MYJ", "ACM2"),
                        ordered = T)]
 
+#saveRDS(all.pbl[lev == 25, .(pblh, date, param)], "pblh")
+
 remove(list = c("caso.YSU", "caso.MYJ", "caso.ACM2"))
 ```
 
@@ -1464,7 +1688,7 @@ ggplot(all.pbl, aes(date, L)) +
 #### Altura de la capa límite
 
 
-```{r pblh-wrf, fig.cap="Altura de la capa límite en cada silumación. \\label{pblh-wrf}", fig.subcap=c("Estimada directamente por cada esquema de CLP. \\label{pblh}", "Comparación entre la altura calculada por cada esquema y la estimada a partir de la altura del viento máximo (sólo período estable). \\label{pblh-spd}"), fig.width=0.48*text.width, fig.align='center', fig.sep = "\\hfill"}
+```{r pblh-wrf, fig.cap="Altura de la capa límite en cada silumación. \\label{pblh-wrf}", fig.subcap=c("Estimada directamente por cada esquema de CLP. \\label{pblh}", "Comparación entre la altura calculada por cada esquema y la estimada a partir de la altura del viento máximo (sólo período estable). \\label{pblh-spd}"), fig.width=0.75*text.width, fig.align='center', fig.ncol=1}
 
 all.pbl[lev < 30] %>%
   ggplot(aes(date, pblh)) +
@@ -1472,7 +1696,7 @@ all.pbl[lev < 30] %>%
              color = "darkgray") +
   geom_line(aes(color = param), linetype = 1) +
   scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
-  scale_y_continuous(name = "Altura de la capa límite (m)", limits = c(0, 4000)) +
+  scale_y_continuous(name = "Altura de la capa límite (m)", limits = c(0, 3000)) +
   scale_x_datetime(name = "Hora UTC",
                    date_breaks = "4 hours", 
                    date_labels = "%H") +
