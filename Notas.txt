@@ -1,0 +1,39 @@
+[Ubicación geográfica del radar Anguil y de la estación meteorológica]
+	Mapa igual que con Paraná? O solo las coordenadas?
+
+[Procesos en la escala de subgrilla se resuelven a través de parametrizaciones con cierres de distinto orden (cita), es decir, con diferentes niveles de aproximaciones (citas).]
+	Esta última cita no se como resolverla. Creo que en el fondo ver que tal son las aproximaciones es algo que estoy analizando en la tesis y capaz me estoy adelantando. 
+
+[Casos: campos y meteogramas]
+	Resolví incluir campos de geopotencial y meteogramas que muestren T, q y la nubosidad. Logré explicar la variación de la humedad debido al viento y los cambios de T cuando estaba presente la nubosidad. 
+
+[Resolución espacial del radar de 1km^2]
+	Lo saqué de una de las referencias pero es cierto que depende del rango. Modifique esa parte.
+
+[Río en figura 2.1]
+	Ahora le agregué la traza del río pero es es muy baja resolución. En la imágen satelital se ven más detalles y se nota que toda la zona gris oscura de la figura corresponde a la región de río.	
+
+[Se determinaron distintos criterios para poder identificar casos de estudio donde se observe el desarrollo de la CLP en condiciones normales ]
+	Necesito una cita que justifique esto? Describo las condiciones luego.
+
+[Viento en el centro del dominio]
+	Eso es lo que dice el paper, es cierto que si el campo es homogeneo también es el promedio del dominio.
+
+
+
+
+===============================================================
+[Jurados:
+		Paola Salio 
+		Matilde Nicolini
+		Ramon Delia
+		Yanina Garcia Skabar
+		Lluis Fita]
+	En que orden?
+	Le mando un mail a Matilde para ver si los acepta y luego contactamos?
+
+
+============================
+- Bichos
+
+- En esta seccion por ahi se podria agregar una figura (que tal vez tambien se podria usar para la parte de control de calidad). Por ejemplo un primer grafico podria ser (para un caso de ejemplo) un scatter del valor de viento de cada anillo como funcion de la altura. Cada punto del scatter podria estar coloreado segun el RMSE del ajuste de ese anillo. Sobre ese mismo grafico se puede agregar el perfil de V que resulta de hacer el promedio por capas verticales (previa eliminacion de los anillos que tienen mucho error).

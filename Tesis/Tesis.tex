@@ -266,28 +266,21 @@ trabajos previos.
 
 \chapter{Metodología}\label{metodologia}
 
-Para alcanzar el objetivo de este trabajo se realizó el siguiente
-procedimiento: en primer lugar se determinaron las características
-necesarias para identificar posibles casos de estudio que permitan
-analizar los procesos de CLP asociados al ciclo diario. Luego se procesó
-los datos de radar para caso en estudio y se aplicaron los controles de
-calidad necesarios antes de realizar el cálculo del VAD desarrollado y
-validado como parte de este trabajo. Se analizó la consistencia de los
-resultados obtenidos y las características principales de la variación
-del viento a lo largo del día. Para las simulaciones numéricas con el
-modelo WRF se define un dominio y condiciones iniciales adecuadas para
-modelar un caso de estudio utilizando algunas parametrizaciones
-disponibles. Se comparan las simulaciones con las observaciones
-previamente obtenidas y se analizan algunas variables asociadas a la
-turbulencia.
-
-\todo[inline]{Ver que de todo esto queda}
-
 En esta sección se describen los datos utilizados en el trabajo, la
-metodología desarrollada para analizar la información de radar Doppler
-en una estación de nuestro país y las simulaciones de la capa límite
-planetaria con un modelo regional para validar a partir de los datos
-producidos los esquemas de capa límite.
+metodología desarrollada para alcanzar el objetivo propuesto. En primer
+lugar se determinaron las características necesarias para identificar
+posibles casos de estudio que permitan analizar los procesos de CLP
+asociados al ciclo diario. Luego se procesó los datos de radar para caso
+en estudio y se aplicaron los controles de calidad necesarios antes de
+realizar el cálculo del VAD desarrollado y validado como parte de este
+trabajo. Se analizó la consistencia de los resultados obtenidos y las
+características principales de la variación del viento a lo largo del
+día haciendo especia hincapié en los procesos que ocurren en el período
+nocturno. Para las simulaciones numéricas con el modelo regional WRF se
+definió un dominio y las condiciones iniciales adecuadas para modelar un
+caso de estudio utilizando tres parametrizaciones disponibles en el
+modelo. Se compararon las simulaciones con las observaciones previamente
+obtenidas y se analizaron algunas variables asociadas a la turbulencia.
 
 \section{Región y casos de estudio}\label{region-y-casos-de-estudio}
 
@@ -320,9 +313,9 @@ noreste) y pequeños conglomerados de casas.
 los casos de estudio
 \label{sec-criterios}}{Criterios utilizados para la selección de los casos de estudio }}\label{criterios-utilizados-para-la-seleccion-de-los-casos-de-estudio}
 
-Se determinaron distintos criterios que permitan identificar casos donde
-se observe el desarrollo de la CLP en condiciones nominales, es decir,
-mucho sol, poca nubosidad, stull.
+Se determinaron distintos criterios para poder identificar casos de
+estudio donde se observe el desarrollo de la CLP en condiciones normales
+\textbf{Cita}.
 
 Al mismo tiempo se buscaron situaciones donde los datos de radar son
 confiables. Los criterios seleccionados son los siguientes:
@@ -332,18 +325,25 @@ confiables. Los criterios seleccionados son los siguientes:
 \item
   \textbf{Viento moderado.} En estas situaciones los datos de radar son
   más confiables y permiten el desarrollo de la capa límite estable
-  nocturna (Gassmann y Mazzeo, 2001).
+  nocturna (Gassmann y Mazzeo, 2001). Se determinó como umbral máximo 7
+  m/s que corresponde a la categoría de brisa moderada en la escala de
+  Beaufort.
 \item
   \textbf{Cielos despejados.} Para garantizar el calentamiento desde la
-  superficie y el desarrollo de una capa límite mezclada.
+  superficie y el desarrollo de una capa límite mezclada. En los casos
+  donde hubo nubosidad presente, se analizó el tipo de nubosidad, el
+  porcentaje de cobertura del cielo y el impacto que tuvo en la
+  temperatura. Los días donde la nubosidad afectó la variación normal de
+  la temperatura (descenso continuo por la noche y ascenso durante el
+  día) fueron descartados.
 \item
   \textbf{Verano.} Donde el calentamiento es más intenso.
 \end{itemize}
 
 Las características previas se buscaron a partir del análisis de los
 datos de la estación meteorológica de superficie Paraná Aero provistos
-por el SMN y de reflectividad (dBZ) del radar de Paraná para los meses
-de enero de 2016 y 2017.
+por el SMN y de reflectividad (dBZ) del radar de Paraná para el mes de
+enero de 2016.
 
 En el primer tipo de datos se analizó la velocidad de viento, la
 cobertura nubosa y la precipitación observada a cada hora. En el caso de
@@ -359,23 +359,36 @@ las características de la capa mezclada del día anterior.
 \section{Descripción de los datos de
 radar}\label{descripcion-de-los-datos-de-radar}
 
-El radar ubicado en Paraná (Provincia de Entre Ríos) emite energía
-electromagnética en la banda C (4 a 8 GHz) y es de doble polarización.
+El radar ubicado en Paraná (Provincia de Entre Ríos) es de doble
+polarización y emite energía electromagnética en la banda C (4 a 8 GHz).
 La estrategia de escaneo de la atmósfera está programada para que la
-antena de giros en sentido horizontal de 360º y cambie de elevación
+antena dé giros en sentido horizontal de 360º y cambie de elevación
 sucesivamente 12 veces. El ángulo vertical varía entre 0.5° y 15.1°. El
 rango del radar (distancia a la que llega la señal desde la ubicación
-del radar) puede ser de 120, 240 y 480 km con una resolución espacial de
-1 \(\mathrm{km^2}\) (Saibene et~al., 2014) de acuerdo a la estrategia de
-escaneo.
+del radar) puede ser de 120, 240 y 480 km con una resolución espacial en
+la dirección del rango de 500 m de acuerdo a la estrategia de escaneo
+(Saibene et~al., 2014).
 
-El escaneo completo se realiza cada 10 minutos, dando 144 volúmenes de
-datos diarios registrando para las distintas variables como
-reflectividad (dBZ) y velocidad radial (\(V_r\)).
+El escaneo completo del volumen de atmósfera que rodea al radar se
+realiza cada 5 minutos en el rango de 120 km y de 240 km de manera
+intercalada, dando como resultado 144 volúmenes de datos diarios para
+cada estrategia de escaneo. Las variables disponibles en cada tiempo
+incluyen la reflectividad (dBZ) y velocidad radial (\(V_r\)).
 
-En este trabajo se usaron datos de radar con un rango de 240 km y 12
+Los datos de reflectividad permitieron evaluar la presencia de nubosidad
+en cada momento mientras que la velocidad radial se utilizó para
+calcular el perfil de viento. La velocidad radial medida por el radar
+corresponde a la velocidad de un objetivo u obstáculo en el camino del
+haz. En situaciones de aire claro (sin nubosidad) es posible tener una
+medida del campo de viento dentro de la capa límite usando insectos como
+obstáculos.
+
+En este trabajo se usaron datos de radar provistos por el Servicio
+Meteorológico Nacional correspondientes a la estrategia de 240 km y 12
 ángulos de elevación para los periodos comprendidos por cada caso de
-estudios provistos por \textbf{XXXX INTA XXXX}
+estudio. Los datos correspondientes a la estrategia de 120 km no fueron
+utilizados debido a la cantidad de ángulo de elevación disponibles fue
+distinta para cada día y en todos los casos menor a 12.
 
 Cada volumen de dato correspondiente a un tiempo de escaneo completo fue
 convertido al formato CfRadial con el paquete Radx C++ desarrollado por
@@ -402,29 +415,34 @@ de la frecuencia de repetición del pulso o señal que emite.
 En el caso del radar de Paraná con la estrategia de escaneo de 240km de
 rango, tiene una \(V_N = 6.7 m/s\) por lo que cualquier velocidad mayor
 se verá afectada por el aliasing. Esto puede verse en la Figura
-\ref{aliasing}, las regiones con aliasing se son aquellas que donde el
+\ref{aliasing}, las regiones con aliasing son aquellas que donde el
 valor de la velocidad radial salta al extremo opuesto de la escala.
 
 Existen muchos algoritmos que buscan solucionar el problema del aliasing
 (por ejemplo Haase y Landelius, 2004; Lim y Sun, 2010) con distinto
 grado de éxito. Una opción válida es el algoritmo de corrección de
 aliasing basado en regiones similares disponible en la librería PyART
-(Helmus y Collis, 2016), este algoritmo busca regiones con velocidad
+(Helmus y Collis, 2016). Este algoritmo busca regiones con velocidad
 radial similar y transforma el rango de la variable hasta que todas las
 regiones fueron corregidas de tal manera de obtener un campo continuo.
 El campo de velocidad radial sin aliasing obtenido utilizando este
 algoritmo se muestra en la Figura \ref{no-aliasing}.
 
 A partir de la exploración visual puede observarse que el algoritmo
-resuelve el problema de manera satisfactoria y por esta razón se
-utilizará para preprocesar todos los volúmenes de datos de radar.
+resuelve el problema de manera satisfactoria en mayor parte del dominio.
+Sin embargo se observa una zona en el borde inferior donde la mágnitud
+de la variable es anómalamente alta. Algunas discontinuidades se
+observaron también en otros casos. Se decidió utilizar este algoritmo
+para preprocesar todos los volúmenes de datos de radar y se incorporaron
+algunos controles de calidad al algoritmo de VAD desarrollado (Ver
+Sección \ref{sec-vad}).
 
 \begin{figure}
 \subfloat[Con aliasing \label{aliasing}\label{fig:aliasing1}]{\includegraphics[ ]{Tesis_files/figure-latex/aliasing-1} }\subfloat[Sin aliasing \label{no-aliasing}\label{fig:aliasing2}]{\includegraphics[ ]{Tesis_files/figure-latex/aliasing-2} }\caption{Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\circ}$ y $V_N = 6.7 m/s$. Notar las escalas diferentes.}\label{fig:aliasing}
 \end{figure}
 
-\section{Velocity Azimuth Display
-(VAD)}\label{velocity-azimuth-display-vad}
+\section{\texorpdfstring{Visualización Azimutal de la Velocidad
+\label{sec-vad}}{Visualización Azimutal de la Velocidad }}\label{visualizacion-azimutal-de-la-velocidad}
 
 A medida que el radar rota en la dirección azimutal, mide la velocidad
 de los objetivos para cada ángulo y rango de manera continua y en
@@ -443,25 +461,64 @@ tiene un comportamiento sinusoidal en función del azimut.
 \caption{Velocidad radial (m/s) en función del azimut (grados) para un rango y ańgulo de elevación fijos. En color se  ajusta una función sinusoidal a los datos. \label{vad}}\label{fig:vad}
 \end{figure}
 
-De esta manera, la velocidad radial medida por el radar corresponde a la
-velocidad de un objetivo u obstáculo en el camino del haz. En
-situaciones de aire claro (sin nubosidad) es posible tener una medida
-del campo de viento dentro de la capa límite usando insectos como
-obstáculos. Sin embargo esta velocidad no corresponde al campo de
-movimiento real ya que es medida en la dirección radial siendo los
-valores negativos movimiento hacia el radar y valores positivos
-movimientos desde el radar. Mientras que el valor nulo ocurre en las
-regiones donde la velocidad real es perpendicular a la trayectoria del
-haz.
+Esta variable corresponde es la componente radial del viento, es decir,
+la proyección del viento en la dirección de la propagación del haz de
+radar. Los valores negativos corresponden a movimiento hacia el radar y
+valores positivos movimientos desde el radar, mientras que el valor nulo
+ocurre en las regiones donde el viento es perpendicular a la trayectoria
+del haz y por lo tanto su proyección es cero.
 
-A partir de este concepto distintos autores han desarrollado técnicas
-para obtener el perfil vertical de viento real a partir del viento
-radial o su gradiente con diferentes grados de complejidad. Estas
-técnicas son también son llamadas VAD (o sus derivaciones, Browning y
-Wexler (1968); Matejka y Srivastava (1991); Gao et~al. (2004); Xu et~al.
-(2011)). Para esta tesis se desarrolló un algoritmo para el cálculo del
-VAD siguiendo a Browning y Wexler (1968) pero incluyendo controles de
-calidad específicos para asegurar la validez de los resultados.
+En días de buen tiempo y aire claro la señal que recibe el radar
+corresponden a los insectos que se encuentran en la capa límite.
+Diferentes autores han analizado la validez de la estimación del viento
+a partir de estos blancos. Si bien en algunos casos los insectos pueden
+ser considerados blancos pasivos, en otros casos, dependiendo del tamaño
+y características del insecto, pueden moverse con velocidad y dirección
+propias (Rennie, 2014). De acuerdo a Hannesen et~al. (2014), una posible
+solución a este problema podría ser el uso de variables polarimétricas
+que permitan determinar la orientación y dirección de desplazamietno de
+los insectos para luego corregir la variable \(V_r\) observada. En este
+trabajo si bien no se analizó la calidad de los datos desde este punto
+de vista individualmente, si se tuvieron en cuenta controles de calidad
+para disminutir errores.
+
+Usando el concepto de la Visualización Azimutal de la Velocidad
+distintos autores han desarrollado técnicas para obtener el perfil
+vertical de viento real a partir del viento radial o su gradiente con
+diferentes grados de complejidad. Estas técnicas son también son
+llamadas VAD (o sus derivaciones). Algunos de estos algoritmos permiten
+estimar variaciones del viento dentro del dominio siempre que éstas sean
+lineales. Browning y Wexler (1968), unos de los primeros autores en
+aplicar este concepto, desarolló una técnica utilizando series de
+Fourier para obtener variables del campo del viento descompuesto en la
+parte divergente, la parte rotacional y la componente de deformación
+válida para casos donde el campo de viento es horizontalmente homogeneo.
+
+Una variación del VAD, el EVAD (por las siglas en inglés de
+Visualización Azimutal de la Vecidad Extendida) fue desarollado por
+Matejka y Srivastava (1991). En esta técnica se incorpora el uso de
+pesos al estimar las variables para tener en cuenta los errores en los
+datos originales y el análisis de los residuos obtenidos a partir de las
+regreciones calculadas. De acuerdo a los autores, esto permite el uso
+del algoritmo en situaciones donde la cortante vertical del viento es
+fuerte, ihnomogeneidades en el campo horizontal o insuficientes datos de
+radar. Posteriormente Gao et~al. (2004) desarolló el GVAD (por las
+siglas en inglés de Visualización Azimutal del Gradiente de la Vecidad)
+que permite obtener el perfil vertical del viento aún en casos donde los
+datos están contaminados por aliasing utilizando el gradiente del la
+velocidad radial. Si bien esta técnica es una mejora sustancial, es muy
+sensible a errores aleatorios y sistemáticos causados por el aliasing.
+Xu et~al. (2010) también busca soluciar el problema de la contaminación
+por aliasing utilizando un algoritmo que ajusta los datos con aliasing a
+un modelo de viento uniforme. Posteriormente el mismo autor modifica
+este algoritmo a partir de un un método variacional que permite eliminar
+la condición de homogeneidad del campo de viento.
+
+Para esta tesis se desarrolló un algoritmo para el cálculo del VAD
+siguiendo a Browning y Wexler (1968) debido a la simpleza de la técnica
+pero además se incluyeron controles de calidad específicos para asegurar
+la validez de los resultados, algunos de los cuales también fueron
+implementados por los autores mencionados.
 
 \subsection{Desarrollo matemático}\label{desarrollo-matematico}
 
@@ -489,8 +546,13 @@ Para \(n=1\), los coeficientes de Fourier están asociados al viento en
 el centro del dominio de escaneo (con subíndice 0) como:
 
 \begin{equation} \label{eq-vr3}
-a_1 = u_0 \cos(\theta) \; y \;
-b_1 = v_0 \cos(\theta) 
+\begin{aligned}
+a_0 = r \cos(\theta)\left ( \frac{\overline{\partial u}}{\partial x} + \frac{\overline{\partial v}}{\partial y} \right) + 2 w \sin(\theta) \\
+a_1 = u_0 \cos(\theta) \\
+b_1 = v_0 \cos(\theta) \\
+a_2 = \frac{1}{2} r \cos(\theta)\left ( \frac{\overline{\partial u}}{\partial x} - \frac{\overline{\partial v}}{\partial y} \right) \\
+b_2 = \frac{1}{2} r \cos(\theta)\left ( \frac{\overline{\partial u}}{\partial y} + \frac{\overline{\partial v}}{\partial x} \right)
+\end{aligned}
 \end{equation}
 
 A partir de esto es posible ajustar cada anillo de datos de radar, es
@@ -502,9 +564,10 @@ lineal de la forma:
 V_r \sim a_1\cos \phi + b_1 \sin \phi
 \end{equation}
 
-Los coeficientes \(a_0\), \(a_2\) y \(b_2\) no incluidos en el algoritmo
-dan información sobre la divergencia horizontal y otras características
-del viento, quedando su implementación para futuros trabajos.
+Los coeficientes \(a_0\), \(a_2\) y \(b_2\) dan información sobre la
+divergencia horizontal y otras características de la variación viento.
+Estos no fueron estimados por el algoritmo pero es posible su
+implementación en futuros trabajos.
 
 Finalmente la velocidad y dirección del viento pueden ser calculadas a
 partir de los coeficientes (Ecuaciones \ref{eq-vr3}).
@@ -524,15 +587,14 @@ Dirección:
 \alpha = \frac{3\pi}{2}-\tan^{-1}(\frac{a_1}{b_1}) \; \; si \; b_1 > 0
 \end{equation}
 
-El resultado de lo anterior un valor de la magnitud del viento y su
+El resultado de lo anterior da un valor de la magnitud del viento y su
 dirección para cada anillo asociado a un ángulo de elevación y rango
 determinado. Para calcular la altura de cada anillo es necesario conocer
-la propagación del haz del radar. La propagación depende del indice de
-refracción de la atmósfera (N) y este a su vez de la densidad del aire y
-por lo tanto de las condiciones de temperatura y humedad del momento.
-Existen distintas metodologías para obtener calcular la propagación del
-haz del radar (Zeng et~al., 2014) que varían en su complejidad y
-precisión.
+la propagación del haz del radar. Ésta depende del indice de refracción
+de la atmósfera (N) y este a su vez de la densidad del aire y por lo
+tanto de las condiciones de temperatura y humedad del momento. Existen
+distintas metodologías para calcular la propagación del haz del radar
+(Zeng et~al., 2014) que varían en complejidad y precisión.
 
 En el algoritmo de VAD desarrollado se aplica el modelo 4/3 del radio de
 la Tierra. Este modelo es utilizado por la mayoría de los programas de
@@ -540,7 +602,7 @@ procesamiento de datos de radar ya que pese a su simpleza (no toma en
 cuenta las condiciones de la atmósfera) es aceptable para cualquier
 ángulo de elevación usado, alturas máximas de entre 10 y 20 km siempre
 que el gradiente de N esté alrededor de \(-1/a\) donde \(a\) es el radio
-de la tierra (Doviak y Zrnić, 1993).
+de la Tierra (Doviak y Zrnić, 1993).
 
 Por otro lado se calcula la raíz del error cuadrático medio asociado a
 cada anillo (\(rmse_a\)) para estimar la diferencia entre las
@@ -553,14 +615,31 @@ rmse_a = \sqrt {\sum \frac {(V_r - V_{rmod} )^2} {n-3}}
 donde \(n\) es el número de observaciones presentes en un anillo
 particular.
 
-Para obtener un único perfil vertical de viento se interpola un promedio
-pesado del valor de las variaciones de los anillos de cada capa de
-atmósfera a una grilla vertical equiespaciada preestablecida.
+\begin{figure}
+
+{\centering \includegraphics{Tesis_files/figure-latex/perfil-rmse-1} 
+
+}
+
+\caption{Velocidad del viento (m/s) en función de la altura para los distintos ángulos de elevación (puntos) y perfil final obtenido luego del primedio pesado (linea) calculados con VAD. \label{perfil-rmse}}\label{fig:perfil-rmse}
+\end{figure}
+
+En la Figura \ref{perfil-rmse} se muestra el valor de la magnitud del
+viento calculado a partir de cad anillo válido y en color el valor de
+\(rmse_a\) asociado para un caso de ejemplo. La dispersión de los datos
+varía con la altura pero se mantiene la forma del perfil con un
+\(rmse_a\) medio de 2.01 m/s.
+
+Para obtener el perfil vertical de viento que se observa en la Figura
+\ref{perfil-rmse} se calcula un promedio pesado de los datos de anillos
+individuales correspondientes a cada capa de atmósfera para obtener un
+valor para cada punto de una grilla vertical equiespaciada
+preestablecida.
 
 El algoritmo identifica los datos de \(V\) para cualquier rango y ángulo
 de elevación que se encuentran en \(z \pm d/2\) donde \(z\) es el punto
 de grilla y \(d\) es la resolución espacial de la grilla vertical. Para
-obtener el valor promedio de de \(V\) correspondiente a la altura \(z\)
+obtener el valor promedio de \(V\) correspondiente a la altura \(z\)
 calcula un promedio pesando la variable por el \(rmse_a\) y la distancia
 de cada anillo al radar \(r\). De esta manera los anillos con mayor
 error y más alejados a punto donde se está estimando la velocidad y
@@ -572,8 +651,11 @@ dirección del viento tienen menor influencia en el resultado final.
 
 Donde \(w_i = \frac {1}{rmse_{ai} + r_i}\) y el subíndice \(i\) cuenta
 la cantidad de datos para cada intervalo \(z \pm d/2\). De manera
-análoga se calcula la dirección del viento para cada punto de grilla
-vertical.
+análoga se calcula las componentes \(u\) y \(v\) y a partir de estas, la
+dirección del viento para cada punto de grilla vertical. Este cálculo no
+se realiza con la dirección del viento estimada con las Ecuaciones
+\ref{eq-vr6} y \ref{eq-vr7} porque al ser una variable cíclica, el
+promedio puede generar errores.
 
 Finalmente se calcula el error de estimación asociado a cada punto de
 dos maneras:
@@ -588,20 +670,18 @@ dos maneras:
 rmse_1 = \frac{\sigma}{\sqrt{n}}
 \end{equation}
 
-Donde \(n\) es la cantidad de anillo en esa capa y
+Donde \(n\) es la cantidad de anillos en esa capa y
 \(\sigma^{2}= \frac{\sum (V_i - \bar{V})^2 /rmse_{ai}^2}{\sum 1/rmse_{ai}^2}\)
 con \(\bar{V}\) el promedio pesado de la velocidad del viento para la
 capa.
 
-Este error relativo da cuenta de la distancia entre el la velocidad
+Este error relativo da cuenta de la distancia entre la velocidad
 promedio calculada para ese nivel y el valor de cada anillo pesada por
 el error del anillo. De esta manera si el \(rmse_{ai}\) es grande la
 diferencia \((V_i - \bar{V})^2\) tiene menor peso en el error del nivel.
-Por otro lado el denominador suma la inversa de errores de todos los
-anillos y por lo tanto mayores errores individuales generan un
-\(rmse_1\) mayor. Es importante notar que \(V_i\) y \(\bar{V}\) no están
-necesariamente a la misma altura ya que \(\bar{V}\) es el promedio de
-muchos \(V_i\) dentro de una capa.
+Es importante notar que \(V_i\) y \(\bar{V}\) no están necesariamente a
+la misma altura ya que \(\bar{V}\) es el promedio de muchos \(V_i\)
+dentro de una capa.
 
 \begin{itemize}
 \tightlist
@@ -688,6 +768,15 @@ posibles errores aleatorios.
   datos faltantes eran erróneos.
 \end{itemize}
 
+\begin{figure}
+
+{\centering \includegraphics{Tesis_files/figure-latex/evad-1} 
+
+}
+
+\caption{Velocidad del viento (m/s) en función de la altura para los distintos ángulos de elevación (puntos) y perfil final obtenido luego del primedio pesado (linea) calculados con VAD. \label{evad}}\label{fig:evad}
+\end{figure}
+
 \subsection{Validación del algoritmo}\label{validacion-del-algoritmo}
 
 Una manera posible de validar los resultados del VAD es comparando
@@ -695,10 +784,10 @@ cualitativa o cuantitativamente el perfil vertical de viento generado
 con los datos de un radiosondeo en el mismo momento. Debido a la
 inexistencia de sondeos en la región de Paraná se exploró la posibilidad
 de utilizar datos del Radar INTA Anguil que se encuentra en la provincia
-de La Pampa y radiosondeos de la estación del SMN Santa Rosa Aero
-(87623). i bien el radar y la estación meteorológica no están en la
-misma ubicación, se encuentran a unos 30 km de distancia y por lo tanto
-la estación está dentro del dominio de escaneo del radar. Sin embargo se
+de La Pampa y radiosondeos de la estación del SMN Santa Rosa Aero. Si
+bien el radar y la estación meteorológica no están en la misma
+ubicación, se encuentran a unos 30 km de distancia y por lo tanto la
+estación está dentro del dominio de escaneo del radar. Sin embargo se
 encontró que la señal de \(V_r\) en días de cielo claro es muy pobre y
 por lo tanto no supera los controles de calidad impuestos en el
 algoritmo.
@@ -798,7 +887,7 @@ casos. Tampoco se observó sensibilidad al aumento de la amplitud de
 error (no se muestra).
 
 \begin{figure}
-\includegraphics[ ]{Tesis_files/figure-latex/validacion-perfiles-1} \caption{Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruevas de validación a la izquierda y el detalle ampliado del máximo en niveles bajos \label{validacion-perfiles}}\label{fig:validacion-perfiles}
+\includegraphics[ ]{Tesis_files/figure-latex/validacion-perfiles-1} \caption{Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruebas de validación a la izquierda y el detalle ampliado del máximo en niveles bajos \label{validacion-perfiles}}\label{fig:validacion-perfiles}
 \end{figure}
 
 \begin{longtable}[]{@{}lrr@{}}
@@ -1270,7 +1359,7 @@ donde se registraron vientos del sector norte y noreste.
 
 El caso 2 comprende el período entre las 00 UTC del 21 de enero a las 00
 UTC del 22 de enero de 2016. A escala regional a las 00 UTC (Figura
-\ref{hgt-caso2}) se observó un anticiclón ubicado sobre el oceano
+\ref{hgt-caso2}) se observó un anticiclón ubicado sobre el océano
 Atlántico frente a la costa de Argentina, mientrás que en el centro del
 país se observó una región de baja presión. De acuerdo a los datos de la
 estación meteorológica en las primeras horas del día el viento estuvo en
@@ -1312,7 +1401,32 @@ nubosidad en las inmediaciones.
 \subsection{Caso 3: 23 de enero de
 2016}\label{caso-3-23-de-enero-de-2016}
 
-El caso
+El caso 3 abarca el periodo de las 00 UTC del 23 de enero a las 00 UTC
+del 24 de enero de 2016. A nivel regional el campo de altura
+geopotencial en 1000 hPa muestró una región de baja presión en el centro
+del país (Figura \ref{hgt-caso3}) que fue desplazándose hacia en NE a lo
+largo del periodo. Esta configuración puede ser asociada con vientos del
+N en la región de Paraná, lo que se confirma con los datos de viento
+registrados en la estación meteorológica débiles a moderados (entre 1.5
+y 5 m/s).
+
+Entre las 06 y 09 UTC se observó nubosidad que cubrió dos octavos del
+cielo de tipo \emph{altocumulus} semitransparentes. Si bien esta
+nubosidad se observó alejada de radar (a más de 60 km hacia el NE),
+puede ser la causa del estancamiento de la temperatura en la estación
+meteorológica durante ese período pero que luego siguió descendiendo al
+desaparecer la nubosidad. El máximo de humedad específica observado
+durante las horas nocturnas pudo deberse al transporte de humedad debido
+al viento del N y del NNE (Figura \ref{meteo3}).
+
+A las 12 UTC el centro de baja presión fue reemplazado por un anticiclón
+que se ubicó al sur de la provincia del Buenos Aires y sobre la costa
+del océano Atlántico. En superficie se registró viento del NO y O con un
+máximo de 5.5 m/s). Entre las 14 y las 17 UTC se registró nubosidad alta
+de tipo \emph{cirrus} en forma de filamentos y bandas que no cubrieron
+la totalidad del cielo en ningún momento. El aumento diurno de la
+temperatura fue constante hasta llegar a una máxima de 37.2°C a las 20
+UTC.
 
 \begin{figure}
 
@@ -1714,6 +1828,10 @@ Haase, G., y Landelius, T., 2004. Dealiasing of Doppler radar velocities
 using a torus mapping. Journal of Atmospheric and Oceanic Technology,
 21, 10, 1566-1573.
 
+\hypertarget{ref-Hannesen2014}{}
+Hannesen, R., Kauczok, S., y Weipert, A., 2014. Quality of clear-air
+radar radial velocity data : Do insects matter ? Erad 2014, 1-17.
+
 \hypertarget{ref-Helmus2016}{}
 Helmus, J.J., y Collis, S.M., 2016. The Python ARM Radar Toolkit (
 Py-ART ), a Library for Working with Weather Radar Data in the Python
@@ -1778,6 +1896,11 @@ Research Atmospheres, 102, 14, 16663-16682.
 Pleim, J.E., 2007. A combined local and nonlocal closure model for the
 atmospheric boundary layer. Part I: Model description and testing.
 Journal of Applied Meteorology and Climatology, 46, 9, 1383-1395.
+
+\hypertarget{ref-Rennie2014}{}
+Rennie, S.J., 2014. Common orientation and layering of migrating insects
+in southeastern Australia observed with a Doppler weather radar.
+Meteorological Applications, 21, 2, 218-229.
 
 \hypertarget{ref-Rennie2010}{}
 Rennie, S.J., Illingworth, A.J., Dance, S.L., y Ballard, S.P., 2010. The
@@ -1868,10 +1991,11 @@ Xie, B., Fung, J.C.H., Chan, A., y Lau, A., 2012. Evaluation of nonlocal
 and local planetary boundary layer schemes in the WRF model. Journal of
 Geophysical Research Atmospheres, 117, 12, 1-26.
 
-\hypertarget{ref-Xu2011}{}
-Xu, Q., Nai, K., Wei, L., Zhang, P., Liu, S., y Parrish, D., 2011. A
-VAD-based dealiasing method for radar velocity data quality control.
-Journal of Atmospheric and Oceanic Technology, 28, 1, 50-62.
+\hypertarget{ref-Xu2010}{}
+Xu, Q., Nai, K., y Wei, L., 2010. Fitting VAD winds to aliased doppler
+radial-velocity observations: A global minimization problem in the
+presence of multiple local minima. Quarterly Journal of the Royal
+Meteorological Society, 136, 647, 451-461.
 
 \hypertarget{ref-Zeng2014}{}
 Zeng, Y., Blahak, U., Neuper, M., y Jerger, D., 2014. Radar beam tracing
