@@ -403,11 +403,11 @@ El algoritmo de VAD desarrollado incluye algunos controles de calidad para evita
 
 Permiten determinar cuales son los anillos de datos válidos y eliminar posibles errores aleatorios.
 
-* **Ángulos de elevación seleccionados:** La presencia de ecos de terreno pueden generar que los campos de velocidad radial para los primeros ángulos de elevación sean muy ruidosos y sin coherencia espacial. En el otro extremo, los ángulos superiores suelen tener pocos datos válidos (es decir, no dato faltante) debido a la escasa señal cerca del tope de la capa límite y atmósfera libre en días claros. Debido a esto es posible seleccionar el rango de ángulos a ser analizados y utilizados en el cálculo del VAD con el $Ángulo \; mínimo$ y el $Ángulo \; máximo$.
-* **Selección del dominio de cálculo:** Otro posibilidad para evitar los ecos de terreno es definir un $Radio \; interior$ por debajo del cual no se incluyen los datos para el cálculo de VAD. En el otro extremo, es posible definir un $Radio \; exterior$ para limitar el uso de datos muy lejanos al centro del volumen de escaneo. Esto es importante para evitar inhomogeneidades en el campo de viento horizontal.
-* **Cantidad de datos por anillo:** el algoritmo cuenta la cantidad de datos válidos por anillo y se define un porcentaje de datos faltantes respecto del total, por ejemplo 20%. Si se excede al máximo definido o $NaN \; máximo$ el anillo es descartado. De esta manera se evita la utilización de anillos donde la señal es muy débil.
-* **Hueco continuo en un anillo:** Además de los datos faltantes ubicados de manera aleatoria a lo largo de un anillo, los huecos continuos pueden ocurrir debido a la falta de señal en una determinada región. De acuerdo a @Matejka1991 esto puede generar importantes errores en el resultado final, por lo tanto cuando el hueco o $Gap \; máximo$ es mayor a 30° de azimut, el anillo se descarta.
-* **Errores aleatorios:** Los errores aleatorios producto de ruido del instrumento pueden ser eliminados utilizando un filtro pasa bajo [@Gao2004]. Este control no elimina anillos pero produce un suavizado de los datos. Es necesario definir la cantidad de datos o $Pesos$ que se utilizaran para calcular filtro en cada punto.
+* **Ángulos de elevación seleccionados:** La presencia de ecos de terreno pueden generar que los campos de velocidad radial para los primeros ángulos de elevación sean muy ruidosos y sin coherencia espacial. En el otro extremo, en caso de ser necesario,se puede eliminar los ángulos superiores. Por lo tanto es posible seleccionar el rango de ángulos a ser analizados y utilizados en el cálculo del VAD con el *Ángulo mínimo* y el *Ángulo máximo*.
+* **Selección del dominio de cálculo:** Otro posibilidad para evitar los ecos de terreno es definir un *Radio interior* por debajo del cual no se incluyen los datos para el cálculo de VAD. En el otro extremo, es posible definir un *Radio exterior* para limitar el uso de datos muy lejanos al centro del volumen de escaneo. Esto es importante para evitar inhomogeneidades en el campo de viento horizontal.
+* **Cantidad de datos por anillo:** el algoritmo cuenta la cantidad de datos válidos por anillo y se define un porcentaje de datos faltantes (NaN) límite respecto del total para descartar el anillo, por ejemplo 20%. Si se excede al máximo definido o *NaN máximo* el anillo es descartado. De esta manera se evita la utilización de anillos donde la señal es muy débil.
+* **Hueco continuo en un anillo:** Además de los datos faltantes ubicados de manera aleatoria a lo largo de un anillo, los huecos continuos pueden ocurrir debido a la falta de señal en una determinada región. De acuerdo a @Matejka1991 esto puede generar importantes errores en el resultado final, por lo tanto cuando el hueco o *Gap máximo* es mayor a 30° de azimut, el anillo se descarta.
+* **Errores aleatorios:** Los errores aleatorios producto de ruido del instrumento pueden ser eliminados utilizando un filtro pasa bajo [@Gao2004]. Este control no elimina anillos pero produce un suavizado de los datos de cada anillo de manera independiente. Es necesario definir la cantidad de datos o $Pesos$ que se utilizaran para calcular el filtro en cada punto.
 
 #### Luego del ajuste
 
@@ -445,7 +445,7 @@ Además, dado que el resultado de la interpolación del viento real da un campo 
 * **Sin datos faltantes ni errores (SE)**
 
 Se obtiene el $V_r$ interpolado a la grilla del radar de Anguil (con una estrategia de escaneo hasta 120 km de radio y 8 ángulos de elevación) a partir del sondeo.
-Como los datos de sondeo llegan hasta los 30 km de altura, hay información disponible para interpolar los datos de $V-r$ para todos los ángulos de elevación y para cualquier rango. Sin embargo esto nos da muchos más datos de los disponibles normalmente. Es de esperar que el VAD resultante sea muy similar al sondeo y inicial pero esta primera validación también permite verificar que la transformación de $V$ a $V_r$ es correcta. 
+Como los datos de sondeo llegan hasta los 30 km de altura, hay información disponible para interpolar los datos de $V-r$ para todos los ángulos de elevación y para cualquier rango. Sin embargo esto da muchos más datos de los disponibles normalmente. Es de esperar que el VAD resultante sea muy similar al sondeo inicial pero esta primera validación también permite verificar que la transformación de $V$ a $V_r$ es correcta. 
 
 ```{r validacion, fig.cap="Velocidad radial (m/s) observada a las 12 UTC por el radar de Anguil en la elevación $1.3^{\\circ}$ y la misma variable transformada a partir del sondeo de la estación Santa Rosa Aero para la misma hora \\label{validacion}", fig.subcap=c("Datos de radar \\label{radar}", "Sin errores \\label{se}", "Con errores \\label{ce}", "Con errores + NAs \\label{na}"), out.extra=" ", fig.width=0.48*text.width, fig.ncol = 2, fig.show="h"}
 
@@ -566,7 +566,7 @@ remove(list = c("radar1", "radar2", "radar3", "radar4",
                 "Vr", "Vrs", "Vre", "Vrena"))
 ```
 
-En la Figura \ref{validacion} se puede observar el campo de $V_r$ observado por el radar (izquierda) y el campo de $V_{rs}$ obtenidos a partir del sondeo. Cualitativamente se observa que tanto la magnitud como la dirección del viento son similares pero también que el $V_rs$ cubre totalmente el dominio mientras que la señal del $V_r$ se extingue a los 15 km de rango. Cuantitativamente la diferencia $V_r - V_{rs}$ es grande en puntos localizados pero la media absoluta es de `r round(mean(abs(radar$Vr-radar$Vrs), na.rm = T), 2)` m/s, un valor razonable teniendo en cuenta que las observaciones son realizadas por instrumentos distintos.
+En la Figura \ref{validacion} se puede observar el campo de $V_r$ observado por el radar (izquierda) y el campo de $V_{rs}$ obtenidos a partir del sondeo. Cualitativamente se observa que tanto la magnitud como la dirección del viento son similares pero también que el $V_rs$ cubre totalmente el dominio mientras que la señal del $V_r$ se extingue a los 15 km de rango. Cuantitativamente la diferencia $V_r - V_{rs}$ es grande en puntos localizados pero el error absoluto medio es de `r round(mean(abs(radar$Vr-radar$Vrs), na.rm = T), 2)` m/s, un valor razonable teniendo en cuenta que las observaciones son realizadas por instrumentos distintos.
 
 * **Con errores aleatorios (EA)**
 
@@ -641,10 +641,10 @@ El efecto más importante en las pruebas de validación corresponde a la presenc
 
 ### Configuración del algoritmo
 
-En la Tabla \ref{parametros} se detallan los valores utilizados en los distintos parámetros necesarios para el algorimo VAD que se mantuvieron para todos los casos de estudio.
+En la Tabla \ref{parametros} se detallan los valores utilizados en los distintos parámetros necesarios para el algoritmo VAD que se mantuvieron para todos los casos de estudio.
 
 ```{r parametros}
-param <- read.csv("seudocache/parametros.csv", sep = ";", header = T)
+param <- read.csv("seudocache/parametros.csv", sep = ",", header = T)
 kable(param, format = "latex", booktabs = T, caption = "Parámetros utilizados en el cálculo del VAD y la construcción de la grilla vertical para todos los casos. \\label{parametros}") %>% 
   collapse_rows(1)
 ```
@@ -654,7 +654,7 @@ kable(param, format = "latex", booktabs = T, caption = "Parámetros utilizados e
 
 Ya que uno de los objetivos de esta tesis es estudiar la evolución del viento a lo largo del día, es importante asegurar cierta consistencia temporal en los datos. La inconsistencia temporal puede deberse a que cada volumen de datos no es medido de manera instantánea si no que demora algunos minutos. Si bien en periodos sin cambios sinópticos importantes no se espera variaciones bruscas del viento, es posible que variaciones menores a los 10 minutos (resolución temporal de los datos de radar) estén afectando la consistencia temporal.
 
-Para solucionar este problema se aplicó un suavizado pesado localmente o LOWESS (locally weighted scatterplot smoothing, @Cleveland1979). LOWESS es un método de regresión no paramétrica y por lo tanto no es necesario asumir que los datos tienen algún tipo de distribución particular. Esto lo hace un método flexible al representar el comportamiento de los datos. Por otro lado la estimación para cada punto se realiza utilizando la información de datos vecinos. Para esto se especifica cuantos datos vecinos se utilizaran para estimar cada punto local como una fracción del total de datos. 
+Para solucionar este problema se aplicó un suavizado pesado localmente o LOWESS (LOcally WEighted Scatterplot Smoothing, @Cleveland1979). LOWESS es un método de regresión no paramétrica y por lo tanto no es necesario asumir que los datos tienen algún tipo de distribución particular. Esto lo hace un método flexible al representar el comportamiento de los datos. Por otro lado la estimación para cada punto se realiza utilizando la información de datos vecinos. Para esto se especifica cuantos datos vecinos se utilizaran para estimar cada punto local como una fracción del total de datos. 
 
 Aplicación de este método permite eliminar variaciones temporales bruscas entre sets de datos y mejorar la coherencia.
 
@@ -662,7 +662,7 @@ Aplicación de este método permite eliminar variaciones temporales bruscas entr
 
 ## Procesos asociados a la CLP
 
-El estudio de los procesos que ocurren en la CLP es un desafío cuando no se cuentan con datos de la turbulencia. En esta tesis se abordan procesos que pueden ser estudiados a partir de los perfiles de viento y las variables de superficie.
+El estudio de los procesos que ocurren en la CLP es un desafío cuando no se cuenta con datos de la turbulencia. En esta tesis se abordan procesos que pueden ser estudiados a partir de los perfiles de viento y las variables de superficie.
 
 ### Determinación del estado de la turbulencia
 
