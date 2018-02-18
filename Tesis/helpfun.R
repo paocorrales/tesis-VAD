@@ -10,7 +10,8 @@ library(data.table)
 read.vad <- function(path, lowess = TRUE){
   
   filename <- (Sys.glob(path))
-  datetime <- ymd_hms(stringi::stri_sub(filename, from = 24, to = 44))
+  file <- basename(filename)
+  datetime <- ymd_hms(stringi::stri_sub(file, from = 5, to = 25))
   
   for (i in 1:length(filename)){
     temp <- read.csv(filename[i], sep = ";", dec = ".", na.strings = "-9999")
@@ -31,6 +32,7 @@ read.vad <- function(path, lowess = TRUE){
     temp2$v <- -temp2$spd * cos(temp2$di*pi/180)
   }
   temp2$date_time <- round_date(temp2$date_time, "minute")
+  temp$di <- ConvertLongitude(temp$di, 180)
   setDT(temp2)
   
   return(temp2)
@@ -108,6 +110,45 @@ convert.sup <- function(sup){
   sup
 }
 
+#=========================================================================================#
+# read.radar es una funcion que lee los archivos cfradial del radar para analizar dBZ y su 
+# gradiente.
+#=========================================================================================#
+
+
+read.radar <- function(file, varname = 'dBZ') {
+  radar <- nc_open(file)
+  azimut <- ncvar_get(radar, 'azimuth')   
+  elevacion <- ncvar_get(radar, 'elevation') 
+  rango <- ncvar_get(radar, 'range')      
+  dbz <- ncvar_get(radar, varname)
+  datetime <- radar$dim$time$units %>% 
+    strsplit(., "since") %>% 
+    .[[1]] %>% 
+    .[2] %>% 
+    ymd_hms(tz = "UTC")
+  second(datetime) <- 0
+  dimnames(dbz) <- list(rango = rango, azimut = azimut)
+  radar <- setDT(melt(dbz, value.name = "dbz")) 
+  radar[, date := datetime]
+  
+  radar[, elevacion := elevacion, by = rango]
+  R <- 6371.0*1000 #km
+  Rp <- 4*R/3
+  radar[, ht := sqrt((rango^2)+(Rp^2)+2*rango*Rp*sin(pi*elevacion/180))-Rp ]
+  radar[elevacion < 6 & ht < 5000]
+  
+  
+  ht_reg <- seq(0, 5000, by = 50)
+  radar[, NNa := sum(!is.na(dbz)), by = .(azimut, elevacion, date)]
+  reg <- radar[NNa > 3, .(ht_reg = ht_reg,
+                          dbz_reg = approx(ht, dbz, xout = ht_reg)$y), 
+               by = .(azimut, elevacion, date)] %>% 
+    .[elevacion < 6, .(dbz = mean(dbz_reg, na.rm = T)), 
+      by = .(ht_reg, date, elevacion)] 
+  reg[, ddbz := metR:::.derv(dbz, ht_reg), by = .(elevacion, date)]
+  reg
+}
 
 #=========================================================================================#
 # ri.j calcula el número de Richarson bulk jet según Banta 2003
@@ -275,10 +316,12 @@ rmse.f <- function(mod, obs){
   rmse
 }
 
-rmsens.f <- function(mod, obs, bias){
+
+rmsens.f <- function(mod, obs){
   
   N <- length(mod)
-  bias <- rep(bias, len = N)
+  # bias <- rep(bias, len = N)
+  bias <- bias.f(mod, obs)
   resta <- mod - obs - bias
   rmsens <- sqrt(sum(resta^2, na.rm = T)/N)
   rmsens

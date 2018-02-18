@@ -29,10 +29,12 @@ subtitle: Validación de parametrizaciones de capa límite utilizando datos de r
 bibliography:
 - Bibliografia/papers.bib
 - Bibliografia/packages.bib
----
+
 
 nocite: | 
   @Amante2009
+---
+
   
 ```{r setup, include=FALSE, cache = FALSE}
 knitr::opts_chunk$set(echo = FALSE,
@@ -75,7 +77,7 @@ setnames(mapa.ar, "long", "lon")
 mapa.sa <- setDT(fortify(rnaturalearth::ne_countries(continent = c("South America", "North America"))))
 setnames(mapa.sa, "long", "lon")
 
-mapa.rios <- setDT(fortify(rnaturalearth::ne_download(scale = 10, type = 'rivers_lake_centerlines', category = 'physical', destdir = "seudocache/")))
+mapa.rios <- setDT(fortify(rnaturalearth::ne_load(scale = 10, type = 'rivers_lake_centerlines', category = 'physical', destdir = "seudocache/")))
 setnames(mapa.rios, "long", "lon")
 
 
@@ -106,6 +108,8 @@ remove(map2)
 # Introducción
 
 La capa límite planetaria (CLP) corresponde a la porción de atmósfera que se encuentra directamente influenciada por la superficie y que responde a sus forzantes en una escala de tiempo de una hora o menos [@Stull1988]. Dentro de esta capa el flujo se encuentra en estado turbulento y por lo tanto los movimientos del aire son aleatorios. Debido a que la capa límite es forzada por las características de la superfice terretre (por su temperatura, humedad y otros) su evolución sigue un ciclo con variabilidad diaria.
+
+La estructura de la capa límite puede ser descripta a partir de su evolución. Luego del amancer la capa límite comienza a crecer debido al calentamiento radiativo de la superficie que produce turbulencia dando lugar a la capa mezclada. En esta capa el viento, la temperatura potencial y otras variables se mantienen constantes con la altura y persiste a lo largo del día hasta el momento del atarder cuando desaparece el forzante. Durante la noche se forma la capa límite nocturna o capa estable forzada por el enfriamiento radiativo desde superficie, dando lugar a una inversión en el perfil de temperatura. En esta capa la turbulencia puede decaer o producirse intermitentemente. Por encima de esta capa persisten las características de la capa mezclada por lo que toma el nombre de capa residual y no forma parte de la capa límite. Al amanecer se forma una nueva capa mezclada que reemplaza a la capa estable. 
 
 Los procesos que ocurren dentro de esta capa son de suma importancia para entender y pronosticar la evolución de la tropopausa en distintas escalas espaciales y temporales. En particular estos procesos controlan el intercambio de energía entre la superficie y la atmósfera afectando, entre otras cosas, las condiciones para la ocurrencia de convección húmeda profunda y la intensidad de las circulaciones de mesoescala, originando eventos meteorológicos que pueden tener un alto impacto sobre las actividades humanas.
 
@@ -256,7 +260,7 @@ radar[elevacion == elev[3] & !is.na(Vda), ] %>%
 
 A medida que el radar rota en la dirección azimutal, mide la velocidad de los objetivos para cada ángulo y rango de manera continua y en función del azimut. A esto se le da el nombre de Visualización Azimutal de la Velocidad o por sus siglas en inglés VAD (por Velocity Azimuth Display, @Lhermitte1962) y se muestra en la Figura \ref{vad}. Si el campo de viento es horizontalmente homogéneo, la velocidad radial media tiene un comportamiento sinusoidal en función del azimut. 
 
-```{r vad, fig.cap="Velocidad radial (m/s) en función del azimut (grados) para un rango y ańgulo de elevación fijos. En color se  ajusta una función sinusoidal a los datos. \\label{vad}", fig.width=0.75*text.width, fig.align='center'}
+```{r vad, fig.cap="Velocidad radial (m/s) en función del azimut (grados) para un rango y ańgulo de elevación fijos. En color se  ajusta una función sinusoidal a los datos. \\label{vad}", fig.width=0.75*text.width, fig.align='center', fig.height=0.4*text.height}
 ggplot(radar[rango %~% 4000 & elevacion == elev[3], ], aes(azimut, Vda)) +
   geom_line() +
   geom_smooth(method = "lm", formula = y ~ I(sin(x*pi/180)) + I(cos(x*pi/180)), se = F, color = "#20968b") +
@@ -347,7 +351,7 @@ rmse_a = \sqrt {\sum \frac {(V_r - V_{rmod} )^2} {n-3}}
 
 donde $n$ es el número de observaciones presentes en un anillo particular.
 
-```{r perfil-rmse, fig.cap="Velocidad del viento (m/s) en función de la altura para los distintos ángulos de elevación (puntos) y perfil final obtenido luego del primedio pesado (linea) calculados con VAD. \\label{perfil-rmse}", fig.width=0.75*text.width, fig.align='center'}
+```{r evad, fig.cap="Velocidad del viento (m/s) en función de la altura para los distintos ángulos de elevación (puntos) y perfil final obtenido luego del primedio pesado (linea) calculados con VAD. \\label{evad}", fig.width=0.75*text.width, fig.align='center'}
 vad <- read.csv("seudocache/elev_vda-2016-01-14T06:00:05Z_INTA_Parana.csv", sep = ";", na.strings = -9999)
 perfil <- read.csv("seudocache/vda-2016-01-14T06:00:05Z_INTA_Parana.csv", sep = ";", na.strings = -9999)
 
@@ -357,17 +361,17 @@ ggplot(vad, aes(ht, spd)) +
   scale_x_continuous(limits = c(0, 1.5), name = "Altura (Km)") +
   scale_y_continuous(name = "V (m/s)") +
   geom_line(data = perfil, aes(ht, spd), color = "#20968b", size = 1) +
-  annotate(geom = "rug", x = seq(0.1, 1.5, 0.1), color = "#20968b") +
   coord_flip() + 
   theme_minimal()
 
+#remove(vad, perfil)
 ```
 
 En la Figura \ref{perfil-rmse} se muestra el valor de la magnitud del viento calculado a partir de cad anillo válido y en color el valor de $rmse_a$ asociado para un caso de ejemplo. La dispersión de los datos varía con la altura pero se mantiene la forma del perfil con un $rmse_a$ medio de `r round(mean(vad$rmse, na.rm = T), 2)` m/s. 
 
 Para obtener el perfil vertical de viento que se observa en la Figura \ref{perfil-rmse} se calcula un promedio pesado de los datos de anillos individuales correspondientes a cada capa de atmósfera para obtener un valor para cada punto de una grilla vertical equiespaciada preestablecida.
 
-El algoritmo identifica los datos de $V$ para cualquier rango y ángulo de elevación que se encuentran en $z \pm d/2$ donde $z$ es el punto de grilla y $d$ es la resolución espacial de la grilla vertical. Para obtener el valor promedio de $V$ correspondiente a la altura $z$ calcula un promedio pesando la variable por el $rmse_a$ y la distancia de cada anillo al radar $r$. De esta manera los anillos con mayor error y más alejados a punto donde se está estimando la velocidad y dirección del viento tienen menor influencia en el resultado final.  
+El algoritmo identifica los datos de $V$ para cualquier rango y ángulo de elevación que se encuentran en $z \pm d/2$ donde $z$ es el punto de grilla y $d$ es la resolución espacial de la grilla vertical. Para obtener el valor promedio de $V$ correspondiente a la altura $z$ calcula un promedio pesando la variable por el $rmse_a$ y la distancia de cada anillo al radar $r$. De esta manera los anillos con mayor error y más alejados a punto donde se está estimando la velocidad y dirección del viento tienen menor influencia en el resultado final.  Si bien el $rmse_a$ y $r$ tienen magnitud distinta se observó que el primero tiene mayor influencia en el promedio pesado y que el $r$ permite una mayor coherencia de los datos.
 
 \begin{equation}\label{eq-vr9}
 \bar{V} = \frac {\sum w_i V_i} {\sum w_i}
@@ -414,30 +418,35 @@ Permiten determinar cuales son los anillos de datos válidos y eliminar posibles
 * **R cuadrado:** El $r^2$ del modelo ajustado (Ecuación \ref{eq-vr4}) permite obtener una medida de
 de la calidad de ese modelo respecto de las observaciones. A partir de la exploración de resultados preliminares se observó que la definición de un umbral mínimo para el $r^2$ permite descartar anillos que pese a no tener datos faltantes eran erróneos.
 
-```{r evad, fig.cap="Velocidad del viento (m/s) en función de la altura para los distintos ángulos de elevación (puntos) y perfil final obtenido luego del primedio pesado (linea) calculados con VAD. \\label{evad}", fig.width=0.75*text.width, fig.align='center'}
-vad <- read.csv("seudocache/elev_vda-2016-01-14T06:00:05Z_INTA_Parana.csv", sep = ";", na.strings = -9999)
-perfil <- read.csv("seudocache/vda-2016-01-14T06:00:05Z_INTA_Parana.csv", sep = ";", na.strings = -9999)
-
-ggplot(vad, aes(ht, spd)) +
-  geom_point(aes(color = rmse), alpha = 0.8) +
-  scale_color_viridis(name = expression(rmse[a])) +
-  scale_x_continuous(limits = c(0, 1.5), name = "Altura (Km)") +
-  scale_y_continuous(name = "V (m/s)") +
-  geom_line(data = perfil, aes(ht, spd), color = "#20968b", size = 1) +
-  coord_flip() + 
-  theme_minimal()
-
-remove(vad, perfil)
-```
-
 
 ### Validación del algoritmo
 
-Una manera posible de validar los resultados del VAD es comparando cualitativa o cuantitativamente el perfil vertical de viento generado con los datos de un radiosondeo en el mismo momento. Debido a la inexistencia de sondeos en la región de Paraná se exploró la posibilidad de utilizar datos del Radar INTA Anguil que se encuentra en la provincia de La Pampa y radiosondeos de la estación del SMN Santa Rosa Aero. Si bien el radar y la estación meteorológica no están en la misma ubicación, se encuentran a unos 30 km de distancia y por lo tanto la estación está dentro del dominio de escaneo del radar. Sin embargo se encontró que la señal de $V_r$ en días de cielo claro es muy pobre y por lo tanto no supera los controles de calidad impuestos en el algoritmo. 
+Una manera posible de validar los resultados del VAD es comparando cualitativa o cuantitativamente el perfil vertical de viento generado con los datos de un radiosondeo en el mismo momento. Debido a la inexistencia de sondeos en la región de Paraná se exploró la posibilidad de utilizar datos del Radar INTA Anguil que se encuentra en la provincia de La Pampa y radiosondeos de la estación del SMN Santa Rosa Aero. Si bien el radar y la estación meteorológica no están en la misma ubicación, se encuentran a unos 30 km de distancia y por lo tanto la estación está dentro del dominio de escaneo del radar (Figura \ref{topo-anguil}). Sin embargo se encontró que la señal de $V_r$ en días de cielo claro es muy pobre y por lo tanto al realizar losccontroles de calidad impuestos en el algoritmo, el perfil de viento final no llega a los 1000 m. 
 
-Pero también es posible reconstruir un campo de velocidad radial sintética interpolando la velocidad medida por la radiosonda utilizando la grilla del radar utilizando la Ecuación \ref{eq-vr1}. En este proceso se asume que el campo de viento tridimensional varía linealmente. Este campo de velocidad radial sintética $V_{rs}$ puede ser re transformado a un perfil vertical de viento utilizando el VAD y comparado con el sondeo original.
+```{r topo-anguil, fig.cap="Topografía de la región del radar Anguil en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Anguil, el punto rojo indica la ubicación de la estación Santa Rosa Aero. Datos ETOPO1 1 Arc-Minute Global Relief Model NOAA (Amante y Eakins, 2009). \\label{topografia}", fig.width=0.75*text.width, fig.align='center'}
 
-Para este segundo método de validación se utilizaron un volumen de datos del Radar INTA Anguil del 05 de enero de 2016 a las 12 UTC y los datos del radiosondeo de la estación del SMN Santa Rosa Aero (87623) para la misma hora. 
+topo <- GetTopography(295.4, 296.3, -36.12, -36.97, resolution = 1/60, file.dir = "seudocache") %>% 
+  .[, lon := ConvertLongitude(lon, from = 360)]
+
+ggplot(topo, aes(lon, lat)) + 
+  geom_contour_fill(aes(z = h)) +
+  #geom_contour(aes(z = h), color = "black") +
+  scale_fill_gradient(high = "#ffffff", low = "#252525", 
+                       name = "",
+                       guide = guide_colorbar(title.position = "top", 
+                                              title.hjust = 0.5)) +
+  scale_x_continuous(name = "Longitud", limits = c(-64.6, -63.7), expand = c(0,0)) +
+  scale_y_continuous(name = "Latitud", limits = c(-36.9, -36.2), expand = c(0,0)) +
+  annotate(geom = "point", x = -63.990067, y = -36.539684, size = 2) +
+  annotate(geom = "point", x = -64.3333, y = -36.5666, size = 2, color = "red") +
+  coord_quickmap() + 
+  theme_minimal() + theme(panel.ontop = T)
+remove(topo)
+```
+
+Pero también es posible reconstruir un campo de velocidad radial sintética interpolando la velocidad medida por la radiosonda a la grilla del radar utilizando la Ecuación \ref{eq-vr1}. En este proceso se asume que el campo de viento tridimensional varía linealmente. Este campo de velocidad radial sintética $V_{rs}$ puede ser re transformado a un perfil vertical de viento utilizando el VAD y comparado con el sondeo original para determinar la validez del algoritmo.
+
+Para este segundo método de validación se utilizaron un volumen de datos del Radar INTA Anguil del 05 de enero de 2016 a las 12 UTC y los datos del radiosondeo de la estación del SMN Santa Rosa Aero para la misma hora. 
 Además, dado que el resultado de la interpolación del viento real da un campo homogéneo, sin errores o datos faltantes, se aplicaron distintas fuentes de errores para que la validación sea más realista. 
 
 #### Pruebas de validación para distintos errores y datos faltantes
@@ -445,9 +454,9 @@ Además, dado que el resultado de la interpolación del viento real da un campo 
 * **Sin datos faltantes ni errores (SE)**
 
 Se obtiene el $V_r$ interpolado a la grilla del radar de Anguil (con una estrategia de escaneo hasta 120 km de radio y 8 ángulos de elevación) a partir del sondeo.
-Como los datos de sondeo llegan hasta los 30 km de altura, hay información disponible para interpolar los datos de $V-r$ para todos los ángulos de elevación y para cualquier rango. Sin embargo esto da muchos más datos de los disponibles normalmente. Es de esperar que el VAD resultante sea muy similar al sondeo inicial pero esta primera validación también permite verificar que la transformación de $V$ a $V_r$ es correcta. 
+Como los datos de sondeo llegan hasta los 30 km de altura, hay información disponible para interpolar los datos de $V_r$ para todos los ángulos de elevación y para cualquier rango. Sin embargo esto genera muchos más datos de los disponibles normalmente. Es de esperar que el VAD resultante sea muy similar al sondeo inicial pero esta primera validación también permite verificar que la transformación de $V$ a $V_r$ es correcta. 
 
-```{r validacion, fig.cap="Velocidad radial (m/s) observada a las 12 UTC por el radar de Anguil en la elevación $1.3^{\\circ}$ y la misma variable transformada a partir del sondeo de la estación Santa Rosa Aero para la misma hora \\label{validacion}", fig.subcap=c("Datos de radar \\label{radar}", "Sin errores \\label{se}", "Con errores \\label{ce}", "Con errores + NAs \\label{na}"), out.extra=" ", fig.width=0.48*text.width, fig.ncol = 2, fig.show="h"}
+```{r validacion, fig.cap="Velocidad radial (m/s) observada a las 12 UTC por el radar de Anguil en la elevación $1.3^{\\circ}$ y la misma variable transformada a partir del sondeo de la estación Santa Rosa Aero para la misma hora \\label{validacion}", fig.subcap=c("Datos de radar \\label{radar}", "Sin errores \\label{se}", "Con errores \\label{ce}", "Con errores + NAs \\label{na}"), out.extra=" ", fig.width=0.48*text.width, fig.ncol = 2, fig.show="h", fig.align='center'}
 
 radar <- nc_open("seudocache/cfrad.20160105_120423.000_to_20160105_120716.001_INTA_Anguil_SUR.nc")
 azimut <- ncvar_get(radar, 'azimuth')   
@@ -566,7 +575,7 @@ remove(list = c("radar1", "radar2", "radar3", "radar4",
                 "Vr", "Vrs", "Vre", "Vrena"))
 ```
 
-En la Figura \ref{validacion} se puede observar el campo de $V_r$ observado por el radar (izquierda) y el campo de $V_{rs}$ obtenidos a partir del sondeo. Cualitativamente se observa que tanto la magnitud como la dirección del viento son similares pero también que el $V_rs$ cubre totalmente el dominio mientras que la señal del $V_r$ se extingue a los 15 km de rango. Cuantitativamente la diferencia $V_r - V_{rs}$ es grande en puntos localizados pero el error absoluto medio es de `r round(mean(abs(radar$Vr-radar$Vrs), na.rm = T), 2)` m/s, un valor razonable teniendo en cuenta que las observaciones son realizadas por instrumentos distintos.
+En la Figura \ref{validacion} se puede observar el campo de $V_r$ observado por el radar (a) y el campo de $V_{rs}$ obtenidos a partir del sondeo (b). Cualitativamente se observa que tanto la magnitud como la dirección del viento son similares pero también que el $V_rs$ cubre totalmente el dominio mientras que la señal del $V_r$ se extingue a los 15 km de rango. Cuantitativamente la diferencia $V_r - V_{rs}$ es grande en puntos localizados pero el error absoluto medio es de `r round(mean(abs(radar$Vr-radar$Vrs), na.rm = T), 2)` m/s, un valor razonable teniendo en cuenta que las observaciones son realizadas por instrumentos distintos.
 
 * **Con errores aleatorios (EA)**
 
@@ -584,11 +593,11 @@ En la Figura \ref{ce} se muestra el campo resultante utilizando $\alpha = 1 m/s$
 
 * **Con errores aleatorios y datos faltantes (EA+NA)**
 
-Otro problema importante en los datos de radar es la ausencia de señal, esto se ve como datos faltantes (NAs). Para analizar el efecto de los datos faltantes se aplicó una máscara de NAs al campo de $V_{rs}'$ de tal manera que sean los mismo NAs presentes en el volumen de datos de radar utilizados (Figura \ref{na}). 
+Otro problema importante en los datos de radar es la ausencia de señal, esto se ve como datos faltantes (NAs). Para analizar el efecto de los datos faltantes se aplicó una máscara de NAs al campo de $V_{rs}'$ de tal manera que sean los mismo NAs presentes en el volumen de datos de radar utilizados para que la distribución de Nas sea realista (Figura \ref{na}). 
 
 #### Perfiles obtenidos
 
-En la Figura \ref{validacion-perfiles} se muestra el perfil del sondeo para los primeros 3 km de altura y los perfiles calculado con VAD a partir de los distintos campos sintéticos. En cuanto a la magnitud no se ven diferencias importantes y al observar el detalle de los primeros 1000 metros de altura, la diferencia es menor a 0.5 m/s en todos los casos. Tampoco se observó sensibilidad al aumento de la amplitud de error (no se muestra).
+En la Figura \ref{validacion-perfiles} se muestra el perfil del sondeo para los primeros 3 km de altura, los perfiles calculado con VAD a partir de los distintos campos sintéticos y en negro se nuestra el perfil vertical obtenido a partir de las observaciones del radar para esa hora. En cuanto a la magnitud no se ven diferencias importantes entre el sondeo y los perfiles sintéticos. Al observar el detalle de los primeros 1000 metros de altura, la diferencia es menor a 0.5 m/s en todos los casos. Tampoco se observó sensibilidad al aumento de la amplitud de error (no se muestra).
 
 ```{r validacion-perfiles, fig.cap="Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruebas de validación a la izquierda y el detalle ampliado del máximo en niveles bajos \\label{validacion-perfiles}", out.extra=" ", fig.width=0.95*text.width, fig.show="h"}
 vad <- read.csv("seudocache/Vr_se_2016-01-05T12:04:23Z-INTA_Anguil.csv", 
@@ -597,6 +606,8 @@ vade <- read.csv("seudocache/Vr_ce_2016-01-05T12:04:23Z-INTA_Anguil.csv",
                 sep = ";", dec = ".", na.strings = "-9999")
 vadena <- read.csv("seudocache/Vr_ce_na_2016-01-05T12:04:23Z-INTA_Anguil.csv", 
                    sep = ";", dec = ".", na.strings = "-9999")
+anguil <- read.csv("seudocache/vda-2016-01-05T12:04:23Z_INTA_Anguil.csv",
+                   sep = ";", na.strings = "-9999")
 
 sondeo <- read.csv("seudocache/sondeo.csv", sep = " ")
 sondeo$ht <- (sondeo$ht-191)/1000
@@ -611,6 +622,8 @@ vad[, .(ht, sondeo_spd, spd, spd_e, spd_ena)] %>%
 ggplot(aes(ht, value, color = variable)) +
   geom_line()+
   geom_point() +
+  geom_point(data = anguil, aes(ht, spd), color = "black") +
+  geom_line(data = anguil, aes(ht, spd), color = "black") +
   scale_color_viridis(discrete = T, name = "Perfil", 
                       labels = c("Sondeo", "SE", "EA", "EA+NA")) +
   scale_x_continuous(name = "Altura (Km)") +
@@ -619,7 +632,7 @@ ggplot(aes(ht, value, color = variable)) +
   facet_zoom(xy = ht < 1, zoom.size = 1) +
   theme_minimal() 
   
-remove(list = c("sondeo","vade", "vadena"))
+remove(list = c("sondeo","vade", "vadena", "anguil"))
 ```
 
 ```{r validacion-errores}
@@ -639,6 +652,8 @@ Esto puede verificarse con el cálculo de distintos errores [@Gao2004]: la raíz
 
 El efecto más importante en las pruebas de validación corresponde a la presencia de NAs. La falta de datos en distintas regiones para rangos a partir de 10 a 15 km impide el cálculo del perfil por encima de 800 metros (con excepción de un punto a los 2000 metros de altura).
 
+Si se compara cualitativamente los perfiles de viento obtenidos con el sonde y el perfil calculado con VAD a partir de los datos de radar se observa que estos no coinciden. Además de la falta de datos por encima de los 800 m (debido a la débil señal del radar), la magnitud del viento observado por el radar es siempre menor y con una diferencia de hasta 2 m/s. Tampoco se observa una similitud en la forma de los perfiles pero puede deberse, en parte, a los pocos datos disponibles.
+
 ### Configuración del algoritmo
 
 En la Tabla \ref{parametros} se detallan los valores utilizados en los distintos parámetros necesarios para el algoritmo VAD que se mantuvieron para todos los casos de estudio.
@@ -656,7 +671,20 @@ Ya que uno de los objetivos de esta tesis es estudiar la evolución del viento a
 
 Para solucionar este problema se aplicó un suavizado pesado localmente o LOWESS (LOcally WEighted Scatterplot Smoothing, @Cleveland1979). LOWESS es un método de regresión no paramétrica y por lo tanto no es necesario asumir que los datos tienen algún tipo de distribución particular. Esto lo hace un método flexible al representar el comportamiento de los datos. Por otro lado la estimación para cada punto se realiza utilizando la información de datos vecinos. Para esto se especifica cuantos datos vecinos se utilizaran para estimar cada punto local como una fracción del total de datos. 
 
-Aplicación de este método permite eliminar variaciones temporales bruscas entre sets de datos y mejorar la coherencia.
+En la Figura \ref{lowess} se muestra la variación de la velocidad del viento con el tiempo a 500 m de altura donde se identifican dos momentos donde la variación del viento da saltos bruscos, alrededor de las 03 y las 08 UTC. Al aplicar el LOWESS el resultado es un suavizado de la variable que elimina los saltos bruscos y mejora la coherencia.
+
+```{r lowess, fig.cap="Velocidad del viento a lo largo del tiempo para el 14 de enero de 2016 a 500 m de altura (negro) y la misma variable luego de la aplicación del LOWESS (color). \\label{lowess}", fig.width=0.75*text.width, fig.height=0.4*text.height, fig.align='center'}
+vad <- read.vad("../../20160114_240/vda*")
+
+vad[ht == 0.5] %>% 
+  ggplot(aes(date_time)) +
+  geom_line(aes(y = spd)) +
+  geom_line(aes(y = spd_smooth), color = "#20968b") +
+  scale_x_datetime(name = "Hora (UTC)", date_breaks = "3 hour", date_labels = "%H:%M", expand = c(0,0)) +
+  scale_y_continuous(name = "V (m/s)") +
+  theme_minimal()
+```
+
 
 **Necesito mostrar como quedan los datos acá? No quiero spoilear los resultados**
 
@@ -666,58 +694,61 @@ El estudio de los procesos que ocurren en la CLP es un desafío cuando no se cue
 
 ### Determinación del estado de la turbulencia
 
-El número de Richarson puede ser utilizado como un estimador de la estabilidad dinámica [@Stull1988] y por lo tanto de la turbulencia presente. A partir de algunas suposiciones como la valides de la teoría K es posible escribir el número de Richarson en termino de gradientes:
+El número de Richardson puede ser utilizado como un estimador de la estabilidad dinámica [@Stull1988] y por lo tanto de la turbulencia presente. Su definición surge como el cociente de los términos de producción mecánica y térmica de la turbulencia en la ecuación de energía cinética turbulenta de un fluido gaseoso [@Stull1988]. A partir de suponer válida la teoría K [@Pasquill1983] y que los coeficientes de intercambio turbulento de calor sensible y de cantidad de movimiento son iguales, es posible escribir el número de Richardson en función de los gradientes verticales de viento y temperatura potencial:
 
 \begin{equation} \label{eq-ri1}
 R_i = \frac{\frac{g}{\overline{\theta_v}} \frac{\partial \overline{\theta_v}}{\partial z}}
 {\left [ \left (\frac{\partial \overline{u}}{\partial z} \right )^2 + \left (\frac{\partial \overline{v}}{\partial z} \right )^2  \right]}
 \end{equation}
 
-El numerador de la Ecuación \ref{eq-ri1} da cuenta de los procesos boyantes que tienen a destruir la turbulencia en condiciones estables y a producirla en condiciones inestables. El  denominador corresponde a la producción mecánica o por cortante. De acuerdo a @Stull1988 la turbulencia puede mantenerse si $R_i < R_T$, ya que por encima de este umbral (en general $R_T = 1$), el flujo turbulento se vuelve laminar.
+El signo de este número permite clasificar la evolución de la turbulencia en dos clases: estables ($R_i$ > 0) e inestables ($R_i$ < 0). EEl numerador de la Ecuación  da cuenta de la disponibilidad de energía asociada a procesos de empuje térmico que favorecen la destrucción o inhiben la turbulencia en condiciones estables y la producen  en condiciones inestables. El denominador corresponde a la producción mecánica o por cortante. De acuerdo a @Stull1988 la turbulencia puede mantenerse si $R_i$ es menor a un valor umbral ($R_T$), ya que por encima de este umbral (en general $R_T = 1$), la inhibición de la turbulencia se incrementa tendiendo a estabilizar el estado del flujo y volverlo laminar.
 
-Debido a que la estimación de los gradientes suele ser difícil, estos suelen ser expresados en términos de observaciones discretas. Surge así el número de Richarson Bulk:
+Debido a que la estimación de los gradientes suele ser difícil, estos tienden a ser expresados en términos de observaciones discretas. Surge así el número de Richardson Bulk:
 
 \begin{equation} \label{eq-ri2}
 R_b = \frac{g \, \Delta \overline{\theta_v} \, \Delta z}{\overline{\theta_v} \, [(\Delta \overline{u}^2) + [(\Delta \overline{v}^2)]}
 \end{equation}
 
-Para obtener el $R_b$ en cada tiempo y su variación con la altura es necesario, entonces con el perfil vertical de temperatura virtual ($\theta_v$), y de la velocidad del viento. Debido a que solo se cuenta con el valor de la temperatura en superficie, se utilizó la siguiente aproximación válida para estimar el número de Richarson en el periodo estable: 
+Para obtener el $R_b$ en cada tiempo y su variación con la altura es necesariocontar con el perfil vertical de temperatura virtual ($\theta_v$) y de la velocidad del viento. Debido a que solo se cuenta con el valor de la temperatura en superficie, se utilizó la siguiente aproximación válida para estimar el número de Richardson en el periodo estable: 
 
 \begin{equation} \label{eq-ri3}
 R_i \sim \frac{(g  \: (\theta_i - \theta_f)/z_{máx})}{(\overline{\theta} \: (u_{máx}/z_{máx})^2)}
 \end{equation}
 
-Donde $\theta_i$ corresponde al valor de la temperatura virtual en superficie en el momento de transición entre la capa mezclada y el comienzo de la capa estable nocturna, por lo tanto será la temperatura en el tope de la capa estable asumiendo que la capa residual no se modifica. El valor de $\theta_f$ será la temperatura en superficie observado. Por último $u_{máx}$ es el valor máximo de viento observado y $z_{máx}$, la altura a la que ocurre este máximo y que coincide con el tope de la capa estable (Ver Sección \ref{sec-pbh}).
+Donde $\theta_i$ corresponde al valor de la temperatura virtual en superficie en el momento de transición entre la capa mezclada y el comienzo de la capa estable nocturna, por lo tanto será la temperatura en el tope de la capa estable asumiendo que la capa residual no se modifica. El valor de $\theta_f$ será la temperatura en superficie observado. Por último $u_{máx}$ es el valor máximo de viento observado y $z_{máx}$, la altura a la que ocurre este máximo y que se considerará en este trabajo como una aproximación de la altura del tope de la capa estable (Ver Sección \ref{sec-pbh}).
 
 ### Altura de la capa límite \label{sec-pbh}
 
 La altura de la capa límite se define como la altura a la cual las características de la superficie no afecta la atmósfera. Las estimaciones de esta variable son muy diversas en la literatura y también sus aplicaciones a los modelos numéricos. 
 
-Por ejemplo la altura de la capa estable nocturna puede definirse como la altura a la cual la intensidad de la turbulencia es una fracción del valor en superficie mientras que la altura de la capa mezclada puede determinarse como la altura a la que se observa el menor transporte vertical de calor. 
+Por ejemplo la altura de la capa estable nocturna puede definirse como la altura a la cual la intensidad de la turbulencia es una fracción del valor en superficie mientras que la altura de la capa mezclada puede determinarse como la altura a la que se observa el menor transporte vertical de calor sensible. 
 
-Teniendo en cuenta los datos disponibles se determinará la altura de la capa estable nocturna como la altura a la que ocurre el máximo de viento. 
+Teniendo en cuenta los datos disponibles se determinó la altura de la capa estable nocturna como la altura a la que ocurre el máximo de viento. 
+
+Otro enfoque posible es el uso de la reflectividad. Por ejemplo @Kaufmann1997 buscó determinar la altura a la que ocurre la inversión térmica en invierno utilizando radares y otros instrumentos asociados utilizando la variable SNR (Signal to Noise Ratio o relación entre la Señal y el Ruido de la refelctividad). Por otro lado @Chandra2010 utiliza la variación de la reflectividad con la altura observada con un perfilador radar de viento en casos de aire claro y cielo nuboso. Esta técnica se basa en el concepto de que en el tope de la capa límite se observan importantes gradientes de temperatura y humedad y estos generan un máximo local en la reflectividad. En este trabajo se exploró de manera preliminar la posibilidad de determinar la altura de la capa límite a partir de las variación es de la reflectividad observada por el radar con la altura.
+
 
 **Ver si resulta lo de usar dBZ o si se puede hacer algo con la altura de la capa mezclada**
 
 ### Descripción del LLJ
 
-El Jet nocturno de capas cajas o LLJ (Low Level Jet) es un fenómeno de mesoescala caracterizado por por una corriente fuerte de viento con máximos de entre 10 y 20 m/s que se localiza en los primeros cientos de metros de altura [@Stull1988]. Su extensión vertical es poca pero horizontalmente puede extenderse por cientos de kilómetros. De acuerdo a @Vera2006 en la región de Paraná el LLJ es observado frecuentemente en la estación de verano entre las 00 y las 06 UTC.
+El Jet nocturno de capas bajas o LLJ (Low Level Jet) es un fenómeno de mesoescala caracterizado por por una corriente fuerte de viento con máximos de entre 10 y 20 m/s que se localiza en los primeros cientos de metros de altura [@Stull1988]. Su extensión vertical es poca pero horizontalmente puede extenderse por cientos de kilómetros. 
 
-Existen distintos criterios para identificar el LLJ, en algunos casos se determina un umbral mínimo para la velocidad del viento a partir del cual se considera la existencia del LLJ siempre que este ocurra por debajo de algún nivel determinado. En otros casos, se busca que el viento sea supergeostrófico. En este trabajo se utilizará el criterio de @Bonner1968 que identifica el LLJ cuando el máximo del viento es superior a 12 m/s y decrece al menos 6 m/s hasta el próximo mínimo o hasta el nivel de 3 km.
+Existen distintos criterios para identificar el LLJ. En algunos casos se determina un umbral mínimo para la velocidad del viento a partir del cual se considera la existencia del LLJ siempre que este ocurra por debajo de algún nivel o altura determinada. En otros casos, se busca que el viento sea supergeostrófico. En este trabajo se utilizará el criterio de @Bonner1968 que identifica el LLJ cuando el máximo del viento es superior a 12 m/s y decrece al menos 6 m/s hasta el próximo mínimo o hasta el nivel de 3 km.
 
-El LLJ puede producirse por distintos mecanismos entre los que se pueden nombrar la topografía, baroclinicidad asociada a pendientes del terreno, frentes y oscilaciones inerciales. En algunas situaciones, varios mecanismos pueden contribuir a la formación del LLJ de manera conjunta. 
+El LLJ puede producirse por distintos mecanismos entre los que se pueden nombrar la topografía, baroclinicidad asociada a pendientes del terreno, frentes y oscilaciones inerciales. En algunas situaciones, varios mecanismos pueden contribuir a la formación del LLJ de manera conjunta y estos son los que determinan las características del fenómeno. 
 
-De acuerdo a @Blackadar1957 luego del atardecer, cuando no hay producción de turbulencia se produce un desacople de la capa mezclada y el viento tiende a acelerarse ante la ausencia de la fricción hacia el equilibrio geostrófico. Sin embargo la fuerza de Coriolis genera una oscilación inercial del viento alrededor del viento geostrófico produciendo un LLJ supergeostrófico durante el periodo estable. 
+En este trabajo el análisis se centra en el LLJ generado por la oscilación inercial. De acuerdo a @Blackadar1957 luego del atardecer, cuando no hay producción de turbulencia de origen térmico se produce un desacople de la capa mezclada y el viento tiende a acelerarse ante la ausencia de la fricción hacia el equilibrio geostrófico. Sin embargo la fuerza de Coriolis genera una oscilación inercial del viento alrededor del viento geostrófico produciendo un LLJ supergeostrófico durante el periodo estable. 
 
-Esta oscilación puede verse en la rotación del vector del viento a lo largo del tiempo. Para el hemisferio sur ésta rotación será en sentido antihorario. El periodo de la oscilación inercial es de $P = 2\pi/f$, con $f$ el parámetro de Coriolis. A la latitud de Paraná $P = `r abs(round(24000/sin(-31.8)/3600, 2))`$ horas y por lo tanto se espera que el máximo viento ocurra para cuando se alcanza la mitad del periodo desde el atardecer [@Kallistratova2012].
+Esta oscilación puede verse en la rotación del vector del viento a lo largo del tiempo. Para el hemisferio sur esta rotación será en sentido antihorario. El periodo de la oscilación inercial es de $P = 2\pi/f$, con $f$ el parámetro de Coriolis. A la latitud de Paraná $P = `r abs(round(24000/sin(-31.8)/3600, 2))`$ horas y por lo tanto se espera que el máximo viento ocurra para cuando se alcanza la mitad del periodo desde el atardecer [@Kallistratova2012].
 
 ## WRF
 
 En este trabajo se utilizó el modelo WRF versión 3.9.1 para la realización de simulaciones numéricas que permitan comparar algunas de las parametrizaciones de CLP disponibles: YSU (Yonsei University Scheme), MYJ(Mellor–Yamada–Janjic) y ACM2 (Asymmetric Convection Model 2). 
 
-Las simulaciones se integraron en un dominio anidado en un sentido de dos niveles, el nivel superior con una resolución de 12 x 12 km y 105 x 105 puntos de grilla y el nivel inferior con una resolución de 4 x 4 km y 253 x 253 puntos de grilla, ambos centrados en la ubicación del radar de Paraná. Como se puede ver en la Figura \ref{dom-modelo} cubre todo el centro y norte del país. Se utilizaron datos geográficos con 10 minutos de resolución para el dominio superior y 2 minutos para el dominio inferior.
+Las simulaciones se integraron en un dominio 1 anidado con un dominio 2  en dos direcciones. El dominio 1 se configuró con una resolución de 12 x 12 km y 105 x 105 puntos de grilla y dominio 2 con una resolución de 4 x 4 km y 253 x 253 puntos de grilla, ambos centrados en la ubicación del radar de Paraná. Como se puede ver en la Figura \ref{dom-modelo} el dominio abarca todo el centro y norte del país. Se utilizaron datos geográficos con 10 minutos de resolución para el dominio superior y 2 minutos para el dominio inferior.
 
-Ambos dominios tienen una grilla vertical de 42 niveles eta configurados de manera hipérbolo tangencial para que los primeros 15 niveles se ubiquen en los primeros kilómetros. La presión en el tope del modelo es de 100 hPa. De acuerdo a @Shin2012 se determinó que el nivel inferior se ubique en z = 40 metros para evitar errores en algunas variables de superficie asociadas a la CLP.
+Ambos dominios tienen una grilla vertical de 42 niveles expresados en coordenadas sigma-p, con una distribución  hipérbolo tangencial para que los primeros 20 niveles se ubiquen en los primeros 1800 m. La presión en el tope del modelo es de 100 hPa. De acuerdo a @Shin2012 se determinó que el nivel inferior se ubique en 40 msns para evitar errores en algunas variables de superficie asociadas a la CLP.
 
 ```{r dominio, fig.cap="Dominios utilizados. \\label{dominio}", fig.subcap=c("Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior. El punto representa la ubicación del radar. \\label{dom-modelo}", "Topografía sobre el nivel del terreno respecto de la ubicación del radar. El circulo negro corresponde al dominio de análisis, de 40km de radio y centrado en el radar. \\label{dom-radar}"), fig.width=0.48*text.width, fig.align='center', fig.sep = "\\hfill"}
 
@@ -763,7 +794,7 @@ ggplot(hgt, aes(lon, lat)) +
 remove(circle, hgt)
 ```
 
-Se realizaron simulaciones para el periodo comprendido en el Caso 1, es decir, entre las 0600 UTC del 13 de enero a las 0000 del 15 de enero de 2016 en todos los casos. Las primeras 6 horas de simulación corresponden al "spin up" del modelo y las siguientes 36 horas pueden ser analizables. Si bien el estudio se centra en comparar las observaciones del 14 de enero con las simulaciones, es importante tener en cuenta que la capa estable nocturna puede ser muy influenciada por la capa mezclada del día anterior, por esta razón la simulación empieza 12 horas antes.
+Se realizaron simulaciones para el periodo comprendido en el Caso 1, es decir, entre las 0600 UTC del 13 de enero a las 0000 del 15 de enero de 2016 en todos los casos. Las primeras 6 horas de simulación corresponden al "spin up" del modelo y las siguientes 36 horas al período de interés para el análisis. Si bien el estudio se centra en comparar las observaciones del 14 de enero con las simulaciones, es importante tener en cuenta que la capa estable nocturna puede ser muy influenciada por la capa mezclada del día anterior, por esta razón la simulación empieza 12 horas antes.
 
 Para las condiciones iniciales para las 0600 UTC del 13 de enero de 2016 se utilizó el Análisis Final (FNL) de National Centers for Environmental Prediction (NCEP) con resolución de 0.25° X 0.25° y las condiciones de borde fueron forzadas por los mismos datos cada 6 horas. 
 
@@ -797,7 +828,7 @@ El análisis del resto de las variables pueden hacerse tomando el dato del punto
 
 Fue posible configurar el modelo para obtener algunas variables específicas de los esquemas de CLP como la altura de la capa límite estimada por cada parametrización ($h$), la Longitud de Monin-Obukohv ($L$), la velocidad de fricción ($u_*$) y el coeficiente de difusividad de calor ($K_h$). 
 
-#### Cálculo de la altura de la CLP
+#### Estimación de la altura de la CLP
 
 Si bien cada parametrización estima la altura de la CLP, esta estimación es distinta en cada esquema. YSU calcula el número de Richarson Bulk desde superficie y determina $h$ como la altura a la cual  $R_b$ alcanza un valor cŕitico: cero para el régimen inestable y 0.25 para el regimen estable [@Hong2006]. ACM2 utiliza el mismo valor crítico del $R_b$ pero en los casos inestables el cálculo del número de Richarson se realiza para la capa de entremezcla entre la CLP y la atmósfera libre [@Pleim2007]. Por otro lado el esquema MYJ diagnostica la altura de la CLP como la altura a la cual la energía cinética turbulenta alcanza un valor prescripto en $0.1 m^2/s^2$ [@Janjic1994].
 
@@ -866,7 +897,9 @@ geop[date %in% c(as_datetime("2016-01-14 00:00:00 UTC"), as_datetime("2016-01-14
   coord_quickmap() +
   facet_wrap(~date, 
              labeller = labeller(date = c("2016-01-14 00:00:00" = "00 UTC", "2016-01-14 12:00:00" = "12 UTC"))) +
-  theme_minimal() +theme(panel.ontop = T, panel.grid = element_line(linetype = 3))
+  theme_minimal() + 
+  theme(panel.ontop = T, panel.grid = element_line(linetype = 3), 
+        panel.spacing.x = unit(1.5, "lines"))
 
 ```
 
@@ -916,8 +949,9 @@ geop[date %in% c(as_datetime("2016-01-21 00:00:00 UTC"), as_datetime("2016-01-21
   coord_quickmap() +
   facet_wrap(~date, 
              labeller = labeller(date = c("2016-01-21 00:00:00" = "00 UTC", "2016-01-21 12:00:00" = "12 UTC"))) +
-  theme_minimal() +theme(panel.ontop = T, panel.grid = element_line(linetype = 3))
-
+  theme_minimal() +
+  theme(panel.ontop = T, panel.grid = element_line(linetype = 3), 
+        panel.spacing.x = unit(1.5, "lines"))
 ```
 
 ```{r meteo-caso2, fig.cap="Idem Figura \\ref{meteo1} pero para el Caso 2 - 21 de enero de 2016. \\label{meteo2}", fig.align='center', fig.width=0.75*text.width, fig.height=0.3*text.height}
@@ -972,8 +1006,9 @@ geop[date %in% c(as_datetime("2016-01-23 00:00:00 UTC"), as_datetime("2016-01-23
   coord_quickmap() +
   facet_wrap(~date, 
              labeller = labeller(date = c("2016-01-23 00:00:00" = "00 UTC", "2016-01-23 12:00:00" = "12 UTC"))) +
-  theme_minimal() +theme(panel.ontop = T, panel.grid = element_line(linetype = 3))
-
+  theme_minimal() +
+  theme(panel.ontop = T, panel.grid = element_line(linetype = 3), 
+        panel.spacing.x = unit(1.5, "lines"))
 ```
 
 
@@ -1032,6 +1067,7 @@ remove(sup_vad)
 ### Magnitud y velocidad del viento
 
 ```{r campo-caso1, fig.cap="Magnitud y dirección del viento  correspondiente al Caso 1 (14/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \\label{campo-caso1}", fig.subcap=c("Magnitud del viento. \\label{caso1-spd}", "Dirección. \\label{caso1-dir}"), fig.width=0.95*text.width, fig.height=0.4*text.height, fig.ncol=1}
+
 vad_20160114[ht > 0.02] %>% 
   ggplot(aes(date_time, ht)) + 
   geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
@@ -1193,6 +1229,30 @@ ggplot(gdata, aes(ht, spd_smooth, color = as.factor(hour(date_time)))) +
 
 ### Características de la capa límite
 
+#### Altura de la capa límite
+
+```{r read-dbz}
+files <- Sys.glob("~/Radar/VAD/PARANA/20160114/240/*.nc")
+dbz_radar <- rbindlist(lapply(files, read.radar))
+```
+
+
+```{r pblh-dbz, fig.cap="Valor absoluto del gradiente vertical de dBZ en función de la altura y el tiempo para el Caso 1. \\label{pblh-dbz}", fig.align='center',  fig.height=0.4*text.height}
+elev <- unique(dbz_radar$elevacion)
+dbz_radar[elevacion == elev[8] & ht_reg > 200] %>%
+  ggplot(aes(date, ht_reg/1000)) +
+  #geom_line(aes(color = factor(elevacion))) +
+  geom_tile(aes(fill = abs(ddbz))) +
+  scale_fill_viridis(name = "Gradiente \n vertical \n de dBZ",
+                     limits = c(0, 0.06)) +
+  scale_y_continuous(name = "Altura (Km)", limits = c(0, 3)) +
+  scale_x_datetime(name = "Hora (UTC)", date_breaks = "3 hour",
+                   date_labels = "%H:%M", expand = c(0,0)) +
+  theme_minimal()
+                     
+```
+
+
 ```{r make-ri}
 sup_20160114 <- superficie[day(fecha) == 14]
 ri_20160114 <- create.ri(vad_20160114, sup_20160114$fecha, sup_20160114$temp, sup_20160114$presion_estacion, 27.7, 1002.6)
@@ -1215,6 +1275,7 @@ remove(sup_20160114, sup_20160121, sup_20160123,
 
 
 ```{r estable-vad, fig.cap="Series de tiempo de la altura de la capa límite, cortante vertical y el número de Richarsdon en la capa estable nocturna para todos los casos de estudio. En a) y b) se muestra solo el período donde se observa el LLJ, en c) el período en cada caso se encuentra sombreado. \\label{estable-vad}", fig.subcap=c("Altura de la capa estable \\label{h-vad}", "Cortante ($u_{máx}/z_{máx}$) \\label{cortante-vad}", "Número de Richardson \\label{ri}"), fig.ncol=1, fig.height=0.24*text.height}
+
 ri_vad$hora <- ri_vad$date_time
 day(ri_vad$hora) = 14
 lim <- as.POSIXct(c(as_datetime("2016-01-14 00:00:00"), as_datetime("2016-01-14 12:00:00")))
@@ -1268,8 +1329,6 @@ ri_vad[hour(hora) %between% c(0, 12)] %>%
   theme_minimal()
 ```
 
-
-
 ```{r hodografa-horaria, fig.cap="Variación del vector del viento en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 0600 UTC. El triángulo marca el nivel inferior y los círculos grandes se ubican cada 500 metros. \\label{hodografa-h}", fig.align='center', fig.width=0.75*text.width}
 
 gdata <- rbind(vad_20160114, vad_20160121, vad_20160123) %>% 
@@ -1292,7 +1351,6 @@ ggplot(gdata, aes(u, v,  color = caso)) +
 
 
 #### Oscilación inercial
-
 
 ```{r hodografa-nivel, fig.cap="Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (0000 UTC). \\label{hodografa-n}", fig.subcap=c("Datos observados en la estación meteorológica. \\label{hodo-nivel1}", "Datos observados por el radar. \\label{hodo-nivel2}"), fig.width=0.95*text.width, fig.ncol=1, fig.align='center', fig.height=0.25*text.height}
 
@@ -1421,7 +1479,6 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_d
 
 ```
 
-
 ```{r diferencia, fig.cap="Diferencia entre las observaciones y cada simulación  correspondiente al Caso 1. \\label{dif}", fig.subcap=c("Magnitud del viento \\label{dif-spd}", "Dirección del viento \\label{dif-dir}"), fig.width=0.48*text.width, fig.height=0.80*text.height, fig.ncol=2}
 
 gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm))
@@ -1484,70 +1541,87 @@ gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>%
                           legend.box = "horizontal")
 ```
 
-```{r errores-wrf}
-gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
+```{r err-spd, fig.cap="Errores calculados para la estimación de la velocidad del viento (m/s) con cada simulación en función de la altura y la correlación. \\label{err-spd}", fig.subcap=c("bias. \\label{bias-spd}", "rmse. \\label{rmse-spd}", "rmsens. \\label{rmsens-spd}", "correlación. \\label{cor-spd}"), fig.width=0.48*text.width, fig.height=0.20*text.height, fig.align='center', fig.ncol=2}
 
-gdata[date_time %between% as.POSIXct(c("2016-01-14 00:00:00", "2016-01-14 09:40:00"), tz = "UTC"),]  
-  
-gdata[caso == "Obs", .(ht, date_time, obs = spd_smooth)] %>% 
-  .[gdata[caso != "Obs", .(ht, date_time, caso, spd_smooth)],
-    on = c("ht", "date_time")] %>% 
-  .[, .(bias = bias.f(spd_smooth, obs)), by = .(caso, ht)] %>% 
-  ggplot(aes(ht, bias)) +
-  geom_line(aes(color = caso)) + 
-  scale_color_viridis(discrete = T) +
-  coord_flip()
+gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm)) %>% 
+  .[vad_20160114[ht != 0.01, .(ht, date_time, obs = spd_smooth)], on = c("ht", "date_time")] %>% 
+  .[day(date_time) == 14 & ht <= 2.0] %>% 
+  .[, .(bias = bias.f(spd_smooth, obs),
+        rmse = rmse.f(spd_smooth, obs),
+        rmsens = rmsens.f(spd_smooth, obs),
+        corr = cor(spd_smooth, obs, use = "complete.obs")), by = .(caso, ht)] %>% 
+  .[, caso2 := factor(caso,
+                       levels = c("YSU", "MYJ", "ACM2"),
+                       ordered = T)]
 
-gdata[caso == "Obs", .(ht, date_time, obs = spd_smooth)] %>% 
-  .[gdata[caso != "Obs", .(ht, date_time, caso, spd_smooth)],
-    on = c("ht", "date_time")] %>% 
-  .[, .(bias = bias.f(spd_smooth, obs)), by = .(caso, date_time)] %>% 
-  .[day(date_time) == 14] %>% 
-  ggplot(aes(date_time, bias)) +
-  geom_line(aes(color = caso)) +
-  scale_color_viridis(discrete = T)
+ggplot(gdata, aes(ht, bias)) +
+  geom_hline(yintercept = 0, color = "darkgray") +
+  geom_line(aes(color = caso2)) + 
+  scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
+  scale_x_continuous(name = "Altura (km)") +
+  scale_y_continuous(name = "bias") +
+  coord_flip() +
+  theme_minimal()
+
+ggplot(gdata, aes(ht, rmse)) +
+  # geom_hline(yintercept = 0, color = "darkgray") +
+  geom_line(aes(color = caso2)) + 
+  scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
+  scale_x_continuous(name = "Altura (km)") +
+  scale_y_continuous(name = "rmse") +
+  coord_flip() +
+  theme_minimal()
+
+ggplot(gdata, aes(ht, rmsens)) +
+  # geom_hline(yintercept = 0, color = "darkgray") +
+  geom_line(aes(color = caso2)) + 
+  scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
+  scale_x_continuous(name = "Altura (km)") +
+  scale_y_continuous(name = "rmsens") +
+  coord_flip() +
+  theme_minimal()
+
+ggplot(gdata, aes(ht, corr)) +
+  geom_hline(yintercept = 0, color = "darkgray") +
+  geom_line(aes(color = caso2)) + 
+  scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
+  scale_x_continuous(name = "Altura (km)") +
+  scale_y_continuous(name = "correlación") +
+  coord_flip() +
+  theme_minimal()
 
 ```
 
 
-```{r}
-err <- gdata[day(date_time) == 14] %>% 
-  .[caso == "Obs", .(ht, date_time, obs = spd_smooth)] %>% 
-  .[gdata[caso != "Obs", .(ht, date_time, caso, spd_smooth)],
+```{r err-tabla}
+
+gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm)) %>% 
+  .[vad_20160114[ht != 0.01, .(ht, date_time, obs = spd_smooth)], 
     on = c("ht", "date_time")] %>% 
+  .[day(date_time) == 14 & ht <= 2.0] %>% 
   .[, .(bias = bias.f(spd_smooth, obs),
-        rmse = rmse.f(spd_smooth, obs)), by = .(caso)]
+        rmse = rmse.f(spd_smooth, obs),
+        rmsens = rmsens.f(spd_smooth, obs),
+        correlación = cor(spd_smooth, obs, use = "complete.obs")), by = .(caso)]
+err <- gdata
 
-bias <- err[, bias]
-err2 <- gdata[day(date_time) == 14] %>%   
-  .[caso == "Obs", .(ht, date_time, obs = spd_smooth)] %>% 
-  .[gdata[caso != "Obs", .(ht, date_time, caso, spd_smooth)],
+gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm)) %>% 
+  .[vad_20160114[ht != 0.01, .(ht, date_time, obs = di)], 
     on = c("ht", "date_time")] %>% 
-  .[, .(rmsens = rmsens.f(spd_smooth, obs, bias)), by = .(caso)]
-
-error <- cbind(err, err2)
-error[,4] <- NULL
-
-
-
-err <- gdata[day(date_time) == 14] %>% 
-  .[caso == "Obs", .(ht, date_time, obs = di)] %>% 
-  .[gdata[caso != "Obs", .(ht, date_time, caso, di)],
-    on = c("ht", "date_time")] %>% 
+  .[day(date_time) == 14 & ht <= 2.0] %>% 
   .[, .(bias = bias.f(di, obs),
-        rmse = rmse.f(di, obs)), by = .(caso)]
+        rmse = rmse.f(di, obs),
+        rmsens = rmsens.f(di, obs),
+        correlación = cor(di, obs, use = "complete.obs")), by = .(caso)]
 
-bias <- err[, bias]
-err2 <- gdata[day(date_time) == 14] %>%   
-  .[caso == "Obs", .(ht, date_time, obs = di)] %>% 
-  .[gdata[caso != "Obs", .(ht, date_time, caso, di)],
-    on = c("ht", "date_time")] %>% 
-  .[, .(rmsens = rmsens.f(di, obs, bias)), by = .(caso)]
+err <- cbind(err, gdata)
+err[,6] <- NULL
 
-err <- cbind(err, err2)
-err[,c(1,4)] <- NULL
-error <- cbind(error, err)
-kable(error, digits = 4, caption = "E")
+kable(err, format = "latex", 
+      digits = 4, 
+      booktabs = T,
+      caption = "Comparación entre las simulaciones y las observaciones de radar a partir de distintos errores") %>% 
+  add_header_above(c(" ", "Velocidad" = 4, "Dirección" = 4)) 
 ```
 
 ### Estructura de la capa límite
@@ -1555,6 +1629,7 @@ kable(error, digits = 4, caption = "E")
 #### Oscilacion inercial y LLJ
 
 ```{r perfiles-mod, fig.cap="Perfil de viento observado por el radar a las 0600 y las 1700 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \\label{perfiles-modelo}", fig.width=0.95*text.width, fig.align='center'}
+
 gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 gdata[, caso2 := factor(caso,
                        levels = c("Obs", "YSU", "MYJ", "ACM2"),
@@ -1570,7 +1645,7 @@ gdata[, caso2 := factor(caso,
   #             fill = as.factor(hour(date_time))), 
   #             alpha = 0.5, color = NA) +
   coord_flip() +
-  scale_color_manual(name= NULL, values = c("black", color_manual)) +
+  scale_color_manual(name= NULL, values = c("black", viridis_pal()(3))) +
   scale_y_continuous(name = "V (m/s)") + 
   scale_x_continuous(name = "Altura (Km)", breaks = seq(0, 2, 0.5),
                      limits = c(0, 2)) + 
@@ -1613,9 +1688,9 @@ gdata[ht %in% c(0.3, 0.5, 1.0) & !is.na(spd_smooth)] %>%
 
 Para determinar la validez del promedio espacial de cada variable en el dominio en estudio es importante analizar la variabilidad de la misma espacial y temporalmente.
 
-En el caso de la Longitud de Monin-Obukhov ($L$) se analizó el procentaje de veces que el valor local tenía signo distinto a la moda calculada para todo el dominio y cada tiempo de simulación. Esto es importante ya que el signo de $L$ marca la diferencia entre el regimen estable y el regimen inestable y por lo tanto debe mantenerse en el dominio. 
+En el caso de la Longitud de Monin-Obukhov ($L$) se analizó el procentaje de veces que el valor local tenía signo distinto a la moda calculada para todo el dominio y cada tiempo de simulación. Esto es importante ya que el signo de $L$ marca la diferencia entre el regimen estable y el regimen inestable y por lo tanto debe mantenerse en el dominio en cada período. 
 
-En la Figura \ref{L-espacial} se muestra el porcentaje de veces que el valor de L en cada punto de grilla tiene signo distinto a la moda calculada en todo el dominio y el período analizado. Se observa que que existen regiones donde el signo de $L$ es dsitnto a la moda del dominio más del 40% de las veces. Esto puede estar relacionado la variación de la altura del terreno (Figura \ref{topografia}) o a la presencia del río y zonas con suelos saturados donde los flujos verticales de calor ($F_{\theta}$) pueden tener un comportamiento contrario al suelo seco. Esto último se observa en la Figura \ref{L-espacial}, donde se muestra que las regiones donde el porcentaje de veces que el valor de $F_{\theta}$ tiene un signo distinto a la moda es alto coincide con las regiones donde se encuentra el río. 
+En la Figura \ref{L-espacial} se muestra el porcentaje de veces que el valor de $L$ en cada punto de grilla tiene signo distinto a la moda calculada en todo el dominio y el período analizado. Se observa que que existen regiones donde el signo de $L$ es distinto a la moda del dominio más del 40% de las veces. Esto puede estar relacionado la variación de la altura del terreno (Figura \ref{topografia}) o a la presencia del río y zonas con suelos saturados donde los flujos verticales de calor latente ($F_{\theta}$) pueden tener un comportamiento contrario al suelo seco. Esto último se observa en la Figura \ref{L-espacial}, donde se muestra que las regiones donde el porcentaje de veces que el valor de $F_{\theta}$ tiene un signo distinto a la moda es alto coincide con las regiones donde se encuentra el río y los valores de $L$ anómalos. 
 
 
 ```{r L-espacial, fig.cap="Porcentaje de veces que el valor local de L (a) y el flujo vertical de calor (b) tiene signo distinto a la moda del dominio calculada en todo el periodo analizado. Se muestran los valores mayores al 5\\% (colores) y topografía del dominio (contornos). Datos de la simulación YSU. \\label{L-esp}", fig.width=0.95*text.width, fig.align='center'}
@@ -1667,7 +1742,8 @@ rbind(L, hfx) %>%
 remove(hfx, hfx.YSU, L, L.YSU)
 
 ```
-Entonces nos quedamos con el análsis en un punto cercano al radar que además no presenta gran variabilidad respecto de la región circundante.
+
+Por lo anterior se decidió centrar el análsis de las variables asociadas a la CLP en el punto de grilla más cercano al radar, que además no presenta gran variabilidad respecto de la zona circundante.
 
 
 
@@ -1742,7 +1818,7 @@ ggplot(all.pbl, aes(date, L)) +
 #### Altura de la capa límite
 
 
-```{r pblh-wrf, fig.cap="Altura de la capa límite en cada silumación. \\label{pblh-wrf}", fig.subcap=c("Estimada directamente por cada esquema de CLP. \\label{pblh}", "Comparación entre la altura calculada por cada esquema y la estimada a partir de la altura del viento máximo (sólo período estable). \\label{pblh-spd}"), fig.width=0.75*text.width, fig.align='center', fig.ncol=1}
+```{r pblh-wrf, fig.cap="Altura de la capa límite en cada simulación. \\label{pblh-wrf}", fig.subcap=c("Estimada directamente por cada esquema de CLP. \\label{pblh}", "Comparación entre la altura calculada por cada esquema y la estimada a partir de la altura del viento máximo (sólo período estable). \\label{pblh-spd}"), fig.width=0.75*text.width, fig.height=0.33*text.height, fig.align='center', fig.ncol=1}
 
 all.pbl[lev < 30] %>%
   ggplot(aes(date, pblh)) +
@@ -1766,18 +1842,6 @@ all.pbl[lev < 2500 & L >=0 , .(pblh = pblh[1], pblh.spd = lev[which.max(spd)], L
   theme_minimal()
 ```
 
-```{r}
-a <- all.pbl[lev < 2500 & L >=0 , .(pblh = pblh[1], pblh.spd = lev[which.max(spd)], L = L[1]), by = .(date, param)] %>%   .[!is.na(pblh), ] 
-
-group_by(a, param) %>% 
-  summarise(cor = cor(pblh, pblh.spd)) %>% 
-  kable(digits = 4)
-  
-```
-
-
-Comparación entre simulaciones y observaciones
-Gráfico de dispersión para analizar la altura obtenida con umax
 
 #### Coeficientes de difusividad turbulenta
 
@@ -1789,43 +1853,6 @@ all.pbl <- all.pbl[, c("kh.u", "km.u", "u.u") := .(
   .[, Pr := km.u/kh.u]
 ```
 
-Coeficiente de difusividad de calor que sale del WRF
-
-
-```{r kh_wrf, fig.cap="BORRADOR - Coeficiente de difusividad de calor $K_h$ ($m^2/s$) promediado para todo el período estable (izquierda) y el período inestable (derecha) de la capa límite en todas las simulaciones. \\label{kh_wrf}", fig.align='center', fig.width=0.95*text.width}
-
-group_by(all.pbl, param, lev, regimen) %>% 
-  summarise(Kh = mean(exchh, na.rm = T)) %>% 
-  ungroup() %>% 
-  ggplot(aes(lev, Kh)) + 
-  geom_line(aes(color = as.factor(param))) +
-  scale_color_viridis(name = "Metodología",discrete = T, option = "viridis") +
-  scale_y_continuous(name = expression(paste(K[h], " (", m^2/s, ")"))) +
-  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)", 
-                     limits = c(0, 1500)) +
-  facet_wrap(~regimen, scales = "free") +
-  coord_flip() +
-  theme_minimal()
-```
-
-
-```{r kh_ulke, fig.cap="BORRADOR - Coeficiente de difusividad de calor $K_h$ ($m^2/s$) promediado sobre el período estable (izquierda) y el período inestable (derecha) de la capa límite calculados a partir de los modelos propuestos por Ulke 2000 \\label{kh-ulke}", fig.align='center', fig.width=0.95*text.width}
-
-group_by(all.pbl, param, lev, regimen) %>% 
-  summarise(Kh.u = mean(kh.u, na.rm = T), Km.u = mean(km.u, na.rm = T)) %>% 
-  ungroup() %>%
-  .[, Pr := Km.u/Kh.u] %>%
-  .[Kh.u > 0 & Km.u > 0, ] %>% 
-  ggplot(aes(lev, Kh.u)) + 
-  geom_line(aes(color = as.factor(param))) +
-  scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
-  scale_y_continuous(name = expression(paste(K[h], " (", m^2/s, ")"))) +
-  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)") +
-  facet_wrap(~regimen, scales = "free") +
-  #labs(title = "Perfiles a partir del promedio del dominio") +
-  coord_flip() +
-  theme_minimal()
-```
 
 ```{r k_norm, fig.cap="Coeficiente de difusividad normalizados calculados a partir de los modelos propuestos por Ulke 2000 y promediados sobre en período estable (izquierda) y el período inestable (derecha) de la capa límite. \\label{kh-ulke}", fig.subcap=c("$K_h* = K_h/khu_*$ \\label{kh-norm}", "$K_m* = K_m/khu_*$ \\label{km-norm}"), fig.align='center', fig.height=0.40*text.height, fig.width=0.95*text.width, fig.ncol=1}
 
@@ -1859,7 +1886,6 @@ ggplot(all.pbl_norm, aes(lev_norm, km.u_norm)) +
   coord_flip() +
   theme_minimal()
 ```
-
 
 ```{r pr, fig.cap="Variación del número de Prandtl calculado a partir del modelo propuesto por Ulke 2000 con las variables de cada simulación y promediado en cada periodo. \\label{Pr}", fig.align='center', fig.width=0.95*text.width}
 group_by(all.pbl, param, lev, regimen) %>%

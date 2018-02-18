@@ -53,13 +53,14 @@ ReadRadar <- function(file) {
   radar[elevacion < 6 & ht < 5000]
   
   
-  ht_reg <- seq(0, 10000, by = 100)
+  ht_reg <- seq(0, 5000, by = 50)
   radar[, NNa := sum(!is.na(dbz)), by = .(azimut, elevacion, date)]
   reg <- radar[NNa > 3, .(ht_reg = ht_reg,
                  dbz_reg = approx(ht, dbz, xout = ht_reg)$y), 
         by = .(azimut, elevacion, date)] %>% 
   .[elevacion < 6, .(dbz = mean(dbz_reg, na.rm = T)), 
     by = .(ht_reg, date, elevacion)] 
+  reg[, ddbz := metR:::.derv(dbz, ht_reg), by = .(elevacion, date)]
   reg
 }
 
@@ -86,11 +87,19 @@ rad <- rbind(radar, radar2)
 #   facet_wrap(~date)
 ```
 
+```{r}
+radar_n <-  radar[, .(ht_norm = seq(0, 3000, by = 10),
+                      dbz_norm = approx(ht, dbz, xout = seq(0, 3000, by = 10))$y), 
+                  by = .(elevacion, date)]
+
+radar[, ddbz := metR:::.derv(dbz, ht_reg), by = .(elevacion, date)]
+```
+
 
 ```{r dbz1, fig.cap="Variación de dBZ con la altura a lo largo de un día (14/01/2016) para distintos ángulos de elevación. La línea negra corresponde a -5 dBZ"}
 ggplot(radar, aes(date, ht_reg)) +
-  geom_contour(aes(z = dbz, color = ..level..)) +
-  geom_contour(aes(z = dbz), breaks = -5, color = "black") +
+  geom_contour(aes(z = ddbz, color = ..level..)) +
+  # geom_contour(aes(z = dbz), breaks = -5, color = "black") +
   scale_color_viridis(name = "dBZ") +
   scale_y_continuous(limits = c(0, 3000)) +
   facet_wrap(~elevacion) +
@@ -103,8 +112,8 @@ elev <- unique(radar$elevacion)
 radar[elevacion == elev[8]] %>%
 ggplot(aes(date, ht_reg)) +
   #geom_line(aes(color = factor(elevacion))) +
-  geom_tile(aes(fill = dbz)) +
-  scale_fill_viridis(name = "dBZ") +
+  geom_tile(aes(fill = ddbz)) +
+  scale_fill_viridis(name = "dBZ", limits = c(-0.001, 0.001)) +
   scale_y_continuous(limits = c(0, 3000)) +
   facet_wrap(~elevacion) +
   theme_minimal()
@@ -115,13 +124,13 @@ ggplot(aes(date, ht_reg)) +
 elev <- unique(radar$elevacion)
 all.pbl <- readRDS("pblh")
 
-radar[elevacion == elev[8]] %>% 
+dbz_radar[elevacion == elev[8]] %>% 
   ggplot(aes(date, ht_reg)) +
   #geom_line(aes(color = factor(elevacion))) +
-  geom_contour(aes(z = dbz, color = ..level..)) +
-  scale_color_viridis(name = "dBZ") +
-  geom_point(data=all.pbl, aes(date, pblh, shape = param)) +
-  scale_y_continuous(limits = c(0, 3000)) +
+  geom_contour_fill(aes(z = abs(ddbz)), binwidth = 0.01) +
+  scale_fill_viridis(name = "dBZ", limits = c(0, 0.06)) +
+  #geom_point(data=all.pbl, aes(date, pblh, shape = param)) +
+  scale_y_continuous(limits = c(200, 3000)) +
   theme_minimal()
     
 ```
