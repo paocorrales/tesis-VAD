@@ -1,0 +1,44 @@
+---
+title: "Agradecimientos"
+date: ''
+output:
+  pdf_document:
+    keep_tex: yes
+    latex_engine: xelatex
+    number_sections: yes
+    toc: yes
+    toc_depth: 4
+classoption: oneside
+documentclass: book
+fontsize: 12pt
+geometry: inner = 3cm, outer = 2cm, top = 2.5cm, bottom = 2.5cm
+header-includes:
+- \linespread{1.25}
+- \usepackage{subfig}
+- \usepackage{hyperref}
+- \usepackage[textsize=tiny]{todonotes}
+lang: es-AR
+link-citation: yes
+csl: Bibliografia/meteorologica.csl
+subtitle: Validación de parametrizaciones de capa límite utilizando datos de radar 
+bibliography:
+- Bibliografia/papers.bib
+- Bibliografia/packages.bib
+
+
+nocite: | 
+  @Amante2009
+  @Kalnay1995
+---
+
+
+La piba del blog de tesis con rmarkdown
+Radx
+Pyart
+
+# Referencias
+
+[@Ruiz2017]
+
+[@Stull1988]
+

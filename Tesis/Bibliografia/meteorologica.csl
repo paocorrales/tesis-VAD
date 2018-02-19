@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<style class="in-text" version="1.0" demote-non-dropping-particle="never" default-locale="es-AR" xmlns="http://purl.org/net/xbiblio/csl">
+<style xmlns="http://purl.org/net/xbiblio/csl" class="in-text" version="1.0" demote-non-dropping-particle="never">
   <info>
     <title>Revista Meteorologica</title>
-    <id>http://csl.mendeley.com/styles/styles/revista-meteorologica</id>
+    <id>http://csl.mendeley.com/styles/styles/revista-meteorologica-2</id>
     <link href="http://www.meteorologica.org.ar/autores/" rel="documentation"/>
     <author>
       <name>Paola Corrales</name>
       <email>paobcorrales@gmail.com</email>
     </author>
     <summary>Estilo para la revista Meteorologica y tesis de grado DCAO-FCEN-UBA</summary>
-    <updated>2018-01-10T01:34:46+00:00</updated>
+    <updated>2018-02-18T21:08:58+00:00</updated>
     <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
     <category/>
   </info>
@@ -80,7 +80,7 @@
             <text variable="title" form="short"/>
           </else-if>
           <else>
-            <text variable="title" form="short" quotes="true"/>
+            <text variable="title" form="short" quotes="false"/>
           </else>
         </choose>
       </substitute>
@@ -232,10 +232,9 @@
           </group>
         </group>
       </else-if>
-      <else-if type="legal_case">
+      <else-if type="webpage">
         <group prefix=" (" suffix=")" delimiter=" ">
-          <text variable="authority"/>
-          <date variable="issued" form="text"/>
+          <text variable="URL"/>
         </group>
       </else-if>
       <else-if type="bill legislation" match="any">

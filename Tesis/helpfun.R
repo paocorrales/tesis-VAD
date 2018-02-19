@@ -25,14 +25,15 @@ read.vad <- function(path, lowess = TRUE){
   }
   if (lowess == TRUE){
     temp2 <- lowess.vad(temp2)
+    temp2$di <- ConvertLongitude(temp2$di, 180)
     temp2$u <- -temp2$spd_smooth * sin(temp2$di*pi/180)
     temp2$v <- -temp2$spd_smooth * cos(temp2$di*pi/180)
   } else{
+    temp2$di <- ConvertLongitude(temp2$di, 180)
     temp2$u <- -temp2$spd * sin(temp2$di*pi/180)
     temp2$v <- -temp2$spd * cos(temp2$di*pi/180)
   }
   temp2$date_time <- round_date(temp2$date_time, "minute")
-  temp$di <- ConvertLongitude(temp$di, 180)
   setDT(temp2)
   
   return(temp2)
@@ -320,9 +321,33 @@ rmse.f <- function(mod, obs){
 rmsens.f <- function(mod, obs){
   
   N <- length(mod)
-  # bias <- rep(bias, len = N)
   bias <- bias.f(mod, obs)
   resta <- mod - obs - bias
   rmsens <- sqrt(sum(resta^2, na.rm = T)/N)
   rmsens
+}
+
+bias.c <- function(dif.circ){
+  bias <- sum(dif.circ, na.rm = T)/length(dif.circ)
+  bias
+}
+
+rmse.c <- function(dif.circ){
+  
+  rmse <- sqrt(sum(dif.circ^2, na.rm = T)/length(dif.circ))
+  rmse
+}
+
+rmsens.c <- function(dif.circ){
+
+  bias <- bias.c(dif.circ)
+  resta <- dif.circ - bias
+  rmsens <- sqrt(sum(resta^2, na.rm = T)/length(dif.circ))
+  rmsens
+}
+
+geom_label_contour2 <- function(...) {
+  list(geom_label_contour(fill = "white", label.r = unit(0, "lines"),
+                          label.padding = unit(0.04, "lines"), color = NA, ...),
+       geom_text_contour(..., rotate = FALSE))
 }
