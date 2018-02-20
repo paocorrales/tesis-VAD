@@ -15,3 +15,5 @@ ncdf4
 reshape2
 knitr
 kableExtra
+ggrepel
+circular
