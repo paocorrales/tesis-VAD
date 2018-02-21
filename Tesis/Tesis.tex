@@ -633,7 +633,7 @@ particular.
 
 }
 
-\caption{Velocidad del viento (m/s) en función de la altura para los distintos ángulos de elevación (puntos) y perfil final obtenido luego del primedio pesado (linea) calculados con VAD. \label{evad}}\label{fig:evad}
+\caption{Velocidad del viento (m/s) en función de la altura para los distintos ángulos de elevación (puntos) y perfil final obtenido luego del primedio pesado (linea) calculados con VAD. \label{perfil-rmse}}\label{fig:evad}
 \end{figure}
 
 En la Figura \ref{perfil-rmse} se muestra el valor de la magnitud del
@@ -1205,16 +1205,16 @@ en algunas variables de superficie asociadas a la CLP.
 \end{figure}
 
 Se realizaron simulaciones para el periodo comprendido en el Caso 1, es
-decir, entre las 0600 UTC del 13 de enero a las 0000 del 15 de enero de
-2016 en todos los casos. Las primeras 6 horas de simulación corresponden
-al ``spin up'' del modelo y las siguientes 36 horas al período de
-interés para el análisis. Si bien el estudio se centra en comparar las
+decir, entre las 06 UTC del 13 de enero a las 00 del 15 de enero de 2016
+en todos los casos. Las primeras 6 horas de simulación corresponden al
+``spin up'' del modelo y las siguientes 36 horas al período de interés
+para el análisis. Si bien el estudio se centra en comparar las
 observaciones del 14 de enero con las simulaciones, es importante tener
 en cuenta que la capa estable nocturna puede ser muy influenciada por la
 capa mezclada del día anterior, por esta razón la simulación empieza 12
 horas antes.
 
-Para las condiciones iniciales para las 0600 UTC del 13 de enero de 2016
+Para las condiciones iniciales para las 06 UTC del 13 de enero de 2016
 se utilizó el Análisis Final (FNL) de National Centers for Environmental
 Prediction (NCEP) con resolución de 0.25° X 0.25° y las condiciones de
 borde fueron forzadas por los mismos datos cada 6 horas.
@@ -1409,7 +1409,7 @@ donde se registraron vientos del sector norte y noreste.
 
 }
 
-\caption{Altura geopotencial en 1000 hPa para las 00 y las 12 UTC del 14 de enero de 2016 (Caso 1). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD - Kalnay et al., 1995). \label{hgt-caso1}}\label{fig:hgt-caso1}
+\caption{Altura geopotencial en 1000 hPa para las 00 y las 12 UTC del 14 de enero de 2016 (Caso 1). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD - Kalnay et al., 1996). \label{hgt-caso1}}\label{fig:hgt-caso1}
 \end{figure}
 
 \begin{figure}
@@ -1453,7 +1453,7 @@ nubosidad en las inmediaciones.
 
 }
 
-\caption{Altura geopotencial en 1000 hPa para las 00 y las 12 UTC del 21 de enero de 2016 (Caso 2). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD - Kalnay et al., 1995). \label{hgt-caso2}}\label{fig:hgt-caso2}
+\caption{Altura geopotencial en 1000 hPa para las 00 y las 12 UTC del 21 de enero de 2016 (Caso 2). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD - Kalnay et al., 1996). \label{hgt-caso2}}\label{fig:hgt-caso2}
 \end{figure}
 
 \begin{figure}
@@ -1501,7 +1501,7 @@ UTC.
 
 }
 
-\caption{Altura geopotencial en 1000 hPa para las 00 y las 12 UTC del 23 de enero de 2016 (Caso 3). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD - Kalnay et al., 1995). \label{hgt-caso3}}\label{fig:hgt-caso3}
+\caption{Altura geopotencial en 1000 hPa para las 00 y las 12 UTC del 23 de enero de 2016 (Caso 3). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD - Kalnay et al., 1996). \label{hgt-caso3}}\label{fig:hgt-caso3}
 \end{figure}
 
 \begin{figure}
@@ -1519,26 +1519,157 @@ VAD}\label{analisis-de-las-observaciones-de-radar-procesadas-con-vad}
 \subsection{Magnitud y velocidad del
 viento}\label{magnitud-y-velocidad-del-viento}
 
-Analisis de la magnitud y velocidad del viento a lo largo del tiempo y
-para cada caso. Ver Los errores, zonas sin datos, datos en superficie.
-Luego características generales, evolución día-noche, máximo nocturno
-(que da pie al LLJ luego), rotación con la altura.
+Los datos de \(V_r\) del radar fueron procesados para obtener la
+magnitud y la intensidad del viento para el período correspondiente a
+cada caso. Debido a que la señal de radar en días de aire claro no
+supera a los primeros kilómetros de atmósfera y los controles de calidad
+impuestos, en muchos tiempos los resultados no alcanzan los 3000 m o no
+existen.
+
+La magnitud y dirección del viento para el Caso 1 se muestra en la
+Figura \ref{campo-caso1}. En la Figura \ref{caso1-spd} se puede observar
+la magnitud del viento en función de la altura y a lo largo del tiempo
+para todo el período que abarca el Caso 1 y en símbolos los errores
+calculados. Las mayores velocidades de viento se observan en horas
+nocturnas con un máximo de 16 m/s cercano a las 06 UTC y a 300 metros de
+altura. Este máximo comienza a observarse a partir de las 03 UTC y se
+extiende más allá de las 12 UTC (3 horas después de la salida del sol).
+Posteriormente durante el día la magnitud del viento disminuye a valores
+del orden de 4 m/s y su variación con la altura es mucho menor en
+comparación con las horas previas. En las últimas horas la velocidad del
+viento comienza a aumentar nuevamente con valores de hasta 8 m/s
+coincidiendo con la puesta del sol cuando la capa mezclada queda
+desacoplada de la superficie y comienza a desarrollarse la capa estable
+nocturna.
+
+En el período nocturno se observa un aumento en la magnitud de los
+errores, principalmente del \(rmse_2\) y por lo tanto esta región está
+asociada a un mayor error en los anillos de datos al estimar el valor
+del viento. Los mayores valores del \(rmse_2\) (hasta 3.8 m/s) se
+observan en los bordes de las regiones donde hay datos tanto en niveles
+altos como en los niveles inferiores por lo que es posible que por fuera
+de estos límites los datos de radar no hayan cumplido con los controles
+de calidad y fueron descartados. El \(rmse_1\) asociado a la dispersión
+de los datos, es menor a 0.5 m/s para la mayoría de los tiempos y
+altura. Algunas excepciones ocurren alrededor de las 08 UTC y para el
+mismo volumen de datos.
+
+En la Figura \ref{caso1-dir} se muestra la dirección del viento en
+función de la altura y el tiempo, los vectores representan la dirección
+y sentido del viento y en colores y largo de cada vector, la magnitud.
+Se observa que en las primeras horas del Caso 1 es predominante del E y
+SE en niveles altos. En horas posteriores se observa una rotación
+mostrando vientos del NE durante el máximo nocturno. Durante el día el
+viento se mantiene con dirección N y NE. El nivel más bajo corresponde a
+los datos de viento observados en la estación meteorológica, no se
+observa mucha coherencia pero esto puede deberse al origen de los datos
+a diferencias en la ubicación geográfica.
 
 \begin{figure}
-\subfloat[Magnitud del viento. \label{caso1-spd}\label{fig:campo-caso11}]{\includegraphics{Tesis_files/figure-latex/campo-caso1-1} }\newline\subfloat[Dirección. \label{caso1-dir}\label{fig:campo-caso12}]{\includegraphics{Tesis_files/figure-latex/campo-caso1-2} }\caption{Magnitud y dirección del viento  correspondiente al Caso 1 (14/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \label{campo-caso1}}\label{fig:campo-caso1}
+\subfloat[Magnitud del viento. \label{caso1-spd}\label{fig:campo-caso11}]{\includegraphics{Tesis_files/figure-latex/campo-caso1-1} }\newline\subfloat[Dirección. \label{caso1-dir}\label{fig:campo-caso12}]{\includegraphics{Tesis_files/figure-latex/campo-caso1-2} }\caption{Magnitud y dirección del viento  correspondiente al Caso 1 (14/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestran los errores calculados ($rmse_1$ en círculos y $rmse_2$ en cruces) cuando superan los 0.5 m/s. \label{campo-caso1}}\label{fig:campo-caso1}
 \end{figure}
+
+La Figura \ref{campo-caso2} muestra la evolución del viento a lo largo
+del tiempo y para cada altura en el Caso 2. En la Figura \ref{caso2-spd}
+se puede observar que la magnitud del viento presenta características
+similares a las observadas en el análisis del Caso 1. Durante las horas
+nocturnas se observa un máximo de viento que llega a los 15 m/s que
+comienza a formarse antes de las 03 UTC y persiste luego de las 12 UTC.
+A diferencia del Caso 1, en este caso las velocidades altas se extienden
+por encima de los 1000 metros de altura. En las horas diurnas la
+velocidad del viento disminuye a valores menores a 7 m/s y hay muy poca
+variación con la altura llegando a ser constante entre las 16 y las 19
+UTC por debajo de los 1500 metros. Lamentablemente no hay suficientes
+datos disponibles para las últimas horas del día pero puede apreciarse
+un ligero aumento de la velocidad.
+
+Al igual que en el Caso 1, los errores calculados presentan un patrón
+similar. Predomina el \(rmse_2\) asociado al error relativo cometido en
+el ajuste de los datos de radar en los bordes entre la región con y sin
+datos. Es importante notar que en algunos casos este error llega a tener
+una magnitud de 4 m/s donde la velocidad del viento es de entre 4 y 7
+m/s, por lo que la estimación en esas regiones no es buena y debe
+analizarse con cuidado. En este Caso hay errores y regiones sin datos en
+niveles bajos y por encima de los 1500 m durante el día, lo que
+dificulta el análisis de la capa mezclada.
+
+La dirección del viento se nuestra en la Figura \ref{caso2-dir}, donde
+puede apreciarse la falta de datos en algunos momentos del día. En la
+primeras horas de la noche el viento es del NE y luego rota hacia el N
+pero se mantiene del NE en los niveles donde se observa el máximo de
+viento. En niveles altos el viento es del NO y O. A las 02 UTC los datos
+de los primeros niveles no son consistentes con los datos de niveles
+superiores o tiempos cercanos, esto puede deberse a un problema con los
+datos de radar ya que también tienen asociado un error relativo en la
+magnitud del viento. Durante el día el viento predominante es del N y
+esto coincide con el viento observado en la estación meteorológica para
+esas horas.
 
 \begin{figure}
-\subfloat[Magnitud del viento. \label{caso2-spd}\label{fig:campo-caso21}]{\includegraphics{Tesis_files/figure-latex/campo-caso2-1} }\newline\subfloat[Dirección. \label{caso2-dir}\label{fig:campo-caso22}]{\includegraphics{Tesis_files/figure-latex/campo-caso2-2} }\caption{Magnitud y dirección del viento  correspondiente al Caso 2 (21/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \label{campo-caso2}}\label{fig:campo-caso2}
+\subfloat[Magnitud del viento. \label{caso2-spd}\label{fig:campo-caso21}]{\includegraphics{Tesis_files/figure-latex/campo-caso2-1} }\newline\subfloat[Dirección. \label{caso2-dir}\label{fig:campo-caso22}]{\includegraphics{Tesis_files/figure-latex/campo-caso2-2} }\caption{Magnitud y dirección del viento  correspondiente al Caso 2 (21/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestran los errores calculados ($rmse_1$ en círculos y $rmse_2$ en cruces) cuando superan los 0.5 m/s. \label{campo-caso2}}\label{fig:campo-caso2}
 \end{figure}
+
+Finalmente la evolución de la magnitud y la dirección del viento con el
+tiempo y la altura para el Caso 3 se muestra en la Figura
+\ref{campo-caso3}. La magnitud del viento (Figura \ref{caso3-spd})
+presenta características similares a los casos anteriores ya que se
+observa un máximo de viento en las horas nocturnas pero con algunas
+particularidades. En primer lugar el máximo se desarrolla de las 00 UTC
+y persiste (con algunas intermitencias) pasadas las 14 UTC. En segundo
+lugar el máximo de viento cambia de nivel con el paso de las horas.
+Inicialmente se encuentra a 300 m y con una magnitud de 15 m/s, luego
+asciende a 400 m con la misma magnitud y finalmente, luego de disminuir
+su intensidad reaparece a los 500 m con una magnitud de 11 m/s. Este
+último máximo que ocurre alrededor de las 12 UTC, casi 3 horas después
+del amanecer no puede ser asociado a los procesos que ocurren en la capa
+estable nocturna y que dan lugar a los máximos descriptos previamente.
+Este máximo secundario afecta la evolución de la capa límite durante el
+día pero igualmente se observa una disminución del viento que llega a
+ser casi constante luego de las 15 UTC. No hay suficientes datos luego
+de las 18 UTC para determinar la evolución de la capa mezclada al
+finalizar el día.
+
+El \(rmse_2\) de la magnitud del viento en este Caso es menor a los
+casos anteriores (menores a 2.5 m/s) pero también marcan el límite donde
+los datos dejan de ser confiables al punto de ser eliminados por los
+controles de calidad del algoritmo. A diferencia de las otras
+situaciones, hay una región marcada donde el \(rmse_1\) tiene magnitud
+por encima de 0.5 m/s que se ubica en niveles por encima del máximo de
+viento y entre las 04 y las 08 UTC. Esto puede analizarse como una
+región donde los valores de viento estimados por los datos de radar en
+cada nivel tienen mucha dispersión. Si bien esto es importante, los
+errores son inferiores a 1.7 m/s.
+
+La dirección del viento (Figura \ref{caso3-dir}) presenta
+características particulares, en términos generales predomina el viento
+del O y NO aunque en los primeros 1000 m y durante la noche el viento es
+del N y en niveles altos el viento rota con dirección SO. Durante el día
+el viento es principalmente del O.
 
 \begin{figure}
-\subfloat[Magnitud del viento. \label{caso3-spd}\label{fig:campo-caso31}]{\includegraphics{Tesis_files/figure-latex/campo-caso3-1} }\newline\subfloat[Dirección. \label{caso3-dir}\label{fig:campo-caso32}]{\includegraphics{Tesis_files/figure-latex/campo-caso3-2} }\caption{Magnitud y dirección del viento  correspondiente al Caso 3 (23/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestra además los errores calculados ($rmse_1$ y $rmse_2$) cuando superan los 0.5 m/s. \label{campo-caso3}}\label{fig:campo-caso3}
+\subfloat[Magnitud del viento. \label{caso3-spd}\label{fig:campo-caso31}]{\includegraphics{Tesis_files/figure-latex/campo-caso3-1} }\newline\subfloat[Dirección. \label{caso3-dir}\label{fig:campo-caso32}]{\includegraphics{Tesis_files/figure-latex/campo-caso3-2} }\caption{Magnitud y dirección del viento  correspondiente al Caso 3 (23/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestran los errores calculados ($rmse_1$ en círculos y $rmse_2$ en cruces) cuando superan los 0.5 m/s. \label{campo-caso3}}\label{fig:campo-caso3}
 \end{figure}
 
-Con esta figura ver las características del perfil del viento para el
-caso nocturno y el caso diurno. También el máximo asociado al LLJ y más
-adelante el criterio de Bonner.
+En la Figura \ref{perfiles-horarios} se muestran perfiles verticales del
+viento de los 3 casos analizados en dos momentos, por la noche a las 06
+UTC y de día a las 17 UTC. Si bien estos datos son mostrados en las
+figuras previas, la Figura \ref{perfiles-horarios} permite analizar la
+forma de los perfiles verticales. En el caso de los perfiles nocturnos
+se observa el máximo de viento en niveles bajos asociado al LLJ por su
+forma de ``nariz'' (Banta et~al., 2003; Klein et~al., 2016) y que luego
+disminuye en niveles altos a valores típicos de la capa mezclada diurna.
+
+En los perfiles diurnos característicos de la capa mezclada la magnitud
+del viento es aproximadamente nulo en superficie aumentando en los
+primeros metros para luego mantenerse constante con la altura (Stull,
+1988). En estos casos, el nivel más bajo donde se tienen datos
+corresponde a las observaciones de la estación meteorológica a 10 m de
+altura y por lo tanto no es esperable que se cumpla la primera
+característica. Sin embargo se observa un leve aumento de la magnitud
+del viento con la altura que a partir de los 100 a 200 metros es casi
+nulo dando lugar a un perfil aproximadamente constante. El valor del
+\(rmse_2\) que se muestra sombreado no es de gran magnitud a excepción
+de los últimos niveles en los perfiles nocturnos.
 
 \begin{figure}
 
@@ -1546,7 +1677,7 @@ adelante el criterio de Bonner.
 
 }
 
-\caption{Perfil de viento observado por el radar a las 0600 y las 1700 UTC y el $rmse_2$ en cada punto (sombreado) para los tres casos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. Los valores en superficie fueron obtenidos a partir de los datos del la estación meteorológica Paraná Aero. \label{perfiles-horarios}}\label{fig:perfiles}
+\caption{Perfil de viento observado por el radar a las 06 y las 17 UTC y el $rmse_2$ en cada punto (sombreado) para los tres casos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. Los valores en superficie fueron obtenidos a partir de los datos del la estación meteorológica Paraná Aero. \label{perfiles-horarios}}\label{fig:perfiles}
 \end{figure}
 
 \subsection{Características de la capa límite
@@ -1586,7 +1717,7 @@ no vale.
 
 }
 
-\caption{Variación del vector del viento en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 0600 UTC. El triángulo marca el nivel inferior y los círculos grandes se ubican cada 500 metros. \label{hodografa-h}}\label{fig:hodografa-horaria}
+\caption{Variación del vector del viento en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 06 UTC. El triángulo marca el nivel inferior y los círculos grandes se ubican cada 500 metros. \label{hodografa-h}}\label{fig:hodografa-horaria}
 \end{figure}
 
 \subsubsection{Oscilación inercial y
@@ -1601,7 +1732,7 @@ autores, giro de la hodógrafa en e tiempo. Periodo inercial.
 
 }
 
-\caption{Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (0000 UTC). \label{hodografa-n}}\label{fig:hodografa-nivel}
+\caption{Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (00 UTC). \label{hodografa-n}}\label{fig:hodografa-nivel}
 \end{figure}
 
 \section{Análisis de las simulaciones y comparación con observaciones de
@@ -1674,7 +1805,7 @@ LLJ}\label{oscilacion-inercial-y-llj-1}
 
 }
 
-\caption{Perfil de viento observado por el radar a las 0600 y las 1700 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \label{perfiles-modelo}}\label{fig:perfiles-mod}
+\caption{Perfil de viento observado por el radar a las 0600 y las 17 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \label{perfiles-modelo}}\label{fig:perfiles-mod}
 \end{figure}
 
 \begin{figure}
@@ -1683,7 +1814,7 @@ LLJ}\label{oscilacion-inercial-y-llj-1}
 
 }
 
-\caption{Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 4 horas) y el cuadrado marca el primer tiempo (0000 UTC). \label{hodografa-wrf}}\label{fig:hodografa-wrf}
+\caption{Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 4 horas) y el cuadrado marca el primer tiempo (00 UTC). \label{hodografa-wrf}}\label{fig:hodografa-wrf}
 \end{figure}
 
 \subsubsection{Análisis de la homogeneidad espacial en las variables de
@@ -1832,6 +1963,12 @@ boundary-layer variables to PBL schemes in the WRF model based on
 surface meteorological observations, lidar, and radiosondes during the
 HygrA-CD campaign. Atmospheric Research, 176-177, 185-201.
 
+\hypertarget{ref-Banta2003}{}
+Banta, R.M., Pichugina, Y.L., y Newsom, R.K., 2003. Relationship between
+Low-Level Jet Properties and Turbulence Kinetic Energy in the Nocturnal
+Stable Boundary Layer. Journal of the Atmospheric Sciences, 60, 20,
+2549-2555.
+
 \hypertarget{ref-Berri2012}{}
 Berri, G.J., Nuin, J.S.G., Sraibman, L., y Bertossa, G., 2012.
 Verification of a Synthesized Method for the Calculation of Low-Level
@@ -1949,10 +2086,21 @@ Kallistratova, M.A., y Kouznetsov, R.D., 2012. Low-Level Jets in the
 Moscow Region in Summer and Winter Observed with a Sodar Network.
 Boundary-Layer Meteorology, 143, 1, 159-175.
 
+\hypertarget{ref-Kalnay1996}{}
+Kalnay, E., Kanamitsu, M., Kistler, R., Collins, W., Deaven, D., Gandin,
+L., Iredell, M., Saha, S., White, G., y Woollen, J. y otros, 1996. The
+NCEP/NCAR 40-year reanalysis project. Bulletin of the American
+Meteorological Society, 77, 3, 437-471.
+
 \hypertarget{ref-Kaufmann1997}{}
 Kaufmann, P., y White, A.B., 1997. Detection of wintertime inversion
 heights using reflectivity data of boundary-layer rad.... En 28th
 Conference on Radar Meteorology pp. 4-6.
+
+\hypertarget{ref-Klein2016}{}
+Klein, P.M., Hu, X.M., Shapiro, A., y Xue, M., 2016. Linkages Between
+Boundary-Layer Structure and the Development of Nocturnal Low-Level Jets
+in Central Oklahoma. Boundary-Layer Meteorology, 158, 3, 383-408.
 
 \hypertarget{ref-Lhermitte1962}{}
 Lhermitte, R., 1962. Note on wind variability with Doppler Radar.
