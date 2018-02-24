@@ -1527,7 +1527,7 @@ remove(gdata, vad_20160121, vad_20160123)
 
 ##Análisis de las simulaciones y comparación con observaciones de radar
 
-Para analizar el desempeño de las parametrizaciones de capa límite elegidas en el Caso 1 se compararos las distintas simulaciones con las observaciones de radar y se calcularon la diferencias en la magnitud del viento, el ángulo de la dirección del viento y algunos parámetros como el bias  (o sesgo), rmse, rmsens (raíz del error cuadratico medio debido a errores no sistemáticos) y el coeficiente de correlación tanto globalmente como dependientes de la altura.
+Para analizar el desempeño de las parametrizaciones de capa límite elegidas en el Caso 1 se compararon las distintas simulaciones con las observaciones de radar y se calcularon la diferencias en la magnitud del viento, el ángulo de la dirección del viento y algunos parámetros como el bias  (o sesgo), rmse, rmsens (raíz del error cuadrático medio debido a errores no sistemáticos) y el coeficiente de correlación tanto globalmente como dependientes de la altura.
 
 ### Magnitud y dirección del viento
 
@@ -1548,9 +1548,9 @@ vad_caso1acm[, caso := "ACM2"]
 vad_20160114 <- vad_20160114[, caso := "Obs"]
 ```
 
-En la Figura \ref{modelo-spd} se  muestra la magnitud del viento en función del tiempo y de la altura observada por el radar (panel superior izquierdo) y cada simulación nombradas de acuerdo a la parametrización de capa límite utilizada: YSU, MYJ y ACM2. En términos generales se puede observar en primer lugar que las tres simulaciones son similares entre si y en segundo lugar hay una coherencia importante entre las simulaciones y las observaciones ya que las simulaciones son capaces de representar el máximo de viento nocturno asociado al LLJ y el viento más calmo y verticalmente homogeneo en las horas diurnas. 
+En la Figura \ref{modelo-spd} se  muestra la magnitud del viento en función del tiempo y de la altura observada por el radar (panel superior izquierdo) y cada simulación nombradas de acuerdo a la parametrización de capa límite utilizada: YSU, MYJ y ACM2. En términos generales se puede observar en primer lugar que las tres simulaciones son similares entre si y en segundo lugar hay una coherencia importante entre las simulaciones y las observaciones ya que las simulaciones son capaces de representar el máximo de viento nocturno asociado al LLJ y el viento más calmo y verticalmente homogéneo en las horas diurnas. 
 
-Sin embargo hay diferencias importantes entre las observaciones y las simulaciones. Se observa un primer máximo por debajo de 500 m en las primeras horas que presede al máximo asociado al LLJ pero que tiene menor magnitud. En las tres simulaciones el LLJ parece prolongarse en el tiempo al menos 3 horas más que en las observaciones y el máximo de viento ocurre en dintintos niveles en casa caso. En niveles altos, el viento decrece rápidamente llegando a valores menores que lo observado.
+Sin embargo hay diferencias importantes entre las observaciones y las simulaciones. Se observa un primer máximo por debajo de 500 m en las primeras horas que presede al máximo asociado al LLJ pero que tiene menor magnitud. En las tres simulaciones el LLJ parece prolongarse en el tiempo al menos 3 horas más que en las observaciones y el máximo de viento ocurre en distintos niveles en caso. En niveles altos, el viento decrece rápidamente llegando a valores menores que lo observado.
 
 
 ```{r vad-modelo-spd, fig.cap="Magnitud del viento observada por el radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-spd}", fig.width=0.95*text.width, fig.align='center'}
@@ -1619,7 +1619,7 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_d
 
 La diferencia en la magnitud del viento entre las observaciones y la simulación con la parametrización YSU es negativa en los primeros niveles de altura y positiva por encima de 500 m. En los primeros niveles las mayores diferencias se deben a la presencia de un máximo de viento entre las 00 y las 03 UTC en la simulación que no se corresponde con las observaciones y la persistencia del LLJ luego de su decaimiento en las observaciones. La simulación MYJ es la que presenta mayores diferencias con las observaciones tanto en las horas nocturnas como en las horas diurnas, mientras que ACM2 se comporta de manera similar a YSU. 
 
-En cuanto a la dirección del viento, en la Figura \ref{dif-dir} se muestra el valor absoluto de la diferencia entre el ángulo del vecto del viento observado y el simulado. En las tres simulaciones la mayor diferencia se da por encima de 1000 m con valores de hasta 149° en MYJ, 141° en YSU y 131° en ACM2. En los primeros 1000 metros la diferencia es mucho menor y en algunos momentos cercana a cero. Cualitativamente no es posible identificar si alguna de las simulaciones tiene un mejor desempeño. 
+En cuanto a la dirección del viento, en la Figura \ref{dif-dir} se muestra el valor absoluto de la diferencia entre el ángulo del vector del viento observado y el simulado. En las tres simulaciones la mayor diferencia se da por encima de 1000 m con valores de hasta 149° en MYJ, 141° en YSU y 131° en ACM2. En los primeros 1000 metros la diferencia es mucho menor y en algunos momentos cercana a cero. Cualitativamente no es posible identificar si alguna de las simulaciones tiene un mejor desempeño. 
 
 
 ```{r diferencia, fig.cap="Diferencia entre las observaciones y cada simulación  correspondiente al Caso 1. \\label{dif}", fig.subcap=c("Magnitud del viento \\label{dif-spd}", "Ángulo de la dirección del viento \\label{dif-dir}"), fig.height=0.85*text.height, fig.width=0.48*text.width, fig.ncol=2}
@@ -1678,7 +1678,7 @@ En la Tabla \ref{err} se presenta la magnitud del bias, rmse, rmsens y del coefi
 
 El error total, el error no sistemático y el bias calculado para la dirección del viento son similar en las tres simulaciones. En este caso MYJ muestra errores menores que YSU y ACM2 a diferencia de lo sucedido con la magnitud del viento. El rmsens es menor al rmse por lo que los errores sistemáticos representados por el bias también son importantes. 
 
-```{r err-spd, fig.cap="Bias, rmse y rmsens en m/s y coeficiente de correlación para la estimación de la velocidad del viento (m/s) con cada simulación en función de la altura y la simulación. \\label{err-spd}", fig.width=0.98*text.width, fig.align='center'}
+```{r err-spd, fig.cap="Bias, rmse y rmsens en m/s y coeficiente de correlación para la estimación de la velocidad del viento (m/s) con cada simulación en función de la altura y la simulación. \\label{err-spd}", fig.width=0.75*text.width, fig.align='center'}
 
 gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm)) %>% 
   .[vad_20160114[ht != 0.01, .(ht, date_time, obs = spd_smooth)], on = c("ht", "date_time")] %>% 
@@ -1749,7 +1749,7 @@ kable(err, format = "latex",
 
 ### Características de la capa límite planetaria
 
-#### Oscilacion inercial y LLJ
+#### Oscilación inercial y LLJ
 
 ```{r perfiles-mod, fig.cap="Perfil de viento observado por el radar a las 0600 y las 17 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \\label{perfiles-modelo}", fig.width=0.95*text.width, fig.align='center'}
 
