@@ -732,7 +732,9 @@ El LLJ puede producirse por distintos mecanismos entre los que se pueden nombrar
 
 En este trabajo el análisis se centra en el LLJ generado por la oscilación inercial. De acuerdo a @Blackadar1957 luego del atardecer, cuando no hay producción de turbulencia de origen térmico se produce un desacople de la capa mezclada y el viento tiende a acelerarse ante la ausencia de la fricción hacia el equilibrio geostrófico. Sin embargo la fuerza de Coriolis genera una oscilación inercial del viento alrededor del viento geostrófico produciendo un LLJ supergeostrófico durante el periodo estable. 
 
-Esta oscilación puede verse en la rotación del vector del viento a lo largo del tiempo. Para el hemisferio sur esta rotación será en sentido antihorario. El periodo de la oscilación inercial es de $P = 2\pi/f$, con $f$ el parámetro de Coriolis. A la latitud de Paraná $P = `r abs(round(24000/sin(-31.8)/3600, 2))`$ horas y por lo tanto se espera que el máximo viento ocurra para cuando se alcanza la mitad del periodo desde el atardecer [@Kallistratova2012].
+Posteriormente @VanDeWiel2010 generaliza el modelo de Blackadar para incluir el efecto de la fricción de superficie (efecto que no puede ser despreciado dentro de la capa límite) y como resultado la oscilación del viento ocurre alrededor de un perfil de equilibrio en vez del viento geostrófico. 
+
+De acuerdo al modelo la oscilación puede verse en la rotación del vector del viento a lo largo del tiempo generando una hodógrafa en forma de "herradura" [@Baas2012]. Para el hemisferio sur la rotación del viento será en sentido antihorario. El periodo de la oscilación inercial es de $P = 2\pi/f$, con $f$ el parámetro de Coriolis. A la latitud de Paraná $P = `r abs(round(24000/sin(-31.8)/3600, 2))`$ horas y por lo tanto se espera que el máximo viento ocurra para cuando se alcanza la mitad del periodo desde el atardecer [@Kallistratova2012].
 
 ## Modelo WRF
 
@@ -781,7 +783,8 @@ ggplot(hgt, aes(lon, lat)) +
   coord_quickmap() +
   theme_minimal() + theme(panel.ontop = T, 
                           legend.position="bottom", 
-                          legend.box = "horizontal")
+                          legend.box = "horizontal",
+                          legend.box.spacing = unit(0, "mm"))
 
 remove(circle, hgt)
 ```
@@ -1314,7 +1317,7 @@ En la Figura \ref{dbz-2} se muestra el $\nabla_z dBZ$ para el Caso 2. Las region
 
 El $\nabla_z dBZ$ para el Caso 3 se muestra en la Figura \ref{dbz-3}. Durante la noche en las primeras horas se observa un máximo cercano a 2000 m que luego desciende y podría corresponder al tope de la capa residual. Por otro lado se observa por debajo de 500 m un máximo intenso que se mantiene durante horas hasta las 14 UTC. Durante la noche este máximo puede asociarse al tope de la capa estable pero luego del amanecer la persistencia de esta capa de gran variabilidad en la reflectividad podría deberse a la presencia de la cortante vertical de viento generada por el máximo de viento secundario que se observa en la Figura \ref{caso3-spd} a las 12 UTC. Además de este máximo, al igual que en los otros casos se observa un máximo que crece desde las 9 UTC y alcanza rápidamente los 2000 m de altura. Este máximo que se mantiene durante el día podría deberse al tope de la capa mezclada. 
 
-```{r pblh-dbz, fig.cap="Valor absoluto del gradiente vertical de dBZ en función de la altura y el tiempo. \\label{pblh-dbz}", fig.subcap=c("Caso 1. \\label{dbz-1}", "Caso2. \\label{dbz-2}", "Caso 3. \\label{dbz-3}"), fig.align='center',  fig.height=0.28*text.height, fig.ncol=1}
+```{r pblh-dbz, fig.cap="Valor absoluto del gradiente vertical de dBZ en función de la altura y el tiempo. \\label{pblh-dbz}", fig.subcap=c("Caso 1. \\label{dbz-1}", "Caso2. \\label{dbz-2}", "Caso 3. \\label{dbz-3}"), fig.align='center', fig.height=0.28*text.height, fig.ncol=1}
 elev <- unique(dbz_20160114$elevacion)
 dbz_20160114[elevacion == elev[8] & ht_reg > 200] %>%
   ggplot(aes(date, ht_reg/1000)) +
@@ -1359,9 +1362,9 @@ dbz_20160123[elevacion == elev[8] & ht_reg > 200] %>%
   #geom_line(aes(color = factor(elevacion))) +
   geom_tile(aes(fill = abs(ddbz), color = abs(ddbz))) +
   scale_fill_viridis(name = "Gradiente \n vertical \n de dBZ",
-                     limits = c(0, 0.07)) +
+                     limits = c(0, 0.06)) +
   scale_color_viridis(name = "Gradiente \n vertical \n de dBZ",
-                     limits = c(0, 0.07)) +
+                     limits = c(0, 0.06)) +
   scale_y_continuous(name = "Altura (Km)", 
                      limits = c(0, 3),
                      breaks = seq(0, 3, 0.5),
@@ -1461,11 +1464,15 @@ ri_vad[hour(hora) %between% c(0, 12)] %>%
 ```
 
 
-
-
 #### Oscilación inercial y LLJ
 
-Criterio de bonner, modelos de oscilación inercial propuesto por otros autores, giro de la hodógrafa en e tiempo. Periodo inercial.
+Si bien en los perfiles mostrados en la Figura \ref{perfiles-horarios} se observa claramente las características típicas del LLJ con el máximo viento en los primeros cientos de metros, el criterio de Bonner permite detectar el LLJ de manera cuantitativa. De acuerdo al Criterio 1 el LLJ ocurre si el máximo de viento es igual o superior a 12 m/s y disminuir al menos 6 m/s en el siguiente mínimo. Valores análogos se siguen para máximos de mayor magnitud, por ejemplo si el máximo es de 16 m/s, el mínimo tendrá que ser de al menos 8 m/s (Criterio 2). Esto también puede verse en la Figura \ref{perfiles-horarios} observando la diferencia entre las marcas verticales en el eje horizontal que representan el mínimo y el máximo en cada perfil nocturno. En todos los casos en estudio el criterio de Bonner se cumple satisfactoriamente.
+
+En la Figura \ref{hodografa-n} se muestran hodógrafas para tres niveles distintos (el primero correspondiente a las observaciones de la estación meteorológica) desde las 00 UTC. El cuadrado indica el punto final del vector del viento en el primer tiempo y los círculos grandes, el vector cada 6 horas. De acuerdo al modelo de @VanDeWiel2010, en el nivel inferior el giro de la hodógrafa es antihorario (Hemisferio Sur) y contrario a los tiempos iniciales generando una disminución inicial en el viento. En niveles altos por otro lado, el giro antihorario ocurre a favor del vector del viento inicial y por lo tanto se observa un aumento en la magnitud del viento. Por las características de los datos de estación la hodógrafa correspondiente al nivel inferior es muy desordenada y no permite sacar conclusiones. 
+
+Sin embargo en los niveles superiores 0.3 km y 1 km la forma de herradura si puede distinguirse y el giro de la hodógrafa es antihorario mostrando una concordancia cualitativa con el modelo de oscilación inercial propuesto por Van De Wiel. Si bien cada caso tiene sus características particulares, los casos 1 y 2 tienen cierta similitud ya que las hodógrafas se ubican principalmente en el cuadrante inferior izquierdo mientras que la hodógrafa del Caso 3 se ubica en el derecho. Esto último tiene que ver con las características del viento que es predominante del O en casi todo momento para este último caso.
+
+Las hodógrafas observadas para los dos niveles mostrados (y otros niveles no incluidos en la figura por motivos de espacio) muestran cierta variación con la altura por lo que la oscilación inercial cambia con la altura.
 
 ```{r hodografa-nivel, fig.cap="Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (00 UTC). \\label{hodografa-n}", fig.subcap=c("Datos observados en la estación meteorológica. \\label{hodo-nivel1}", "Datos observados por el radar. \\label{hodo-nivel2}"), fig.width=0.95*text.width, fig.ncol=1, fig.align='center', fig.height=0.25*text.height}
 
@@ -1517,7 +1524,10 @@ ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
 remove(gdata, vad_20160121, vad_20160123)
 ```
 
+
 ##Análisis de las simulaciones y comparación con observaciones de radar
+
+Para analizar el desempeño de las parametrizaciones de capa límite elegidas en el Caso 1 se compararos las distintas simulaciones con las observaciones de radar y se calcularon la diferencias en la magnitud del viento, el ángulo de la dirección del viento y algunos parámetros como el bias  (o sesgo), rmse, rmsens (raíz del error cuadratico medio debido a errores no sistemáticos) y el coeficiente de correlación tanto globalmente como dependientes de la altura.
 
 ### Magnitud y dirección del viento
 
@@ -1538,8 +1548,10 @@ vad_caso1acm[, caso := "ACM2"]
 vad_20160114 <- vad_20160114[, caso := "Obs"]
 ```
 
-Descripción general de la magnitud y la dirección del viento en cada simulación y como se parece a las observaciones. Bias, correlación y otros errores. 
-A resolver: como trabajar con la dirección del viento.
+En la Figura \ref{modelo-spd} se  muestra la magnitud del viento en función del tiempo y de la altura observada por el radar (panel superior izquierdo) y cada simulación nombradas de acuerdo a la parametrización de capa límite utilizada: YSU, MYJ y ACM2. En términos generales se puede observar en primer lugar que las tres simulaciones son similares entre si y en segundo lugar hay una coherencia importante entre las simulaciones y las observaciones ya que las simulaciones son capaces de representar el máximo de viento nocturno asociado al LLJ y el viento más calmo y verticalmente homogeneo en las horas diurnas. 
+
+Sin embargo hay diferencias importantes entre las observaciones y las simulaciones. Se observa un primer máximo por debajo de 500 m en las primeras horas que presede al máximo asociado al LLJ pero que tiene menor magnitud. En las tres simulaciones el LLJ parece prolongarse en el tiempo al menos 3 horas más que en las observaciones y el máximo de viento ocurre en dintintos niveles en casa caso. En niveles altos, el viento decrece rápidamente llegando a valores menores que lo observado.
+
 
 ```{r vad-modelo-spd, fig.cap="Magnitud del viento observada por el radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-spd}", fig.width=0.95*text.width, fig.align='center'}
 
@@ -1568,9 +1580,12 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_d
   scale_y_continuous(name = "Altura (km)", limits = c(0,2), 
                      expand = c(0,0)) +
   facet_wrap(~caso2) +
-  theme_minimal()
+  theme_minimal() + theme(legend.position = "bottom")
 
 ```
+
+La variación de la dirección del viento con el tiempo y la altura en cada simulación se muestra en la Figura \ref{modelo-dir}. Nuevamente se observa una similaridad importante entre las tres simulaciones y en líneas generales conservan las características de las observaciones. Para analizar en más detalle el desempeño de las simulaciones se calculó la diferencia de la magnitud del viento entre las observaciones y cada simulación y lo mismo para el ángulo de la dirección del viento (Figura \ref{dif}).
+
 
 ```{r vad-modelo-dir, fig.cap="Dirección del viento observada por el radar(Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-dir}", fig.width=0.95*text.width, fig.align='center'}
 
@@ -1598,9 +1613,14 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_d
                    limits = c(as_datetime("2016-01-14 00:00:00"), NA),
                    expand = c(0,0)) +
   facet_wrap(~caso2) +
-  theme_minimal() 
+  theme_minimal() + theme(legend.position = "bottom")
 
 ```
+
+La diferencia en la magnitud del viento entre las observaciones y la simulación con la parametrización YSU es negativa en los primeros niveles de altura y positiva por encima de 500 m. En los primeros niveles las mayores diferencias se deben a la presencia de un máximo de viento entre las 00 y las 03 UTC en la simulación que no se corresponde con las observaciones y la persistencia del LLJ luego de su decaimiento en las observaciones. La simulación MYJ es la que presenta mayores diferencias con las observaciones tanto en las horas nocturnas como en las horas diurnas, mientras que ACM2 se comporta de manera similar a YSU. 
+
+En cuanto a la dirección del viento, en la Figura \ref{dif-dir} se muestra el valor absoluto de la diferencia entre el ángulo del vecto del viento observado y el simulado. En las tres simulaciones la mayor diferencia se da por encima de 1000 m con valores de hasta 149° en MYJ, 141° en YSU y 131° en ACM2. En los primeros 1000 metros la diferencia es mucho menor y en algunos momentos cercana a cero. Cualitativamente no es posible identificar si alguna de las simulaciones tiene un mejor desempeño. 
+
 
 ```{r diferencia, fig.cap="Diferencia entre las observaciones y cada simulación  correspondiente al Caso 1. \\label{dif}", fig.subcap=c("Magnitud del viento \\label{dif-spd}", "Ángulo de la dirección del viento \\label{dif-dir}"), fig.height=0.85*text.height, fig.width=0.48*text.width, fig.ncol=2}
 
@@ -1615,7 +1635,7 @@ gdata <- gdata[vad_20160114[, .(date_time, ht, spd_obs = spd_smooth, di_obs = di
   .[, caso2 := factor(caso,
                        levels = c("Obs", "YSU", "MYJ", "ACM2"),
                        ordered = T)]
-# abs(atan2(- dif_u, - dif_v)*180/pi)
+
 gdata[ht > 0.02] %>% 
   ggplot(aes(date_time, ht)) + 
   geom_contour(aes(z = dif_spd, color = ..level..), binwidth = 1) +
@@ -1636,12 +1656,10 @@ gdata[ht > 0.02] %>%
 
 gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>% 
   ggplot(aes(date_time, ht)) + 
-  # geom_contour(aes(z = dif_di, color = ..level..), binwidth = 1) +
-  geom_tile(aes(z = dif_di, fill = dif_di), binwidth = 1) +
+  geom_tile(aes(z = abs(dif_di), fill = abs(dif_di)), binwidth = 1) +
   scale_fill_divergent(name = "Dirección\ndel viento",
                       #breaks = seq(0, 18, 2), limits = c(0, 19),
                       guide = guide_colorbar(order = 1)) +
-  # scale_size(name = "Error", guide = guide_legend(order = 2)) +
   scale_color_divergent(name = "Dirección\ndel viento") +
   scale_x_datetime(name = "Tiempo (UTC)", 
                    date_breaks = "4 hour",
@@ -1656,7 +1674,11 @@ gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>%
                           legend.box = "horizontal")
 ```
 
-```{r err-spd, fig.cap="Errores calculados para la estimación de la velocidad del viento (m/s) con cada simulación en función de la altura y la correlación. \\label{err-spd}", fig.subcap=c("bias. \\label{bias-spd}", "rmse. \\label{rmse-spd}", "rmsens. \\label{rmsens-spd}", "correlación. \\label{cor-spd}"), fig.width=0.48*text.width, fig.height=0.20*text.height, fig.align='center', fig.ncol=2}
+En la Tabla \ref{err} se presenta la magnitud del bias, rmse, rmsens y del coeficiente de correlación de la magnitud y la dirección del viento calculados de manera global para las tres simulaciones. El rmse que cuantifica el error total y el rmsens asociado a los errores no sistemáticos son muy similares y por lo tanto las diferencias entre las observaciones y cada simulación se debe principalmente a los errores sistemáticos. En concordancia con el análisis cualitativo, MYJ tiene un mayor rmse mientras que en YSU y ACM2, son similares. Sin embargo ACM2 es la simulación con mayor bias y MYJ tiene el menor. En los tres casos el bias es negativo y por lo tanto la magnitud del viento está subestimada en las simulaciones. La mayor correlación se da entre las observaciones y ACM2 y es menor con YSU y MYJ. 
+
+El error total, el error no sistemático y el bias calculado para la dirección del viento son similar en las tres simulaciones. En este caso MYJ muestra errores menores que YSU y ACM2 a diferencia de lo sucedido con la magnitud del viento. El rmsens es menor al rmse por lo que los errores sistemáticos representados por el bias también son importantes. 
+
+```{r err-spd, fig.cap="Bias, rmse y rmsens en m/s y coeficiente de correlación para la estimación de la velocidad del viento (m/s) con cada simulación en función de la altura y la simulación. \\label{err-spd}", fig.width=0.98*text.width, fig.align='center'}
 
 gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm)) %>% 
   .[vad_20160114[ht != 0.01, .(ht, date_time, obs = spd_smooth)], on = c("ht", "date_time")] %>% 
@@ -1664,48 +1686,26 @@ gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm)) %>%
   .[, .(bias = bias.f(spd_smooth, obs),
         rmse = rmse.f(spd_smooth, obs),
         rmsens = rmsens.f(spd_smooth, obs),
-        corr = cor(spd_smooth, obs, use = "complete.obs")), by = .(caso, ht)] %>% 
-  .[, caso2 := factor(caso,
+        correlación = cor(spd_smooth, obs, use = "complete.obs")), by = .(caso, ht)] %>% 
+  .[, caso := factor(caso,
                        levels = c("YSU", "MYJ", "ACM2"),
-                       ordered = T)]
+                       ordered = T)] %>% 
+  melt(id.vars = c("caso", "ht"))
 
-ggplot(gdata, aes(ht, bias)) +
-  geom_hline(yintercept = 0, color = "darkgray") +
-  geom_line(aes(color = caso2)) + 
+hline <- data.frame(y = 0, variable = c("bias", "correlación"))
+ggplot(gdata, aes(ht, value)) +
+  geom_hline(data = hline, aes(yintercept = y), color = "darkgray") +
+  geom_line(aes(color = caso)) + 
   scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
   scale_x_continuous(name = "Altura (km)") +
-  scale_y_continuous(name = "bias") +
+  scale_y_continuous(name = NULL) +
   coord_flip() +
-  theme_minimal()
-
-ggplot(gdata, aes(ht, rmse)) +
-  # geom_hline(yintercept = 0, color = "darkgray") +
-  geom_line(aes(color = caso2)) + 
-  scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
-  scale_x_continuous(name = "Altura (km)") +
-  scale_y_continuous(name = "rmse") +
-  coord_flip() +
-  theme_minimal()
-
-ggplot(gdata, aes(ht, rmsens)) +
-  # geom_hline(yintercept = 0, color = "darkgray") +
-  geom_line(aes(color = caso2)) + 
-  scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
-  scale_x_continuous(name = "Altura (km)") +
-  scale_y_continuous(name = "rmsens") +
-  coord_flip() +
-  theme_minimal()
-
-ggplot(gdata, aes(ht, corr)) +
-  geom_hline(yintercept = 0, color = "darkgray") +
-  geom_line(aes(color = caso2)) + 
-  scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
-  scale_x_continuous(name = "Altura (km)") +
-  scale_y_continuous(name = "correlación") +
-  coord_flip() +
-  theme_minimal()
+  facet_wrap(~variable, scales = "free") +
+  theme_minimal() + theme(legend.position = "bottom")
 
 ```
+
+Otro aspecto importante para analizar es el comportamiento de los errores con la altura. Para eso se calcularon el bias, rmse, rmsens y el coeficiente de correlación de la magnitud del viento para cada nivel y simulación (Figura \ref{err-spd}). En todas las simulaciones el bias tiene un comportamiento similar con la altura, positivo por debajo de 600 m y negativo por encima. La mayor diferencia entre las simulaciones se da en los niveles inferiores entre 200 y 300 m donde MYJ tiene un bias 1 m/s mayor que ACM2. El rmse tiene un mínimo en 500 m para todas las simulaciones y aumenta tanto en el nivel del LLJ como por encima de los 500 m. La simulación MYJ tiene un mayor rmse en casi todos los niveles. Los errores no sistemáticos son más importantes alrededor de 1000 m y por encima de 500 m MYJ tiene un rmsens mayor a las otras simulaciones. En cuanto al coeficiente de correlación, en los primeros niveles y hasta los 600 m aproximadamente es superior a 0.9 y con un comportamiento muy similar en las tres simulaciones. Luego de ese nivel disminuye rápidamente hasta llegar a valores cercanos a cero o negativos por encima de 1000 m. Como en el caso de los errores MYJ tiene el peor desempeño.
 
 
 ```{r err-tabla}
@@ -1742,7 +1742,7 @@ err[,6] <- NULL
 kable(err, format = "latex", 
       digits = 4, 
       booktabs = T,
-      caption = "Comparación entre las simulaciones y las observaciones de radar a partir de distintos errores") %>% 
+      caption = "Comparación entre las simulaciones y las observaciones de radar a partir de distintos errores \\label{err}") %>% 
   add_header_above(c(" ", "Velocidad" = 4, "Dirección" = 4)) %>% 
   kable_styling(latex_options = "hold_position")
 ```
@@ -1813,7 +1813,7 @@ Para determinar la validez del promedio espacial de una variable en el dominio e
 
 Se utilizó la Longitud de Monin-Obukhov ($L$) para analizar la homogeneidad calculando el porcentaje de veces que el valor local tenía signo distinto a la moda calculada para todo el dominio y cada tiempo de simulación. Esto es importante ya que el signo de $L$ marca la diferencia entre el régimen estable y el regimen inestable y por lo tanto debe mantenerse en el dominio en cada período. 
 
-En la Figura \ref{L-esp} se muestra el porcentaje de veces que el valor de $L$ en cada punto de grilla tiene signo distinto a la moda calculada en todo el dominio y el período analizado. Se observa que que existen regiones donde el signo de $L$ es distinto a la moda del dominio más del 40% de las veces. Esto puede estar relacionado la variación de la altura del terreno (Figura \ref{topografia}) o a la presencia del río y zonas con suelos saturados donde los flujos verticales de calor latente ($F_{\theta}$) pueden tener un comportamiento contrario al suelo seco. Esto último se observa en la Figura \ref{L-espacial}, donde se muestra que las regiones donde el porcentaje de veces que el valor de $F_{\theta}$ tiene un signo distinto a la moda es alto coincide con las regiones donde se encuentra el río y los valores de $L$ anómalos. 
+En la Figura \ref{L-esp} se muestra el porcentaje de veces que el valor de $L$ en cada punto de grilla tiene signo distinto a la moda calculada en todo el dominio y el período analizado. Se observa que que existen regiones donde el signo de $L$ es distinto a la moda del dominio más del 40% de las veces. Esto puede estar relacionado la variación de la altura del terreno (Figura \ref{topografia}) o a la presencia del río y zonas con suelos saturados donde los flujos verticales de calor latente ($F_{\theta}$) pueden tener un comportamiento contrario al suelo seco. Esto último se observa en la Figura \ref{L-esp}, donde se muestra que las regiones donde el porcentaje de veces que el valor de $F_{\theta}$ tiene un signo distinto a la moda es alto coincide con las regiones donde se encuentra el río y los valores de $L$ anómalos. 
 
 
 ```{r L-espacial, fig.cap="Porcentaje de veces que el valor local de L (a) y el flujo vertical de calor (b) tiene signo distinto a la moda del dominio calculada en todo el periodo analizado. Se muestran los valores mayores al 5\\% (colores) y topografía del dominio (contornos). Datos de la simulación YSU. \\label{L-esp}", fig.width=0.95*text.width, fig.align='center'}
@@ -2121,7 +2121,15 @@ remove("d")
 ```
 
 # Conclusiones
+
+Por ahora solo notas sueltas de lo que se me va ocurriendo: 
+
 - Ekman, si bien a simple vista se cumple sería ideal tener datos suficientes (viento geostríficos) para poder calcular y ver si realmente los datos se ajustan al modelo.
 - dBZ funciona más o menos bien pero es necesario desarrollar una técnica que permita determinar el tope sin ambiguedades.
+- Es fácil ver el LLJ y ademas funciona Bonner. Por las condiciones generales y lo más o menos lindo que se ven en las hodografas en comparación con el modelo de OI, podemos decir que esta es la causa?
+- Sería genial tener suficientes casos y datos de Vg para poder probar cuantitativamente el modelo de Van De Wiel
+- Diferencias entre observaciones y simulaciones son menores en los primeros 1000 metros, tal vez puede ser porque en esa capa hay mejor señal de radar. O sea que en niveles mas altos las simulaciones son mejores que las observaciones??!!
+- El LLJ parece durar más en las simulaciones, tendrá que ver con la duración (también prolongada) de la CLP?
+
 
 # Referencias

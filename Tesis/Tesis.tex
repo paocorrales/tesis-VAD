@@ -1163,13 +1163,20 @@ fuerza de Coriolis genera una oscilación inercial del viento alrededor
 del viento geostrófico produciendo un LLJ supergeostrófico durante el
 periodo estable.
 
-Esta oscilación puede verse en la rotación del vector del viento a lo
-largo del tiempo. Para el hemisferio sur esta rotación será en sentido
-antihorario. El periodo de la oscilación inercial es de \(P = 2\pi/f\),
-con \(f\) el parámetro de Coriolis. A la latitud de Paraná \(P = 17.79\)
-horas y por lo tanto se espera que el máximo viento ocurra para cuando
-se alcanza la mitad del periodo desde el atardecer (Kallistratova y
-Kouznetsov, 2012).
+Posteriormente Van de Wiel et~al. (2010) generaliza el modelo de
+Blackadar para incluir el efecto de la fricción de superficie (efecto
+que no puede ser despreciado dentro de la capa límite) y como resultado
+la oscilación del viento ocurre alrededor de un perfil de equilibrio en
+vez del viento geostrófico.
+
+De acuerdo al modelo la oscilación puede verse en la rotación del vector
+del viento a lo largo del tiempo generando una hodógrafa en forma de
+``herradura'' (Baas et~al., 2012). Para el hemisferio sur la rotación
+del viento será en sentido antihorario. El periodo de la oscilación
+inercial es de \(P = 2\pi/f\), con \(f\) el parámetro de Coriolis. A la
+latitud de Paraná \(P = 17.79\) horas y por lo tanto se espera que el
+máximo viento ocurra para cuando se alcanza la mitad del periodo desde
+el atardecer (Kallistratova y Kouznetsov, 2012).
 
 \section{Modelo WRF}\label{modelo-wrf}
 
@@ -1818,8 +1825,46 @@ además se observa coincidencia en la evolución a lo largo del tiempo.
 \subsubsection{Oscilación inercial y
 LLJ}\label{oscilacion-inercial-y-llj}
 
-Criterio de bonner, modelos de oscilación inercial propuesto por otros
-autores, giro de la hodógrafa en e tiempo. Periodo inercial.
+Si bien en los perfiles mostrados en la Figura \ref{perfiles-horarios}
+se observa claramente las características típicas del LLJ con el máximo
+viento en los primeros cientos de metros, el criterio de Bonner permite
+detectar el LLJ de manera cuantitativa. De acuerdo al Criterio 1 el LLJ
+ocurre si el máximo de viento es igual o superior a 12 m/s y disminuir
+al menos 6 m/s en el siguiente mínimo. Valores análogos se siguen para
+máximos de mayor magnitud, por ejemplo si el máximo es de 16 m/s, el
+mínimo tendrá que ser de al menos 8 m/s (Criterio 2). Esto también puede
+verse en la Figura \ref{perfiles-horarios} observando la diferencia
+entre las marcas verticales en el eje horizontal que representan el
+mínimo y el máximo en cada perfil nocturno. En todos los casos en
+estudio el criterio de Bonner se cumple satisfactoriamente.
+
+En la Figura \ref{hodografa-n} se muestran hodógrafas para tres niveles
+distintos (el primero correspondiente a las observaciones de la estación
+meteorológica) desde las 00 UTC. El cuadrado indica el punto final del
+vector del viento en el primer tiempo y los círculos grandes, el vector
+cada 6 horas. De acuerdo al modelo de Van de Wiel et~al. (2010), en el
+nivel inferior el giro de la hodógrafa es antihorario (Hemisferio Sur) y
+contrario a los tiempos iniciales generando una disminución inicial en
+el viento. En niveles altos por otro lado, el giro antihorario ocurre a
+favor del vector del viento inicial y por lo tanto se observa un aumento
+en la magnitud del viento. Por las características de los datos de
+estación la hodógrafa correspondiente al nivel inferior es muy
+desordenada y no permite sacar conclusiones.
+
+Sin embargo en los niveles superiores 0.3 km y 1 km la forma de
+herradura si puede distinguirse y el giro de la hodógrafa es antihorario
+mostrando una concordancia cualitativa con el modelo de oscilación
+inercial propuesto por Van De Wiel. Si bien cada caso tiene sus
+características particulares, los casos 1 y 2 tienen cierta similitud ya
+que las hodógrafas se ubican principalmente en el cuadrante inferior
+izquierdo mientras que la hodógrafa del Caso 3 se ubica en el derecho.
+Esto último tiene que ver con las características del viento que es
+predominante del O en casi todo momento para este último caso.
+
+Las hodógrafas observadas para los dos niveles mostrados (y otros
+niveles no incluidos en la figura por motivos de espacio) muestran
+cierta variación con la altura por lo que la oscilación inercial cambia
+con la altura.
 
 \begin{figure}
 
@@ -1833,12 +1878,34 @@ autores, giro de la hodógrafa en e tiempo. Periodo inercial.
 \section{Análisis de las simulaciones y comparación con observaciones de
 radar}\label{analisis-de-las-simulaciones-y-comparacion-con-observaciones-de-radar}
 
+Para analizar el desempeño de las parametrizaciones de capa límite
+elegidas en el Caso 1 se compararos las distintas simulaciones con las
+observaciones de radar y se calcularon la diferencias en la magnitud del
+viento, el ángulo de la dirección del viento y algunos parámetros como
+el bias (o sesgo), rmse, rmsens (raíz del error cuadratico medio debido
+a errores no sistemáticos) y el coeficiente de correlación tanto
+globalmente como dependientes de la altura.
+
 \subsection{Magnitud y dirección del
 viento}\label{magnitud-y-direccion-del-viento}
 
-Descripción general de la magnitud y la dirección del viento en cada
-simulación y como se parece a las observaciones. Bias, correlación y
-otros errores. A resolver: como trabajar con la dirección del viento.
+En la Figura \ref{modelo-spd} se muestra la magnitud del viento en
+función del tiempo y de la altura observada por el radar (panel superior
+izquierdo) y cada simulación nombradas de acuerdo a la parametrización
+de capa límite utilizada: YSU, MYJ y ACM2. En términos generales se
+puede observar en primer lugar que las tres simulaciones son similares
+entre si y en segundo lugar hay una coherencia importante entre las
+simulaciones y las observaciones ya que las simulaciones son capaces de
+representar el máximo de viento nocturno asociado al LLJ y el viento más
+calmo y verticalmente homogeneo en las horas diurnas.
+
+Sin embargo hay diferencias importantes entre las observaciones y las
+simulaciones. Se observa un primer máximo por debajo de 500 m en las
+primeras horas que presede al máximo asociado al LLJ pero que tiene
+menor magnitud. En las tres simulaciones el LLJ parece prolongarse en el
+tiempo al menos 3 horas más que en las observaciones y el máximo de
+viento ocurre en dintintos niveles en casa caso. En niveles altos, el
+viento decrece rápidamente llegando a valores menores que lo observado.
 
 \begin{figure}
 
@@ -1849,6 +1916,15 @@ otros errores. A resolver: como trabajar con la dirección del viento.
 \caption{Magnitud del viento observada por el radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \label{modelo-spd}}\label{fig:vad-modelo-spd}
 \end{figure}
 
+La variación de la dirección del viento con el tiempo y la altura en
+cada simulación se muestra en la Figura \ref{modelo-dir}. Nuevamente se
+observa una similaridad importante entre las tres simulaciones y en
+líneas generales conservan las características de las observaciones.
+Para analizar en más detalle el desempeño de las simulaciones se calculó
+la diferencia de la magnitud del viento entre las observaciones y cada
+simulación y lo mismo para el ángulo de la dirección del viento (Figura
+\ref{dif}).
+
 \begin{figure}
 
 {\centering \includegraphics{Tesis_files/figure-latex/vad-modelo-dir-1} 
@@ -1858,22 +1934,80 @@ otros errores. A resolver: como trabajar con la dirección del viento.
 \caption{Dirección del viento observada por el radar(Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \label{modelo-dir}}\label{fig:vad-modelo-dir}
 \end{figure}
 
+La diferencia en la magnitud del viento entre las observaciones y la
+simulación con la parametrización YSU es negativa en los primeros
+niveles de altura y positiva por encima de 500 m. En los primeros
+niveles las mayores diferencias se deben a la presencia de un máximo de
+viento entre las 00 y las 03 UTC en la simulación que no se corresponde
+con las observaciones y la persistencia del LLJ luego de su decaimiento
+en las observaciones. La simulación MYJ es la que presenta mayores
+diferencias con las observaciones tanto en las horas nocturnas como en
+las horas diurnas, mientras que ACM2 se comporta de manera similar a
+YSU.
+
+En cuanto a la dirección del viento, en la Figura \ref{dif-dir} se
+muestra el valor absoluto de la diferencia entre el ángulo del vecto del
+viento observado y el simulado. En las tres simulaciones la mayor
+diferencia se da por encima de 1000 m con valores de hasta 149° en MYJ,
+141° en YSU y 131° en ACM2. En los primeros 1000 metros la diferencia es
+mucho menor y en algunos momentos cercana a cero. Cualitativamente no es
+posible identificar si alguna de las simulaciones tiene un mejor
+desempeño.
+
 \begin{figure}
 \subfloat[Magnitud del viento \label{dif-spd}\label{fig:diferencia1}]{\includegraphics{Tesis_files/figure-latex/diferencia-1} }\subfloat[Ángulo de la dirección del viento \label{dif-dir}\label{fig:diferencia2}]{\includegraphics{Tesis_files/figure-latex/diferencia-2} }\caption{Diferencia entre las observaciones y cada simulación  correspondiente al Caso 1. \label{dif}}\label{fig:diferencia}
 \end{figure}
 
+En la Tabla \ref{err} se presenta la magnitud del bias, rmse, rmsens y
+del coeficiente de correlación de la magnitud y la dirección del viento
+calculados de manera global para las tres simulaciones. El rmse que
+cuantifica el error total y el rmsens asociado a los errores no
+sistemáticos son muy similares y por lo tanto las diferencias entre las
+observaciones y cada simulación se debe principalmente a los errores
+sistemáticos. En concordancia con el análisis cualitativo, MYJ tiene un
+mayor rmse mientras que en YSU y ACM2, son similares. Sin embargo ACM2
+es la simulación con mayor bias y MYJ tiene el menor. En los tres casos
+el bias es negativo y por lo tanto la magnitud del viento está
+subestimada en las simulaciones. La mayor correlación se da entre las
+observaciones y ACM2 y es menor con YSU y MYJ.
+
+El error total, el error no sistemático y el bias calculado para la
+dirección del viento son similar en las tres simulaciones. En este caso
+MYJ muestra errores menores que YSU y ACM2 a diferencia de lo sucedido
+con la magnitud del viento. El rmsens es menor al rmse por lo que los
+errores sistemáticos representados por el bias también son importantes.
+
 \begin{figure}
 
-{\centering \subfloat[bias. \label{bias-spd}\label{fig:err-spd1}]{\includegraphics{Tesis_files/figure-latex/err-spd-1} }\subfloat[rmse. \label{rmse-spd}\label{fig:err-spd2}]{\includegraphics{Tesis_files/figure-latex/err-spd-2} }\newline\subfloat[rmsens. \label{rmsens-spd}\label{fig:err-spd3}]{\includegraphics{Tesis_files/figure-latex/err-spd-3} }\subfloat[correlación. \label{cor-spd}\label{fig:err-spd4}]{\includegraphics{Tesis_files/figure-latex/err-spd-4} }
+{\centering \includegraphics{Tesis_files/figure-latex/err-spd-1} 
 
 }
 
-\caption{Errores calculados para la estimación de la velocidad del viento (m/s) con cada simulación en función de la altura y la correlación. \label{err-spd}}\label{fig:err-spd}
+\caption{Bias, rmse y rmsens en m/s y coeficiente de correlación para la estimación de la velocidad del viento (m/s) con cada simulación en función de la altura y la simulación. \label{err-spd}}\label{fig:err-spd}
 \end{figure}
+
+Otro aspecto importante para analizar es el comportamiento de los
+errores con la altura. Para eso se calcularon el bias, rmse, rmsens y el
+coeficiente de correlación de la magnitud del viento para cada nivel y
+simulación (Figura \ref{err-spd}). En todas las simulaciones el bias
+tiene un comportamiento similar con la altura, positivo por debajo de
+600 m y negativo por encima. La mayor diferencia entre las simulaciones
+se da en los niveles inferiores entre 200 y 300 m donde MYJ tiene un
+bias 1 m/s mayor que ACM2. El rmse tiene un mínimo en 500 m para todas
+las simulaciones y aumenta tanto en el nivel del LLJ como por encima de
+los 500 m. La simulación MYJ tiene un mayor rmse en casi todos los
+niveles. Los errores no sistemáticos son más importantes alrededor de
+1000 m y por encima de 500 m MYJ tiene un rmsens mayor a las otras
+simulaciones. En cuanto al coeficiente de correlación, en los primeros
+niveles y hasta los 600 m aproximadamente es superior a 0.9 y con un
+comportamiento muy similar en las tres simulaciones. Luego de ese nivel
+disminuye rápidamente hasta llegar a valores cercanos a cero o negativos
+por encima de 1000 m. Como en el caso de los errores MYJ tiene el peor
+desempeño.
 
 \begin{table}[!h]
 
-\caption{\label{tab:err-tabla}Comparación entre las simulaciones y las observaciones de radar a partir de distintos errores}
+\caption{\label{tab:err-tabla}Comparación entre las simulaciones y las observaciones de radar a partir de distintos errores \label{err}}
 \centering
 \begin{tabular}[t]{lrrrrrrrr}
 \toprule
@@ -1935,7 +2069,7 @@ variación de la altura del terreno (Figura \ref{topografia}) o a la
 presencia del río y zonas con suelos saturados donde los flujos
 verticales de calor latente (\(F_{\theta}\)) pueden tener un
 comportamiento contrario al suelo seco. Esto último se observa en la
-Figura \ref{L-espacial}, donde se muestra que las regiones donde el
+Figura \ref{L-esp}, donde se muestra que las regiones donde el
 porcentaje de veces que el valor de \(F_{\theta}\) tiene un signo
 distinto a la moda es alto coincide con las regiones donde se encuentra
 el río y los valores de \(L\) anómalos.
@@ -2037,6 +2171,8 @@ ACM2 & Inestable & 1871.88 & -35.07 & 0.6055 & 0.26 & -53.37\\
 
 \chapter{Conclusiones}\label{conclusiones}
 
+Por ahora solo notas sueltas de lo que se me va ocurriendo:
+
 \begin{itemize}
 \tightlist
 \item
@@ -2046,6 +2182,21 @@ ACM2 & Inestable & 1871.88 & -35.07 & 0.6055 & 0.26 & -53.37\\
 \item
   dBZ funciona más o menos bien pero es necesario desarrollar una
   técnica que permita determinar el tope sin ambiguedades.
+\item
+  Es fácil ver el LLJ y ademas funciona Bonner. Por las condiciones
+  generales y lo más o menos lindo que se ven en las hodografas en
+  comparación con el modelo de OI, podemos decir que esta es la causa?
+\item
+  Sería genial tener suficientes casos y datos de Vg para poder probar
+  cuantitativamente el modelo de Van De Wiel
+\item
+  Diferencias entre observaciones y simulaciones son menores en los
+  primeros 1000 metros, tal vez puede ser porque en esa capa hay mejor
+  señal de radar. O sea que en niveles mas altos las simulaciones son
+  mejores que las observaciones??!!
+\item
+  El LLJ parece durar más en las simulaciones, tendrá que ver con la
+  duración (también prolongada) de la CLP?
 \end{itemize}
 
 \chapter*{Referencias}\label{referencias}
@@ -2061,6 +2212,12 @@ Atmospheric Sciences, 71, 1, 207-225.
 \hypertarget{ref-Amante2009}{}
 Amante, C., y Eakins, B., 2009. ETOPO1 1 Arc-Minute Global Relief Model:
 Procedures, Data Sources and Analysis.
+
+\hypertarget{ref-Baas2012}{}
+Baas, P., Van de Wiel, B.J.H., Van den Brink, L., y Holtslag, A.A.M.,
+2012. Composite hodographs and inertial oscillations in the nocturnal
+boundary layer. Quarterly Journal of the Royal Meteorological Society,
+138, 663, 528-535.
 
 \hypertarget{ref-Banks2016}{}
 Banks, R.F., Tiana-Alsina, J., Baldasano, J.M., Rocadenbosch, F.,
@@ -2323,6 +2480,12 @@ Ulke, A.G., y Andrade, M.F., 2001. Modeling urban air pollution in Sao
 Paulo, Brazil: Sensitivity of model predicted concentrations to
 different turbulence parameterizations. Atmospheric Environment, 35, 10,
 1747-1763.
+
+\hypertarget{ref-VanDeWiel2010}{}
+Van de Wiel, B.J.H., Moene, A.F., Steeneveld, G.J., Baas, P., Bosveld,
+F.C., y Holtslag, A.A.M., 2010. A Conceptual View on Inertial
+Oscillations and Nocturnal Low-Level Jets. Journal of the Atmospheric
+Sciences, 67, 8, 2679-2689.
 
 \hypertarget{ref-Wang2004}{}
 Wang, Y., Xie, S.-P., Xu, H., y Wang, B., 2004. Regional Model
