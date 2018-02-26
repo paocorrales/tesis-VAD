@@ -24,7 +24,6 @@
 \usepackage[inner = 3cm, outer = 2cm, top = 2.5cm, bottom = 2.5cm]{geometry}
 \usepackage{hyperref}
 \hypersetup{unicode=true,
-            pdftitle={Tesis de Licenciatura},
             pdfauthor={Paola Corrales},
             pdfborder={0 0 0},
             breaklinks=true}
@@ -80,9 +79,9 @@
 }
 
 \setlength{\droptitle}{-2em}
-  \title{Tesis de Licenciatura}
-  \pretitle{\vspace{\droptitle}\centering\huge}
-  \posttitle{\par}
+  \title{}
+  \pretitle{\vspace{\droptitle}}
+  \posttitle{}
 \subtitle{Validación de parametrizaciones de capa límite utilizando datos de radar}
   \author{Paola Corrales}
   \preauthor{\centering\large\emph}
@@ -110,18 +109,43 @@
 \usepackage[textsize=tiny]{todonotes}
 
 \begin{document}
-\maketitle
 
-{
-\setcounter{tocdepth}{3}
-\tableofcontents
-}
-\newpage
+\begin{titlepage}
+    \centering
+    \includegraphics[width=0.2\textwidth]{logoUBA}  \hfill \includegraphics[width=0.2\textwidth]{logoDCAO} \par
+    \vspace{1cm}
+    {\scshape\LARGE Universidad de Buenos Aires  \\
+    \large Facultad de Ciencias Exactas y Naturales \\
+Departamento de Ciencias de la Atmósfera y los Océanos  \par}
+    \vspace{0.5cm}
+    {\scshape\Large Tesis de Licenciatura en Ciencias de la Atmósfera\par}
+    \vspace{1.5cm}
+    {\huge\bfseries Validación de parametrizaciones de capa límite utilizando datos de radar\par}
+    \vspace{4.5cm}
+    {\Large Tesista: Paola \textsc{Corrales} \\
+        Directores: Dr. Jua \textsc{Ruíz} y Dra. Marisa \textsc{Gassman}
+    \par}
+    \vfill
 
-\section*{Resumen}\newpage
+% Bottom of the page
+    {\large --2018--\par}
+\end{titlepage}
 
 \renewcommand{\listtablename}{Índice de tablas} 
 \renewcommand{\tablename}{Tabla} 
+
+\chapter*{Agradecimientos}
+
+A mi gata
+
+\newpage
+
+\chapter*{Resumen}\begin{center}\begin{minipage}{\dimexpr\paperwidth-7cm}
+Este es el resumen de mi tesis sdfklsadjksajdlkf skjdfklsdflkkflsjfadfkxvxkcn  sdfjskdjskd osdfmfk sdfkjlls 
+\end{minipage}
+\end{center}\newpage
+
+\setcounter{tocdepth}{4} \tableofcontents
 
 \listoffigures
 \newpage
@@ -1540,19 +1564,20 @@ magnitud y la intensidad del viento para el período correspondiente a
 cada caso de estudio. Debido a que la señal de radar en días de aire
 claro no supera a los primeros kilómetros de atmósfera y los controles
 de calidad impuestos, en muchos tiempos los resultados no alcanzan los
-3000 m o no existen.
+3000 m de altura.
 
 La magnitud y dirección del viento para el Caso 1 se muestra en la
 Figura \ref{campo-caso1}. En la Figura \ref{caso1-spd} se puede observar
 en contornos la magnitud del viento en función de la altura y a lo largo
-del tiempo para todo el período que abarca el Caso 1 y en símbolos los
-errores calculados. Las mayores velocidades de viento se observan en
+del tiempo para todo el período correspondiente al Caso 1 y en símbolos
+los errores calculados. Las mayores velocidades de viento se observan en
 horas nocturnas con un máximo de 16 m/s cercano a las 06 UTC y a 300
 metros de altura. Este máximo comienza a observarse a partir de las 03
 UTC y se extiende más allá de las 12 UTC (3 horas después de la salida
 del sol). Posteriormente durante el día la magnitud del viento disminuye
 a valores del orden de 4 m/s y su variación con la altura es mucho menor
-en comparación con las horas previas. En las últimas horas la velocidad
+en comparación con las horas previas lo que corresponde a las
+características de la capa mezclada. En las últimas horas la velocidad
 del viento comienza a aumentar nuevamente con valores de hasta 8 m/s
 coincidiendo con la puesta del sol cuando la capa mezclada queda
 desacoplada de la superficie y comienza a desarrollarse la capa estable
@@ -1578,7 +1603,7 @@ en niveles altos. En horas posteriores se observa una rotación mostrando
 vientos del NE durante el máximo nocturno. Durante el día el viento se
 mantiene con dirección N y NE. El nivel más bajo corresponde a los datos
 de viento observados en la estación meteorológica, si bien no se observa
-mucha coherencia, esto puede deberse al origen de los datos a
+mucha coherencia, esto puede deberse al origen de los datos o
 diferencias en la ubicación geográfica.
 
 \begin{figure}
@@ -1597,17 +1622,18 @@ velocidad del viento disminuye a valores menores a 7 m/s y hay muy poca
 variación con la altura llegando a ser constante entre las 16 y las 19
 UTC por debajo de los 1500 metros. Lamentablemente no hay suficientes
 datos disponibles para las últimas horas del día pero puede apreciarse
-un ligero aumento de la velocidad.
+un ligero aumento de la velocidad signo del incipiente desarrollo de la
+capa estable nocturna.
 
-Al igual que en el Caso 1, los errores calculados presentan un patrón
-similar. Predomina el \(rmse_2\) asociado al error relativo cometido en
+Los errores calculados presentan un patrón similar a lo observado en el
+Caso 1. Predomina el \(rmse_2\) asociado al error relativo cometido en
 el ajuste de los datos de radar en los bordes entre la región con y sin
 datos. Es importante notar que en algunos casos este error llega a tener
 una magnitud de 4 m/s donde la velocidad del viento es de entre 4 y 7
-m/s, por lo que la estimación en esas regiones no es buena y debe
-analizarse con cuidado. En este Caso hay errores y regiones sin datos en
-niveles bajos y por encima de los 1500 m durante el día, lo que
-dificulta el análisis de la capa mezclada.
+m/s, por lo que la estimación de la magnitud del viento en esas regiones
+no es buena y debe analizarse con cuidado. En este caso hay errores y
+regiones sin datos en niveles bajos y por encima de los 1500 m durante
+el día, lo que dificulta el análisis de la capa mezclada.
 
 La dirección del viento se nuestra en la Figura \ref{caso2-dir}, donde
 puede apreciarse la falta de datos en algunos momentos de la tarde. En
@@ -1637,15 +1663,15 @@ Inicialmente se encuentra a 300 m y con una magnitud de 15 m/s, luego
 asciende a 400 m con la misma magnitud y finalmente, luego de disminuir
 su intensidad reaparece a los 500 m con una magnitud de 11 m/s. Este
 último máximo que ocurre alrededor de las 12 UTC, casi 3 horas después
-del amanecer no puede ser asociado a los procesos que ocurren en la capa
-estable nocturna y que dan lugar a los máximos descriptos previamente.
-Este máximo secundario afecta la evolución de la capa límite durante el
-día pero igualmente se observa una disminución del viento que llega a
-ser casi constante luego de las 15 UTC. No hay suficientes datos luego
-de las 18 UTC para determinar la evolución de la capa mezclada al
-finalizar el día.
+del amanecer y por esto podría no estar asociado a los procesos que
+ocurren en la capa estable nocturna y que dan lugar a los máximos
+descriptos previamente. Este máximo secundario afecta la evolución de la
+capa límite durante el día pero sin embargo se observa una disminución
+del viento que llega a ser casi constante luego de las 15 UTC. No hay
+suficientes datos luego de las 18 UTC para determinar la evolución de la
+capa mezclada al finalizar el día.
 
-El \(rmse_2\) de la magnitud del viento en este Caso es menor a los
+El \(rmse_2\) de la magnitud del viento en este caso es menor a los
 casos anteriores (menores a 2.5 m/s) pero también marcan el límite donde
 los datos dejan de ser confiables al punto de ser eliminados por los
 controles de calidad del algoritmo. A diferencia de las otras
@@ -1667,18 +1693,19 @@ el viento es principalmente del O.
 \end{figure}
 
 En la Figura \ref{perfiles-horarios} se muestran perfiles verticales del
-viento de los 3 casos analizados en dos momentos, por la noche a las 06
-UTC y de día a las 17 UTC. Si bien estos datos son mostrados en las
-figuras previas, la Figura \ref{perfiles-horarios} permite analizar la
-forma de los perfiles verticales. En el caso de los perfiles nocturnos
-se observa el máximo de viento en niveles bajos asociado al LLJ por su
-forma de ``nariz'' (Banta et~al., 2003; Klein et~al., 2016) y que luego
-disminuye en niveles altos a valores típicos de la capa mezclada diurna.
-Como se observó previamente el perfil vertical en el Caso 2 tiene una
-disminución más lenta con la altura por encima del máximo.
+viento de los 3 casos analizados para dos momentos del día, por la noche
+a las 06 UTC y de día a las 17 UTC. Si bien estos datos son mostrados en
+las figuras previas, la Figura \ref{perfiles-horarios} permite analizar
+la forma de los perfiles verticales. En el caso de los perfiles
+nocturnos se observa el máximo de viento en niveles bajos asociado al
+LLJ por su forma de ``nariz'' (Banta et~al., 2003; Klein et~al., 2016) y
+que luego disminuye en niveles altos a valores típicos de la capa
+mezclada diurna. Como se observó previamente el perfil vertical en el
+Caso 2 tiene una disminución más lenta con la altura por encima del
+máximo.
 
 En los perfiles diurnos característicos de la capa mezclada la magnitud
-del viento es aproximadamente nulo en superficie aumentando en los
+del viento es aproximadamente nula en superficie aumentando en los
 primeros metros para luego mantenerse constante con la altura (Stull,
 1988). En estos casos, el nivel más bajo donde se tienen datos
 corresponde a las observaciones de la estación meteorológica a 10 m de
@@ -1686,8 +1713,8 @@ altura y por lo tanto no es esperable que se cumpla la primera
 característica. Sin embargo se observa un leve aumento de la magnitud
 del viento con la altura que a partir de los 100 a 200 metros es casi
 nulo dando lugar a un perfil aproximadamente constante. El valor del
-\(rmse_2\) que se muestra sombreado no es de gran magnitud a excepción
-de los últimos niveles en los perfiles nocturnos.
+\(rmse_2\) que se muestra sombreado es casi despreciable a excepción de
+los últimos niveles en los perfiles nocturnos.
 
 \begin{figure}
 
@@ -1700,14 +1727,15 @@ de los últimos niveles en los perfiles nocturnos.
 
 La variación de la dirección del viento con la altura puede analizarse a
 partir de un hodógrafa. En la Figura \ref{hodografa-h} se muestra la
-hodógrafa de las 06 UTC para cada caso donde el triángulo corresponde al
-nivel más bajo. De acuerdo al comportamiento de la espiral de Ekman se
-espera que la rotación del viento sea en sentido antihorario dentro de
-la capa límite. Si bien existen controversias respecto de la validez de
-la espira de Ekman en la capa límite atmosférica (Stull, 1988) se
-observa en los tres casos una rotación antihoraria en los primeros
-metros (correspondientes a la capa estable nocturna), que se mantiene en
-todo el perfil para los casos 2 y 3.
+hodógrafa de las 06 UTC para cada caso. El triángulo corresponde al
+nivel inferior y los círculos grandes se ubican cada 500 m. De acuerdo
+al comportamiento de la espiral de Ekman se espera que la rotación del
+viento sea en sentido antihorario dentro de la capa límite. Si bien
+existen controversias respecto de la validez de la espira de Ekman en la
+capa límite atmosférica (Stull, 1988) se observa en los tres casos una
+rotación antihoraria en los primeros metros (correspondientes a la capa
+estable nocturna), que se mantiene en todo el perfil para los casos 2 y
+3.
 
 \begin{figure}
 
@@ -1743,15 +1771,15 @@ En el Caso 1 (Figura \ref{dbz-1}) se observa un máximo del
 que luego se eleva rápidamente y forma dos máximos, uno a 1000 m hasta
 las 15 UTC y el otro por encima hasta las 21 UTC. Por las
 características, el primer máximo corresponde al tope de la capa estable
-y por encima de este hay regiones donde el \(\nabla_z dBZ\) aumenta que
-podrían ocurrir debido a la presencia del tope de la capa residual donde
-puede existir una importante variación de la temperatura y la humedad
-debido a los procesos de mezcla turbulenta entre la capa mezclada y la
-atmósfera libre durante el día anterior. En la segunda mitad del periodo
-es interesante notar que la altura de los máximos de \(\nabla_z dBZ\)
-aumenta rápidamente con el tiempo luego del amanecer aunque no es
-posible determinar cual de los máximos representa el tope de la capa
-mezclada.
+y por encima de este hay regiones donde el \(\nabla_z dBZ\) tiene
+máximos y que podrían ocurrir debido a la presencia del tope de la capa
+residual donde puede existir una importante variación remanente de la
+temperatura y la humedad debido a los procesos de mezcla turbulenta
+entre la capa mezclada y la atmósfera libre durante el día anterior. En
+la segunda mitad del periodo es interesante notar que la altura de los
+máximos de \(\nabla_z dBZ\) aumenta rápidamente con el tiempo luego del
+amanecer aunque no es posible determinar cuál de los máximos representa
+el tope de la capa mezclada.
 
 En la Figura \ref{dbz-2} se muestra el \(\nabla_z dBZ\) para el Caso 2.
 Las regiones de máximo gradiente no son tan claras como en el Caso 1
@@ -1766,19 +1794,19 @@ marcha de temperatura no parece haber sido afectada por la nubosidad es
 posible que el desarrollo de la turbulencia si lo fuera impidiendo el
 desarrollo de una capa mezclada más profunda luego de la mitad del día.
 
-El \(\nabla_z dBZ\) para el Caso 3 se muestra en la Figura \ref{dbz-3}.
-Durante la noche en las primeras horas se observa un máximo cercano a
-2000 m que luego desciende y podría corresponder al tope de la capa
-residual. Por otro lado se observa por debajo de 500 m un máximo intenso
-que se mantiene durante horas hasta las 14 UTC. Durante la noche este
-máximo puede asociarse al tope de la capa estable pero luego del
-amanecer la persistencia de esta capa de gran variabilidad en la
-reflectividad podría deberse a la presencia de la cortante vertical de
-viento generada por el máximo de viento secundario que se observa en la
-Figura \ref{caso3-spd} a las 12 UTC. Además de este máximo, al igual que
-en los otros casos se observa un máximo que crece desde las 9 UTC y
-alcanza rápidamente los 2000 m de altura. Este máximo que se mantiene
-durante el día podría deberse al tope de la capa mezclada.
+La variación de \(\nabla_z dBZ\) con la altura para el Caso 3 se muestra
+en la Figura \ref{dbz-3}. Durante la noche en las primeras horas se
+observa un máximo cercano a 2000 m que luego desciende y podría
+corresponder al tope de la capa residual. Por otro lado se observa por
+debajo de 500 m un máximo intenso que se mantiene durante horas hasta
+las 14 UTC. Durante la noche este máximo puede asociarse al tope de la
+capa estable pero luego del amanecer la persistencia de esta capa de
+gran variabilidad en la reflectividad podría deberse a la presencia de
+la cortante vertical de viento generada por el máximo de viento
+secundario que se observa en la Figura \ref{caso3-spd} a las 12 UTC. Al
+igual que en los otros casos se observa un máximo que crece desde las 9
+UTC y alcanza rápidamente los 2000 m de altura. Este máximo que se
+mantiene durante el día podría deberse al tope de la capa mezclada.
 
 \begin{figure}
 
@@ -1790,17 +1818,18 @@ durante el día podría deberse al tope de la capa mezclada.
 \end{figure}
 
 En la Figura \ref{estable-vad} se muestran algunas características de la
-capa estable noctura asociadas a la turbulencia que pueden estimarse a
+capa estable nocturna asociadas a la turbulencia que pueden estimarse a
 partir de los datos disponibles. En primer lugar se estimó la altura de
 la capa estable como el nivel en el cual ocurre el máximo viento (Figura
-\ref{h-vad}) en le período donde se observó el máximo. Esta estimación
-depende de la resolución vertical elegida para el cálculo del VAD que en
-este caso es de 100 m, por lo tanto no es muy precisa. En la Figura
-\ref{cortante-vad} se presenta la cortante vertical por debajo del
-máximo del viento y en la Figura \ref{ri-vad} el número de Richardson
-calculado de acuerdo a la Ecuación \ref{eq-ri3} donde los períodos
-sombreados corresponden a los momentos donde se observó el máximo de
-viento y por lo tanto donde estas aproximaciones son válidas.
+\ref{h-vad}) durante el período donde se observó el máximo. Esta
+estimación depende de la resolución vertical elegida para el cálculo del
+VAD que en este caso es de 100 m, por lo tanto la estimación no es muy
+precisa. En la Figura \ref{cortante-vad} se presenta la cortante
+vertical calculada por debajo del máximo del viento y en la Figura
+\ref{ri-vad} el número de Richardson calculado de acuerdo a la Ecuación
+\ref{eq-ri3} donde los períodos sombreados corresponden a los momentos
+donde se observó el máximo de viento y por lo tanto donde estas
+aproximaciones son válidas.
 
 En el Caso 1 la altura de la capa estable se mantuvo en 300 m en todo
 momento coincidiendo con lo estimado a partir del \(\nabla_z dBZ\). La
@@ -1808,19 +1837,19 @@ cortante de viento tuvo variaciones temporales con un máximo que
 coincidió con el momento donde el LLJ fue más intenso. De acuerdo a
 (Banta et~al., 2003), estos valores de cortante están asociados a la
 presencia de energía cinética turbulenta y podría ser usada como un
-estimado de la turbulencia. Consistente con lo anterior, el número de
-Richardson es siempre positivo y por lo tanto estamos ante una situación
-de estabilidad estática y además se mantiene por debajo de 1 por lo
-tanto el flujo se mantiene turbulento debido a procesos mecánicos
+estimado de la turbulencia en la capa. Consistente con lo anterior, el
+número de Richardson es siempre positivo y por lo tanto estamos ante una
+situación de estabilidad estática y además se mantiene por debajo de 1
+por lo tanto el flujo se mantiene turbulento debido a procesos mecánicos
 asociados a la cortante.
 
 En los Casos 2 y 3 la cortante vertical y el número de Richardson tienen
 un comportamiento similar al primer caso y por lo tanto corresponden a
 situaciones estables pero donde el flujo es turbulento. Sin embargo a
 partir de las 10 UTC en el Caso 3 se observa un aumento en el número de
-Richardson que supera el valor crítico \(R_T=1\) y una disminución de la
-cortante, esto implica un incremento en la inhibición de la turbulencia
-tendiendo a estabilizar el flujo hasta volverlo laminar.
+Richardson que supera el valor crítico \(R_T = 1\) y una disminución de
+la cortante, esto implica un incremento en la inhibición de la
+turbulencia tendiendo a estabilizar el flujo hasta volverlo laminar.
 
 La estimación del tope de la capa estable en el Caso 2 no coincide con
 lo observado en la Figura \ref{dbz-2} ya que de acuerdo a este criterio
@@ -1839,26 +1868,27 @@ se observa claramente las características típicas del LLJ con el máximo
 viento en los primeros cientos de metros, el criterio de Bonner permite
 detectar el LLJ de manera cuantitativa. De acuerdo al Criterio 1 el LLJ
 ocurre si el máximo de viento es igual o superior a 12 m/s y disminuir
-al menos 6 m/s en el siguiente mínimo. Valores análogos se siguen para
-máximos de mayor magnitud, por ejemplo si el máximo es de 16 m/s, el
-mínimo tendrá que ser de al menos 8 m/s (Criterio 2). Esto también puede
-verse en la Figura \ref{perfiles-horarios} observando la diferencia
-entre las marcas verticales en el eje horizontal que representan el
-mínimo y el máximo en cada perfil nocturno. En todos los casos en
-estudio el criterio de Bonner se cumple satisfactoriamente.
+al menos 6 m/s en el siguiente mínimo (Bonner, 1968). Valores análogos
+se siguen para máximos de mayor magnitud, por ejemplo si el máximo es de
+16 m/s, el mínimo tendrá que ser de al menos 8 m/s (Criterio 2). Esto
+también puede verse en la Figura \ref{perfiles-horarios} observando la
+diferencia entre las marcas verticales en el eje horizontal que
+representan el mínimo y el máximo en cada perfil nocturno. En todos los
+casos en estudio el criterio de Bonner se cumple satisfactoriamente.
 
 En la Figura \ref{hodografa-n} se muestran hodógrafas para tres niveles
 distintos (el primero correspondiente a las observaciones de la estación
 meteorológica) desde las 00 UTC. El cuadrado indica el punto final del
-vector del viento en el primer tiempo y los círculos grandes, el vector
-cada 6 horas. De acuerdo al modelo de Van de Wiel et~al. (2010), en el
-nivel inferior el giro de la hodógrafa es antihorario (Hemisferio Sur) y
-contrario a los tiempos iniciales generando una disminución inicial en
-el viento. En niveles altos por otro lado, el giro antihorario ocurre a
-favor del vector del viento inicial y por lo tanto se observa un aumento
-en la magnitud del viento. Por las características de los datos de
-estación la hodógrafa correspondiente al nivel inferior es muy
-desordenada y no permite sacar conclusiones.
+vector del viento en el primer tiempo y los círculos grandes,
+corresponden al vector en intervalos cada 6 horas. De acuerdo al modelo
+de Van de Wiel et~al. (2010), en el nivel inferior el giro de la
+hodógrafa es antihorario (en el Hemisferio Sur) y contrario a los
+tiempos iniciales generando una disminución inicial en el viento. En
+niveles altos por otro lado, el giro antihorario ocurre a favor del
+vector del viento inicial y por lo tanto se observa un aumento en la
+magnitud del viento. Por las características de los datos de estación la
+hodógrafa correspondiente al nivel inferior es muy desordenada y no
+permite sacar conclusiones.
 
 Sin embargo en los niveles superiores 0.3 km y 1 km la forma de
 herradura si puede distinguirse y el giro de la hodógrafa es antihorario
@@ -1872,8 +1902,8 @@ predominante del O en casi todo momento para este último caso.
 
 Las hodógrafas observadas para los dos niveles mostrados (y otros
 niveles no incluidos en la figura por motivos de espacio) muestran
-cierta variación con la altura por lo que la oscilación inercial tiene
-una variación vertical.
+cierta variación con la altura lo que permite ver que la oscilación
+inercial tiene una variación vertical.
 
 \begin{figure}
 
@@ -2358,7 +2388,9 @@ Por ahora solo notas sueltas de lo que se me va ocurriendo:
   realmente los datos se ajustan al modelo.
 \item
   dBZ funciona más o menos bien pero es necesario desarrollar una
-  técnica que permita determinar el tope sin ambiguedades.
+  técnica que permita determinar el tope sin ambiguedades. Las
+  coincidencias con la estimación de la capa estable le dan robustés al
+  método.
 \item
   Es fácil ver el LLJ y ademas funciona Bonner. Por las condiciones
   generales y lo más o menos lindo que se ven en las hodografas en
