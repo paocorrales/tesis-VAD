@@ -1,4 +1,4 @@
-\documentclass[12pt,spanish,oneside]{book}
+\documentclass[12pt,spanish,oneside, a4paper]{book}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
@@ -103,7 +103,8 @@
 \usepackage{threeparttable}
 \usepackage[normalem]{ulem}
 
-\linespread{1.25}
+\usepackage{setspace}
+\setstretch{1.5}
 \usepackage{subfig}
 \usepackage{hyperref}
 \usepackage[textsize=tiny]{todonotes}
@@ -115,6 +116,10 @@
 \setcounter{tocdepth}{3}
 \tableofcontents
 }
+\newpage
+
+\section*{Resumen}\newpage
+
 \renewcommand{\listtablename}{Índice de tablas} 
 \renewcommand{\tablename}{Tabla} 
 
@@ -123,10 +128,6 @@
 
 \listoftables
 \newpage
-
-\section*{Agradecimientos}\newpage
-
-\section*{Resumen}\newpage
 
 \chapter{Introducción}\label{introduccion}
 
@@ -450,7 +451,12 @@ algunos controles de calidad al algoritmo de VAD desarrollado (Ver
 Sección \ref{sec-vad}).
 
 \begin{figure}
-\subfloat[Con aliasing \label{aliasing}\label{fig:aliasing1}]{\includegraphics[ ]{Tesis_files/figure-latex/aliasing-1} }\subfloat[Sin aliasing \label{no-aliasing}\label{fig:aliasing2}]{\includegraphics[ ]{Tesis_files/figure-latex/aliasing-2} }\caption{Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\circ}$ y $V_N = 6.7 m/s$. Notar las escalas diferentes.}\label{fig:aliasing}
+
+{\centering \subfloat[Con aliasing \label{aliasing}\label{fig:aliasing1}]{\includegraphics[ ]{Tesis_files/figure-latex/aliasing-1} }\subfloat[Sin aliasing \label{no-aliasing}\label{fig:aliasing2}]{\includegraphics[ ]{Tesis_files/figure-latex/aliasing-2} }
+
+}
+
+\caption{Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\circ}$ y $V_N = 6.7 m/s$. Notar las escalas diferentes.}\label{fig:aliasing}
 \end{figure}
 
 \section{\texorpdfstring{Visualización Azimutal de la Velocidad
@@ -931,6 +937,8 @@ EA+NA & 0.1778 & 0.0214\tabularnewline
 \bottomrule
 \end{longtable}
 
+\newpage
+
 Esto puede verificarse con el cálculo de distintos errores (Gao y
 Droegemeier, 2004): la raíz del error cuadrático medio
 (\(rms = \sqrt{ \frac{\sum (V-V_{ref})^2}{N} }\)) y el error relativo al
@@ -1372,9 +1380,10 @@ K_m(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1
 K_h(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1 - 13\frac{h}{L}\frac{z}{h} \right)^{1/2}
 \end{equation}
 
-Y a partir de esto se obtiene \(P_r(z) = K_m/K_h\) para obtener el
-coeficiente de difusividad de cantidad de movimientos a partir de los
-datos del modelo.
+donde \(u_*\) es la velocidad de fricción y \(k\) la constante de Von
+Karman. A partir de este modelo se obtiene \(P_r(z) = K_m/K_h\) para
+obtener el coeficiente de difusividad de cantidad de movimientos a
+partir de los datos del modelo.
 
 \chapter{Resultados}\label{resultados}
 
@@ -1863,8 +1872,8 @@ predominante del O en casi todo momento para este último caso.
 
 Las hodógrafas observadas para los dos niveles mostrados (y otros
 niveles no incluidos en la figura por motivos de espacio) muestran
-cierta variación con la altura por lo que la oscilación inercial cambia
-con la altura.
+cierta variación con la altura por lo que la oscilación inercial tiene
+una variación vertical.
 
 \begin{figure}
 
@@ -1986,6 +1995,23 @@ errores sistemáticos representados por el bias también son importantes.
 \caption{Bias, rmse y rmsens en m/s y coeficiente de correlación para la estimación de la velocidad del viento (m/s) con cada simulación en función de la altura y la simulación. \label{err-spd}}\label{fig:err-spd}
 \end{figure}
 
+\begin{table}[!h]
+
+\caption{\label{tab:err-tabla}Comparación entre las simulaciones y las observaciones de radar a partir de distintos errores \label{err}}
+\centering
+\begin{tabular}[t]{lrrrrrrrr}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Velocidad} & \multicolumn{4}{c}{Dirección} \\
+\cmidrule(l{2pt}r{2pt}){2-5} \cmidrule(l{2pt}r{2pt}){6-9}
+caso & bias & rmse & rmsens & correlación & bias & rmse & rmsens & correlación\\
+\midrule
+YSU & -0.848 & 2.309 & 2.125 & 0.681 & -24.726 & 43.804 & 35.413 & 0.546\\
+MYJ & -0.564 & 2.559 & 2.485 & 0.633 & -21.819 & 41.601 & 34.710 & 0.545\\
+ACM2 & -1.009 & 2.336 & 2.073 & 0.711 & -25.717 & 45.481 & 36.730 & 0.527\\
+\bottomrule
+\end{tabular}
+\end{table}
+
 Otro aspecto importante para analizar es el comportamiento de los
 errores con la altura. Para eso se calcularon el bias, rmse, rmsens y el
 coeficiente de correlación de la magnitud del viento para cada nivel y
@@ -2005,28 +2031,36 @@ disminuye rápidamente hasta llegar a valores cercanos a cero o negativos
 por encima de 1000 m. Como en el caso de los errores MYJ tiene el peor
 desempeño.
 
-\begin{table}[!h]
-
-\caption{\label{tab:err-tabla}Comparación entre las simulaciones y las observaciones de radar a partir de distintos errores \label{err}}
-\centering
-\begin{tabular}[t]{lrrrrrrrr}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{4}{c}{Velocidad} & \multicolumn{4}{c}{Dirección} \\
-\cmidrule(l{2pt}r{2pt}){2-5} \cmidrule(l{2pt}r{2pt}){6-9}
-caso & bias & rmse & rmsens & correlación & bias & rmse & rmsens & correlación\\
-\midrule
-YSU & -0.8484 & 2.3088 & 2.1254 & 0.6814 & -24.7264 & 43.8039 & 35.4133 & 0.5459\\
-MYJ & -0.5639 & 2.5587 & 2.4851 & 0.6332 & -21.8190 & 41.6008 & 34.7102 & 0.5447\\
-ACM2 & -1.0089 & 2.3356 & 2.0733 & 0.7112 & -25.7172 & 45.4811 & 36.7295 & 0.5270\\
-\bottomrule
-\end{tabular}
-\end{table}
-
 \subsection{Características de la capa límite
 planetaria}\label{caracteristicas-de-la-capa-limite-planetaria-1}
 
+Los perfiles mostrados en la Figura \ref{perfil-mod} correspondientes
+alas 17 UTC muestran las características de la capa mezclada. El perfil
+observado muestra un ligero aumento con la altura pero mantiene la
+homegeneidad característica de la capa mezclada. Las tres simulaciones
+presentan un perfil con un comportamiento similar, son verticalmente
+homogeneos con una ligera disminución de la magnitud del viento con la
+altura pero similar al perfil observado.
+
 \subsubsection{Oscilación inercial y
 LLJ}\label{oscilacion-inercial-y-llj-1}
+
+Si bien el máximo del viento en la capa estable se da en distintos
+momentos en cada simulación y con respecto a las observaciones, se
+comparó el perfil vertical de viento a las 06 UTC como hora de
+referencia donde se observa el LLJ (Figura \ref{perfil-mod}). El perfil
+de las tres simulaciones tiene un comportamiento similar con diferencias
+de hasta 2 m/s en algunos niveles. Como se observó en la Figura
+\ref{modelo-spd} durante la noche la magnitud del viento disminuye
+rápidamente luego del máximo llegando a un mínimo de entre 2 y 3 m/s en
+las simulaciones respecto de los 8 m/s observados por el radar a 1000 m.
+
+Al aplicar el Criterio de Bonner en todas las simulaciones se puede
+observar el LLJ que a las 06 UTC tiene el máximo ubicado en 200 m y con
+magnitudes que varían entre 14 y 16 m/s. Sin embargo en las simulaciones
+el LLJ se prolonga en el tiempo mucho más que en las observaciones ya
+que el máximo viento ocurre dos horas después (posterior a las 8 UTC) y
+con magnitud entre 1 y 2 m/s superior a lo observado.
 
 \begin{figure}
 
@@ -2034,8 +2068,28 @@ LLJ}\label{oscilacion-inercial-y-llj-1}
 
 }
 
-\caption{Perfil de viento observado por el radar a las 0600 y las 17 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \label{perfiles-modelo}}\label{fig:perfiles-mod}
+\caption{Perfil de viento observado por el radar a las 06 y las 17 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \label{perfil-mod}}\label{fig:perfiles-mod}
 \end{figure}
+
+En la Figura \ref{hodografa-mod} se presentan las hodógrafas observadas
+para distintos niveles en el Caso 1 y las obtenidas a partir de las tres
+simulaciones. Al igual que en figuras anteriores, las simulaciones
+tienen un comportamiento similar entre si. En el primer nivele de 0.3 km
+las hodógrafas tiene la forma de herradura pronosticada por el modelo de
+Van De Wiel aunque la magnitud del viento es superior a lo observado en
+las primeras 10 horas mostradas. El nivel de 0.5 km también presenta la
+característica forma de herradura pero en este caso la magnitud del
+viento de las distintas simulaciones es similar a la obervada en las
+primeras horas y luego es menor.
+
+Sin embargo en el nivel de 1 km si bien la hodógrafa observada presenta
+la forma de herradura y se ajusta cualitativamente al modelo de
+oscilación inercial, no ocurre lo mismo en las simulaciones. En primer
+lugar, al igual que se observó en la Figura \ref{modelo-spd}, la
+magnitud del viento es mucho menor a la observada ya que decrece
+rápidamente con la altura (Figura \ref{perfil-mod}) pero además la
+rotación alrededor de un perfil de equilibrio no se observa en ninguna
+de las simulaciones.
 
 \begin{figure}
 
@@ -2043,36 +2097,43 @@ LLJ}\label{oscilacion-inercial-y-llj-1}
 
 }
 
-\caption{Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 4 horas) y el cuadrado marca el primer tiempo (00 UTC). \label{hodografa-wrf}}\label{fig:hodografa-wrf}
+\caption{Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 4 horas) y el cuadrado marca el primer tiempo (00 UTC). \label{hodografa-mod}}\label{fig:hodografa-wrf}
 \end{figure}
 
 \subsubsection{Análisis de la homogeneidad espacial en las variables de
 estabilidad}\label{analisis-de-la-homogeneidad-espacial-en-las-variables-de-estabilidad}
 
-Para determinar la validez del promedio espacial de una variable en el
-dominio en estudio es importante analizar la variabilidad de la misma
+Si bien los análisis previos se realizaron comparando los perfiles de
+viento obtenidos a partir de la técnica VAD, otras variables podrían
+analizarse tanto a partir de su valor más cercano al radar como por su
+promedio espacial e en el dominio en estudio. Para determinar la validez
+de este promedio es importante analizar la variación de la variable
 espacial y temporalmente.
 
-Se utilizó la Longitud de Monin-Obukhov (\(L\)) para analizar la
-homogeneidad calculando el porcentaje de veces que el valor local tenía
-signo distinto a la moda calculada para todo el dominio y cada tiempo de
-simulación. Esto es importante ya que el signo de \(L\) marca la
-diferencia entre el régimen estable y el regimen inestable y por lo
-tanto debe mantenerse en el dominio en cada período.
+Para analizar la honogeneidad se utilizó la Longitud de Monin-Obukhov
+(\(L = \frac{-u_*^3 \;T}{k \, g \, (w'\theta ')_s}\)) calculando el
+porcentaje de veces que el valor local (es decir, es un punto
+particular) tenía signo distinto a la moda calculada para todo el
+dominio y cada tiempo de simulación. El comportamiento de \(L\) permite
+analizar la homogeneidad ya que su signo marca la diferencia entre el
+régimen estable y el regimen inestable de la capa límite y por lo tanto
+debe mantenerse constante en el dominio durante cada período.
 
 En la Figura \ref{L-esp} se muestra el porcentaje de veces que el valor
 de \(L\) en cada punto de grilla tiene signo distinto a la moda
 calculada en todo el dominio y el período analizado. Se observa que que
 existen regiones donde el signo de \(L\) es distinto a la moda del
-dominio más del 40\% de las veces. Esto puede estar relacionado la
+dominio más del 40\% de las veces. Esto podría estar relacionado la
 variación de la altura del terreno (Figura \ref{topografia}) o a la
-presencia del río y zonas con suelos saturados donde los flujos
-verticales de calor latente (\(F_{\theta}\)) pueden tener un
-comportamiento contrario al suelo seco. Esto último se observa en la
-Figura \ref{L-esp}, donde se muestra que las regiones donde el
-porcentaje de veces que el valor de \(F_{\theta}\) tiene un signo
-distinto a la moda es alto coincide con las regiones donde se encuentra
-el río y los valores de \(L\) anómalos.
+presencia del río y zonas con suelos saturados en la zona con mayor
+porcentaje de variación de \(L\). La presencia de suelos saturados
+podría generar que el flujo verticale de calor latente en superficie
+(\(F_{\theta} = (w'\theta ')_s\)) tenga un comportamiento contrario al
+que se observa en suelos seco generando esta variabilidad en el dominio.
+Esto último se observa en la Figura \ref{L-esp}, donde se muestra que
+las regiones donde el porcentaje de veces que el valor de \(F_{\theta}\)
+tiene un signo distinto a la moda mayor coincide con las regiones donde
+se encuentra el río y los valores de \(L\) anómalos.
 
 \begin{figure}
 
@@ -2083,9 +2144,19 @@ el río y los valores de \(L\) anómalos.
 \caption{Porcentaje de veces que el valor local de L (a) y el flujo vertical de calor (b) tiene signo distinto a la moda del dominio calculada en todo el periodo analizado. Se muestran los valores mayores al 5\% (colores) y topografía del dominio (contornos). Datos de la simulación YSU. \label{L-esp}}\label{fig:L-espacial}
 \end{figure}
 
-Por lo anterior se decidió centrar el análisis de las variables
-asociadas a la CLP en el punto de grilla más cercano al radar, que
-además no presenta gran variabilidad respecto de la zona circundante.
+De acuerdo a estos resultados se decidió centrar el análisis de las
+variables asociadas a la CLP en el punto de grilla más cercano al radar,
+que además no presenta gran variabilidad respecto de la zona
+circundante.
+
+En la Figura \ref{L-param} se presenta la variación de \(L\) a lo largo
+del tiempo en cada simulación. Esta variable permite reconocer el
+período estable de la capa límite, la capa estable nocturna y el período
+instables correspondiente a la capa mezclada. Debido a que el signo
+depende de \((w'\theta ')_s\) que cambia su signo en la transición entre
+una capa y la otra, \(L\) tiende a infinito a estos momentos. El
+comportamiento de \(L\) es acorde a lo descripto por Stull (1988) para
+condiciones de buen tiempo.
 
 \begin{figure}
 
@@ -2099,6 +2170,47 @@ además no presenta gran variabilidad respecto de la zona circundante.
 \subsubsection{Altura de la capa
 límite}\label{altura-de-la-capa-limite-1}
 
+En la Figura \ref{pblh} se muestra la altura de la capa líte estimada
+por cada parametrización en todo el período. En líneas generales
+representan de manera correcta la evolución del tope de la capa límite,
+por ejemplo las tres parametrizaciones marcan el comienzo del
+crecimiento de la capa mezclada pasadas las 10 UTC, esto es
+aproximadamente una hora posterior al amancer pero divergen de manera
+considerable al estimar el tope de la capa mezclada.
+
+En YSU la altura de la capa estable es mayor a las otras dos
+parametrizaciones mientras que durante el día la estimación queda por
+debajo o entre las restantes. MYJ presenta las mayores variaciones del
+tope de la capa mezclada, inicialmente su crecimiento es muy rápido
+superando los 1000 metros en una hora pero posteriormente el crecimiento
+se desacelera con un período de decrecimiento luego de las 17 UTC. Si
+bien en presencia de nubosidad el tope de la capa mezclada puede verse
+afecta de esta manera, durante esas horas no se registró nubes en la
+estación meteorológica y tampoco se observa el decrecimiento del tope en
+las otras simulaciones. La parametrización ACM2 genera la capa mezclada
+más profunda superando los 2500 m o 1872 m en promedio (Tabla
+\ref{tabla-clp}).
+
+En resumen ACM2 produce la capa mezclada más profunda, en segundo lugar
+YSU y MYJ la capa menos profunda. Este resultado fue obtenido por otros
+autores (por ejemplo Hu et~al., 2010; Xie et~al., 2012) y puede deberse
+a las características de las distintas parametrizaciones. En particular
+MYJ es un esquema local y por lo tanto el transporte vertical de las
+distintas propiedades es más débil. Sumando a lo anterior MYJ produce un
+menor intercambio de temperatura y humedad con la atmósfera libre
+limitando el crecimiento de la capa límite (Xu et~al., 2010).
+
+Debido a que cada parametrización estima la altura de la capa límite de
+manera diferente, se utilizó el criterio descripto en la Sección
+\ref{sec-pbh} para estimar la altura de la capa estable en las tres
+simulaciones. En la Figura \ref{pblh-spd} se muestra la altura de la
+capa estable nocturna estimada por cada parametrización en lineas y la
+estimada utilizando la altura a la que ocurre el máximo viento en
+puntos. Si bien este criterio está limitado por la resolución de la
+grilla vertical utilizada por el VAD, se observa una concordancia entre
+las estimaciones con MYJ y ACM2 principalmente en los momentos donde se
+produce el máximo LLJ.
+
 \begin{figure}
 
 {\centering \subfloat[Estimada directamente por cada esquema de CLP. \label{pblh}\label{fig:pblh-wrf1}]{\includegraphics{Tesis_files/figure-latex/pblh-wrf-1} }\newline\subfloat[Comparación entre la altura calculada por cada esquema (linea) y la estimada a partir de la altura del viento máximo (puntos) sólo período estable. \label{pblh-spd}\label{fig:pblh-wrf2}]{\includegraphics{Tesis_files/figure-latex/pblh-wrf-2} }
@@ -2107,6 +2219,40 @@ límite}\label{altura-de-la-capa-limite-1}
 
 \caption{Altura de la capa límite en cada simulación. \label{pblh-wrf}}\label{fig:pblh-wrf}
 \end{figure}
+
+La Figura \ref{pblh-dbz} permite comparar la estimación de la altura de
+la capa límite a partir de la variación de la reflectividad con la
+altura (en colores) y las estimaciones de cada simulaciónse muestra la
+variación (en símbolos). En las primeras hroas de la noche el tope de la
+capa estable se encuentra por debajo de los 200 m de acuerdo a las
+parametrizaciones y es posible compararlo con \(\nabla_{dBZ}\) debido al
+ruido de esta variable en los primeros metros. Posteriormente el
+\(\nabla_{dBZ}\) presenta un máximo a 300 m de altura desde las 04 UTC
+mientras que la altura de la capa límite estimada por las observaciones
+llega a esa altura pasadas las 05 UTC. La altura de la capa estable se
+mantienen alrededor de ese nivel hasta las 10 UTC mientas que
+\(\nabla_{dBZ}\) crece rápidamente a partir de las 9 UTC. De acuerdo a
+esto la capa límite estimada por las parametrizaciones parece
+\emph{retrasada} respecto de las observaciones en aproximadamente una
+hora.
+
+El desarrollo de la capa mezclada en las parametrizaciones parece ser
+más lento en comparación con las observaciones de \(\nabla_{dBZ}\),
+puesto que el tope crece más lentamente y lo hace casi dos horas
+después. ACM2 sobreestima la altura de la capa mezclada y sucede algo
+similar con YSU aunque la señal del máximo \(\nabla_{dBZ}\) desaparece
+en el momento donde ocurre la máxima altura para YSU. El comportamiento
+de MYJ si bien es muy diferente al observado en las otras dos
+simulciones, tiene características semejantes a la altura de la CLP
+estimada con las observaciones. En primer lugar, al comenzar el
+desarrollo de la capa mezclada, el tope de la capa estimada por MYJ
+crece rápidamente y al mismo ritmo que en las observaciones aunque una
+hora después. La desaceleración observada posteriormente coincide con
+uno de los máximos de \(\nabla_{dBZ}\) observados entre las 1 y las 15
+UTC para luego profundizarse hasta alcanzar los 2000 m de altura al
+igual que las observaciones. El descenso observado en esta simulación
+también está presente en la variación de la reflectividad pero no así el
+posterior crecimiento.
 
 \begin{figure}
 
@@ -2120,14 +2266,45 @@ límite}\label{altura-de-la-capa-limite-1}
 \subsubsection{Coeficientes de difusividad
 turbulenta}\label{coeficientes-de-difusividad-turbulenta-1}
 
+En la Figura \ref{k-ulke} se muestran los perfiles verticales
+normalizados de los coeficientes de dibusividad de calor
+(\(K_h^* = K_h/khu_*\)) y cantidad de movimiento (\(K_m^* = K_m/khu_*\))
+calculados a partir del modelo propuesto por Ulke (2000) y promediados a
+lo largo de cada período estable e inestable. Cada perfil fue obtenido
+utlizando los valores de \(L\), \(u_*\) y \(h\) estimados en cada
+simulación, los valores promedio para cada régimen y simulación se
+presentan en la Tabla \ref{tabla-clp}.
+
+De acuerdo con Ulke (2000) la forma de los perfiles de cada coeficiente
+tienen una dependencia con el parámetro \(h/L\). En el regimen estable
+de la capa límite, mayores \(h/L\) producen perfiles con máximos cerca
+de superficie y de menor magnitud mientras que valores cercanos a cero
+dan un perfil con el máximo ubicado en la mitad de la capa límite y de
+mayor magnitud. En el regimen inestable \(h/L\) es negativo y la
+dependencia con los perfiles es contraria. Valores de \(h/L\) cercanos a
+cero están asociados a coeficientes de menor magnitud y aumentan al
+disminutir \(h/L\).
+
+Los parámetros \(h/L\) calculados para cada simulación y regimen se
+muestra en la Tabla \ref{tabla-clp} y a partir de estos puede verse que
+los perfiles obtenidos siguen la forma de los perfiles teóricos
+propuestos.
+
 \begin{figure}
 
 {\centering \subfloat[$K_h* = K_h/khu_*$ \label{kh-norm}\label{fig:k_norm1}]{\includegraphics{Tesis_files/figure-latex/k_norm-1} }\newline\subfloat[$K_m* = K_m/khu_*$ \label{km-norm}\label{fig:k_norm2}]{\includegraphics{Tesis_files/figure-latex/k_norm-2} }
 
 }
 
-\caption{Coeficiente de difusividad normalizados calculados a partir de los modelos propuestos por Ulke 2000 y promediados sobre en período estable (izquierda) y el período inestable (derecha) de la capa límite. \label{kh-ulke}}\label{fig:k_norm}
+\caption{Coeficiente de difusividad normalizados calculados a partir de los modelos propuestos por Ulke 2000 y promediados sobre en período estable (izquierda) y el período inestable (derecha) de la capa límite. \label{k-ulke}}\label{fig:k_norm}
 \end{figure}
+
+A partir de los perfiles obtenidos se calculó el número de Prandtl como
+\(Pr = K_m/K_h\) para cada simulación y en función de la altura. En la
+Figura \ref{Pr} se muestran los perfiles verticales del número de
+Prandtl. Se observa un comportamiento similar en todas la simulaciones
+aunque varía en los primeros 200 m luego es aproximadamente constante
+con la altura, lo que es esperable para este parámetro.
 
 \begin{figure}
 
@@ -2140,7 +2317,7 @@ turbulenta}\label{coeficientes-de-difusividad-turbulenta-1}
 
 \begin{table}
 
-\caption{\label{tab:tabla-clp}Parámetros característicos de la capa límite para cada simulación y regimen, promediados para todo el periodo y todo el perfil (en los casos que corresponda).}
+\caption{\label{tab:tabla-clp}Parámetros característicos de la capa límite para cada simulación y regimen, promediados para todo el periodo y todo el perfil (en los casos que corresponda). \label{tabla-clp}}
 \centering
 \begin{tabular}[t]{llrrrrr}
 \toprule
@@ -2195,8 +2372,19 @@ Por ahora solo notas sueltas de lo que se me va ocurriendo:
   señal de radar. O sea que en niveles mas altos las simulaciones son
   mejores que las observaciones??!!
 \item
+  En 1km la hodógrafa en las simulaciones ya no tiene forma de nada.
+  Será que las características sinópticas le ganan a la oscilación
+  inercial en las simulacioneS? Hasta donde se puede considerar válido
+  el modelo de Van de Wiel?
+\item
   El LLJ parece durar más en las simulaciones, tendrá que ver con la
   duración (también prolongada) de la CLP?
+\item
+  El ``buen'' desempeño de MYJ al representar la altura de la capa
+  límite podría estar indicando que el transporte no local de
+  propiedades es suficiente y por lo tanto los eddies presentes en la
+  capa límite no son son muy grandes (entonces no es necesario tener
+  transporte no local)
 \end{itemize}
 
 \chapter*{Referencias}\label{referencias}

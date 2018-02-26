@@ -11,7 +11,7 @@ output:
 classoption: oneside
 documentclass: book
 fontsize: 12pt
-geometry: inner = 3cm, outer = 2cm, top = 2.5cm, bottom = 2.5cm
+geometry: inner = 2cm, outer = 2cm, top = 2.5cm, bottom = 2.5cm
 header-includes:
 - \linespread{1.25}
 - \usepackage{subfig}
@@ -20,25 +20,58 @@ header-includes:
 lang: es-AR
 link-citation: yes
 csl: Bibliografia/meteorologica.csl
-subtitle: Validación de parametrizaciones de capa límite utilizando datos de radar 
-bibliography:
-- Bibliografia/papers.bib
-- Bibliografia/packages.bib
-
-
-nocite: | 
-  @Amante2009
-  @Kalnay1995
 ---
 
 
 La piba del blog de tesis con rmarkdown
 Radx
 Pyart
+La piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+PyartLa piba del blog de tesis con rmarkdown
+Radx
+Pyart
 
-# Referencias
 
-[@Ruiz2017]
 
-[@Stull1988]
 

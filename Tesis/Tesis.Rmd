@@ -1,6 +1,8 @@
 ---
 title: "Tesis de Licenciatura"
 author: "Paola Corrales"
+#thanks: "Gracias a mi gata"
+#abstract: "Esto es una tesis"
 date: ''
 output:
   pdf_document:
@@ -13,12 +15,14 @@ output:
     reference_docx: word-template.docx
     toc: yes
     toc_depth: '4'
-classoption: oneside
+classoption: oneside, a4paper
 documentclass: book
 fontsize: 12pt
 geometry: inner = 3cm, outer = 2cm, top = 2.5cm, bottom = 2.5cm
 header-includes:
-- \linespread{1.25}
+- \usepackage{setspace}
+- \setstretch{1.5}
+#- \linespread{1.25}
 - \usepackage{subfig}
 - \usepackage{hyperref}
 - \usepackage[textsize=tiny]{todonotes}
@@ -88,6 +92,12 @@ path <- "~/Radar/WRF/"
 
 remove(map2)
 ```
+
+\newpage
+
+\section*{Resumen}
+\newpage
+
 \renewcommand{\listtablename}{Índice de tablas} 
 \renewcommand{\tablename}{Tabla} 
 
@@ -95,12 +105,6 @@ remove(map2)
 \newpage
 
 \listoftables
-\newpage
-
-\section*{Agradecimientos}
-\newpage
-
-\section*{Resumen}
 \newpage
 
 # Introducción
@@ -207,7 +211,7 @@ Existen muchos algoritmos que buscan solucionar el problema del aliasing [por ej
 
 A partir de la exploración visual puede observarse que el algoritmo resuelve el problema de manera satisfactoria en mayor parte del dominio. Sin embargo se observa una zona en el borde inferior donde la magnitud de la variable es anómalamente alta. Algunas discontinuidades se observaron también en otros casos. Se decidió utilizar este algoritmo para preprocesar todos los volúmenes de datos de radar y se incorporaron algunos controles de calidad al algoritmo de VAD desarrollado (Ver Sección \ref{sec-vad}).
 
-```{r aliasing, fig.cap="Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\\circ}$ y $V_N = 6.7 m/s$. Notar las escalas diferentes.", fig.subcap=c("Con aliasing \\label{aliasing}", "Sin aliasing \\label{no-aliasing}"), out.extra=" ", fig.width=0.48*text.width}
+```{r aliasing, fig.cap="Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\\circ}$ y $V_N = 6.7 m/s$. Notar las escalas diferentes.", fig.subcap=c("Con aliasing \\label{aliasing}", "Sin aliasing \\label{no-aliasing}"), out.extra=" ", fig.width=0.48*text.width, fig.align='center'}
 
 radar <- nc_open("seudocache/cfrad.20160114_060005.000_to_20160114_060431.001_INTA_Parana_SUR.nc")
 azimut <- ncvar_get(radar, 'azimuth')   
@@ -640,9 +644,12 @@ tmp <- tmp[, .(rms = rms(value, tmp[variable == "sondeo_spd", value]),
   .[, Prueba := c("SE", "EA", "EA+NA")] %>% 
   .[, c(4, 2, 3)]
 
-kable(tmp, digits = 4, caption = "Errores calculados para las distintas pruebas de validación. \\label{validacion-errores}")
+kable(tmp, digits = 4, 
+      caption = "Errores calculados para las distintas pruebas de validación. \\label{validacion-errores}") %>% 
+      kable_styling(latex_options = "hold_position")
 ```
 
+\newpage
 
 Esto puede verificarse con el cálculo de distintos errores [@Gao2004]: la raíz del error cuadrático medio ($rms = \sqrt{ \frac{\sum (V-V_{ref})^2}{N} }$) y el error relativo al rms ($rre = \sqrt{ \frac{\sum (V-V_{ref})^2}{\sum (V_{ref})^2} }$) donde $V_{ref}$ corresponde a la variable de referencia, en este caso el sondeo. Los resultados se muestran en la Tabla \ref{validacion-errores} y como puede observarse no hay un aumento importante al incorporar errores aleatorios y disminuye al quitar datos en la prueba EA+NA ya que los errores calculados son sensibles a la cantidad total de datos.
 
@@ -853,7 +860,7 @@ K_m(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1
 K_h(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1 - 13\frac{h}{L}\frac{z}{h} \right)^{1/2}
 \end{equation}
 
-Y a partir de esto se obtiene $P_r(z) = K_m/K_h$ para obtener el coeficiente de difusividad de cantidad de movimientos a partir de los datos del modelo.
+donde $u_*$ es la velocidad de fricción y $k$ la constante de Von Karman. A partir de este modelo se obtiene $P_r(z) = K_m/K_h$ para obtener el coeficiente de difusividad de cantidad de movimientos a partir de los datos del modelo.
 
 ```{r remove-metodologia}
 remove("param", "radar", "tmp", "vad")
@@ -1472,7 +1479,7 @@ En la Figura \ref{hodografa-n} se muestran hodógrafas para tres niveles distint
 
 Sin embargo en los niveles superiores 0.3 km y 1 km la forma de herradura si puede distinguirse y el giro de la hodógrafa es antihorario mostrando una concordancia cualitativa con el modelo de oscilación inercial propuesto por Van De Wiel. Si bien cada caso tiene sus características particulares, los casos 1 y 2 tienen cierta similitud ya que las hodógrafas se ubican principalmente en el cuadrante inferior izquierdo mientras que la hodógrafa del Caso 3 se ubica en el derecho. Esto último tiene que ver con las características del viento que es predominante del O en casi todo momento para este último caso.
 
-Las hodógrafas observadas para los dos niveles mostrados (y otros niveles no incluidos en la figura por motivos de espacio) muestran cierta variación con la altura por lo que la oscilación inercial cambia con la altura.
+Las hodógrafas observadas para los dos niveles mostrados (y otros niveles no incluidos en la figura por motivos de espacio) muestran cierta variación con la altura por lo que la oscilación inercial tiene una variación vertical.
 
 ```{r hodografa-nivel, fig.cap="Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 6 horas) y el cuadrado marca el primer tiempo (00 UTC). \\label{hodografa-n}", fig.subcap=c("Datos observados en la estación meteorológica. \\label{hodo-nivel1}", "Datos observados por el radar. \\label{hodo-nivel2}"), fig.width=0.95*text.width, fig.ncol=1, fig.align='center', fig.height=0.25*text.height}
 
@@ -1553,7 +1560,7 @@ En la Figura \ref{modelo-spd} se  muestra la magnitud del viento en función del
 Sin embargo hay diferencias importantes entre las observaciones y las simulaciones. Se observa un primer máximo por debajo de 500 m en las primeras horas que presede al máximo asociado al LLJ pero que tiene menor magnitud. En las tres simulaciones el LLJ parece prolongarse en el tiempo al menos 3 horas más que en las observaciones y el máximo de viento ocurre en distintos niveles en caso. En niveles altos, el viento decrece rápidamente llegando a valores menores que lo observado.
 
 
-```{r vad-modelo-spd, fig.cap="Magnitud del viento observada por el radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-spd}", fig.width=0.95*text.width, fig.align='center'}
+```{r vad-modelo-spd, fig.cap="Magnitud del viento observada por el radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-spd}", fig.width=0.98*text.width, fig.align='center'}
 
 gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 gdata[, caso2 := factor(caso,
@@ -1587,7 +1594,7 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_d
 La variación de la dirección del viento con el tiempo y la altura en cada simulación se muestra en la Figura \ref{modelo-dir}. Nuevamente se observa una similaridad importante entre las tres simulaciones y en líneas generales conservan las características de las observaciones. Para analizar en más detalle el desempeño de las simulaciones se calculó la diferencia de la magnitud del viento entre las observaciones y cada simulación y lo mismo para el ángulo de la dirección del viento (Figura \ref{dif}).
 
 
-```{r vad-modelo-dir, fig.cap="Dirección del viento observada por el radar(Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-dir}", fig.width=0.95*text.width, fig.align='center'}
+```{r vad-modelo-dir, fig.cap="Dirección del viento observada por el radar(Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-dir}", fig.width=0.98*text.width, fig.align='center'}
 
 gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 gdata[, caso2 := factor(caso,
@@ -1705,9 +1712,6 @@ ggplot(gdata, aes(ht, value)) +
 
 ```
 
-Otro aspecto importante para analizar es el comportamiento de los errores con la altura. Para eso se calcularon el bias, rmse, rmsens y el coeficiente de correlación de la magnitud del viento para cada nivel y simulación (Figura \ref{err-spd}). En todas las simulaciones el bias tiene un comportamiento similar con la altura, positivo por debajo de 600 m y negativo por encima. La mayor diferencia entre las simulaciones se da en los niveles inferiores entre 200 y 300 m donde MYJ tiene un bias 1 m/s mayor que ACM2. El rmse tiene un mínimo en 500 m para todas las simulaciones y aumenta tanto en el nivel del LLJ como por encima de los 500 m. La simulación MYJ tiene un mayor rmse en casi todos los niveles. Los errores no sistemáticos son más importantes alrededor de 1000 m y por encima de 500 m MYJ tiene un rmsens mayor a las otras simulaciones. En cuanto al coeficiente de correlación, en los primeros niveles y hasta los 600 m aproximadamente es superior a 0.9 y con un comportamiento muy similar en las tres simulaciones. Luego de ese nivel disminuye rápidamente hasta llegar a valores cercanos a cero o negativos por encima de 1000 m. Como en el caso de los errores MYJ tiene el peor desempeño.
-
-
 ```{r err-tabla}
 
 gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm)) %>% 
@@ -1740,30 +1744,39 @@ err <- cbind(err, gdata)
 err[,6] <- NULL
 
 kable(err, format = "latex", 
-      digits = 4, 
+      digits = 3, 
       booktabs = T,
       caption = "Comparación entre las simulaciones y las observaciones de radar a partir de distintos errores \\label{err}") %>% 
   add_header_above(c(" ", "Velocidad" = 4, "Dirección" = 4)) %>% 
   kable_styling(latex_options = "hold_position")
 ```
 
+Otro aspecto importante para analizar es el comportamiento de los errores con la altura. Para eso se calcularon el bias, rmse, rmsens y el coeficiente de correlación de la magnitud del viento para cada nivel y simulación (Figura \ref{err-spd}). En todas las simulaciones el bias tiene un comportamiento similar con la altura, positivo por debajo de 600 m y negativo por encima. La mayor diferencia entre las simulaciones se da en los niveles inferiores entre 200 y 300 m donde MYJ tiene un bias 1 m/s mayor que ACM2. El rmse tiene un mínimo en 500 m para todas las simulaciones y aumenta tanto en el nivel del LLJ como por encima de los 500 m. La simulación MYJ tiene un mayor rmse en casi todos los niveles. Los errores no sistemáticos son más importantes alrededor de 1000 m y por encima de 500 m MYJ tiene un rmsens mayor a las otras simulaciones. En cuanto al coeficiente de correlación, en los primeros niveles y hasta los 600 m aproximadamente es superior a 0.9 y con un comportamiento muy similar en las tres simulaciones. Luego de ese nivel disminuye rápidamente hasta llegar a valores cercanos a cero o negativos por encima de 1000 m. Como en el caso de los errores MYJ tiene el peor desempeño.
+
 ### Características de la capa límite planetaria
+
+Los perfiles mostrados en la Figura \ref{perfil-mod} correspondientes alas 17 UTC muestran las características de la capa mezclada. El perfil observado muestra un ligero aumento con la altura pero mantiene la homegeneidad característica de la capa mezclada. Las tres simulaciones presentan un perfil con un comportamiento similar, son verticalmente homogeneos con una ligera disminución de la magnitud del viento con la altura pero similar al perfil observado.
 
 #### Oscilación inercial y LLJ
 
-```{r perfiles-mod, fig.cap="Perfil de viento observado por el radar a las 0600 y las 17 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \\label{perfiles-modelo}", fig.width=0.95*text.width, fig.align='center'}
+Si bien el máximo del viento en la capa estable se da en distintos momentos en cada simulación y con respecto a las observaciones, se comparó el perfil vertical de viento a las 06 UTC como hora de referencia donde se observa el LLJ (Figura \ref{perfil-mod}). El perfil de las tres simulaciones tiene un comportamiento similar con diferencias de hasta 2 m/s en algunos niveles. Como se observó en la Figura \ref{modelo-spd} durante la noche la magnitud del viento disminuye rápidamente luego del máximo llegando a un mínimo de entre 2 y 3 m/s en las simulaciones respecto de los 8 m/s observados por el radar a 1000 m. 
+
+Al aplicar el Criterio de Bonner en todas las simulaciones se puede observar el LLJ que a las 06 UTC tiene el máximo ubicado en 200 m y con magnitudes que varían entre 14 y 16 m/s. Sin embargo en las simulaciones el LLJ se prolonga en el tiempo mucho más que en las observaciones ya que el máximo viento ocurre dos horas después (posterior a las 8 UTC) y con magnitud entre 1 y 2 m/s superior a lo observado. 
+
+
+```{r perfiles-mod, fig.cap="Perfil de viento observado por el radar a las 06 y las 17 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \\label{perfil-mod}", fig.width=0.95*text.width, fig.align='center'}
 
 gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
-gdata[, caso2 := factor(caso,
+gdata[, caso := factor(caso,
                        levels = c("Obs", "YSU", "MYJ", "ACM2"),
                        ordered = T)] %>% 
   .[, hora := hour(date_time)] %>% 
   .[minute(date_time) == 00 & hour(date_time) %in% c(06, 17) & ht < 2 &
       !is.na(spd_smooth)] %>% 
-  ggplot(aes(ht, spd_smooth, color = caso2)) +
+  ggplot(aes(ht, spd_smooth, color = caso)) +
   geom_line() +
-  geom_rug(data = gdata[minute(date_time) == 00 & hour(date_time) == 6][, maxspd := max(spd_smooth, na.rm = T), by = caso2][spd_smooth == maxspd]) +
-  geom_rug(data = gdata[minute(date_time) == 00 & hour(date_time) == 6 & ht > 0.5][, minspd := min(spd_smooth, na.rm = T), by = caso2][spd_smooth == minspd]) +
+  geom_rug(data = gdata[minute(date_time) == 00 & hour(date_time) == 6][, maxspd := max(spd_smooth, na.rm = T), by = caso][spd_smooth == maxspd]) +
+  geom_rug(data = gdata[minute(date_time) == 00 & hour(date_time) == 6 & ht > 0.5][, minspd := min(spd_smooth, na.rm = T), by = caso][spd_smooth == minspd]) +
   # geom_ribbon(aes(ymin = spd_smooth - rmse2, ymax = spd_smooth + rmse2,
   #             fill = as.factor(hour(date_time))), 
   #             alpha = 0.5, color = NA) +
@@ -1776,7 +1789,12 @@ gdata[, caso2 := factor(caso,
   theme_minimal()
 ```
 
-```{r hodografa-wrf, fig.cap="Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 4 horas) y el cuadrado marca el primer tiempo (00 UTC). \\label{hodografa-wrf}", fig.width=0.95*text.width, fig.align='center'}
+En la Figura \ref{hodografa-mod} se presentan las hodógrafas observadas para distintos niveles en el Caso 1 y las obtenidas a partir de las tres simulaciones. Al igual que en figuras anteriores, las simulaciones tienen un comportamiento similar entre si. En el primer nivele de 0.3 km las hodógrafas tiene la forma de herradura pronosticada por el modelo de Van De Wiel aunque la magnitud del viento es superior a lo observado en las primeras 10 horas mostradas. El nivel de 0.5 km también presenta la característica forma de herradura pero en este caso la magnitud del viento de las distintas simulaciones es similar a la obervada en las primeras horas y luego es menor. 
+
+Sin embargo en el nivel de 1 km si bien la hodógrafa observada presenta la forma de herradura y se ajusta cualitativamente al modelo de oscilación inercial, no ocurre lo mismo en las simulaciones. En primer lugar, al igual que se observó en la Figura \ref{modelo-spd}, la magnitud del viento es mucho menor a la observada ya que decrece rápidamente con la altura (Figura \ref{perfil-mod}) pero además la rotación alrededor de un perfil de equilibrio no se observa en ninguna de las simulaciones.
+
+
+```{r hodografa-wrf, fig.cap="Variación del vector del viento en función del tiempo para tres niveles. Cada circulo representa un valor horario (con circulos más grandes cada 4 horas) y el cuadrado marca el primer tiempo (00 UTC). \\label{hodografa-mod}", fig.width=0.95*text.width, fig.align='center'}
 
 gdata <- rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm)
 gdata <- as.data.table(gdata) %>%
@@ -1809,11 +1827,11 @@ gdata[ht %in% c(0.3, 0.5, 1.0) & !is.na(spd_smooth)] %>%
 
 #### Análisis de la homogeneidad espacial en las variables de estabilidad
 
-Para determinar la validez del promedio espacial de una variable en el dominio en estudio es importante analizar la variabilidad de la misma espacial y temporalmente.
+Si bien los análisis previos se realizaron comparando los perfiles de viento obtenidos a partir de la técnica VAD, otras variables podrían analizarse tanto a partir de su valor más cercano al radar como por su promedio espacial e en el dominio en estudio. Para determinar la validez de este promedio es importante analizar la variación de la variable espacial y temporalmente.
 
-Se utilizó la Longitud de Monin-Obukhov ($L$) para analizar la homogeneidad calculando el porcentaje de veces que el valor local tenía signo distinto a la moda calculada para todo el dominio y cada tiempo de simulación. Esto es importante ya que el signo de $L$ marca la diferencia entre el régimen estable y el regimen inestable y por lo tanto debe mantenerse en el dominio en cada período. 
+Para analizar la honogeneidad se utilizó la Longitud de Monin-Obukhov ($L = \frac{-u_*^3 \;T}{k \, g \, (w'\theta ')_s}$) calculando el porcentaje de veces que el valor local (es decir, es un punto particular) tenía signo distinto a la moda calculada para todo el dominio y cada tiempo de simulación. El comportamiento de $L$ permite analizar la homogeneidad ya que su signo marca la diferencia entre el régimen estable y el regimen inestable de la capa límite y por lo tanto debe mantenerse constante en el dominio durante cada período. 
 
-En la Figura \ref{L-esp} se muestra el porcentaje de veces que el valor de $L$ en cada punto de grilla tiene signo distinto a la moda calculada en todo el dominio y el período analizado. Se observa que que existen regiones donde el signo de $L$ es distinto a la moda del dominio más del 40% de las veces. Esto puede estar relacionado la variación de la altura del terreno (Figura \ref{topografia}) o a la presencia del río y zonas con suelos saturados donde los flujos verticales de calor latente ($F_{\theta}$) pueden tener un comportamiento contrario al suelo seco. Esto último se observa en la Figura \ref{L-esp}, donde se muestra que las regiones donde el porcentaje de veces que el valor de $F_{\theta}$ tiene un signo distinto a la moda es alto coincide con las regiones donde se encuentra el río y los valores de $L$ anómalos. 
+En la Figura \ref{L-esp} se muestra el porcentaje de veces que el valor de $L$ en cada punto de grilla tiene signo distinto a la moda calculada en todo el dominio y el período analizado. Se observa que que existen regiones donde el signo de $L$ es distinto a la moda del dominio más del 40% de las veces. Esto podría estar relacionado la variación de la altura del terreno (Figura \ref{topografia}) o a la presencia del río y zonas con suelos saturados en la zona con mayor porcentaje de variación de $L$. La presencia de suelos saturados podría generar que el flujo verticale de calor latente en superficie ($F_{\theta} = (w'\theta ')_s$) tenga un comportamiento contrario al que se observa en suelos seco generando esta variabilidad en el dominio. Esto último se observa en la Figura \ref{L-esp}, donde se muestra que las regiones donde el porcentaje de veces que el valor de $F_{\theta}$ tiene un signo distinto a la moda mayor coincide con las regiones donde se encuentra el río y los valores de $L$ anómalos. 
 
 
 ```{r L-espacial, fig.cap="Porcentaje de veces que el valor local de L (a) y el flujo vertical de calor (b) tiene signo distinto a la moda del dominio calculada en todo el periodo analizado. Se muestran los valores mayores al 5\\% (colores) y topografía del dominio (contornos). Datos de la simulación YSU. \\label{L-esp}", fig.width=0.95*text.width, fig.align='center'}
@@ -1866,8 +1884,7 @@ remove(hfx, hfx.YSU, L, L.YSU)
 
 ```
 
-Por lo anterior se decidió centrar el análisis de las variables asociadas a la CLP en el punto de grilla más cercano al radar, que además no presenta gran variabilidad respecto de la zona circundante.
-
+De acuerdo a estos resultados se decidió centrar el análisis de las variables asociadas a la CLP en el punto de grilla más cercano al radar, que además no presenta gran variabilidad respecto de la zona circundante.
 
 
 ```{r leo-pbl}
@@ -1922,6 +1939,9 @@ all.pbl <- rbind(caso.YSU, caso.MYJ, caso.ACM2) %>%
 remove(list = c("caso.YSU", "caso.MYJ", "caso.ACM2"))
 ```
 
+En la Figura \ref{L-param} se presenta la variación de $L$ a lo largo del tiempo en cada simulación. Esta variable permite reconocer el período estable de la capa límite, la capa estable nocturna y el período instables correspondiente a la capa mezclada. Debido a que el signo depende de $(w'\theta ')_s$ que cambia su signo en la transición entre una capa y la otra, $L$ tiende a infinito a estos momentos. El comportamiento de $L$ es acorde a lo descripto por @Stull1988 para condiciones de buen tiempo.
+
+
 ```{r L-parm, fig.cap="Longitud de Monin Obukhov (m) en función del tiempo, para cada simulación. \\label{L-param}", fig.width=0.95*text.width, fig.align='center'}
 
 ggplot(all.pbl, aes(date, L)) +
@@ -1939,6 +1959,14 @@ ggplot(all.pbl, aes(date, L)) +
 
 
 #### Altura de la capa límite
+
+En la Figura \ref{pblh} se muestra la altura de la capa líte estimada por cada parametrización en todo el período. En líneas generales representan de manera correcta la evolución del tope de la capa límite, por ejemplo las tres parametrizaciones marcan el comienzo del crecimiento de la capa mezclada pasadas las 10 UTC, esto es aproximadamente una hora posterior al amancer pero divergen de manera considerable al estimar el tope de la capa mezclada.
+
+En YSU la altura de la capa estable es mayor a las otras dos parametrizaciones mientras que durante el día la estimación queda por debajo o entre las restantes. MYJ presenta las mayores variaciones del tope de la capa mezclada, inicialmente su crecimiento es muy rápido superando los 1000 metros en una hora pero posteriormente el crecimiento se desacelera con un período de decrecimiento luego de las 17 UTC. Si bien en presencia de nubosidad el tope de la capa mezclada puede verse afecta de esta manera, durante esas horas no se registró nubes en la estación meteorológica y tampoco se observa el decrecimiento del tope en las otras simulaciones. La parametrización ACM2 genera la capa mezclada más profunda superando los 2500 m o 1872 m en promedio (Tabla \ref{tabla-clp}).
+
+En resumen ACM2 produce la capa mezclada más profunda, en segundo lugar YSU y MYJ la capa menos profunda. Este resultado fue obtenido por otros autores [por ejemplo @Hu2010; @Xie2012] y puede deberse a las características de las distintas parametrizaciones. En particular MYJ es un esquema local y por lo tanto el transporte vertical de las distintas propiedades es más débil. Sumando a lo anterior MYJ produce un menor intercambio de temperatura y humedad con la atmósfera libre limitando el crecimiento de la capa límite [@Xu2010].
+
+Debido a que cada parametrización estima la altura de la capa límite de manera diferente, se utilizó el criterio descripto en la Sección \ref{sec-pbh} para estimar la altura de la capa estable en las tres simulaciones. En la Figura \ref{pblh-spd} se muestra la altura de la capa estable nocturna estimada por cada parametrización en lineas y la estimada utilizando la altura a la que ocurre el máximo viento en puntos. Si bien este criterio está limitado por la resolución de la grilla vertical utilizada por el VAD, se observa una concordancia entre las estimaciones con MYJ y ACM2 principalmente en los momentos donde se produce el máximo LLJ. 
 
 ```{r pblh-wrf, fig.cap="Altura de la capa límite en cada simulación. \\label{pblh-wrf}", fig.subcap=c("Estimada directamente por cada esquema de CLP. \\label{pblh}", "Comparación entre la altura calculada por cada esquema (linea) y la estimada a partir de la altura del viento máximo (puntos) sólo período estable. \\label{pblh-spd}"), fig.width=0.75*text.width, fig.height=0.35*text.height, fig.align='center', fig.ncol=1}
 
@@ -1973,6 +2001,10 @@ all.pbl[lev < 2500 & L >=0 , .(pblh = pblh[1], pblh.spd = lev[which.max(spd)], L
 
 ```
 
+La Figura \ref{pblh-dbz} permite comparar la estimación de la altura de la capa límite a partir de la variación de la reflectividad con la altura (en colores) y las estimaciones de cada simulaciónse muestra la variación (en símbolos). En las primeras hroas de la noche el tope de la capa estable se encuentra por debajo de los 200 m de acuerdo a las parametrizaciones y es posible compararlo con $\nabla_{dBZ}$ debido al ruido de esta variable en los primeros metros. Posteriormente el $\nabla_{dBZ}$ presenta un máximo a 300 m de altura desde las 04 UTC mientras que la altura de la capa límite estimada por las observaciones llega a esa altura pasadas las 05 UTC. La altura de la capa estable se mantienen alrededor de ese nivel hasta las 10 UTC mientas que $\nabla_{dBZ}$ crece rápidamente a partir de las 9 UTC. De acuerdo a esto la capa límite estimada por las parametrizaciones parece *retrasada* respecto de las observaciones en aproximadamente una hora.
+
+El desarrollo de la capa mezclada en las parametrizaciones parece ser más lento en comparación con las observaciones de $\nabla_{dBZ}$, puesto que el tope crece más lentamente y lo hace casi dos horas después. ACM2 sobreestima la altura de la capa mezclada y sucede algo similar con YSU aunque la señal del máximo $\nabla_{dBZ}$ desaparece en el momento donde ocurre la máxima altura para YSU. El comportamiento de MYJ si bien es muy diferente al observado en las otras dos simulciones, tiene características semejantes a la altura de la CLP estimada con las observaciones. En primer lugar, al comenzar el desarrollo de la capa mezclada, el tope de la capa estimada por MYJ crece rápidamente y al mismo ritmo que en las observaciones aunque una hora después. La desaceleración observada posteriormente coincide con uno de los máximos de $\nabla_{dBZ}$ observados entre las 1 y las 15 UTC para luego profundizarse hasta alcanzar los 2000 m de altura al igual que las observaciones. El descenso observado en esta simulación también está presente en la variación de la reflectividad pero no así el posterior crecimiento.
+
 ```{r dbz-wrf, fig.cap="Valor absoluto del gradiente vertical de dBZ en función de la altura y el tiempo para el Caso 1 y la altura de la capa límite estimada en cada simulación. \\label{pblh-dbz}", fig.align='center',  fig.height=0.4*text.height}
 elev <- unique(dbz_20160114$elevacion)
 pbl <- readRDS("pblh")
@@ -1996,7 +2028,6 @@ remove(files, dbz_20160114)
 ```
 
 
-
 #### Coeficientes de difusividad turbulenta
 
 ```{r make-ulke}
@@ -2007,8 +2038,13 @@ all.pbl <- all.pbl[, c("kh.u", "km.u", "u.u") := .(
   .[, Pr := km.u/kh.u]
 ```
 
+En la Figura \ref{k-ulke} se muestran los perfiles verticales normalizados de los coeficientes de dibusividad de calor ($K_h^* = K_h/khu_*$) y cantidad de movimiento ($K_m^* = K_m/khu_*$) calculados a partir del modelo propuesto por @Ulke2000 y promediados a lo largo de cada período estable e inestable. Cada perfil fue obtenido utlizando los valores de $L$, $u_*$ y $h$ estimados en cada simulación, los valores promedio para cada régimen y simulación se presentan en la Tabla \ref{tabla-clp}. 
 
-```{r k_norm, fig.cap="Coeficiente de difusividad normalizados calculados a partir de los modelos propuestos por Ulke 2000 y promediados sobre en período estable (izquierda) y el período inestable (derecha) de la capa límite. \\label{kh-ulke}", fig.subcap=c("$K_h* = K_h/khu_*$ \\label{kh-norm}", "$K_m* = K_m/khu_*$ \\label{km-norm}"), fig.align='center', fig.height=0.40*text.height, fig.width=0.95*text.width, fig.ncol=1}
+De acuerdo con @Ulke2000 la forma de los perfiles de cada coeficiente tienen una dependencia con el parámetro $h/L$. En el regimen estable de la capa límite, mayores $h/L$ producen perfiles con máximos cerca de superficie y de menor magnitud mientras que valores cercanos a cero dan un perfil con el máximo ubicado en la mitad de la capa límite y de mayor magnitud. En el regimen inestable $h/L$ es negativo y la dependencia con los perfiles es contraria. Valores de $h/L$ cercanos a cero están asociados a coeficientes de menor magnitud y aumentan al disminutir $h/L$.
+
+Los parámetros $h/L$ calculados para cada simulación y regimen se muestra en la Tabla \ref{tabla-clp} y a partir de estos puede verse que los perfiles obtenidos siguen la forma de los perfiles teóricos propuestos.
+
+```{r k_norm, fig.cap="Coeficiente de difusividad normalizados calculados a partir de los modelos propuestos por Ulke 2000 y promediados sobre en período estable (izquierda) y el período inestable (derecha) de la capa límite. \\label{k-ulke}", fig.subcap=c("$K_h* = K_h/khu_*$ \\label{kh-norm}", "$K_m* = K_m/khu_*$ \\label{km-norm}"), fig.align='center', fig.height=0.40*text.height, fig.width=0.95*text.width, fig.ncol=1}
 
 all.pbl_norm <- all.pbl[, `:=`(kh.u_norm = kh.u/(ust*0.4*pblh),
              km.u_norm = km.u/(ust*0.4*pblh), 
@@ -2041,6 +2077,8 @@ ggplot(all.pbl_norm, aes(lev_norm, km.u_norm)) +
   theme_minimal()
 ```
 
+A partir de los perfiles obtenidos se calculó el número de Prandtl como $Pr = K_m/K_h$ para cada simulación y en función de la altura. En la Figura \ref{Pr} se muestran los perfiles verticales del número de Prandtl. Se observa un comportamiento similar en todas la simulaciones aunque varía en los primeros 200 m luego es aproximadamente constante con la altura, lo que es esperable para este parámetro. 
+
 ```{r pr, fig.cap="Variación del número de Prandtl calculado a partir del modelo propuesto por Ulke 2000 con las variables de cada simulación y promediado en cada periodo. \\label{Pr}", fig.align='center', fig.width=0.95*text.width}
 group_by(all.pbl, param, lev, regimen) %>%
   summarise(Pr = mean(Pr, na.rm = T)) %>%
@@ -2048,10 +2086,9 @@ ungroup() %>%
 ggplot(aes(lev, Pr)) + 
   geom_line(aes(color = as.factor(param))) +
   scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
-  scale_y_continuous(name = "Km/Kh") +
+  scale_y_continuous(name = "Km/Kh", expand = c(0,0)) +
   scale_x_continuous(name = "z", limits = c(0,1500)) +
   facet_wrap(~regimen, scales = "free") +
-  #labs(title = "Perfiles a partir del promedio del dominio") +
   coord_flip() +
   theme_minimal()
 ```
@@ -2072,7 +2109,7 @@ names(hL)[5] <- paste0(names(hL)[5], footnote_marker_number(3, "latex"))
 names(hL)[6] <- paste0(names(hL)[6], footnote_marker_number(4, "latex"))
 
 kable(hL, "latex",
-      caption = "Parámetros característicos de la capa límite para cada simulación y regimen, promediados para todo el periodo y todo el perfil (en los casos que corresponda).", 
+      caption = "Parámetros característicos de la capa límite para cada simulación y regimen, promediados para todo el periodo y todo el perfil (en los casos que corresponda). \\label{tabla-clp}", 
       escape = F,
       booktabs = T,
       digits = c(0,0,2,2,4,2,2)) %>% 
@@ -2083,10 +2120,9 @@ kable(hL, "latex",
                       "Longitud de Monin Obukhov promediada.",
                       "Velocidad de fricción promediada.",
                       "Número de Prandtl promediado."))
-
-
-# col.names = c("Simulación", "Regimen", "$\\overline{h}$", "$\\overline{L}$", "$\\overline{u*}$", "$\\overline{Pr}$", "h/L")
 ```
+
+
 
 ```{r k_ulke_wrf, fig.cap="Coeficientes de difusividad promediados para todo el período estable (izquierda) y el período inestable (derecha) de la capa límite en todas las simulaciones. \\label{kh_wrf}", fig.subcap=c("Calor $K_h$ ($m^2/s$). \\label{kh-wrf}", "Moviento $K_m$ ($m^2/s$). \\label{km-wrf-ulke}"), fig.align='center', fig.width=0.98*text.width, fig.ncol=1, fig.height=0.40*text.height}
 
@@ -2117,7 +2153,7 @@ ggplot(d, aes(lev, Km.m)) +
   coord_flip() +
   theme_minimal() 
   
-remove("d")
+remove(d)
 ```
 
 # Conclusiones
@@ -2129,7 +2165,9 @@ Por ahora solo notas sueltas de lo que se me va ocurriendo:
 - Es fácil ver el LLJ y ademas funciona Bonner. Por las condiciones generales y lo más o menos lindo que se ven en las hodografas en comparación con el modelo de OI, podemos decir que esta es la causa?
 - Sería genial tener suficientes casos y datos de Vg para poder probar cuantitativamente el modelo de Van De Wiel
 - Diferencias entre observaciones y simulaciones son menores en los primeros 1000 metros, tal vez puede ser porque en esa capa hay mejor señal de radar. O sea que en niveles mas altos las simulaciones son mejores que las observaciones??!!
+- En 1km la hodógrafa en las simulaciones ya no tiene forma de nada. Será que las características sinópticas le ganan a la oscilación inercial en las simulacioneS? Hasta donde se puede considerar válido el modelo de Van de Wiel?
 - El LLJ parece durar más en las simulaciones, tendrá que ver con la duración (también prolongada) de la CLP?
+- El "buen" desempeño de MYJ al representar la altura de la capa límite podría estar indicando que el transporte no local de propiedades es suficiente y por lo tanto los eddies presentes en la capa límite no son son muy grandes (entonces no es necesario tener transporte no local)
 
 
 # Referencias
