@@ -104,7 +104,7 @@ Departamento de Ciencias de la Atmósfera y los Océanos	\par}
 	{\huge\bfseries Validación de parametrizaciones de capa límite utilizando datos de radar\par}
 	\vspace{4.5cm}
 	{\Large Tesista: Paola \textsc{Corrales} \\
-		Directores:	Dr. Jua \textsc{Ruíz} y Dra. Marisa \textsc{Gassman}
+		Directores:	Dr. Jua \textsc{Ruíz} y Dra. Marisa \textsc{Gassmann}
 	\par}
 	\vfill
 
@@ -140,35 +140,35 @@ Este es el resumen de mi tesis sdfklsadjksajdlkf skjdfklsdflkkflsjfadfkxvxkcn  s
 
 # Introducción
 
-La capa límite planetaria (CLP) corresponde a la porción de atmósfera que se encuentra directamente influenciada por la superficie y que responde a sus forzantes en una escala de tiempo de una hora o menos [@Stull1988]. Dentro de esta capa el flujo se encuentra en estado turbulento y por lo tanto los movimientos del aire son aleatorios. Debido a que la capa límite es forzada por las características de la superfice terrestre (por su temperatura, humedad y otros) su evolución sigue un ciclo con variabilidad diaria.
+La capa límite planetaria (CLP) corresponde a la porción de atmósfera que se encuentra directamente influenciada por la superficie terrestre y que responde a sus forzantes en una escala de tiempo de una hora o menos [@Stull1988]. Dentro de esta capa el flujo se encuentra en estado turbulento y por lo tanto los movimientos del aire son aleatorios. Debido a que la capa límite es forzada por las características de la superfice terrestre (por su rugosidad, temperatura, humedad y otros) su evolución sigue un ciclo con variabilidad diaria.
 
-La estructura de la capa límite puede ser descripta a partir de su evolución. Luego del amanecer la capa límite comienza a crecer debido al calentamiento radiativo de la superficie que produce turbulencia dando lugar a la capa mezclada. En esta capa el viento, la temperatura potencial y otras variables se mantienen constantes con la altura y persiste a lo largo del día hasta el momento del atardecer cuando desaparece el forzante. Durante la noche se forma la capa límite nocturna o capa estable forzada por el enfriamiento radiativo desde superficie, dando lugar a una inversión en el perfil de temperatura. En esta capa la turbulencia puede decaer o producirse intermitentemente. Por encima de esta capa persisten las características de la capa mezclada por lo que toma el nombre de capa residual y no forma parte de la capa límite. Al amanecer se forma una nueva capa mezclada que reemplaza a la capa estable. 
+La estructura de la capa límite puede ser descripta a partir de su evolución. Luego del amanecer la capa límite comienza a crecer debido al calentamiento radiativo de la superficie que produce turbulencia dando lugar a la capa mezclada. En esta capa la intensidad del viento, la temperatura potencial y otras variables se mantienen constantes con la altura debido a la intensa mezcla vertical, persistiendo a lo largo del día hasta el momento del atardecer cuando la turbulencia comienza a decaer. Durante la noche se forma la capa límite nocturna estable forzada por el enfriamiento radiativo desde superficie, caracterizada generalmente por una inversión en el perfil de temperatura. En esta capa la turbulencia puede decaer o producirse intermitentemente. Por encima de esta capa persisten las características de la capa mezclada por lo que toma el nombre de capa residual y no forma parte de la capa límite. Al amanecer se forma una nueva capa mezclada que orada la capa estable hasta hacerla desaparecer.
 
-Los procesos que ocurren dentro de esta capa son de suma importancia para entender y pronosticar la evolución de la tropopausa en distintas escalas espaciales y temporales. En particular estos procesos controlan el intercambio de energía entre la superficie y la atmósfera afectando, entre otras cosas, las condiciones para la ocurrencia de convección húmeda profunda y la intensidad de las circulaciones de mesoescala, originando eventos meteorológicos que pueden tener un alto impacto sobre las actividades humanas.
+Los procesos que ocurren dentro de esta capa son de suma importancia para entender y pronosticar la evolución de la tropoósfera en distintas escalas espaciales y temporales. En particular estos procesos controlan el intercambio de energía entre la superficie y la atmósfera afectando, entre otras cosas, las condiciones para la ocurrencia de convección húmeda profunda y la intensidad de las circulaciones de mesoescala, originando eventos meteorológicos que pueden tener un alto impacto sobre las actividades humanas.
 
 En nuestra región existen estudios que buscan caracterizar la evolución y los procesos que ocurren en la capa límite de forma tal de poder avanzar en su entendimiento y su dependencia por ejemplo con las propiedades de la superficie o el estado de la atmósfera [@Mazzeo1990; @Ulke2000; @Gassmann2001; @Acevedo2014; @Tonti2015].
 
 Dado que la ocurrencia de turbulencia en la capa límite planetaria se da en múltiples escalas espaciales y temporales, la representación de los procesos que ocurren dentro de ella es un desafío para los modelos numéricos. Actualmente los modelos de simulación regional y global no cuentan con la resolución necesaria para representar los procesos de la CLP de forma explícita, debiendo recurrir a una representación simplificada. De esta manera se simula numéricamente una parte del espectro turbulento, mientras que los procesos en la escala de subgrilla se resuelven a través de parametrizaciones con cierres de distinto orden [@Stull1988], es decir, con diferentes niveles de aproximaciones. 
 
-Existen diferentes alternativas para parametrizar los procesos de capa límite pero pueden clasificarse en dos grandes grupos. De acuerdo a @Stull1988, las parametrizaciones con clausura local determinan el valor de cualquier variable desconocida en cada punto a partir del valor o el gradiente de una variable conocida en el mismo punto; suponiendo que la difusión turbulenta tiene un comportamiento análogo al de la difusión molecular. Por otro lado las parametrizaciones con clausura no local asumen que la turbulencia está caracterizada por la superposición de torbellinos de distintas escalas que transportan las características del medio; y para lograr esto, el valor de la variable desconocida en un punto es aproximada a partir de una variable conocida en varios puntos en el espacio. 
+Existen diferentes alternativas para parametrizar los procesos de capa límite pero pueden clasificarse en dos grandes grupos. De acuerdo a @Stull1988, las parametrizaciones con clausura local determinan el valor de cualquier variable desconocida en cada punto a partir del valor o el gradiente de una variable conocida en el mismo punto; suponiendo que la difusión turbulenta tiene un comportamiento análogo al de la difusión molecular. Por otro lado, las parametrizaciones con clausura no local asumen que la turbulencia está caracterizada por la superposición de torbellinos de distintas escalas que transportan las características del medio; y para lograr esto, el valor de la variable desconocida en un punto es aproximada a partir de una variable conocida en varios puntos en el espacio. 
 
 La validación de las diferentes parametrizaciones de CLP en distintas situaciones sinópticas es un tema de gran interés debido a la necesidad de modelar los procesos de subgrilla presentes que afectan procesos en el resto de las escalas de variabilidad atmosférica [@Zhang2004; @Hu2010; @Xie2012; @Banks2016]. 
 
 A nivel regional, la representación de la capa límite en los modelos numéricos ha recibido mucha atención en las zonas oceánicas (particularmente en los océanos tropicales, @Wang2004). Sin embargo, existen pocos estudios acerca del desempeño de las parametrizaciones de capa límite en las regiones continentales [@Ulke2001; @Ruiz2010; @Berri2012; @Rizza2013].
 
-Uno de los principales desafíos a la hora de estudiar los procesos que ocurren en la capa límite o para validar cómo los modelos representan dichos procesos, es la disponibilidad de observaciones. Las redes de radiosondeos que permiten obtener perfiles de viento, temperatura y humedad en la capa límite miden con frecuencias temporales de entre 12 y 24 horas (sólo eventualmente cada 6 horas) lo que dificulta la posibilidad de analizar la evolución de las características de la CLP a lo largo del día.
+Uno de los principales desafíos a la hora de estudiar los procesos que ocurren en la capa límite o para validar cómo los modelos representan dichos procesos, es la disponibilidad de observaciones. Las redes de radiosondeos que permiten obtener perfiles de viento, temperatura y humedad en la capa límite miden con frecuencias temporales de entre 12 y 24 horas (sólo eventualmente cada 6 horas) lo que dificulta la posibilidad de analizar la evolución de las características de la CLP a lo largo del día. Sumado a esto, las mediciones se realizan en puntos geográficos individuables y muy dispersos entre sí.
 
-Sin embargo los radares Doppler permiten estimar la componente radial del viento en un radio horizontal de hasta 240 km y a partir de esa información reconstruir perfiles verticales de viento utilizando la técnica Velocity Azimuth Display (VAD). 
+Sin embargo los radares Doppler permiten estimar la componente radial del viento en un radio horizontal de hasta 240 km y a partir de esa información reconstruir perfiles verticales de viento utilizando la técnica Velocity Azimuth Display (VAD). Otra ventaja de las observaciones de radar es que están disponibles con una frecuencia temporal de hasta 5 minutos permitiendo obtener perfiles de viento con una resolución temporal mucho mayor que la de los radiosondeos. 
 
-En días en los que no existen ecos producidos por hidrometeoros, los radares pueden detectar el viento dentro de la capa límite a partir de blancos como los insectos. De acuerdo a @Rennie2010 estos datos podrían ser utilizados si se elimina el efecto de los ecos de terreno y otras observaciones erróneas. Las observaciones de radar están disponibles con una frecuencia temporal de hasta 5 minutos permitiendo obtener perfiles de viento con una resolución temporal mucho mayor que la de los radiosondeos. 
+En días en los que no existen ecos producidos por hidrometeoros, los radares pueden detectar el viento dentro de la capa límite a partir de blancos como los insectos. De acuerdo a @Rennie2010 estos datos podrían ser utilizados si se elimina el efecto de los ecos de terreno y otras observaciones erróneas.
 
 La calidad de estos perfiles ha sido comparada con los perfiles obtenidos a partir de radiosondeos, encontrándose en general que los datos obtenidos resultan adecuados para su uso en el estudio de los procesos de capa límite y en la verificación de modelos numéricos [@Bousquet2008; @Salonen2008] y en la generación de condiciones iniciales para pronósticos a muy corto plazo [@Rennie2011].
 
-Uno de los aspectos importantes a tener en cuenta en el uso de radares para el estudio de los perfiles de viento, es la necesidad de aplicar un riguroso control de calidad a los datos  que permita solucionar diversos aspectos que pueden afectar la confiabilidad de los mismos. Entre los problemas más comunes se cuentan: contaminación por ecos de terreno, efecto de aliasing, y contaminación por blancos móviles. Estos aspectos deben ser abordados antes de poder utilizar los datos para estimar el perfil de velocidad [@Holleman2008; @Rennie2011] aplicando algoritmos de control de calidad [@Ruiz2015; @Rennie2011].
+Uno de los aspectos importantes a tener en cuenta en el uso de radares para el estudio de los perfiles de viento, es la necesidad de aplicar un riguroso control de calidad a los datos  que permita solucionar diversos aspectos que pueden afectar la confiabilidad de los mismos. Entre los problemas más comunes se cuentan: contaminación por ecos de terreno, efecto de aliasing, y contaminación por blancos móviles. Estos aspectos deben ser abordados antes de poder utilizar los datos para estimar el perfil de velocidad del aire [@Holleman2008; @Rennie2011] aplicando algoritmos de control de calidad [@Ruiz2015; @Rennie2011].
 
-La disponibilidad de la información de radar Doppler en Argentina desde 1999 con la instalación del radar Ezeiza [@DeElia2017] ofrece un gran recurso de información para estudiar las propiedades de la capa límite planetaria en nuestra región y para validar la calidad de los modelos numéricos a la hora de representar dichas propiedades.
+La disponibilidad de la información de radar Doppler en Argentina comienza en 1999 con la instalación del radar Ezeiza [@DeElia2017], ofreciendo un gran recurso de información para estudiar las propiedades de la capa límite planetaria en nuestra región y para validar la calidad de los modelos numéricos a la hora de representar dichas propiedades.
 
-El objetivo de esta Tesis de Licenciatura es desarrollar una metodología para el estudio de los procesos de capa límite a partir de los datos de radar y analizar el comportamiento de tres parametrizaciones de CLP disponibles en el modelo Weather Research and Forecasting (WRF - @Skamarock2008) al representar algunos de los procesos presentes en uno de los casos de estudio seleccionados. 
+El objetivo de esta Tesis de Licenciatura es desarrollar una metodología para el estudio de los procesos de capa límite a partir de los datos de radar Doppler y analizar el comportamiento de tres parametrizaciones de CLP disponibles en el modelo Weather Research and Forecasting (WRF - @Skamarock2008) al representar algunos de los procesos presentes en uno de los casos de estudio seleccionados. 
 
 Se plantea como hipótesis que los datos de viento radial obtenidos de información de radar permiten realizar buenas estimaciones de los perfiles verticales de viento con una frecuencia temporal de hasta 5 minutos, en un espesor que abarca desde los 100 metros desde la superficie y hasta 2000 o 3000 m de altura dependiendo de la altura de la capa límite, la presencia de nubes y otras condiciones. La alta frecuencia de información observacional ofrece la posibilidad de caracterizar la evolución temporal de dichos perfiles dentro de la capa límite atmosférica. La estimación de esos perfiles permitirán además validar las parametrizaciones de la capa límite que utilizan los modelos numéricos con una mayor resolución temporal y espacial a la utilizada en trabajos previos.
 
@@ -1906,7 +1906,7 @@ caso.YSU <- ReadNetCDF(paste(path,"caso1_YSU/spd_YSU.nc", sep = "")) %>%
          ust = ReadNetCDF(paste(path,"caso1_YSU/ust_YSU.nc", sep = ""), out = "vector")[[1]],
          L = ReadNetCDF(paste(path,"caso1_YSU/l_YSU.nc", sep = ""), out = "vector")[[1]],
          param = "YSU") %>% 
-  .[, lev := lev*1000 - 75] %>% 
+  .[, lev := lev*1000 - 73] %>% 
   .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>% 
   .[, regimen := ifelse(L <= 0, "Inestable", "Estable")] %>% 
   .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
@@ -1919,7 +1919,7 @@ caso.MYJ <- ReadNetCDF(paste(path,"caso1_MYJ/spd_MYJ.nc", sep = "")) %>%
          ust = ReadNetCDF(paste(path,"caso1_MYJ/ust_MYJ.nc", sep = ""), out = "vector")[[1]],
          L = ReadNetCDF(paste(path,"caso1_MYJ/l_MYJ.nc", sep = ""), out = "vector")[[1]],
          param = "MYJ") %>% 
-  .[, lev := lev*1000 - 75] %>% 
+  .[, lev := lev*1000 - 73] %>% 
   .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>% 
   .[, regimen := ifelse(L <= 0, "Inestable", "Estable")] %>% 
   .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
@@ -1932,7 +1932,7 @@ caso.ACM2 <- ReadNetCDF(paste(path,"caso1_ACM2/spd_ACM2.nc", sep = "")) %>%
          ust = ReadNetCDF(paste(path,"caso1_ACM2/ust_ACM2.nc", sep = ""), out = "vector")[[1]],
          L = ReadNetCDF(paste(path,"caso1_YSU/l_YSU.nc", sep = ""), out = "vector")[[1]],
          param = "ACM2") %>% 
-  .[, lev := lev*1000 - 75] %>% 
+  .[, lev := lev*1000 - 73] %>% 
   .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>% 
   .[, regimen := ifelse(L <= 0, "Inestable", "Estable")] %>% 
   .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>% 
@@ -2088,7 +2088,7 @@ ggplot(all.pbl_norm, aes(lev_norm, km.u_norm)) +
   theme_minimal()
 ```
 
-A partir de los perfiles obtenidos se calculó el número de Prandtl como $Pr = K_m/K_h$ para cada simulación y en función de la altura. En la Figura \ref{Pr} se muestran los perfiles verticales del número de Prandtl. Se observa un comportamiento similar en todas la simulaciones, en particular no hay diferencias entre YSU y ACM2 mientras que el perfil de MYJ se separa de los otros dos. En todos los casos varía en los primeros 200 m y luego es aproximadamente constante con la altura, lo que es esperable para este parámetro. 
+ 
 
 ```{r pr, fig.cap="Variación del número de Prandtl calculado a partir del modelo propuesto por Ulke 2000 con las variables de cada simulación y promediado en cada periodo. \\label{Pr}", fig.align='center', fig.width=0.95*text.width}
 group_by(all.pbl, param, lev, regimen) %>%
@@ -2130,26 +2130,47 @@ kable(hL, "latex",
            number = c("Altura de la CLP promediada.",
                       "Longitud de Monin Obukhov promediada.",
                       "Velocidad de fricción promediada.",
-                      "Número de Prandtl promediado."))
+                      "Número de Prandtl promediado.")) %>% 
+  kable_styling(latex_options = "hold_position")
 ```
 
-Finalmente se obtuvieron los perfiles de $K_m$ utilizando los valores del número de Prandtl y el $K_h$ resuelto por cada simulación. En la Figura \ref{k-ulke-wrf} se muestran los perfiles verticales de $K_m$ y de $K_h$ para cada simulación obtenidos a partir del promedio de la variable en cada nivel durante el período estable e inestable.
+A partir de los perfiles obtenidos se calculó el número de Prandtl como $Pr = K_m/K_h$ para cada simulación y en función de la altura. En la Figura \ref{Pr} se muestran los perfiles verticales del número de Prandtl. Se observa un comportamiento similar en todas la simulaciones, en particular no hay diferencias entre YSU y ACM2 mientras que el perfil de MYJ se separa de los otros dos. En todos los casos varía en los primeros 200 m y luego es aproximadamente constante con la altura, lo que es esperable para este parámetro.
+
+Finalmente se obtuvieron los perfiles de $K_m$ utilizando los valores del número de Prandtl y el $K_h$ disponible en el resultado de cada simulación. En la Figura \ref{k-ulke-wrf} se muestran los perfiles verticales de $K_m$ y de $K_h$ para cada simulación obtenidos a partir del promedio de la variable en cada nivel durante un período estable (05 a 06 UTC) e inestable. Los perfiles de $K_h$ y $K_m$ obtenidos para el régimen estable presentan mucha variación temporal durante el período por lo que solo se muestra el promedio obtenido durante las horas más representativas. 
+En el período estable las tres simulaciones muestran un máximo de difusividad entre 750 y 1000 m de altura, mientras que es casi nulo en niveles superiores e inferiores. YSU genera la mezcla más profunda que las otras parametrizaciones ya que el máximo ocurre en mayor altura y los coeficientes de difusividad tienen mayor magnitud. En el otro extremo MYJ muestra una mezcla menor con un máximo en niveles inferiores a YSU, esto es esperable debido a que MYJ es un esquema local y por lo tanto el transporte vertical será más débil. Sin embargo de acuerdo con @Klein2016 una mayor mezcla vertical está asociada a un LLJ menos intenso, mientras que en la Figura \ref{perfil-mod} se observa lo contrario. Si bien la forma de los perfiles concuerda con lo encontrado por otros autores, los máximos observados deberían ocurrir dentro de la capa estable y mientras que el tope de la capa debería coincidir con el rápido decrecimiento por encima del máximo [@Klein2016].
+
+Los perfiles del período inestable divergen entre las distintas simulaciones en los primeros 2000 m pero luego de ese nivel convergen a cero. En este régimen MYJ muestra las mayores magnitudes de los coeficientes de difusividad pero el máximo del perfil ocurre en niveles menores a las otras parametrizaciones y por lo tanto la capa mezclada es menos profunda (Figura \ref{pblh}). YSU y ACM2 presentan capas muy profundas en comparación con MYJ ya que llegan cero a los 2000 m en comparación con MYJ que lo hace a los 1200 m.
 
 ```{r k_ulke_wrf, fig.cap="Coeficientes de difusividad promediados para todo el período estable (izquierda) y el período inestable (derecha) de la capa límite en todas las simulaciones. \\label{k-ulke-wrf}", fig.subcap=c("Calor $K_h$ ($m^2/s$). \\label{kh-wrf}", "Moviento $K_m$ ($m^2/s$). \\label{km-wrf}"), fig.align='center', fig.width=0.98*text.width, fig.ncol=1, fig.height=0.40*text.height}
 
 all.pbl <- all.pbl[, exchm := Pr*exchh]
-d <- group_by(all.pbl, param, lev, regimen) %>% 
-  summarise(Kh.m = mean(exchh, na.rm = T), Km.m = mean(exchm, na.rm = T)) %>% 
+
+# ggplot(all.pbl[regimen == "Estable"], aes(lev, exchh, group = factor(lev))) +
+#   geom_boxplot() +
+#   facet_wrap(~param)
+
+d <- all.pbl[date %between% c(as_datetime("2016-01-14 04:00:00"), as_datetime("2016-01-14 05:00:00")) | regimen == "Inestable"] %>% 
+  group_by(param, lev, regimen) %>% 
+  summarise(Kh.m = median(exchh, na.rm = T), Km.m = median(exchm, na.rm = T)) %>% 
   ungroup()
+
+# ggplot(all.pbl[date %between% c(as_datetime("2016-01-14 12:00:00"), as_datetime("2016-01-14 18:00:00"))], aes(lev, exchh)) +
+#   geom_line(aes(color = as.factor(param))) +
+#   scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
+#   scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
+#   scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)",
+#                      limits = c(0, NA)) +
+#   facet_wrap(~date, scales = "free") +
+#   coord_flip() +
+#   theme_minimal()
 
 ggplot(d, aes(lev, Kh.m)) + 
   geom_line(aes(color = as.factor(param))) +
   scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
   scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
   scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)", 
-                     limits = c(0, 1500)) +
+                     limits = c(0, 2500)) +
   facet_wrap(~regimen, scales = "free") +
-  #labs(title = "Perfiles a partir del promedio del dominio") +
   coord_flip() +
   theme_minimal() 
 
@@ -2158,7 +2179,7 @@ ggplot(d, aes(lev, Km.m)) +
   scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
   scale_y_continuous(name = expression(paste(K[m], " (", m^2,s^{-1}, ")"))) +
   scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)", 
-                     limits = c(0, 1500)) +
+                     limits = c(0, 2500)) +
   facet_wrap(~regimen, scales = "free") +
   #labs(title = "Perfiles a partir del promedio del dominio") +
   coord_flip() +
@@ -2176,9 +2197,14 @@ Por ahora solo notas sueltas de lo que se me va ocurriendo:
 - Es fácil ver el LLJ y ademas funciona Bonner. Por las condiciones generales y lo más o menos lindo que se ven en las hodografas en comparación con el modelo de OI, podemos decir que esta es la causa?
 - Sería genial tener suficientes casos y datos de Vg para poder probar cuantitativamente el modelo de Van De Wiel
 - Diferencias entre observaciones y simulaciones son menores en los primeros 1000 metros, tal vez puede ser porque en esa capa hay mejor señal de radar. O sea que en niveles mas altos las simulaciones son mejores que las observaciones??!! Pasa lo mismo si analizamos la correlación.
+- YSU y ACM2 son somilares. Si bien ACM2 es hibrido parece que funciona como no local.
 - En 1km la hodógrafa en las simulaciones ya no tiene forma de nada. Será que las características sinópticas le ganan a la oscilación inercial en las simulacioneS? Hasta donde se puede considerar válido el modelo de Van de Wiel?
 - El LLJ parece durar más en las simulaciones, tendrá que ver con la duración (también prolongada) de la CLP?
 - El "buen" desempeño de MYJ al representar la altura de la capa límite podría estar indicando que el transporte no local de propiedades es suficiente y por lo tanto los eddies presentes en la capa límite no son son muy grandes (entonces no es necesario tener transporte no local)
+
+A futuro:
+
+- Estudiar casos distintos con datos que permitan estudiar un poco más la turbulencia para determinar cuales son las mejores características para la formación del LLJ. Por ejemplo viento más debil al atardecer genera un mayor desacople de las capas, mientras que viento más fuerte ayuda a mantener una mezcla turbulenta.
 
 
 # Referencias
