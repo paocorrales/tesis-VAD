@@ -838,7 +838,7 @@ final no llega a los 1000 m.
 
 }
 
-\caption{Topografía de la región del radar Anguil en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Anguil, el punto rojo indica la ubicación de la estación Santa Rosa Aero. Datos ETOPO1 1 Arc-Minute Global Relief Model NOAA (Amante y Eakins, 2009). \label{topografia}}\label{fig:topo-anguil}
+\caption{Topografía de la región del radar Anguil en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Anguil, el punto rojo indica la ubicación de la estación Santa Rosa Aero. Datos ETOPO1 1 Arc-Minute Global Relief Model NOAA (Amante y Eakins, 2009). \label{topo-anguil}}\label{fig:topo-anguil}
 \end{figure}
 
 Pero también es posible reconstruir un campo de velocidad radial
@@ -947,20 +947,20 @@ amplitud de error (no se muestra).
 \includegraphics[ ]{Tesis_files/figure-latex/validacion-perfiles-1} \caption{Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruebas de validación a la izquierda y el detalle ampliado del máximo en niveles bajos \label{validacion-perfiles}}\label{fig:validacion-perfiles}
 \end{figure}
 
-\begin{longtable}[]{@{}lrr@{}}
+\begin{longtable}[]{@{}lrrrr@{}}
 \caption{Errores calculados para las distintas pruebas de validación.
 \label{validacion-errores}}\tabularnewline
 \toprule
-Prueba & rms & rre\tabularnewline
+Prueba & rms & rre & rmse1 & rmse2\tabularnewline
 \midrule
 \endfirsthead
 \toprule
-Prueba & rms & rre\tabularnewline
+Prueba & rms & rre & rmse1 & rmse2\tabularnewline
 \midrule
 \endhead
-SE & 0.1613 & 0.0194\tabularnewline
-EA & 0.3020 & 0.0364\tabularnewline
-EA+NA & 0.1778 & 0.0214\tabularnewline
+SE & 0.161 & 0.019 & 0.003 & 0.000\tabularnewline
+EA & 0.302 & 0.036 & 0.105 & 2.094\tabularnewline
+EA+NA & 0.178 & 0.021 & 0.174 & 2.873\tabularnewline
 \bottomrule
 \end{longtable}
 
@@ -973,9 +973,16 @@ rms (\(rre = \sqrt{ \frac{\sum (V-V_{ref})^2}{\sum (V_{ref})^2} }\))
 donde \(V_{ref}\) corresponde a la variable de referencia, en este caso
 el sondeo. Los resultados se muestran en la Tabla
 \ref{validacion-errores} y como puede observarse no hay un aumento
-importante al incorporar errores aleatorios y disminuye al quitar datos
-en la prueba EA+NA ya que los errores calculados son sensibles a la
-cantidad total de datos.
+importante en \(rms\) o \(rre\) al incorporar errores aleatorios y
+disminuye al quitar datos en la prueba EA+NA ya que los errores
+calculados son sensibles a la cantidad total de datos. Sin embargo los
+errores de estimación calculados por el algoritmo \(rmse_1\) y
+\(rmse_2\) y promediados para todo el perfil se ven fuertemente
+afectados por la incorporación de errores aleatorios y más aún en la
+prueba EA+NA. Es importante notar que si bien está validación se realiza
+con un campo de \(V_r\) idealizado, el \(rmse_2\) es un orden de
+magnitud mayor al \(rms\) y por lo tanto el algoritmo puede estar
+sobreestimando este error.
 
 El efecto más importante en las pruebas de validación corresponde a la
 presencia de NAs. La falta de datos en distintas regiones para rangos a
@@ -2432,6 +2439,52 @@ comparación con MYJ que lo hace a los 1200 m.
 \end{figure}
 
 \chapter{Conclusiones}\label{conclusiones}
+
+Este trabajo de tesis tuvo como objetivo desarrollar una metodología
+para estudiar algunos procesos que ocurren en la capa límite planetaria
+a partir de la utilización de datos de radar Doppler y analizar el
+desempeño de tres parametrizaciones de CLP del modelo WRF al simular
+estos procesos. En primer lugar se determinaron las características
+necesarias para identificar los casos de estudio que permitan analizar
+los procesos de CLP asociados al ciclo diario. Para eso se analizaron
+los datos del Radar INTA Paraná y de la estación meteorológica Paraná
+Aero en busca de días con cielos despejados (o en su defecto, donde la
+nubosidad no tenga un efecto signiticativo sobre la temperatura
+observada) y con vientos moderados (menor a 7 m/s) en el mes de enero de
+2016. A patir de los criterios establecidos se identificaron tres casos
+correspondientes a tres días completos: 14, 21 y 23 de enero.
+
+Para el procesamiento de los datos de radar se desarrolló un algoritmo
+basado en la técnica de Visualización Azimutal de la Velocidad o VAD que
+permitió la la obtención de perfiles verticales de la velocidad del
+viento horizontal a partir de la velocidad radial medida por el radar.
+En esta técnica se incluyeron controles de calidad para asegurar la
+validez de los resultados teniendo en cuenta distintas fuentes de
+errores posibles. En este trabajo se aplicaron controles para limitar la
+presencia de datos faltantes dispersos y consecutivos, se determinaron
+los límites del dominio donde el cálculo es posible y los ángulos de
+elevación del radar utilizados. Posteriormente se definió un umbral
+mínimo para eliminar datos que no tuvieran un buen ajuste al modelo
+propuesto a partir del \(R^2\). Para validar la técnica de VAD
+desarrollada se construyeron campos de velocidad radial sintéticos con
+distintos errores a partir de los datos de un sondeo y se compararon los
+perfiles resultantes con el sondeo inicial y con el perfíl obtenido a
+partir de los datos de un radar cercano. A partir de estas comparaciones
+se concluyó que el algoritmo tiene un buen desempeño aunque la presencia
+de datos faltantes disminuye la calidad del resultado.
+
+A partir de los perfiles verticales del viento para cada caso en estudio
+se analizaron las características principaes de la variación del viento
+a lo largo del día. Los tres casos muestran el desarrollo del LLJ
+durante las horas nocturnas y el criterio de Bonner permite
+identificarlo de manera cuantitativa.
+
+haciendo especial hincapié en los procesos que ocurren en el período
+nocturno. Para las simulaciones numéricas con el modelo regional WRF se
+definió un dominio y las condiciones iniciales adecuadas para modelar un
+caso de estudio utilizando tres parametrizaciones disponibles en el
+modelo. Se compararon las simulaciones con las observaciones previamente
+obtenidas y se analizaron algunas variables asociadas a la turbulencia.
 
 Por ahora solo notas sueltas de lo que se me va ocurriendo:
 

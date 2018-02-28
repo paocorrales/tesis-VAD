@@ -454,7 +454,7 @@ de la calidad de ese modelo respecto de las observaciones. A partir de la explor
 
 Una manera posible de validar los resultados del VAD es comparando cualitativa o cuantitativamente el perfil vertical de viento generado con los datos de un radiosondeo en el mismo momento. Debido a la inexistencia de sondeos en la región de Paraná se exploró la posibilidad de utilizar datos del Radar INTA Anguil que se encuentra en la provincia de La Pampa y radiosondeos de la estación del SMN Santa Rosa Aero. Si bien el radar y la estación meteorológica no están en la misma ubicación, se encuentran a unos 30 km de distancia y por lo tanto la estación está dentro del dominio de escaneo del radar (Figura \ref{topo-anguil}). Sin embargo se encontró que la señal de $V_r$ en días de cielo claro es muy pobre y por lo tanto al realizar los controles de calidad impuestos en el algoritmo, el perfil de viento final no llega a los 1000 m. 
 
-```{r topo-anguil, fig.cap="Topografía de la región del radar Anguil en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Anguil, el punto rojo indica la ubicación de la estación Santa Rosa Aero. Datos ETOPO1 1 Arc-Minute Global Relief Model NOAA (Amante y Eakins, 2009). \\label{topografia}", fig.width=0.75*text.width, fig.align='center'}
+```{r topo-anguil, fig.cap="Topografía de la región del radar Anguil en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Anguil, el punto rojo indica la ubicación de la estación Santa Rosa Aero. Datos ETOPO1 1 Arc-Minute Global Relief Model NOAA (Amante y Eakins, 2009). \\label{topo-anguil}", fig.width=0.75*text.width, fig.align='center'}
 
 topo <- GetTopography(295.4, 296.3, -36.12, -36.97, resolution = 1/60, file.dir = "seudocache") %>% 
   .[, lon := ConvertLongitude(lon, from = 360)]
@@ -646,8 +646,12 @@ sondeo$spd <- sondeo$spd*0.5144444
 vad$sondeo_spd <- sondeo$spd[2:17]
 setDT(vad)
 
-vad[, spd_e := vade$spd] 
-vad[, spd_ena := vadena$spd] 
+vad[, spd_e := vade$spd]
+vad[, rmse1_e := vade$rmse]
+vad[, rmse2_e := vade$rmse2]
+vad[, spd_ena := vadena$spd]
+vad[, rmse1_ena := vadena$rmse]
+vad[, rmse2_ena := vadena$rmse2]
 vad[, .(ht, sondeo_spd, spd, spd_e, spd_ena)] %>% 
   melt(id.vars = "ht") %>% 
 ggplot(aes(ht, value, color = variable)) +
@@ -675,14 +679,24 @@ tmp <- tmp[, .(rms = rms(value, tmp[variable == "sondeo_spd", value]),
   .[, Prueba := c("SE", "EA", "EA+NA")] %>% 
   .[, c(4, 2, 3)]
 
-kable(tmp, digits = 4, 
+tmp1 <- vad[, .(ht, rmse, rmse1_e, rmse1_ena)] %>% 
+  melt(id.vars ="ht") %>% 
+  .[, .(rmse1 = median(value, na.rm = T)), by = variable]
+
+tmp2 <- vad[, .(ht, rmse2, rmse2_e, rmse2_ena)] %>% 
+  melt(id.vars ="ht") %>% 
+  .[, .(rmse2 = median(value, na.rm = T)), by = variable]
+tmp[, rmse1 := tmp1$rmse1]
+tmp[, rmse2 := tmp2$rmse2]
+
+kable(tmp, digits = 3, 
       caption = "Errores calculados para las distintas pruebas de validación. \\label{validacion-errores}") %>% 
       kable_styling(latex_options = "hold_position")
 ```
 
 \newpage
 
-Esto puede verificarse con el cálculo de distintos errores [@Gao2004]: la raíz del error cuadrático medio ($rms = \sqrt{ \frac{\sum (V-V_{ref})^2}{N} }$) y el error relativo al rms ($rre = \sqrt{ \frac{\sum (V-V_{ref})^2}{\sum (V_{ref})^2} }$) donde $V_{ref}$ corresponde a la variable de referencia, en este caso el sondeo. Los resultados se muestran en la Tabla \ref{validacion-errores} y como puede observarse no hay un aumento importante al incorporar errores aleatorios y disminuye al quitar datos en la prueba EA+NA ya que los errores calculados son sensibles a la cantidad total de datos.
+Esto puede verificarse con el cálculo de distintos errores [@Gao2004]: la raíz del error cuadrático medio ($rms = \sqrt{ \frac{\sum (V-V_{ref})^2}{N} }$) y el error relativo al rms ($rre = \sqrt{ \frac{\sum (V-V_{ref})^2}{\sum (V_{ref})^2} }$) donde $V_{ref}$ corresponde a la variable de referencia, en este caso el sondeo. Los resultados se muestran en la Tabla \ref{validacion-errores} y como puede observarse no hay un aumento importante en $rms$ o $rre$ al incorporar errores aleatorios y disminuye al quitar datos en la prueba EA+NA ya que los errores calculados son sensibles a la cantidad total de datos. Sin embargo los errores de estimación calculados por el algoritmo $rmse_1$ y $rmse_2$ y promediados para todo el perfil se ven fuertemente afectados por la incorporación de errores aleatorios y más aún en la prueba EA+NA. Es importante notar que si bien está validación se realiza con un campo de $V_r$ idealizado, el $rmse_2$ es un orden de magnitud mayor al $rms$ y por lo tanto el algoritmo puede estar sobreestimando este error. 
 
 El efecto más importante en las pruebas de validación corresponde a la presencia de NAs. La falta de datos en distintas regiones para rangos a partir de 10 a 15 km impide el cálculo del perfil por encima de 800 metros (con excepción de un punto a los 2000 metros de altura).
 
@@ -2189,6 +2203,15 @@ remove(d)
 ```
 
 # Conclusiones
+
+Este trabajo de tesis tuvo como objetivo desarrollar una metodología para estudiar algunos procesos que ocurren en la capa límite planetaria a partir de la utilización de datos de radar Doppler y analizar el desempeño de tres parametrizaciones de CLP del modelo WRF al simular estos procesos. En primer lugar se determinaron las características necesarias para identificar los casos de estudio que permitan analizar los procesos de CLP asociados al ciclo diario. Para eso se analizaron los datos del Radar INTA Paraná y de la estación meteorológica Paraná Aero en busca de días con cielos despejados (o en su defecto, donde la nubosidad no tenga un efecto signiticativo sobre la temperatura observada) y con vientos moderados (menor a 7 m/s) en el mes de enero de 2016. A patir de los criterios establecidos se identificaron tres casos correspondientes a tres días completos: 14, 21 y 23 de enero.
+
+Para el procesamiento de los datos de radar se desarrolló un algoritmo basado en la técnica de Visualización Azimutal de la Velocidad o VAD que permitió la la obtención de perfiles verticales de la velocidad del viento horizontal a partir de la velocidad radial medida por el radar. En esta técnica se incluyeron controles de calidad para asegurar la validez de los resultados teniendo en cuenta distintas fuentes de errores posibles. En este trabajo se aplicaron controles para limitar la presencia de datos faltantes dispersos y consecutivos, se determinaron los límites del dominio donde el cálculo es posible y los ángulos de elevación del radar utilizados. Posteriormente se definió un umbral mínimo para eliminar datos que no tuvieran un buen ajuste al modelo propuesto a partir del $R^2$. Para validar la técnica de VAD desarrollada se construyeron campos de velocidad radial sintéticos con distintos errores a partir de los datos de un sondeo y se compararon los perfiles resultantes con el sondeo inicial y con el perfíl obtenido a partir de los datos de un radar cercano. A partir de estas comparaciones se concluyó que el algoritmo tiene un buen desempeño aunque la presencia de datos faltantes disminuye la calidad del resultado. 
+
+A partir de los perfiles verticales del viento para cada caso en estudio se analizaron las características principaes de la variación del viento a lo largo del día. Los tres casos muestran el desarrollo del LLJ durante las horas nocturnas y el criterio de Bonner permite identificarlo de manera cuantitativa. 
+
+haciendo especial hincapié en los procesos que ocurren en el período nocturno.
+Para las simulaciones numéricas con el modelo regional WRF se definió un dominio y las condiciones iniciales adecuadas para modelar un caso de estudio utilizando tres parametrizaciones disponibles en el modelo. Se compararon las simulaciones con las observaciones previamente obtenidas y se analizaron algunas variables asociadas a la turbulencia.
 
 Por ahora solo notas sueltas de lo que se me va ocurriendo: 
 
