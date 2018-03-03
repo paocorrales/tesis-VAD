@@ -225,6 +225,18 @@ azimuth <- function(lon, lat, lon0 = -60.537289, lat0 = -31.848438) {
   d <- ConvertLongitude(d - 180, 180)
 }
 
+cuad_split <- function(azimut) {
+  cuadrants <- cut(azimut, breaks = c(0, 90, 180, 270, 360), labels = as.character(1:4))
+  groups <- vector("numeric", length = length(azimut))
+  cur.group <- 1
+  groups[1] <- cur.group
+  for (i in seq_along(azimut)[-1]) {
+    if (cuadrants[i] != cuadrants[i-1]) cur.group <- groups[i-1] + 1
+    groups[i] <- cur.group
+  }
+  return(groups)
+}
+
 #=========================================================================================#
 # mode:
 # Calcula la moda de x
