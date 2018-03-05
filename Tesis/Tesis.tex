@@ -194,7 +194,12 @@ y los procesos que ocurren en la capa límite de forma tal de poder
 avanzar en su entendimiento y su dependencia por ejemplo con las
 propiedades de la superficie o el estado de la atmósfera (Mazzeo y
 Gassmann, 1990; Ulke, 2000; Gassmann y Mazzeo, 2001; Acevedo et~al.,
-2014; Tonti y Gassmann, 2015).
+2014; Tonti y Gassmann, 2015). Otros estudios buscan ver la influencia
+de la capa límite en distintas escalas, por ejemplo Marengo et~al.
+(2004) sugiere que existe una relación entre las condiciones de la CLP y
+el SALLJ (South American low-level jet) durante el verano, uno de los
+principales mecanismos responsables de desarrollo de sistemas conectivos
+de mesoescala en nuestra región (Salio et~al., 2007).
 
 Dado que la ocurrencia de turbulencia en la capa límite planetaria se da
 en múltiples escalas espaciales y temporales, la representación de los
@@ -217,9 +222,29 @@ A nivel regional, la representación de la capa límite en los modelos
 numéricos ha recibido mucha atención en las zonas oceánicas
 (particularmente en los océanos tropicales, Wang et~al. (2004)). Sin
 embargo, existen pocos estudios acerca del desempeño de las
-parametrizaciones de capa límite en las regiones continentales (Ulke y
-Andrade, 2001; Ruiz et~al., 2010; Berri et~al., 2012; Rizza et~al.,
-2013).
+parametrizaciones de capa límite en las regiones continentales. Ulke y
+Andrade (2001) utlizan un modelo de calidad del aire euleriano para
+estudiar el transporte de contaminantes en una ciudad e incorporan a
+este una parametrización para calcular la difusión vertical de los
+contaminantes. El modelo permite representar la evolución turbulenta de
+la CLP pero requiere de mediciones confiables para inicializar el modelo
+y mejorar su desempeño. Berri et~al. (2012) utilizan un modelo
+hidrostático de capa límite de mesoescala para simular el viento medio
+utilizando el método de ensables. Encuentran que la metodología es buena
+para determinar los vientos en niveles bajos sobre regiones con un
+importante ciclo diurno de la temperatura de superficie. Ruiz et~al.
+(2010) analizan la sensibilidad de distintas parametrizaciones de
+procesos de subgrilla para representar algunas variables de superficie
+en Sudamérica y encuentra que ninguna parametrización tiene un buen
+desempeño al simular todas las variables. Los mejores resultados se
+encuentran al calcular la media de un ensamble con simulaciones
+realizadas con distintas parametrizaciones. Finalmente Rizza et~al.
+(2013) estudian la evolución diaria de la CLP con una simulación de
+grandes torbellinos (LES por sus siglas en inglés) a partir de
+condicines iniciales y forzantes provistos por modelo WRF. Encontraron
+que la incorporación de perfiles de cortante de viento geostrófico en el
+modelo mejora la capacidad del LES al pronosticar el campo de viento de
+la CLP.
 
 Uno de los principales desafíos a la hora de estudiar los procesos que
 ocurren en la capa límite o para validar cómo los modelos representan
@@ -296,7 +321,9 @@ metodología para el estudio de los procesos de capa límite a partir de
 los datos de radar Doppler y analizar el comportamiento de tres
 parametrizaciones de CLP disponibles en el modelo Weather Research and
 Forecasting (WRF - Skamarock et~al. (2008)) al representar algunos de
-los procesos presentes en uno de los casos de estudio seleccionados.
+los procesos presentes en uno de los casos de estudio seleccionados. Se
+eligió este modelo debido su continuo desarrollo tanto en términos de
+investigación como de su implementación operativa.
 
 Se plantea como hipótesis que los datos de viento radial obtenidos de
 información de radar permiten realizar buenas estimaciones de los
@@ -463,16 +490,16 @@ radial es la contaminación por aliasing ya que afecta significativamente
 la calidad de los perfiles de viento finales. De acuerdo a Gao y
 Droegemeier (2004) un 3\% de contaminación por aliasing puede generar un
 error cuadrático medio del 50\% en el perfil de viento medio a partir de
-la técnica VAD. El aliasing ocurre cuando la señal que se mide varía con
-una frecuencia mayor a la frecuencia detectada por el instrumento
-denominada frecuencia de Nyquist y que esta directamente relacionada con
-la frecuencia de repeticion de los pulsos de radar (o PRF por sus siglas
-en ingles). En esos casos la señal es interpretada por el instrumento
-como una señal de menor frecuencia que la real. Dicho fenomeno se conoce
+la técnica VAD. El aliasing ocurre cuando la señal que se mide tiene una
+frecuencia mayor a la frecuencia que puede detectar por el instrumento
+denominada frecuencia de Nyquist y que está directamente relacionada con
+la frecuencia de repetición de los pulsos de radar (o PRF por sus siglas
+en inglés). En esos casos la señal es interpretada por el instrumento
+como una señal de menor frecuencia que la real. Dicho fenómeno se conoce
 como ``aliasing'' o ``folding''. A partir de lo anterior es posible
 determinar la velocidad máxima que puede ser medida por un radar sin
 ambigüedades o aliasing, es decir la Velocidad de Nyquist (\(V_N\)). Por
-lo tanto cualquier velocidad que se encuentre fuera del inervalo de
+lo tanto cualquier velocidad que se encuentre fuera del intervalo de
 Nysquist será interpretada como una velocidad menor (Figura
 \ref{nysquist}). La \(V_N\) intrínseca a las características del radar
 ya que depende de la longitud de onda de la señal y de la frecuencia de
@@ -582,8 +609,8 @@ VAD (o sus derivaciones). Algunos de estos algoritmos permiten estimar
 variaciones horizontales del viento dentro del dominio siempre que éstas
 sean lineales. Browning y Wexler (1968), unos de los primeros autores en
 aplicar este concepto, desarrollaron una técnica utilizando series de
-Fourier para obtener variables del campo del viento descompuesto en la
-parte divergente, la parte rotacional y la componente de deformación
+Fourier para obtener variables del campo del viento descompuesto en una
+parte divergente, una parte rotacional y una componente de deformación
 válida para casos donde la velocidad terminal de la precipitación es
 horizontalmente homogenea y la cortante vertical no es intensa.
 
@@ -594,7 +621,7 @@ pesos al estimar las variables para tener en cuenta los errores en los
 datos originales y el análisis de los residuos obtenidos a partir de las
 regresiones calculadas. De acuerdo a los autores, esto mejora el
 desempeño del algoritmo en situaciones donde la cortante vertical del
-viento es fuerte, inhomogeneidades en el campo horizontal o
+viento es fuerte, cuando hay inhomogeneidades en el campo horizontal o
 insuficientes datos de radar. Posteriormente Gao et~al. (2004)
 desarrolló el GVAD (por las siglas en inglés de Visualización Azimutal
 del Gradiente de la Velocidad) que permite obtener el perfil vertical
@@ -602,10 +629,10 @@ del viento aún en casos donde los datos están contaminados por aliasing
 reemplazando el campo de la velocidad radial por su derivada respecto
 del azimuth. Si bien esta técnica es una mejora sustancial, es muy
 sensible a errores aleatorios y sistemáticos. Xu et~al. (2010) también
-busca solucionar el problema de la contaminación por aliasing utilizando
-un algoritmo que ajusta los datos con aliasing a un modelo de viento
-uniforme. Posteriormente el mismo autor modifica este algoritmo a partir
-de un un método variacional que permite eliminar la condición de
+buscaron solucionar el problema de la contaminación por aliasing
+utilizando un algoritmo que ajusta los datos con aliasing a un modelo de
+viento uniforme. Posteriormente el mismo autor modifica este algoritmo a
+partir de un un método variacional que permite eliminar la condición de
 homogeneidad del campo de viento para aplicar el mismo a campos de
 viento horizontalmente no-homogeneos (Xu y Nai, 2013).
 
@@ -657,7 +684,8 @@ anillo de datos de radar, es decirlos datos para cada \(\theta\) y \(r\)
 y realizando una regresión lineal de la forma:
 
 A partir de esto es posible ajustar cada anillo de datos de radar, es
-decir los datos para cada una regresión lineal de la forma:
+decir los datos para cada \(\theta\) y \(r\), realizando una regresión
+lineal de la forma:
 
 \begin{equation}
 \label{eq-vr4}
@@ -687,15 +715,16 @@ Dirección:
 \alpha = \frac{3\pi}{2}-\tan^{-1}(\frac{a_1}{b_1}) \; \; si \; b_1 > 0
 \end{equation}
 
-Las Ecuaciones \ref{eq-vr5} a \ref{eq-vr7} permiten obtener la dirección
+Las Ecuaciones \ref{eq-vr5} a \ref{eq-vr7} permiten estimar la dirección
 e intensidad del viento a partir de los datos de velocidad radial
 observados sobre un anillo correspondiente a un cierto ángulo de
 elevación y rango. Para calcular la altura de cada anillo es necesario
-conocer la propagación del haz del radar. Ésta depende del índice de
-refracción de la atmósfera (N) y este a su vez de la densidad del aire y
-por lo tanto del perfil vertical de temperatura y humedad. Existen
-distintas metodologías para calcular la propagación del haz del radar
-(Zeng et~al., 2014) que varían en complejidad y precisión.
+conocer la manera en que se propaga el haz del radar. Ésta depende del
+índice de refracción de la atmósfera (N) y este a su vez de la densidad
+del aire y por lo tanto del perfil vertical de temperatura y humedad.
+Existen distintas metodologías para calcular el camino que realiza el
+haz del radar al propagarse (Zeng et~al., 2014) y que varían en
+complejidad y precisión.
 
 Debido a la falta de datos de temperatura y humedad necesarios para
 calcular el índice de refracción, en el algoritmo de VAD se aplica el
@@ -703,8 +732,8 @@ modelo 4/3 del radio de la Tierra. Este modelo es utilizado por la
 mayoría de los programas de procesamiento de datos de radar ya que pese
 a su simpleza (no toma en cuenta las condiciones de la atmósfera) es
 aceptable para cualquier ángulo de elevación usado, alturas máximas de
-entre 10 y 20 km siempre que el gradiente de N esté alrededor de
-\(-1/a\) donde \(a\) es el radio de la Tierra (Doviak y Zrnić, 1993).
+entre 10 y 20 km, siempre que el gradiente de N sea cercano a \(-1/a\),
+donde \(a\) es el radio de la Tierra (Doviak y Zrnić, 1993).
 
 Para determinar la bondad de la regresión lineal realizada para cada
 anillo se calcula la raíz del error cuadrático medio asociada
@@ -724,33 +753,31 @@ particular.
 
 }
 
-\caption{Velocidad del viento (m/s) en función de la altura para cada anillo individual calculada con VAD (puntos) y el perfil vertical obtenido luego del promedio pesado (línea). \label{perfil-rmse}}\label{fig:evad}
+\caption{Velocidad del viento (m/s) en función de la altura para cada anillo individual calculada con VAD (puntos) y el perfil vertical obtenido luego del promedio pesado (línea). En colores se muestra el $rmse_a$ (m/s) de cada anillo. \label{perfil-rmse}}\label{fig:evad}
 \end{figure}
 
 En la Figura \ref{perfil-rmse} se muestra el valor de la magnitud del
-viento calculado a partir de cada anillo válido y en colores el valor de
-\(rmse_a\) asociado para un caso de ejemplo. La dispersión de los datos
-varía con la altura pero se mantiene la forma del perfil con un
-\(rmse_a\) medio de 2.01 m/s.
+viento calculado a partir de cada anillo válido y en color el rango del
+valor de \(rmse_a\) asociado para un caso de ejemplo. La dispersión de
+los datos varía con la altura pero se mantiene la forma del perfil con
+un \(rmse_a\) medio de 2.01 m/s.
 
 A partir de la intensidad y dirección del viento obtenidos con cada
 anillo a distintas alturas, es posible obtener un único perfil vertical
 calculando un promedio pesado de los datos de anillos. Para esto se
 establece una retícula vertical equiespaciada y se calcula el valor del
 viento en cada punto como el promedio de los valores de los anillos
-dentro de cada capa de atmósfera.
-
-El algoritmo identifica los datos de \(V\) para cualquier rango y ángulo
-de elevación que se encuentran en \(z(k) \pm d/2\) donde \(z\) es el
-k-ésimo punto de retícula vertical y \(d\) es la resolución espacial.
-Para obtener el valor promedio de \(V\) correspondiente a la altura
-\(z\) se calcula un promedio pesando la variable por el \(rmse_a\) y la
-distancia de cada anillo al radar \(r\). De esta manera los anillos con
-mayor error y más alejados a la ubicación del radar tienen menor
-influencia en el resultado final. Si bien el \(rmse_a\) y \(r\) tienen
-magnitud distinta se observó que el primero tiene mayor influencia en el
-promedio pesado y que la incorporación del \(r\) disminuye el ruido en
-el perfil final.
+dentro de cada capa de atmósfera. El algoritmo identifica los datos de
+\(V\) para cualquier rango y ángulo de elevación que se encuentran en
+\(z(k) \pm d/2\), donde \(z\) es el k-ésimo punto de retícula vertical y
+\(d\) es la resolución espacial. Para obtener el valor promedio de \(V\)
+correspondiente a la altura \(z\), se calcula un promedio pesando la
+variable por el \(rmse_a\) y la distancia de cada anillo al radar \(r\).
+De esta manera los anillos con mayor error y más alejados a la ubicación
+del radar tienen menor influencia en el resultado final. Si bien el
+\(rmse_a\) y \(r\) tienen magnitud distinta se observó que el primero
+tiene mayor influencia en el promedio pesado y que la incorporación del
+\(r\) disminuye el ruido en el perfil final.
 
 \begin{equation}\label{eq-vr9}
 \bar{V} = \frac {\sum w_i V_i} {\sum w_i}
@@ -758,12 +785,13 @@ el perfil final.
 
 Donde \(w_i = \frac {1}{rmse_{ai} + r_i}\) y el subíndice \(i\) cuenta
 la cantidad de datos para cada intervalo \(z \pm d/2\). De manera
-análoga se calcula las componentes \(u\) y \(v\) y a partir de estas, la
-dirección del viento para cada punto de retícula vertical. Este cálculo
-no se realiza con la dirección del viento estimada con las Ecuaciones
-\ref{eq-vr6} y \ref{eq-vr7} porque al ser una variable cíclica, el
-promedio puede generar errores. El perfil final obtenido a partir de la
-Ecuación \ref{eq-vr9} se puede observar en la Figura \ref{perfil-rmse}.
+análoga se calcula las componentes \(u\) y \(v\), y a partir de estas,
+la dirección del viento para cada punto de retícula vertical. Este
+cálculo no se realiza con la dirección del viento estimada con las
+Ecuaciones \ref{eq-vr6} y \ref{eq-vr7} ya que al ser una variable
+cíclica el promedio puede generar errores. El perfil final obtenido a
+partir de la Ecuación \ref{eq-vr9} se puede observar en la Figura
+\ref{perfil-rmse}.
 
 Finalmente se calculan dos medidas del error de estimación asociado a
 cada punto:
@@ -784,12 +812,12 @@ con \(\bar{V}\) el promedio pesado de la velocidad del viento para la
 capa.
 
 Este error relativo da cuenta de la distancia entre la velocidad
-promedio calculada para ese nivel y el valor de cada anillo pesada por
-el error del anillo. De esta manera si el \(rmse_{ai}\) es grande la
-diferencia \((V_i - \bar{V})^2\) tiene menor peso en el error del nivel.
-Es importante notar que \(V_i\) y \(\bar{V}\) no están necesariamente a
-la misma altura ya que \(\bar{V}\) es el promedio de muchos \(V_i\)
-dentro de una capa.
+promedio calculada para ese nivel y el valor de cada anillo pesado por
+el error del anillo. De esta manera si el \(rmse_{ai}\) del i-ésimo
+anillo es grande, la diferencia \((V_i - \bar{V})^2\) tiene menor peso
+en el error del nivel. Es importante notar que \(V_i\) y \(\bar{V}\) no
+están necesariamente a la misma altura ya que \(\bar{V}\) es el promedio
+de muchos \(V_i\) dentro de una capa.
 
 \begin{itemize}
 \tightlist
@@ -802,7 +830,7 @@ rmse = \sqrt{\frac{1}{\sum \frac{1}{rmse_{ai}^2}}}
 \end{equation}
 
 Este rmse no toma en cuenta la posible dispersión de los valores
-individuales de los anillos respecto del valor medio pero retiene el
+individuales de los anillos respecto del valor medio, pero retiene el
 error cuadrático medio de cada anillo y calcula la raíz del error
 cuadrático medio del nivel como la suma de la inversa de los errores
 individuales.
@@ -826,12 +854,12 @@ posibles errores aleatorios.
   \textbf{Ángulos de elevación seleccionados:} La presencia de ecos de
   terreno pueden generar que los campos de velocidad radial para los
   primeros ángulos de elevación sean muy ruidosos y sin coherencia
-  espacial. En el otro extremo, en caso de ser necesario,se puede
+  espacial. En el otro extremo, en caso de ser necesario, se pueden
   eliminar los ángulos superiores. Por lo tanto es posible seleccionar
   el rango de ángulos a ser analizados y utilizados en el cálculo del
   VAD con el \emph{Ángulo mínimo} y el \emph{Ángulo máximo}.
 \item
-  \textbf{Selección del dominio de cálculo:} Otro posibilidad para
+  \textbf{Selección del dominio de cálculo:} Otra posibilidad para
   evitar los ecos de terreno es definir un \emph{Radio interior} por
   debajo del cual no se incluyen los datos para el cálculo de VAD. En el
   otro extremo, es posible definir un \emph{Radio exterior} para limitar
@@ -842,7 +870,7 @@ posibles errores aleatorios.
   \textbf{Cantidad de datos por anillo:} el algoritmo cuenta la cantidad
   de datos válidos por anillo y se define un porcentaje de datos
   faltantes (NaN) límite respecto del total para descartar el anillo,
-  por ejemplo 20\%. Si se excede dicho umbral (\emph{NaN máximo}) el
+  por ejemplo 30\%. Si se excede dicho umbral (\emph{NaN máximo}) el
   anillo es descartado. De esta manera se evita la utilización de
   anillos donde la señal es muy débil.
 \item
@@ -854,8 +882,8 @@ posibles errores aleatorios.
   errores en el resultado final, por lo tanto cuando el hueco o
   \emph{Gap máximo} es mayor a 30° de azimut, el anillo se descarta.
 \item
-  \textbf{Errores aleatorios:} Los errores aleatorios producto de ruido
-  del instrumento pueden ser eliminados utilizando un filtro pasa bajo
+  \textbf{Errores aleatorios:} Los errores aleatorios, producto de ruido
+  del instrumento, pueden ser eliminados utilizando un filtro pasa bajo
   (Gao y Droegemeier, 2004). Este control no elimina anillos pero
   produce un suavizado de los datos de cada anillo de manera
   independiente. Es necesario definir la cantidad de datos o \(Pesos\)
@@ -900,16 +928,16 @@ m.
 
 }
 
-\caption{Topografía de la región del radar Anguil en metros sobre el nivel del mar. El punto negro indica la ubicación del Radar INTA Anguil, el punto rojo indica la ubicación de la estación Santa Rosa Aero. Datos ETOPO1 1 Arc-Minute Global Relief Model NOAA (Amante y Eakins, 2009). \label{topo-anguil}}\label{fig:topo-anguil}
+\caption{Topografía de la región del radar Anguil en metros sobre el nivel del mar. El punto azul indica la ubicación del Radar INTA Anguil, el punto rojo indica la ubicación de la estación Santa Rosa Aero. Datos ETOPO1 1 Arc-Minute Global Relief Model NOAA (Amante y Eakins, 2009). \label{topo-anguil}}\label{fig:topo-anguil}
 \end{figure}
 
-Las evaluaciones con datos sintéticos se realizaron recontruyendo el
+Las evaluaciones con datos sintéticos se realizaron reconstruyendo el
 campo de velocidad radial sintética interpolando la velocidad medida por
 la radiosonda a la retícula del radar utilizando la Ecuación
 \ref{eq-vr1}. En este proceso se asume que el campo de viento horizontal
 es homogéneo. Este campo de velocidad radial sintética \(V_{rs}\) puede
-ser re transformado a un perfil vertical de viento utilizando el VAD y
-comparado con el sondeo original para determinar la validez del
+ser transformado nuevamente a un perfil vertical de viento utilizando el
+VAD y comparado con el sondeo original para determinar la validez del
 algoritmo.
 
 Para este segundo método de validación se utilizaron un volumen de datos
@@ -918,160 +946,9 @@ del radiosondeo de la estación del SMN Santa Rosa Aero para la misma
 hora. Además, dado que el resultado de la interpolación del viento real
 da un campo homogéneo, sin errores o datos faltantes, se aplicaron
 distintas fuentes de errores para evaluar la sensibilidad de la tecnica
-a diferentes tipos de errores.
-
-\subsubsection{Pruebas de validación para distintos errores y datos
-faltantes}\label{pruebas-de-validacion-para-distintos-errores-y-datos-faltantes}
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Sin datos faltantes ni errores (SE)}
-\end{itemize}
-
-Se obtiene el \(V_r\) interpolado a la retícula del radar de Anguil (con
-una estrategia de escaneo hasta 120 km de radio y 8 ángulos de
-elevación) a partir del sondeo. Como los datos de sondeo llegan hasta
-los 30 km de altura, hay información disponible para interpolar los
-datos de \(V_r\) para todos los ángulos de elevación y para cualquier
-rango. Sin embargo esto genera muchos más datos de los disponibles
-normalmente. Es de esperar que el VAD resultante sea muy similar al
-sondeo inicial pero esta primera validación también permite verificar
-que la transformación de \(V\) a \(V_r\) es correcta.
-
-\begin{figure}
-
-{\centering \subfloat[Datos de radar \label{radar}\label{fig:validacion1}]{\includegraphics[ ]{Tesis_files/figure-latex/validacion-1} }\subfloat[Sin errores \label{se}\label{fig:validacion2}]{\includegraphics[ ]{Tesis_files/figure-latex/validacion-2} }\newline\subfloat[Con errores \label{ce}\label{fig:validacion3}]{\includegraphics[ ]{Tesis_files/figure-latex/validacion-3} }\subfloat[Con errores + DF \label{na}\label{fig:validacion4}]{\includegraphics[ ]{Tesis_files/figure-latex/validacion-4} }
-
-}
-
-\caption{Velocidad radial (m/s) observada a las 12 UTC por el radar de Anguil en la elevación $1.3^{\circ}$ (a), la misma variable transformada a partir del sondeo de la estación Santa Rosa Aero para la misma hora (b), velocidad radial mostrada en (b) pero con errores aleatorios (c) y con los mismos datos faltantes observados por el radar (d). \label{validacion}}\label{fig:validacion}
-\end{figure}
-
-En la Figura \ref{validacion} se puede observar el campo de \(V_r\)
-observado por el radar (a) y el campo de \(V_{rs}\) obtenidos a partir
-del sondeo (b). Cualitativamente se observa que tanto la magnitud como
-la dirección del viento son similares pero también que el \(V_rs\) cubre
-totalmente el dominio mientras que la señal del \(V_r\) se extingue a
-partir de los 15 km de rango. Cuantitativamente la diferencia
-\(V_r - V_{rs}\) es grande en puntos localizados pero el error absoluto
-medio es de 2.08 m/s, un valor razonable teniendo en cuenta que las
-observaciones son realizadas por instrumentos distintos.
-
-A continuacion se describen los resultados obtenidos con las pruebas de
-sensibilidad del algoritmo de reconstrucción del perfil vertical del
-viento a diferentes tipos de errores presentes en el campo de velocidad
-radial.
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Con errores aleatorios (EA)}
-\end{itemize}
-
-En el primer experimento se agregaron errores aleatorios al campo de
-\(V_{rs}\), esto además permite analizar la sensibilidad del algoritmo a
-este tipo de errores.
-
-El nuevo campo perturbado será:
-
-\begin{equation} \label{eq-vr12}
-V_{rs}'  = V_{rs} + \alpha \varepsilon(0,1)
-\end{equation}
-
-Donde \(\alpha\) es la amplitud del error y \(\varepsilon\) es un número
-aleatorio con distribución normal, \(\mu = 0\) y \(\sigma= 1\).
-
-En la Figura \ref{ce} se muestra el campo resultante utilizando
-\(\alpha = 1 m/s\), rápidamente se ve la variabilidad impuesta y también
-la disminución en la coherencia horizontal aunque se mantiene
-aproximadamente el signo de la variable en las distintas regiones.
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Con errores aleatorios y datos faltantes (EA+DF)}
-\end{itemize}
-
-Otro problema importante en los datos de radar es la ausencia de señal,
-esto se ve como datos faltantes (DF). Para analizar el efecto de los
-datos faltantes se aplicó una máscara de datos faltantes al campo de
-\(V_{rs}'\) de tal manera que sean los mismo NAs presentes en el volumen
-de datos de radar utilizados para que la distribución de Nas sea
-realista (Figura \ref{na}).
-
-\subsubsection{Perfiles obtenidos}\label{perfiles-obtenidos}
-
-En la Figura \ref{validacion-perfiles} se muestra el perfil del sondeo
-para los primeros 3 km de altura, los perfiles calculado con VAD a
-partir de los distintos campos sintéticos y en negro se muestra el
-perfil vertical obtenido a partir de las observaciones del radar para
-esa hora. En cuanto a la magnitud no se ven diferencias importantes
-entre el sondeo y los perfiles sintéticos. Al observar el detalle de los
-primeros 1000 metros de altura, la diferencia es menor a 0.5 m/s en
-todos los casos. Tampoco se observó sensibilidad al aumento de la
-amplitud de error lo cual sugiere que el algoritmo es robusto frente a
-la presencia de errores aleatorios (no se muestra).
-
-\begin{figure}
-
-{\centering \subfloat[ \label{perfiles}\label{fig:validacion-perfiles1}]{\includegraphics{Tesis_files/figure-latex/validacion-perfiles-1} }\subfloat[ \label{zoom}\label{fig:validacion-perfiles2}]{\includegraphics{Tesis_files/figure-latex/validacion-perfiles-2} }
-
-}
-
-\caption{Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruebas de validación (a) y detalle ampliado del máximo en niveles bajos (b) \label{validacion-perfiles}}\label{fig:validacion-perfiles}
-\end{figure}
-
-\begin{longtable}[]{@{}lrrrr@{}}
-\caption{Errores calculados para las distintas pruebas de validación.
-\label{validacion-errores}}\tabularnewline
-\toprule
-Prueba & rms & rre & dispersión & rmse\tabularnewline
-\midrule
-\endfirsthead
-\toprule
-Prueba & rms & rre & dispersión & rmse\tabularnewline
-\midrule
-\endhead
-SE & 0.161 & 0.019 & 0.003 & 0.000\tabularnewline
-EA & 0.302 & 0.036 & 0.105 & 2.094\tabularnewline
-EA+DF & 0.178 & 0.021 & 0.174 & 2.873\tabularnewline
-\bottomrule
-\end{longtable}
-
-\newpage
-
-Esto puede verificarse con el cálculo de distintos errores (Gao y
-Droegemeier, 2004): la raíz del error cuadrático medio
-(\(rms = \sqrt{ \frac{\sum (V-V_{ref})^2}{N} }\)) y el error relativo al
-rms (\(rre = \sqrt{ \frac{\sum (V-V_{ref})^2}{\sum (V_{ref})^2} }\))
-donde \(V_{ref}\) corresponde a la variable de referencia, en este caso
-el sondeo. Los resultados se muestran en la Tabla
-\ref{validacion-errores} y como puede observarse no hay un aumento
-importante en \(rms\) o \(rre\) al incorporar errores aleatorios y
-disminuye al quitar datos en la prueba EA+NA ya que los errores
-calculados son sensibles a la cantidad total de datos. Sin embargo los
-errores de estimación calculados por el algoritmo \(dispersión\)
-(Ecuación \ref{eq-vr10}) y \(rmse\) (Ecuación \ref{eq-vr11}) y
-promediados para todo el perfil se ven fuertemente afectados por la
-incorporación de errores aleatorios y más aún en la prueba EA+NA. Es
-importante notar que si bien está validación se realiza con un campo de
-\(V_r\) idealizado, el \(rmse_2\) es un orden de magnitud mayor al
-\(rms\) y por lo tanto el algoritmo puede estar sobreestimando este
-error.
-
-El efecto más importante en las pruebas de validación corresponde a la
-presencia de NAs. La falta de datos en distintas regiones para rangos a
-partir de 10 a 15 km impide el cálculo del perfil por encima de 800
-metros (con excepción de un punto a los 2000 metros de altura).
-
-Si se compara cualitativamente el perfil vertical obtenido a partir del
-radiosondeo y el perfil calculado con VAD a partir de los datos de radar
-se observa que estos no coinciden. Además de la falta de datos por
-encima de los 800 m (debido a la débil señal del radar), la magnitud del
-viento observado por el radar es siempre menor y con una diferencia de
-hasta 2 m/s. Tampoco se observa una similitud en la forma de los
-perfiles pero puede deberse, en parte, a los pocos datos disponibles.
+a diferentes tipos de errores. En la Sección \ref{sec-validacion} se
+presenta una descripción de las validaciones con los resultados
+obtenidos.
 
 \subsection{Configuración del algoritmo
 elegida}\label{configuracion-del-algoritmo-elegida}
@@ -1179,8 +1056,8 @@ El número de Richardson puede ser utilizado como un estimador de la
 estabilidad dinámica (Stull, 1988) y por lo tanto de la turbulencia
 presente. Su definición surge como el cociente de los términos de
 producción mecánica y térmica de la turbulencia en la ecuación de
-energía cinética turbulenta de un fluido gaseoso (Stull, 1988). A partir
-de suponer válida la teoría K (Pasquill y Smith, 1983) y que los
+energía cinética turbulenta para un fluido gaseoso (Stull, 1988). A
+partir de suponer válida la teoría K (Pasquill y Smith, 1983) y que los
 coeficientes de intercambio turbulento de calor sensible y de cantidad
 de movimiento son iguales, es posible escribir el número de Richardson
 en función de los gradientes verticales de viento y temperatura
@@ -1228,16 +1105,17 @@ comienzo de la capa estable nocturna, por lo tanto será la temperatura
 en el tope de la capa estable asumiendo que la capa residual no se
 modifica. El valor de \(\theta_f\) será la temperatura en superficie
 observado. Por último \(u_{máx}\) es el valor máximo de viento observado
-y \(z_{máx}\), la altura a la que ocurre este máximo y que se
-considerará en este trabajo como una aproximación de la altura del tope
-de la capa estable (Ver Sección \ref{sec-pbh}).
+y \(z_{máx}\), la altura a la que ocurre este máximo y que será
+considerado en este trabajo como una aproximación de la altura del tope
+de la capa límite estable nocturna (Ver Sección \ref{sec-pbh}).
 
 \subsection{\texorpdfstring{Altura de la capa límite
 \label{sec-pbh}}{Altura de la capa límite }}\label{altura-de-la-capa-limite}
 
-La altura de la capa límite se define como la altura a la cual las
-características de la superficie no afecta la atmósfera. Las
-estimaciones de esta variable son muy diversas en la literatura y
+La altura de la capa límite se define como el nivel de la atmósfera a
+partir del cual los forzantes de la superficie contigua a la atmósfera
+ya no la afectan en escalas temporales del orden de una hora o menos.
+Las estimaciones de esta variable son muy diversas en la literatura y
 también sus aplicaciones a los modelos numéricos.
 
 Por ejemplo la altura de la capa estable nocturna puede definirse como
@@ -1247,22 +1125,22 @@ determinarse como la altura a la que se observa el menor transporte
 vertical de calor sensible.
 
 Teniendo en cuenta los datos disponibles se determinó la altura de la
-capa estable nocturna como la altura a la que ocurre el máximo de
-viento.
+capa estable nocturna como la altura a la que ocurre el máximo relativo
+de viento más cercano a la superficie.
 
-Otro enfoque posible es el uso de la reflectividad. Por ejemplo Kaufmann
-y White (1997) buscó determinar la altura a la que ocurre la inversión
-térmica en invierno utilizando radares y otros instrumentos asociados
-utilizando la variable SNR (Signal to Noise Ratio o relación entre la
-Señal y el Ruido de la reflectividad). Por otro lado Chandra et~al.
-(2010) utiliza la variación de la reflectividad con la altura observada
-con un perfilador radar de viento en casos de aire claro y cielo nuboso.
-Esta técnica se basa en el concepto de que en el tope de la capa límite
-se observan importantes gradientes de temperatura y humedad y estos
-generan un máximo local en la reflectividad. En este trabajo se exploró
-de manera preliminar la posibilidad de determinar la altura de la capa
-límite a partir de las variaciones de la reflectividad observada por el
-radar con la altura.
+Otro enfoque posible es el uso de la reflectividad del aire medida por
+el radar. Por ejemplo Kaufmann y White (1997) buscó determinar la altura
+a la que ocurre la inversión térmica en invierno utilizando radares y
+otros instrumentos asociados, utilizando la variable SNR (Signal to
+Noise Ratio o relación entre la Señal y el Ruido de la reflectividad en
+la atmósfera). Por otro lado Chandra et~al. (2010) utilizan la variación
+de la reflectividad con la altura observada con un perfilador radar de
+viento en casos de aire claro y cielo nuboso. Esta técnica se basa en el
+concepto de que en el tope de la capa límite se observan importantes
+gradientes de temperatura y humedad y estos generan un máximo local en
+la reflectividad. En este trabajo se exploró de manera preliminar la
+posibilidad de determinar la altura de la capa límite a partir de las
+variaciones de la reflectividad observada por el radar con la altura.
 
 \subsection{Descripción del LLJ}\label{descripcion-del-llj}
 
@@ -1302,14 +1180,14 @@ que no puede ser despreciado dentro de la capa límite) y como resultado
 la oscilación del viento ocurre alrededor de un perfil de equilibrio en
 vez del viento geostrófico.
 
-De acuerdo con este modelo, la oscilación puede verse en la rotación del
-vector del viento a lo largo del tiempo generando una hodógrafa en forma
-de ``herradura'' (Baas et~al., 2012). Para el hemisferio sur la rotación
-del viento será en sentido antihorario. El periodo de la oscilación
-inercial es de \(P = 2\pi/f\), con \(f\) el parámetro de Coriolis. A la
-latitud de Paraná \(P = 17.79\) horas y por lo tanto se espera que el
-máximo viento ocurra unas 9 horas depues del atardecer (Kallistratova y
-Kouznetsov, 2012).
+De acuerdo con este modelo, físicamente la oscilación puede verse a
+través de la rotación del vector del viento a lo largo del tiempo
+generando una hodógrafa en forma de ``herradura'' (Baas et~al., 2012).
+Para el hemisferio sur la rotación del viento será en sentido
+antihorario. El periodo de la oscilación inercial es de \(P = 2\pi/f\),
+con \(f\) el parámetro de Coriolis. A la latitud de Paraná \(P = 17.79\)
+horas y por lo tanto se espera que el máximo viento ocurra unas 9 horas
+depues del atardecer (Kallistratova y Kouznetsov, 2012).
 
 \section{Modelo WRF}\label{modelo-wrf}
 
@@ -1333,21 +1211,21 @@ para comparar algunas de las parametrizaciones de CLP disponibles: YSU
 
 En las simulaciones se utilizaron 2 dominios con anidado en 2
 direcciones. El dominio 1 se configuró con una resolución de 12 x 12 km
-y 105 x 105 puntos de retícula y dominio 2 con una resolución de 4 x 4
-km y 253 x 253 puntos de retícula, ambos centrados en la ubicación del
+y 105 x 105 puntos de retícula y el dominio 2 con una resolución de 4 x
+4 km y 253 x 253 puntos de retícula, ambos centrados en la ubicación del
 radar de Paraná. Como se puede ver en la Figura \ref{dom-modelo} el
 dominio abarca todo el centro y norte del país. Se utilizaron datos
 geográficos con 10 minutos de resolución para el dominio 1 y 2 minutos
 para el dominio 2.
 
 Ambos dominios tienen una retícula vertical de 42 niveles expresados en
-coordenadas sigma-p, con una distribución hipérbolo tangencial para que
+coordenadas sigma-p, con una distribución hipérbolo-tangencial para que
 los primeros 20 niveles se ubiquen en los primeros 1800 m. La
 distribución de los niveles fue elegida para obtener mayor resolución
 vertical dentro del a capa límite y mejorar la representación de los
 procesos que ocurren en ella. La presión en el tope del modelo es de 100
 hPa. De acuerdo a Shin et~al. (2012) se determinó que el nivel inferior
-se ubique en 40 m para evitar errores en algunas variables de superficie
+se ubique a 40 m para evitar errores en algunas variables de superficie
 asociadas a la CLP.
 
 \begin{figure}
@@ -1396,7 +1274,7 @@ punto es aproximada a partir de una variable conocida en varios puntos
 en el espacio.
 
 A continuación se presentan las características generales de cada
-parametrización analizada y el esquema de capa de superficie asociado a
+parametrización utilizada y el esquema de capa de superficie asociado a
 cada una (ya que cada parametrización de CLP tiene una determinada
 parametrización de capa de superficie se los consideró como parte del
 mismo esquema: capa de superficie + PBL).
@@ -1412,10 +1290,10 @@ para la determminación de los coeficientes de difusividad turbuelenta
 (\(K()\)) se asume una función que es aplicada a toda la CLP
 independientemente de las condiciones locales en cada punto. Está
 configurado con una clausura de primer orden y considera la mezcla no
-local debido a torbellinos grandes agregando un término de ajuste de
-gradiente al gradiente local a cada variable de pronóstico. El esquema
-usa la parametrización de capa de superficie proveniente del modelo MM5
-que esta basada en la teoria de la semejanza de Monin-Obukohv.
+local debido a torbellinos grandes agregando un término de ajuste al
+gradiente local a cada variable de pronóstico. El esquema usa la
+parametrización de capa de superficie proveniente del modelo MM5 que
+esta basada en la teoria de la semejanza de Monin-Obukhov.
 
 \begin{itemize}
 \tightlist
@@ -1438,7 +1316,7 @@ Este esquema es similar a YSU en el sentido de que es no local y tiene
 clausura de primer orden. Sin embargo considera un transporte no local
 hacia arriba y un transporte local hacia abajo ``capa a capa'' para las
 variables de pronóstico (Pleim, 2007). También utiliza el esquema de
-capa de superficie MM5 Monin-Obukohv Similarity.
+capa de superficie MM5 Monin-Obukhov Similarity.
 
 \subsection{Post Procesamiento de los
 datos}\label{post-procesamiento-de-los-datos}
@@ -1468,20 +1346,20 @@ CLP}\label{tratamiento-de-variables-asociadas-a-la-clp}
 
 Fue posible configurar el modelo para obtener algunas variables
 específicas de los esquemas de CLP como la altura de la capa límite
-estimada por cada parametrización (\(h\)), la Longitud de Monin-Obukohv
+estimada por cada parametrización (\(h\)), la Longitud de Monin-Obukhov
 (\(L\)), la velocidad de fricción (\(u_*\)) y el coeficiente de
-difusividad de calor (\(K_h\)).
+difusividad turbulento de calor sensible (\(K_h\)).
 
 \subsubsection{Estimación de la altura de la
 CLP}\label{estimacion-de-la-altura-de-la-clp}
 
 Si bien cada parametrización estima la altura de la CLP, esta estimación
-es distinta en cada esquema. YSU calcula el número de Richarson Bulk
+es distinta en cada esquema. YSU calcula el número de Richardson Bulk
 desde superficie y determina \(h\) como la altura a la cual \(R_b\)
 alcanza un valor cŕitico: cero para el régimen inestable y 0.25 para el
-regimen estable (Hong et~al., 2006). ACM2 utiliza el mismo valor crítico
+régimen estable (Hong et~al., 2006). ACM2 utiliza el mismo valor crítico
 del \(R_b\) pero en los casos inestables el cálculo del número de
-Richardson se realiza para la capa de entremezcla entre la CLP y la
+Richardson se realiza para la capa de entremezcla que separa la CLP y la
 atmósfera libre (Pleim, 2007). Por otro lado el esquema MYJ diagnostica
 la altura de la CLP como la altura a la cual la energía cinética
 turbulenta alcanza un valor prescripto en \(0.1 m^2/s^2\) (Janjić,
@@ -1489,10 +1367,10 @@ turbulenta alcanza un valor prescripto en \(0.1 m^2/s^2\) (Janjić,
 
 Esto hace que la comparación entre las distintas parametrizaciones no
 sea del todo válida. Por esta razón además de utilizar el valor de \(h\)
-para cada parametrización, en el caso de la capa estable nocturna se
-estimará la altura de la capa a partir de la altura a la que ocurre el
-máximo de viento siguiendo la metodología utilizada para la
-observaciones (Sección \ref{sec-pbh}) y realizar una mejor comparación.
+para cada parametrización, en el caso de la capa límite estable nocturna
+se estimará su altura como el nivel en el que ocurre el máximo de viento
+siguiendo la metodología utilizada para la observaciones (Sección
+\ref{sec-pbh}) y así poder realizar una mejor comparación.
 
 \subsubsection{Coeficientes de difusividad
 turbulenta}\label{coeficientes-de-difusividad-turbulenta}
@@ -1502,7 +1380,7 @@ tiempo, no fue posible obtener el coeficiente de difusividad de cantidad
 de movimiento (\(K_m\)) directamente desde el modelo por lo que se
 estimó a partir de la relación \(K_m = K_h \: P_r\) donde \(P_r\) es el
 número de Prandtl. Este último se determinó calculando los perfiles de
-los coeficientes de difusividad según Ulke (2000):
+los coeficientes de difusividad turbulentos según Ulke (2000):
 
 \begin{itemize}
 \tightlist
@@ -1533,11 +1411,167 @@ K_h(z) =  ku_{*o}h\left (\frac{z}{h} \right )\left(1-\frac{z}{h} \right)\left (1
 \end{equation}
 
 donde \(u_*\) es la velocidad de fricción y \(k\) la constante de Von
-Karman. A partir de este modelo se obtiene \(P_r(z) = K_m/K_h\) para
-obtener el coeficiente de difusividad de cantidad de movimientos a
-partir de los datos del modelo.
+Karman. A partir de estos coeficientes se estimó \(P_r(z) = K_m/K_h\)
+para luego obtener el coeficiente de difusividad de cantidad de
+movimientos a partir del dato de \(K_h\) predicho por el modelo.
 
 \chapter{Resultados}\label{resultados}
+
+\section{\texorpdfstring{Pruebas de validación de VAD
+\label{sec-validacion}}{Pruebas de validación de VAD }}\label{pruebas-de-validacion-de-vad}
+
+Se presentan los resultados de las pruebas de validación de la técnica
+VAD para distintos errores y datos faltantes
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Sin datos faltantes ni errores (SE)}
+\end{itemize}
+
+Se obtiene el \(V_r\) interpolado a la retícula del radar de Anguil (con
+una estrategia de escaneo hasta 120 km de radio y 8 ángulos de
+elevación) a partir del sondeo. Como los datos de sondeo llegan hasta
+los 30 km de altura, hay información disponible para interpolar los
+datos de \(V_r\) para todos los ángulos de elevación y para cualquier
+rango. Sin embargo esto genera muchos más datos de los disponibles
+normalmente. Es de esperar que el VAD resultante sea muy similar al
+sondeo inicial pero esta primera validación también permite verificar
+que la transformación de \(V\) a \(V_r\) es correcta.
+
+\begin{figure}
+
+{\centering \subfloat[Datos de radar \label{radar}\label{fig:validacion1}]{\includegraphics[ ]{Tesis_files/figure-latex/validacion-1} }\subfloat[Sin errores \label{se}\label{fig:validacion2}]{\includegraphics[ ]{Tesis_files/figure-latex/validacion-2} }\newline\subfloat[Con errores \label{ce}\label{fig:validacion3}]{\includegraphics[ ]{Tesis_files/figure-latex/validacion-3} }\subfloat[Con errores + DF \label{na}\label{fig:validacion4}]{\includegraphics[ ]{Tesis_files/figure-latex/validacion-4} }
+
+}
+
+\caption{Velocidad radial (m/s) observada a las 12 UTC por el radar de Anguil en la elevación $1.3^{\circ}$ (a), la misma variable transformada a partir del sondeo de la estación Santa Rosa Aero para la misma hora (b), velocidad radial mostrada en (b) pero con errores aleatorios (c) y con los mismos datos faltantes observados por el radar (d). \label{validacion}}\label{fig:validacion}
+\end{figure}
+
+En la Figura \ref{validacion} se presenta el campo de \(V_r\) observado
+por el radar (a) y el campo de \(V_{rs}\) obtenidos a partir del sondeo
+(b). Tanto la magnitud como la dirección del viento son similares pero
+también se observa que el \(V_rs\) cubre totalmente el dominio mientras
+que la señal del \(V_r\) se extingue a partir de los 15 km de rango.
+Cuantitativamente la diferencia \(V_r - V_{rs}\) es grande en puntos
+localizados pero el error absoluto medio es de 2.08 m/s, un valor
+razonable teniendo en cuenta que las mediciones se realizan con
+instrumentos distintos.
+
+A continuacion se describen los resultados obtenidos con las pruebas de
+sensibilidad del algoritmo de reconstrucción del perfil vertical del
+viento a diferentes tipos de errores presentes en el campo de velocidad
+radial.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Con errores aleatorios (EA)}
+\end{itemize}
+
+En el primer experimento se agregaron errores aleatorios al campo de
+\(V_{rs}\), esto además permite analizar la sensibilidad del algoritmo a
+este tipo de errores.
+
+El nuevo campo perturbado será:
+
+\begin{equation} \label{eq-vr12}
+V_{rs}'  = V_{rs} + \alpha \varepsilon(0,1)
+\end{equation}
+
+Donde \(\alpha\) es la amplitud del error y \(\varepsilon\) es un número
+aleatorio con distribución normal, \(\mu = 0\) y \(\sigma= 1\).
+
+En la Figura \ref{ce} se muestra el campo resultante utilizando
+\(\alpha = 1 m/s\), rápidamente se ve la variabilidad impuesta y también
+la disminución en la coherencia horizontal aunque se mantiene
+aproximadamente el signo de la variable en las distintas regiones.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Con errores aleatorios y datos faltantes (EA+DF)}
+\end{itemize}
+
+Otro problema importante en los datos de radar es la ausencia de señal,
+que se clasifica como dato faltante (DF). Para analizar el efecto de los
+datos faltantes se aplicó una máscara de datos faltantes al campo de
+\(V_{rs}'\), para replicar la distribución de DF presentes en el volumen
+de datos de radar utilizados para generar una distribución de datos
+realista (Figura \ref{na}).
+
+\subsection{Perfiles obtenidos}\label{perfiles-obtenidos}
+
+En la Figura \ref{validacion-perfiles} se muestra el perfil del sondeo
+para los primeros 3 km de altura, los perfiles calculados con VAD a
+partir de los distintos campos sintéticos y en negro se muestra el
+perfil vertical obtenido a partir de las observaciones del radar para
+esa hora. En cuanto a la magnitud no se ven diferencias importantes
+entre el sondeo y los perfiles sintéticos. Al observar el detalle de los
+primeros 1000 metros de altura, la diferencia entre estos perfiles es
+menor a 0.5 m/s en todos los casos. Tampoco se observó sensibilidad al
+aumento de la amplitud de error lo cual sugiere que el algoritmo es
+robusto frente a la presencia de errores aleatorios (no se muestra).
+
+\begin{figure}
+
+{\centering \subfloat[ \label{perfiles}\label{fig:validacion-perfiles1}]{\includegraphics{Tesis_files/figure-latex/validacion-perfiles-1} }\subfloat[ \label{zoom}\label{fig:validacion-perfiles2}]{\includegraphics{Tesis_files/figure-latex/validacion-perfiles-2} }
+
+}
+
+\caption{Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruebas de validación (a) y detalle ampliado del máximo en niveles bajos (b) \label{validacion-perfiles}}\label{fig:validacion-perfiles}
+\end{figure}
+
+\begin{longtable}[]{@{}lrrrr@{}}
+\caption{Errores calculados para las distintas pruebas de validación.
+\label{validacion-errores}}\tabularnewline
+\toprule
+Prueba & rms & rre & dispersión & rmse\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+Prueba & rms & rre & dispersión & rmse\tabularnewline
+\midrule
+\endhead
+SE & 0.161 & 0.019 & 0.003 & 0.000\tabularnewline
+EA & 0.302 & 0.036 & 0.105 & 2.094\tabularnewline
+EA+DF & 0.178 & 0.021 & 0.174 & 2.873\tabularnewline
+\bottomrule
+\end{longtable}
+
+\newpage
+
+Esto puede verificarse con el cálculo de distintos errores (Gao y
+Droegemeier, 2004): la raíz del error cuadrático medio
+(\(rms = \sqrt{ \frac{\sum (V-V_{ref})^2}{N} }\)) y el error relativo al
+rms (\(rre = \sqrt{ \frac{\sum (V-V_{ref})^2}{\sum (V_{ref})^2} }\))
+donde \(V_{ref}\) corresponde a la variable de referencia, en este caso
+el sondeo. Los resultados se muestran en la Tabla
+\ref{validacion-errores} y como puede observarse no hay un aumento
+importante en \(rms\) o \(rre\) al incorporar errores aleatorios y
+disminuye al quitar datos en la prueba EA+NA ya que los errores
+calculados son sensibles a la cantidad total de datos. Sin embargo los
+errores de estimación calculados por el algoritmo \(dispersión\)
+(Ecuación \ref{eq-vr10}) y \(rmse\) (Ecuación \ref{eq-vr11}) y
+promediados para todo el perfil se ven fuertemente afectados por la
+incorporación de errores aleatorios y más aún en la prueba EA+NA. Es
+importante notar que si bien está validación se realiza con un campo de
+\(V_r\) idealizado, el \(rmse_2\) es un orden de magnitud mayor al
+\(rms\) y por lo tanto el algoritmo puede estar sobreestimando este
+error.
+
+El efecto más importante en las pruebas de validación corresponde a la
+presencia de NAs. La falta de datos en distintas regiones para rangos a
+partir de 10 a 15 km impide el cálculo del perfil por encima de 800
+metros (con excepción de un punto a los 2000 metros de altura).
+
+Si se compara cualitativamente el perfil vertical obtenido a partir del
+radiosondeo y el perfil calculado con VAD a partir de los datos de radar
+se observa que estos no coinciden. Además de la falta de datos por
+encima de los 800 m (debido a la débil señal del radar), la magnitud del
+viento observado por el radar es siempre menor y con una diferencia de
+hasta 2 m/s. Tampoco se observa una similitud en la forma de los
+perfiles pero puede deberse, en parte, a los pocos datos disponibles.
 
 \section{Descripción de los casos de
 estudio}\label{descripcion-de-los-casos-de-estudio}
@@ -1567,7 +1601,7 @@ significativamente afectado por la presencia de nubosidad (Figura
 
 Posteriormente, a las 12 UTC el anticiclón se intensificó y comenzó a
 moverse hacia el NE mientras que en superficie se observaron vientos
-predominantes del noreste de hasta 6.5 m/s. No se observó nubosidad y la
+predominantes del noreste de hasta 6.5 m/s. No hubo nubosidad y la
 temperatura en superficie alcanzó los 32.4°C. El aumento de humedad
 específica observado alrededor de las 12 UTC coincidió con el el momento
 donde se registraron vientos del sector norte y noreste.
@@ -1578,7 +1612,7 @@ donde se registraron vientos del sector norte y noreste.
 
 }
 
-\caption{Altura geopotencial en 1000 hPa para las 00 y las 12 UTC del 14 de enero de 2016 (Caso 1). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD - Kalnay et al., 1996). \label{hgt-caso1}}\label{fig:hgt-caso1}
+\caption{Altura geopotencial (mpg) en 1000 hPa para las 00 y las 12 UTC del 14 de enero de 2016 (Caso 1). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD - Kalnay et al., 1996). \label{hgt-caso1}}\label{fig:hgt-caso1}
 \end{figure}
 
 \begin{figure}
@@ -1587,7 +1621,7 @@ donde se registraron vientos del sector norte y noreste.
 
 }
 
-\caption{Variables de superficie observadas por la estación meteorológica Paraná el 14 de enero de 2016. La región sombreada corresponde a al período donde se observa nubosidad (ver texto). Datos Servicio Meteorológico Nacional. \label{meteo1}}\label{fig:meteo-caso1}
+\caption{Variables de superficie observadas por la estación meteorológica Paraná el 14 de enero de 2016 (temperatura (°C) y humedad específica). La región sombreada corresponde al período donde se observa nubosidad (ver texto). Datos Servicio Meteorológico Nacional. \label{meteo1}}\label{fig:meteo-caso1}
 \end{figure}
 
 \subsection{Caso 2: 21 de enero de
@@ -1597,24 +1631,24 @@ El caso 2 comprende el período entre las 00 UTC del 21 de enero a las 00
 UTC del 22 de enero de 2016. A escala regional a las 00 UTC (Figura
 \ref{hgt-caso2}) se observó un anticiclón ubicado sobre el océano
 Atlántico frente a la costa de Argentina, mientras que en el centro del
-país se observó una región de baja presión. De acuerdo a los datos de la
-estación meteorológica en las primeras horas del día el viento estuvo en
-calma y llegando a los 2 m/s en algunos momentos. La dirección
-predominante fue del E y SE en algunas horas. En cuanto a la nubosidad,
-en las primeras cuatro horas se observó nubosidad de tipo
-\emph{cirrostratus} que no cubrió la totalidad del cielo en ningún
-momento. No no afectó el descenso de temperatura durante las horas
-nocturnas (Figura \ref{meteo2}).
+país había un sistema de baja presión. De acuerdo a los datos de la
+estación meteorológica en las primeras horas del día el viento estuvo
+mayormente en calma, presentando velocidades de hasta 2 m/s en algunos
+momentos. La dirección predominante fue del E y SE a partir de las 03
+UTC. En cuanto a la nubosidad, en las primeras cuatro horas se observó
+nubosidad de tipo \emph{cirrostratus} que no cubrió la totalidad del
+cielo en ningún momento y no afecto el enfriamiento en horas nocturnas
+(Figura \ref{meteo2}).
 
 Posteriormente a las 12 UTC del mismo día el anticiclón se debilitó y se
-desplazó hacia el noreste. El viento en superficie fue de predominante
-del N a partir de esa hora con máximos de hasta 5.5 m/s. Esta situación
+desplazó hacia el noreste. El viento en superficie fue predominante del
+N a partir de esa hora con máximos de hasta 5.5 m/s. Esta situación
 generó un aumento de la humedad específica proveniente del norte con un
 máximo luego de las 14 UTC. Entre las 09 y las 16 UTC se observó
 nubosidad tipo \emph{cirro} que no llegó a cubrir la totalidad del
 cielo. Esta nubosidad no afectó de manera observable la temperatura en
-superficie que llegó a 35.4°C. En las observaciones del radar no se vió
-nubosidad en las inmediaciones.
+superficie que alcanzó los 35.4°C. Las observaciones del radar no
+mostraron nubosidad en las inmediaciones.
 
 \begin{figure}
 
@@ -1622,7 +1656,7 @@ nubosidad en las inmediaciones.
 
 }
 
-\caption{Altura geopotencial en 1000 hPa para las 00 y las 12 UTC del 21 de enero de 2016 (Caso 2). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD - Kalnay et al., 1996). \label{hgt-caso2}}\label{fig:hgt-caso2}
+\caption{Altura geopotencial (mpg) en 1000 hPa para las 00 y las 12 UTC del 21 de enero de 2016 (Caso 2). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD - Kalnay et al., 1996). \label{hgt-caso2}}\label{fig:hgt-caso2}
 \end{figure}
 
 \begin{figure}
@@ -1631,14 +1665,14 @@ nubosidad en las inmediaciones.
 
 }
 
-\caption{Variables de superficie observadas por la estación meteorológica Paraná el 21 de enero de 2016. La región sombreada corresponde a al período donde se observa nubosidad (ver texto). Datos Servicio Meteorológico Nacional. \label{meteo2}}\label{fig:meteo-caso2}
+\caption{Variables de superficie observadas por la estación meteorológica Paraná el 21 de enero de 2016 (temperatura (°C) y humedad específica). La región sombreada corresponde al período donde se observa nubosidad (ver texto). Datos Servicio Meteorológico Nacional. \label{meteo2}}\label{fig:meteo-caso2}
 \end{figure}
 
 \subsection{Caso 3: 23 de enero de
 2016}\label{caso-3-23-de-enero-de-2016}
 
-El caso 3 abarca el periodo de las 00 UTC del 23 de enero a las 00 UTC
-del 24 de enero de 2016. A nivel regional el campo de altura
+El caso 3 abarca el periodo entre las 00 UTC del 23 de enero y las 00
+UTC del 24 de enero de 2016. A nivel regional el campo de altura
 geopotencial en 1000 hPa mostró una región de baja presión en el centro
 del país (Figura \ref{hgt-caso3}) que fue desplazándose hacia el NE a lo
 largo del periodo. Esta configuración puede ser asociada con vientos del
@@ -1648,17 +1682,17 @@ y 5 m/s).
 
 Entre las 06 y 09 UTC se observó nubosidad que cubrió dos octavos del
 cielo de tipo \emph{altocumulus} semitransparentes. Si bien esta
-nubosidad se observó alejada de radar (a más de 60 km hacia el NE),
-puede ser la causa del estancamiento de la temperatura en la estación
-meteorológica durante ese período pero que luego siguió descendiendo al
-desaparecer la nubosidad. El máximo de humedad específica observado
-durante las horas nocturnas pudo deberse al transporte de humedad debido
-al viento del N y del NNE (Figura \ref{meteo3}).
+nubosidad estuvo alejada de radar (a más de 60 km hacia el NE), puede
+ser la causa del estancamiento de la temperatura en la estación
+meteorológica durante ese período. Al desaparecer la nubosidad, el
+descenso de temperatura continuó. El máximo de humedad específica
+observado durante las horas nocturnas pudo deberse al transporte de
+humedad debido al viento del N y del NNE (Figura \ref{meteo3}).
 
-A las 12 UTC el centro de baja presión fue reemplazado por un anticiclón
+A las 12 UTC el centro de baja presión fue desplzado por un anticiclón
 que se ubicó al sur de la provincia del Buenos Aires y sobre la costa
 del océano Atlántico. En superficie se registró viento del NO y O con un
-máximo de 5.5 m/s). Entre las 14 y las 17 UTC se registró nubosidad alta
+máximo de 5.5 m/s. Entre las 14 y las 17 UTC se registró nubosidad alta
 de tipo \emph{cirrus} en forma de filamentos y bandas que no cubrieron
 la totalidad del cielo en ningún momento. El aumento diurno de la
 temperatura fue constante hasta llegar a una máxima de 37.2°C a las 20
@@ -1670,7 +1704,7 @@ UTC.
 
 }
 
-\caption{Altura geopotencial en 1000 hPa para las 00 y las 12 UTC del 23 de enero de 2016 (Caso 3). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD - Kalnay et al., 1996). \label{hgt-caso3}}\label{fig:hgt-caso3}
+\caption{Altura geopotencial (mpg) en 1000 hPa para las 00 y las 12 UTC del 23 de enero de 2016 (Caso 3). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD - Kalnay et al., 1996). \label{hgt-caso3}}\label{fig:hgt-caso3}
 \end{figure}
 
 \begin{figure}
@@ -1679,7 +1713,7 @@ UTC.
 
 }
 
-\caption{Variables de superficie observadas por la estación meteorológica Paraná el 23 de enero de 2016. La región sombreada corresponde a al período donde se observa nubosidad (ver texto). Datos Servicio Meteorológico Nacional. \label{meteo3}}\label{fig:meteo-caso3}
+\caption{Variables de superficie observadas por la estación meteorológica Paraná el 23 de enero de 2016 (temperatura (°C) y humedad específica). La región sombreada corresponde al período donde se observa nubosidad (ver texto). Datos Servicio Meteorológico Nacional. \label{meteo3}}\label{fig:meteo-caso3}
 \end{figure}
 
 \section{Análisis de las observaciones de radar procesadas con
@@ -1691,9 +1725,10 @@ viento}\label{magnitud-y-velocidad-del-viento}
 Los datos de \(V_r\) del radar fueron procesados para obtener la
 magnitud y la intensidad del viento para el período correspondiente a
 cada caso de estudio. Debido a que la señal de radar en días de aire
-claro no supera a los primeros kilómetros de atmósfera y los controles
-de calidad impuestos, en muchos tiempos los resultados no alcanzan los
-3000 m de altura.
+claro no supera a los primeros kilómetros de atmósfera y que en altura
+los datos no superan los controles de calidad impuestos, en muchos
+tiempos los los perfiles se pueden estimar hasta una altura que varía
+entre 1000 y 3000 m.
 
 La magnitud y dirección del viento para el Caso 1 se muestra en la
 Figura \ref{campo-caso1}. En la Figura \ref{caso1-spd} se puede observar
@@ -1713,16 +1748,15 @@ desacoplada de la superficie y comienza a desarrollarse la capa estable
 nocturna.
 
 En el período nocturno se observa un aumento en la magnitud de los
-errores, principalmente del \(rmse_2\) que está asociado a un mayor
-error en los anillos de datos al estimar el valor del viento en esa
-región. Los mayores valores del \(rmse_2\) (hasta 3.8 m/s) se observan
-en los bordes de las regiones donde hay datos tanto en niveles altos
-como en los niveles inferiores por lo que es posible que por fuera de
-estos límites los datos de radar no hayan cumplido con los controles de
-calidad y fueron descartados. El \(rmse_1\) asociado a la dispersión de
-los datos, es menor a 0.5 m/s para la mayoría de los tiempos y altura.
-Algunas excepciones ocurren alrededor de las 08 UTC y para el mismo
-volumen de datos.
+errores, principalmente del \(rmse\). Este error está asociado al error
+de estimación del viento en cada anillo de datos. Los mayores valores
+del \(rmse\) (hasta 3.8 m/s) se observan en los bordes de las regiones
+donde hay datos tanto en niveles altos como en los niveles inferiores
+por lo que es posible que por fuera de estos límites los datos de radar
+no hayan cumplido con los controles de calidad y fueron descartados. La
+\(dispersión\) calculada para los datos, es menor a 0.5 m/s para la
+mayoría de los tiempos y altura. Algunas excepciones ocurren alrededor
+de las 08 UTC y para el mismo volumen de datos.
 
 En la Figura \ref{caso1-dir} se muestra la dirección del viento en
 función de la altura y el tiempo, los vectores representan la dirección
@@ -1736,7 +1770,7 @@ mucha coherencia, esto puede deberse al origen de los datos o
 diferencias en la ubicación geográfica.
 
 \begin{figure}
-\subfloat[Magnitud del viento. \label{caso1-spd}\label{fig:campo-caso11}]{\includegraphics{Tesis_files/figure-latex/campo-caso1-1} }\newline\subfloat[Dirección. \label{caso1-dir}\label{fig:campo-caso12}]{\includegraphics{Tesis_files/figure-latex/campo-caso1-2} }\caption{Magnitud y dirección del viento  correspondiente al Caso 1 (14/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestran los errores calculados ($rmse_1$ en círculos y $rmse_2$ en cruces) cuando superan los 0.5 m/s. \label{campo-caso1}}\label{fig:campo-caso1}
+\subfloat[Magnitud del viento. \label{caso1-spd}\label{fig:campo-caso11}]{\includegraphics{Tesis_files/figure-latex/campo-caso1-1} }\newline\subfloat[Dirección. \label{caso1-dir}\label{fig:campo-caso12}]{\includegraphics{Tesis_files/figure-latex/campo-caso1-2} }\caption{Magnitud y dirección del viento  correspondiente al Caso 1 (14/01/2016) estimados a partir de las observaciones de radar utilizando la tecnica VAD. En el caso de la magnitud del viento se muestran los errores calculados ($rmse_1$ en círculos y $rmse_2$ en cruces) cuando superan los 0.5 m/s. \label{campo-caso1}}\label{fig:campo-caso1}
 \end{figure}
 
 La Figura \ref{campo-caso2} muestra la evolución del viento a lo largo
@@ -1777,7 +1811,7 @@ esto coincide con el viento observado en la estación meteorológica para
 esas horas.
 
 \begin{figure}
-\subfloat[Magnitud del viento. \label{caso2-spd}\label{fig:campo-caso21}]{\includegraphics{Tesis_files/figure-latex/campo-caso2-1} }\newline\subfloat[Dirección. \label{caso2-dir}\label{fig:campo-caso22}]{\includegraphics{Tesis_files/figure-latex/campo-caso2-2} }\caption{Magnitud y dirección del viento  correspondiente al Caso 2 (21/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestran los errores calculados ($rmse_1$ en círculos y $rmse_2$ en cruces) cuando superan los 0.5 m/s. \label{campo-caso2}}\label{fig:campo-caso2}
+\subfloat[Magnitud del viento. \label{caso2-spd}\label{fig:campo-caso21}]{\includegraphics{Tesis_files/figure-latex/campo-caso2-1} }\newline\subfloat[Dirección. \label{caso2-dir}\label{fig:campo-caso22}]{\includegraphics{Tesis_files/figure-latex/campo-caso2-2} }\caption{Magnitud y dirección del viento  correspondiente al Caso 2 (21/01/2016) estimados a partir de las observaciones de radar utilizando la tecnica VAD. En el caso de la magnitud del viento se muestran los errores calculados ($rmse_1$ en círculos y $rmse_2$ en cruces) cuando superan los 0.5 m/s. \label{campo-caso2}}\label{fig:campo-caso2}
 \end{figure}
 
 Finalmente la evolución de la magnitud y la dirección del viento con el
@@ -1818,7 +1852,7 @@ del N y en niveles altos el viento rota con dirección SO. Durante el día
 el viento es principalmente del O.
 
 \begin{figure}
-\subfloat[Magnitud del viento. \label{caso3-spd}\label{fig:campo-caso31}]{\includegraphics{Tesis_files/figure-latex/campo-caso3-1} }\newline\subfloat[Dirección. \label{caso3-dir}\label{fig:campo-caso32}]{\includegraphics{Tesis_files/figure-latex/campo-caso3-2} }\caption{Magnitud y dirección del viento  correspondiente al Caso 3 (23/01/2016) observados por el radar y procesados con VAD. En el caso de la magnitud del viento se muestran los errores calculados ($rmse_1$ en círculos y $rmse_2$ en cruces) cuando superan los 0.5 m/s. \label{campo-caso3}}\label{fig:campo-caso3}
+\subfloat[Magnitud del viento. \label{caso3-spd}\label{fig:campo-caso31}]{\includegraphics{Tesis_files/figure-latex/campo-caso3-1} }\newline\subfloat[Dirección. \label{caso3-dir}\label{fig:campo-caso32}]{\includegraphics{Tesis_files/figure-latex/campo-caso3-2} }\caption{Magnitud y dirección del viento  correspondiente al Caso 3 (23/01/2016) estimados a partir de las observaciones de radar utilizando la tecnica VAD. En el caso de la magnitud del viento se muestran los errores calculados ($rmse_1$ en círculos y $rmse_2$ en cruces) cuando superan los 0.5 m/s. \label{campo-caso3}}\label{fig:campo-caso3}
 \end{figure}
 
 En la Figura \ref{perfiles-horarios} se muestran perfiles verticales del
@@ -2868,7 +2902,7 @@ Boundary-Layer Meteorology, 143, 1, 159-175.
 \hypertarget{ref-Kalnay1996}{}
 Kalnay, E., Kanamitsu, M., Kistler, R., Collins, W., Deaven, D., Gandin,
 L., Iredell, M., Saha, S., White, G., y Woollen, J. y otros, 1996. The
-NCEP/NCAR 40-year reanalysis project. Bulletin of the American
+NCEP/NCAR 40-Year Reanaysis Project. Bulletin of the American
 Meteorological Society, 77, 3, 437-471.
 
 \hypertarget{ref-Kaufmann1997}{}
@@ -2890,6 +2924,12 @@ Lim, E., y Sun, J., 2010. A Velocity dealiasing technique using rapidly
 updated analysis from a four-dimensional variational doppler radar data
 assimilation system. Journal of Atmospheric and Oceanic Technology, 27,
 7, 1140-1152.
+
+\hypertarget{ref-Marengo2004}{}
+Marengo, J.A., Soares, W.R., Saulo, C., y Nicolini, M., 2004.
+Climatology of the low-level jet east of the Andes as derived from the
+NCEP-NCAR reanalyses: Characteristics and temporal variability. Journal
+of Climate, 17, 12, 2261-2280.
 
 \hypertarget{ref-Matejka1991}{}
 Matejka, T., y Srivastava, R.C., 1991. An improved version of the
@@ -2955,6 +2995,11 @@ Algorithm for the Osaka Phased Array Weather Radar. Sola, 11, 0, 48-52.
 Saibene, Y.B., Banchero, S., y Pampa, L., 2014. Desarrollo y uso de
 herramientas libres para la explotación de datos de los radares
 meteorológicos del INTA. En pp. 74-86.
+
+\hypertarget{ref-Salio2007}{}
+Salio, P., Nicolini, M., y Zipser, E.J., 2007. Mesoscale Convective
+Systems over Southeastern South America and Their Relationship with the
+South American Low-Level Jet. Monthly Weather Review, 135, 4, 1290-1309.
 
 \hypertarget{ref-Salonen2008}{}
 Salonen, K., Järvinen, H., Järvenoja, S., Niemelä, S., y Eresmaa, R.,
