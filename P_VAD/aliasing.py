@@ -18,7 +18,7 @@ import netCDF4
 #import LowPassFilter
 import RadarBeamPropagation
 
-path_user = '../Tesis/seudocache/*Anguil_SUR.nc'
+path_user = '../../'
 path_user = '../../Radar/VAD/PARANA/20170128/240/cfrad.20170128_103003.000_to_20170128_103427.998_PAR_SUR.nc'
 
 FileList = np.sort(glob.glob(path_user))
@@ -138,8 +138,8 @@ for j in data_dates:
 
 # Leemos los archicos .nc
 #rango = '240/' #Elejimos con que rango queremos trabajar
-#path_user = '../../../../Radar/VAD/PARANA/caso1acm/'
-#FileList = np.sort(glob.glob(path_user + '*.nc'))
+path_user = '../../../../Radar/VAD/PARANA/caso1acm/'
+FileList = np.sort(glob.glob(path_user + '*.nc'))
 
 # Parametros
 
@@ -319,7 +319,7 @@ for f in range(len(FileList)):
     rs = rs.flatten('F')
     vad = pandas.DataFrame({'spd':spd, 'rmse':rmse, 'di':di, 'rh':rh, 'ht':ht, 'elev':elev, 'a':a, 'b':b, 'rs':rs})
 
-    vad.to_csv('../Tesis/seudocache/elev_vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
+    vad.to_csv('../../caso1acm_240/elev_vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
     #Muestra por pantalla la cantidad de anillos válidos para cada ángulo de elevación
     
 #%%
@@ -329,8 +329,8 @@ for f in range(len(FileList)):
     #========================
  
 #Leemos los archivos
-path_user = '../Tesis/seudocache/'
-FileList = np.sort(glob.glob(path_user + 'elev_vda-2016-01-05T12:04:23Z_INTA_Anguil.csv'))
+path_user = '../../caso1acm_240/'
+FileList = np.sort(glob.glob(path_user + 'elev*'))
 
 # Parámetros
 minlev = 0.1  #Nivel inferior en kilometros
@@ -391,7 +391,7 @@ for f in range(len(FileList)):
     
     #Escribo un .csv que se guarda con la fecha y la hora del volumen de datos
     #totalvad.to_csv('20160114_240/vda-'+ DateTime + '_' + NameRadar + '.csv', sep = ';', na_rep = '-9999')
-    totalvad.to_csv('../Tesis/seudocache/'+ FileList[f][25:65], sep = ';', na_rep = '-9999')
+    totalvad.to_csv('../../caso1acm_240/'+ FileList[f][24:65], sep = ';', na_rep = '-9999')
 
     print "Listo " + FileList[f]
 
