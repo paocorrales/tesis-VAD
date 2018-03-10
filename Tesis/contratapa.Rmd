@@ -1,0 +1,22 @@
+---
+title: ''
+output: pdf_document
+---
+\begin{titlepage}
+	\centering
+	{\scshape\Huge Validación de parametrizaciones de capa límite utilizando datos de radar. \par}
+	\vspace{12.0cm}
+	
+	{\Large Paola \textsc{Corrales} \\
+	Tesista \par}
+	\vspace{3.0cm}
+	\begin{tabular}{ccc}
+\Large	Dr. Juan \textsc{Ruiz} & \hspace{2.5cm}& \Large Dra. Marisa \textsc{Gassmann} \\
+Director & \hspace{2.5cm} & Directora \\
+\end{tabular}
+
+	\vfill
+
+% Bottom of the page
+	{\large Buenos Aires, 8 de marzo de 2018.\par}
+\end{titlepage}
