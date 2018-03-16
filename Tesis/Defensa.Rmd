@@ -1,0 +1,935 @@
+---
+# title: "Tesis de Licenciatura"
+author: "Paola Corrales"
+date: ''
+output:
+  pdf_document:
+    keep_tex: yes
+    latex_engine: xelatex
+    number_sections: yes
+    # toc: yes
+    # toc_depth: 4
+  word_document:
+    reference_docx: word-template.docx
+    # toc: yes
+    # toc_depth: '4'
+classoption: oneside, a4paper
+documentclass: book
+fontsize: 12pt
+geometry: inner = 3cm, outer = 2cm, top = 2.5cm, bottom = 2.5cm
+header-includes:
+- \usepackage{setspace}
+- \setstretch{1.5}
+- \usepackage{subfig}
+lang: es-AR
+link-citation: yes
+csl: Bibliografia/meteorologica.csl
+subtitle: Validación de parametrizaciones de capa límite utilizando datos de radar
+bibliography:
+- Bibliografia/papers.bib
+- Bibliografia/packages.bib
+nocite: |
+  @Amante2009, @Kalnay1996
+---
+
+
+```{r setup, include=FALSE, cache = FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      cache = TRUE,
+                      dev = "png",
+                      dpi = 150,
+                      fig.path = "Defensa/Fig/",
+                      warning = FALSE,
+                      message = FALSE)
+
+knitr::write_bib(c("base", "data.table", "ggplot2", "metR"),
+                 file = "Bibliografia/packages.bib")
+# librerías
+library(metR)
+library(ggplot2)
+library(ggforce)
+library(ggrepel)
+library(lubridate)
+library(magrittr)
+library(dplyr)
+library(dtplyr)
+library(viridis)
+library(directlabels)
+library(data.table)
+library(patchwork)
+library(ncdf4)
+library(knitr)
+library(kableExtra)
+library(circular)
+source("helpfun.R")
+
+# Variables útiles
+mapa.ar <- setDT(fortify(rnaturalearth::ne_states(country = c("Argentina"))))
+map2 <- setDT(fortify(rnaturalearth::ne_countries(country = c("Brazil", "Uruguay"))))
+mapa.ar <- rbind(mapa.ar, map2) %>%
+   .[, .(long = approx(.I, long, n = .N*5)$y,
+         lat = approx(.I, lat, n = .N*5)$y),
+     by = .(group)] %>%
+   .[, rango := rrange(long, lat)] %>%
+   .[, azimut := azimuth(long, lat)] %>%
+   .[, group2 := cuad_split(azimut), by = group]
+
+setnames(mapa.ar, "long", "lon")
+
+mapa.sa <- setDT(fortify(rnaturalearth::ne_countries(continent = c("South America", "North America"))))
+setnames(mapa.sa, "long", "lon")
+
+mapa.rios <- setDT(fortify(rnaturalearth::ne_load(scale = 10, type = 'rivers_lake_centerlines', category = 'physical', destdir = "seudocache/")))
+setnames(mapa.rios, "long", "lon")
+
+
+text.height <- (420 - 50)/25.4
+text.width <- (297 - 50)/25.4
+
+color_manual <- c("#231151", "#d3436e", "#feba80")
+
+path <- "~/Radar/WRF/"
+
+remove(map2)
+```
+
+
+
+```{r aliasing, fig.cap="Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\\circ}$ y $V_N =$ 6.7 m/s con aliasing (a) y sin aliasing (b). Notar las escalas diferentes.", fig.subcap=c("Con aliasing \\label{aliasing}", "Sin aliasing \\label{no-aliasing}"), out.extra=" ", fig.width=0.98*text.width, fig.align='center'}
+
+radar <- nc_open("seudocache/cfrad.20160114_060005.000_to_20160114_060431.001_INTA_Parana_SUR.nc")
+azimut <- ncvar_get(radar, 'azimuth')   
+elevacion <- ncvar_get(radar, 'elevation')
+rango <- ncvar_get(radar, 'range')      
+V <- ncvar_get(radar, 'V')            
+Vda <- ncvar_get(radar, 'Vda')
+Vda[Vda > 99999] <- NA
+elev <- unique(elevacion)
+
+
+dimnames(V) <- list(rango = rango, azimut = azimut)
+radar <- setDT(melt(V, value.name = "V"))
+radar[, elevacion := elevacion, by = rango]
+radar[, Vda := c(Vda)]
+
+
+radar[elevacion == elev[3] & !is.na(Vda), ] %>%
+  RepeatLon(., colname = "azimut") %>%
+  ggplot(aes(azimut, rango/1000)) +
+  geom_path(data = mapa.ar,
+            aes(group = interaction(group, group2)), color = "darkgray") +
+  geom_point(aes(color = Vda, size = rango)) +
+  scale_color_divergent(name = expression(V[r])) +
+  scale_size_area(max_size = 0.2) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_y_continuous(name = "Distancia al centro (km)",
+                     breaks = c(20,40,60,80,100),
+                     limits = c(0, 100), expand = c(0, 0)) +
+  guides(size = "none") +
+  coord_polar() +
+  theme_minimal(base_size = 14) + theme(legend.position = "bottom") 
+
+radar[elevacion == elev[3] & !is.na(Vda), ] %>%
+  RepeatLon(., colname = "azimut") %>%
+  ggplot(aes(azimut, rango/1000)) +
+  geom_path(data = mapa.ar,
+            aes(group = interaction(group, group2)), color = "darkgray") +
+  geom_point(aes(color = Vda, size = rango)) +
+  scale_color_divergent(name = expression(V[r])) +
+  scale_size_area(max_size = 0.2) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_y_continuous(name = "Distancia al centro (km)",
+                     breaks = c(20,40,60,80,100),
+                     limits = c(0, 100), expand = c(0, 0)) +
+  guides(size = "none") +
+  geom_hline(yintercept = 40) +
+  coord_polar() +
+  theme_minimal(base_size = 14)
+```
+
+
+```{r vad, fig.cap="Velocidad radial (m/s) en función del azimut (grados) para un rango y ańgulo de elevación fijos. En color se  ajusta una función sinusoidal a los datos. \\label{vad}", fig.width=0.75*text.width, fig.align='center', fig.height=0.4*text.height}
+ggplot(radar[rango %~% 4000 & elevacion == elev[3], ], aes(azimut, Vda)) +
+  geom_line() +
+  geom_smooth(method = "lm", formula = y ~ I(sin(x*pi/180)) + I(cos(x*pi/180)), se = F, color = "#20968b") +
+  scale_y_continuous(name = "Velocidad radial (m/s)") +
+  scale_x_continuous(name = "Azimut (grados)") +
+  geom_hline(yintercept = 0) +
+  theme_minimal(base_size = 14)
+
+remove(list = c("radar", "V", "Vda", "azimut", "elev", "elevacion", "rango"))
+```
+
+
+
+```{r evad, fig.cap="Velocidad del viento (m/s) en función de la altura para cada anillo individual calculada con VAD (puntos) y el perfil vertical obtenido luego del promedio pesado (línea). En colores se muestra el $rmse_a$ (m/s) de cada anillo. \\label{perfil-rmse}", fig.width=0.55*text.width, fig.align='center'}
+vad <- read.csv("seudocache/elev_vda-2016-01-14T06:00:05Z_INTA_Parana.csv", sep = ";", na.strings = -9999)
+perfil <- read.csv("seudocache/vda-2016-01-14T06:00:05Z_INTA_Parana.csv", sep = ";", na.strings = -9999)
+
+ggplot(vad, aes(ht, spd)) +
+  geom_point(aes(color = rmse), alpha = 0.8) +
+  scale_color_viridis(name = expression(rmse[a])) +
+  scale_x_continuous(limits = c(0, 1.5), name = "Altura (km)", expand = c(0,0)) +
+  scale_y_continuous(name = "V (m/s)") +
+  #geom_line(data = perfil, aes(ht, spd), color = "#20968b", size = 1) +
+  geom_vline(xintercept = 0.5) +
+  geom_vline(xintercept = 0.6) +
+  coord_flip() +
+  theme_minimal(base_size = 14)
+
+ggplot(vad, aes(ht, spd)) +
+  geom_point(aes(color = rmse), alpha = 0.8) +
+  scale_color_viridis(name = expression(rmse[a])) +
+  scale_x_continuous(limits = c(0, 1.5), name = "Altura (km)", expand = c(0,0)) +
+  scale_y_continuous(name = "V (m/s)") +
+  geom_line(data = perfil, aes(ht, spd), color = "#20968b", size = 1) +
+  coord_flip() +
+  theme_minimal(base_size = 14)
+
+#remove(vad, perfil)
+```
+
+```{r dominio, fig.cap="Dominios utilizados. (a) Dominio utilizado en el modelo con resolución de 12 km (dominio exterior) y 4 km (dominio interior). El punto representa la ubicación del radar y (b) Topografía sobre el nivel del terreno respecto de la ubicación del radar. El círculo negro corresponde al dominio de análisis centrado en el radar, de 40km de radio. \\label{dominio}", fig.subcap=c(" \\label{dom-modelo}", " \\label{dom-radar}"), fig.width=0.48*text.width, fig.align='center', fig.sep = "\\hfill"}
+
+hgt <- ReadNetCDF(paste(path, "caso1_YSU/hgt_YSU.nc", sep = "")) %>%
+  .[date == "2016-01-14 21:00:00 UTC" & lev == 0.05, ]
+
+circle <- setDT(expand.grid(lon = seq(-61.04, -60.05, by = 0.001),
+                            lat = seq(-32.25, -31.44, by = 0.001)))
+circle <- circle[inside(lon, lat) == T, ]
+
+ggplot(mapa.ar, aes(lon, lat)) +
+  geom_path(aes(group = group), color = "darkgray") +
+  scale_x_continuous(limits = c(-71, -50), breaks = MakeBreaks(5),
+                     name = "Longitud", expand = c(0,0)) +
+  scale_y_continuous(limits = c(-39.5, -24),
+                     name = "Latitud", expand = c(0,0)) +
+  annotate(geom = "rect", xmin = -66.3349, xmax = -54.8394,
+           ymin = -36.5501, ymax = -27.0726, fill = NA, color = "black", size = 1) +
+  annotate(geom = "rect", xmin = -68.0717, xmax = -53.1528,
+           ymin = -37.9493, ymax = -25.679, fill = NA, color = "black", size = 1) +
+  annotate(geom = "point", x = -60.537289, y = -31.848438, size = 3) +
+  coord_map() +
+  theme_minimal(base_size = 14)
+
+
+
+ggplot(hgt, aes(lon, lat)) +
+  geom_contour_fill(aes(z = hgt - 73)) +
+  geom_polygon(fill = NA, color = "black",
+               data = circle[chull(lon, lat)], size = 1) +
+  scale_fill_gradient(high = "#ffffff", low = "#252525",
+                       guide = "none") +
+  scale_x_continuous(name = "Longitud", limits = c(-61.04, -60.05), expand = c(0,0)) +
+  scale_y_continuous(name = "Latitud", limits = c(-32.25, -31.44), expand = c(0,0)) +
+  annotate(geom = "point", x = -60.537289, y = -31.848438, size = 3) +
+  # geom_point(data = subset(distances, inside == "TRUE")) +
+  # geom_circle(data = circle, aes(x0 = x0, y0 = y0, r = r), inherit.aes = F) +
+  coord_quickmap() +
+  theme_minimal(base_size = 14)+ theme(panel.ontop = T,
+                          legend.position="bottom",
+                          legend.box = "horizontal",
+                          legend.box.spacing = unit(0, "mm"))
+
+remove(circle, hgt)
+```
+
+
+```{r validacion-perfiles, fig.cap="Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruebas de validación (a) y detalle ampliado del máximo en niveles bajos (b). \\label{validacion-perfiles}", fig.subcap=c(" \\label{perfiles}", " \\label{zoom}"), fig.align='center', fig.width=0.35*text.width}
+vad <- read.csv("seudocache/Vr_se_2016-01-05T12:04:23Z-INTA_Anguil.csv",
+                sep = ";", dec = ".", na.strings = "-9999")
+vade <- read.csv("seudocache/Vr_ce_2016-01-05T12:04:23Z-INTA_Anguil.csv",
+                sep = ";", dec = ".", na.strings = "-9999")
+vadena <- read.csv("seudocache/Vr_ce_na_2016-01-05T12:04:23Z-INTA_Anguil.csv",
+                   sep = ";", dec = ".", na.strings = "-9999")
+anguil <- read.csv("seudocache/vda-2016-01-05T12:04:23Z_INTA_Anguil.csv",
+                   sep = ";", na.strings = "-9999")
+
+sondeo <- read.csv("seudocache/sondeo.csv", sep = " ")
+sondeo$ht <- (sondeo$ht-191)/1000
+sondeo$spd <- sondeo$spd*0.5144444
+vad$sondeo_spd <- sondeo$spd[2:17]
+setDT(vad)
+
+vad[, spd_e := vade$spd]
+vad[, rmse1_e := vade$rmse]
+vad[, rmse2_e := vade$rmse2]
+vad[, spd_ena := vadena$spd]
+vad[, rmse1_ena := vadena$rmse]
+vad[, rmse2_ena := vadena$rmse2]
+gdata <- vad[, .(ht, sondeo_spd, spd, spd_e, spd_ena)] %>%
+  melt(id.vars = "ht")
+
+ggplot(gdata, aes(ht, value, color = variable)) +
+  geom_line()+
+  geom_point() +
+  geom_point(data = anguil, aes(ht, spd), color = "black") +
+  geom_line(data = anguil, aes(ht, spd), color = "black") +
+  scale_color_viridis(discrete = T, name = " ",
+                      guide = "none") +
+  scale_x_continuous(name = "Altura (km)") +
+  scale_y_continuous(name = "V (m/s)", breaks = seq(0, 11, by = 1)) +
+  coord_flip() +
+  theme_minimal(base_size = 14)
+
+ggplot(gdata, aes(ht, value, color = variable)) +
+  geom_line()+
+  geom_point() +
+  geom_point(data = anguil, aes(ht, spd), color = "black") +
+  geom_line(data = anguil, aes(ht, spd), color = "black") +
+  scale_color_viridis(discrete = T, name = "Perfil",
+                      labels = c("Sondeo", "SE", "EA", "EA+DF")) +
+  scale_x_continuous(name = "Altura (km)") +
+  scale_y_continuous(name = "V (m/s)", breaks = seq(8, 11, by = 1),
+                     limits = c(8, 11)) +
+  coord_flip(xlim = c(0,1)) +
+  theme_minimal(base_size = 14)
+
+
+
+remove(list = c("sondeo","vade", "vadena", "anguil", "gdata"))
+```
+
+```{r hgt-caso1, fig.cap="Altura geopotencial (mpg) en 1000 hPa para las 00 y las 12 UTC del 14 de enero de 2016 (Caso 1). Datos de Reanálisis NCEP (NOAA/OAR/ESRL PSD - Kalnay et al., 1996). \\label{hgt-caso1}", fig.align='center', fig.width=0.75*text.width}
+geop <- ReadNetCDF("seudocache/caso1_hgt.nc")
+
+geop[date %in% c(as_datetime("2016-01-14 12:00:00 UTC"))] %>%
+  ggplot(aes(ConvertLongitude(lon, 360), lat)) +
+  geom_contour_fill(aes(z = hgt),  breaks = seq(-350, 150, 25)) +
+  geom_contour(aes(z = hgt), color = "black", size = 0.1,
+               breaks = seq(-350, 150, 25)) +
+  geom_text_contour(aes(z = hgt, label = ..level..), size = 2,
+                    breaks = seq(-350, 150, 25)) +
+  scale_fill_distiller(name = NULL, type = "seq", palette = "YlOrRd",
+                       guide =  "none", direction = 1) +
+  geom_path(data = mapa.sa, aes(group = group), color = "black", size = 0.2) +
+  scale_x_continuous(name = "Longitud", limits = c(-100, -20), expand = c(0,0)) +
+  scale_y_continuous(name = "Latitud", limits = c(-60, 20), expand = c(0,0)) +
+  coord_quickmap() +
+  facet_wrap(~date,
+             labeller = labeller(date = c("2016-01-14 00:00:00" = "00 UTC", "2016-01-14 12:00:00" = "12 UTC"))) +
+  theme_minimal(base_size = 14)+
+  theme(panel.ontop = T, panel.grid = element_line(linetype = 3),
+        panel.spacing.x = unit(1.5, "lines"))
+
+```
+
+```{r meteo-caso1, fig.cap="Variables de superficie observadas por la estación meteorológica Paraná el 14 de enero de 2016 (temperatura (°C) y humedad específica). La región sombreada corresponde al período donde se observa nubosidad (ver texto). Datos Servicio Meteorológico Nacional. \\label{meteo1}", fig.align='center', fig.width=0.75*text.width, fig.height=0.3*text.height}
+
+superficie <- setDT(read.sup("seudocache/superficie.csv"))
+superficie[day(fecha) == 14, .(fecha, temp, q)] %>%
+  melt(id.vars = "fecha") %>%
+  ggplot(aes(fecha, value)) +
+  annotate(geom = "rect",
+           xmin = as_datetime("2016-01-14 00:00:00"),
+           xmax = as_datetime("2016-01-14 04:00:00"),
+           ymin = -Inf, ymax = Inf,
+           fill = "darkgrey", alpha = 0.2) +
+  facet_wrap(~variable, ncol = 1, scales = "free",
+             labeller = labeller(variable = c("temp" = "T", "q" = "q"))) +
+  geom_line() +
+  scale_x_datetime(name = "Hora (UTC)", date_breaks = "3 hour",
+                   date_labels = "%H:%M", expand = c(0,0)) +
+  scale_y_continuous(name = NULL) +
+  theme_minimal(base_size = 14)
+```
+
+```{r leo-vad}
+
+superficie <- setDT(read.sup("seudocache/superficie.csv"))
+sup_vad <- convert.sup(superficie)
+
+# Caso 1 - 14/01/2016
+vad_20160114 <- read.vad("../../20160114_240/vda*")  
+vad_20160114 <- rbind(subset(sup_vad,
+                             day(date_time) == 14), vad_20160114)
+vad_20160114[, caso := "Caso 1"]
+
+
+
+remove(sup_vad)
+```
+
+
+
+```{r campo-caso1, fig.cap="Intensidad (m/s) y dirección del viento (grados) correspondiente al Caso 1 (14/01/2016) estimados a partir de las observaciones de radar utilizando la técnica VAD. En el caso de la magnitud del viento se muestran los errores calculados ($dispersi\\acute{o}n$ en círculos y $rmse$ en cruces) cuando superan los 0.5 m/s. \\label{campo-caso1}", fig.subcap=c("Magnitud del viento. \\label{caso1-spd}", "Dirección. \\label{caso1-dir}"), fig.width=0.95*text.width, fig.height=0.4*text.height, fig.ncol=1}
+
+vad_20160114[ht > 0.02] %>%
+  ggplot(aes(date_time, ht)) +
+  geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
+  scale_color_viridis(name = "Magnitud\ndel viento", direction = 1,
+                      breaks = seq(0, 16, 2), limits = c(0, 16),
+                      guide = guide_colorbar(order = 1)) +
+  geom_point(data = subset(vad_20160114, rmse1 > 0.5),
+             aes(size = rmse1),
+             shape = 1, color = "grey25") +
+  geom_point(data = subset(vad_20160114, rmse2 > 0.5),
+             aes(size = rmse2),
+             shape = 4, color = "grey25") +
+  geom_label_contour2(aes(z = spd_smooth, label = ..level.., color = ..level..),
+                    size = 4,
+                    breaks = seq(0, 16, 1)) +
+  scale_size(name = "Error", guide = guide_legend(order = 2)) +
+  scale_x_datetime(name = "Hora (UTC)",
+                   date_breaks = "3 hour",
+                   date_labels = "%H:%M",
+                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+                   expand = c(0,0)) +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,NA),
+                     expand = c(0,0)) +
+  theme_minimal(base_size = 14)
+
+vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
+  ggplot(aes(date_time, ht)) +
+  geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
+             scale = 0.007, start = -90, direction = -1) +
+  # geom_point(data = subset(vad_20160114, rmse1 > 0.5),
+  #            aes(size = rmse1),
+  #            shape = 1, color = "grey25") +
+  # geom_point(data = subset(vad_20160114, rmse2 > 0.5),
+  #            aes(size = rmse2),
+  #            shape = 4, color = "grey25") +
+  scale_color_viridis(name = "Magnitud\ndel viento",
+                      breaks = seq(0, 16, 2), limits = c(0, 16)) +
+  scale_size_continuous(range = c(0, 5), guide = "none") +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,NA)) +
+  scale_x_datetime(name = "Hora (UTC)",
+                   date_breaks = "3 hour",
+                   date_labels = "%H:%M",
+                   limits = c(as_datetime("2016-01-14 00:00:00"), NA)) +
+  theme_minimal(base_size = 14)
+```
+
+
+
+```{r perfiles, fig.cap="Perfil vertical de viento (m/s) estimado a partir de los datos de radar a las 06 y las 17 UTC y el $rmse$ (m/s) en cada punto (sombreado) para los tres casos. Las marcas en los ejes indican la magnitud del viento máxima y mínima (por encima del LLJ) y la altura a la que ocurren. Los valores en superficie fueron obtenidos a partir de los datos del la estación meteorológica Paraná Aero. \\label{perfiles-horarios}", fig.width=0.30*text.width, fig.height=6, fig.align='center'}
+
+gdata <- rbindlist(list(vad_20160114)) %>%
+  .[minute(date_time) == 00 & hour(date_time) %in% c(06, 17) & ht < 2.5 &
+      !is.na(spd_smooth)]
+ggplot(gdata, aes(ht, spd_smooth, color = as.factor(hour(date_time)))) +
+  geom_line() +
+  geom_rug(data = gdata[minute(date_time) == 00 & hour(date_time) == 6][, maxspd := max(spd_smooth, na.rm = T), by = caso][spd_smooth == maxspd]) +
+  geom_rug(data = gdata[minute(date_time) == 00 & hour(date_time) == 6 & ht > 0.5][, minspd := min(spd_smooth, na.rm = T), by = caso][spd_smooth == minspd]) +
+  geom_ribbon(aes(ymin = spd_smooth - rmse2, ymax = spd_smooth + rmse2,
+              fill = as.factor(hour(date_time))),
+              alpha = 0.5, color = NA) +
+  coord_flip() +
+  scale_color_manual(name="Hora UTC", values = color_manual) +
+  scale_fill_manual(name="Hora UTC", values = color_manual) +
+  scale_y_continuous(name = "V (m/s)") +
+  scale_x_continuous(name = "Altura (km)", breaks = seq(0, 2.5, 0.5),
+                     limits = c(0, 2.5)) +
+  theme_minimal(base_size = 14) + theme(legend.position = c(.95, .95),
+                                        legend.justification = c("right", "top"), 
+                                        legend.box.just = "right", 
+                                        legend.margin = margin(6, 6, 6, 6))
+```
+
+
+
+```{r hodografa-nivel, fig.cap="Hodógrafa temporal para el nivel correspondiente a los datos de la estación meteorológica (a) y 0.3 y 1 km a partir de la estimación del viento con los dato del radar (b). el cuadrado marca el primer tiempo (00 UTC) y cada círculo representa un valor horario (con circulos más grandes cada 6 horas). \\label{hodografa-n}", fig.subcap=c("Datos observados en la estación meteorológica. \\label{hodo-nivel1}", "Datos observados por el radar. \\label{hodo-nivel2}"), fig.width=0.98*text.width, fig.ncol=1, fig.align='center', fig.height=0.30*text.height}
+
+gdata <- rbind(vad_20160114)
+gdata <- as.data.table(gdata) %>%
+  .[, hora := hour(date_time)] %>%
+  .[ht %in% c(0.01) & !is.na(spd_smooth) &
+      minute(date_time) == 00 & hora < 18]
+ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
+  geom_hline(yintercept = 0, color = "darkgrey") +
+  geom_vline(xintercept = 0, color = "darkgrey") +
+  geom_point(aes(x = ifelse(hour(date_time) != 0, u, NA)), size = 1) +
+  geom_point(aes(x = ifelse(hour(date_time) %in% c(0,6,12), u, NA)),
+             size = 2) +
+  geom_point(aes(x = ifelse(hour(date_time) == 0, u, NA)), shape = 15,
+             size = 3) +
+  geom_path() +
+  geom_text_repel(aes(label = JumpBy(hora, 6, fill = NA)),
+                  data = gdata[ht != 1]) +
+  scale_color_manual(name="Altura", values = c("#231151", "#d3436e", "#feba80")) +
+  scale_x_continuous(name = "u (m/s)") +
+  scale_y_continuous(name = "v (m/s)") +
+  coord_equal() +
+  theme_minimal(base_size = 14)
+
+gdata <- as.data.table(rbind(vad_20160114)) %>%
+  .[, hora := hour(date_time)] %>%
+  .[ht %in% c(0.3, 1) & !is.na(spd_smooth) &
+      minute(date_time) == 00 & hora <= 18]
+ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
+  geom_hline(yintercept = 0, color = "darkgrey") +
+  geom_vline(xintercept = 0, color = "darkgrey") +
+  geom_point(aes(x = ifelse(hour(date_time) != 0, u, NA)), size = 1) +
+  geom_point(aes(x = ifelse(hour(date_time) %in% c(0,6,12), u, NA)),
+             size = 2) +
+  geom_point(aes(x = ifelse(hour(date_time) == 0, u, NA)), shape = 15,
+             size = 3) +
+  geom_path() +
+  geom_text_repel(aes(label = JumpBy(hora, 6, fill = NA)),
+                  data = gdata[ht != 1]) +
+  scale_color_manual(name="Altura", values = c("#d3436e", "#feba80")) +
+  scale_x_continuous(name = "u (m/s)") +
+  scale_y_continuous(name = "v (m/s)") +
+  coord_equal() +
+  theme_minimal(base_size = 14)
+
+```
+
+
+
+```{r read-dbz}
+files <- Sys.glob("~/Radar/VAD/PARANA/20160114/240/*.nc")
+dbz_20160114 <- rbindlist(lapply(files, read.radar))
+
+```
+
+
+```{r dbz, fig.cap="Reflecttividad (dBZ) medida por el radar en función de la altura y el tiempo para el Caso 1 (a), el Caso 2 (b) y el Caso 3 (c). \\label{dbz}", fig.subcap=c("Caso 1. \\label{reflec-1}", "Caso2. \\label{reflec-2}", "Caso 3. \\label{reflec-3}"), fig.align='center', fig.height=0.28*text.height, fig.ncol=1}
+elev <- unique(dbz_20160114$elevacion)
+dbz_20160114[elevacion == elev[8] & ht_reg > 100] %>%
+  ggplot(aes(date, ht_reg/1000)) +
+  #geom_line(aes(color = factor(elevacion))) +
+  geom_tile(aes(fill = dbz, color = dbz)) +
+  scale_fill_viridis(name = "dBZ",
+               limits = c(NA, NA)) +
+  scale_color_viridis(name = "dBZ",
+                    limits = c(NA, NA)) +
+  # geom_contour(data = vad_20160114[ht > 0.02], aes(date_time, ht, z = spd_smooth)) +
+  scale_y_continuous(name = "Altura (km)",
+                     limits = c(0, 3),
+                     breaks = seq(0, 3, 0.5),
+                     expand = c(0,0)) +
+  scale_x_datetime(name = NULL,
+                   date_breaks = "3 hour",
+                   date_labels = "%H:%M",
+                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+                   expand = c(0,0)) +
+  theme_minimal(base_size = 14)
+
+```
+
+```{r pblh-dbz, fig.cap="Valor absoluto del gradiente vertical de reflectividad (dBZ/m) en función de la altura y el tiempo para el Caso 1 (a), el Caso 2 (b) y el Caso 3 (c). \\label{pblh-dbz}", fig.subcap=c("Caso 1. \\label{dbz-1}", "Caso2. \\label{dbz-2}", "Caso 3. \\label{dbz-3}"), fig.align='center', fig.height=0.28*text.height, fig.ncol=1}
+elev <- unique(dbz_20160114$elevacion)
+dbz_20160114[elevacion == elev[8] & ht_reg > 200] %>%
+  ggplot(aes(date, ht_reg/1000)) +
+  #geom_line(aes(color = factor(elevacion))) +
+  geom_tile(aes(fill = abs(ddbz), color = abs(ddbz))) +
+  scale_fill_viridis(name = "Gradiente \n vertical de \n reflectividad",
+                     limits = c(0, 0.06)) +
+  scale_color_viridis(name = "Gradiente \n vertical de \n reflectividad",
+                      limits = c(0, 0.06)) +
+  scale_y_continuous(name = "Altura (km)",
+                     limits = c(0, 3),
+                     breaks = seq(0, 3, 0.5),
+                     expand = c(0,0)) +
+  scale_x_datetime(name = NULL,
+                   date_breaks = "3 hour",
+                   date_labels = "%H:%M",
+                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+                   expand = c(0,0)) +
+  theme_minimal(base_size = 14)
+
+```
+
+
+```{r make-ri}
+sup_20160114 <- superficie[day(fecha) == 14]
+ri_20160114 <- create.ri(vad_20160114, sup_20160114$fecha, sup_20160114$temp, sup_20160114$presion_estacion, 27.7, 1002.6)
+ri_20160114[, caso := "Caso 1"]
+
+
+```
+
+
+
+```{r read-WRF-VAD}
+# YSU
+vad_caso1ysu <- read.vad("../../caso1ysu_240/vda*")
+vad_caso1ysu[, caso := "YSU"]
+
+#MYJ
+vad_caso1myj <- read.vad("../../caso1myj_240/vda*")
+vad_caso1myj[, caso := "MYJ"]
+
+#ACM2
+vad_caso1acm <- read.vad("../../caso1acm_240/vda*")
+vad_caso1acm[, caso := "ACM2"]
+
+vad_20160114 <- vad_20160114[, caso := "Obs"]
+```
+
+
+
+```{r vad-modelo-spd, fig.cap="Magnitud del viento (m/s) estimada a partir de los datos de radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con la técnica VAD. \\label{modelo-spd}", fig.width=0.98*text.width, fig.align='center'}
+
+gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
+gdata[, caso := factor(caso,
+                       levels = c("Obs", "YSU", "MYJ", "ACM2"),
+                       ordered = T)]
+gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-13 12:00:00"), as_datetime("2016-01-15 00:00:00")) ] %>%
+  ggplot(aes(date_time, ht)) +
+  geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
+  scale_color_viridis(name = "Magnitud\ndel viento", direction = 1,
+                      breaks = seq(0, 18, 3), limits = c(0, 19),
+                      guide = guide_colorbar(order = 1)) +
+  geom_label_contour2(aes(z = spd_smooth, label = ..level.., color = ..level..),
+                    size = 4,
+                    breaks = seq(0, 18, 1)) +
+  scale_x_datetime(name = "Hora (UTC)",
+                   date_breaks = "4 hour",
+                   date_labels = "%H:%M",
+                   limits = c(as_datetime("2016-01-13 20:00:00"), NA),
+                   expand = c(0,0)) +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2),
+                     expand = c(0,0)) +
+  facet_wrap(~caso) +
+  theme_minimal(base_size = 14)+ theme(legend.position = "bottom")
+
+```
+
+
+```{r vad-modelo-dir, fig.cap="Dirección del viento (grados) estimada por el radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-dir}", fig.width=0.98*text.width, fig.align='center'}
+
+gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
+gdata[, caso2 := factor(caso,
+                       levels = c("Obs", "YSU", "MYJ", "ACM2"),
+                       ordered = T)]
+gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_datetime("2016-01-15 00:00:00")) & minute(date_time) == 0 & !is.na(spd_smooth) ] %>%
+  ggplot(aes(date_time, ht)) +
+  geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
+             scale = 0.005, start = -90, direction = -1) +
+  # geom_point(data = subset(vad_20160114, rmse1 > 0.5),
+  #            aes(size = rmse1),
+  #            shape = 1, color = "grey25") +
+  # geom_point(data = subset(vad_20160114, rmse2 > 0.5),
+  #            aes(size = rmse2),
+  #            shape = 4, color = "grey25") +
+  scale_color_viridis(name = "Velocidad\ndel viento",
+                      breaks = seq(0, 18, 3), limits = c(0, 19)) +
+  scale_size_continuous(range = c(0, 5), guide = "none") +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2)) +
+  scale_x_datetime(name = "Hora (UTC)",
+                   date_breaks = "4 hour",
+                   date_labels = "%H:%M",
+                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+                   expand = c(0,0)) +
+  facet_wrap(~caso2) +
+  theme_minimal(base_size = 14)+ theme(legend.position = "bottom")
+
+```
+
+
+```{r diferencia, fig.cap="Diferencia entre las observaciones y cada simulación para la magnitud del viento (m/s) (a) y el ángulo de la dirección del viento (grados) (b) correspondiente al Caso 1. \\label{dif}", fig.subcap=c("Magnitud del viento (m/s) \\label{dif-spd}", "Ángulo de la dirección del viento (grados) \\label{dif-dir}"), fig.height=0.85*text.height, fig.width=0.48*text.width, fig.ncol=2}
+
+gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm))
+
+gdata <- gdata[vad_20160114[, .(date_time, ht, spd_obs = spd_smooth, di_obs = di, u_obs = u, v_obs = v)],
+      on = c("date_time", "ht")] %>%
+  .[, dif_spd := spd_obs - spd_smooth] %>%
+  .[, di.c := circular(di, units = "degrees", modulo = "2pi")] %>%
+  .[, di_obs.c := circular(di_obs, units = "degrees", modulo = "2pi")] %>%
+  .[, dif_di := ifelse(di_obs.c - di.c > 180, di_obs.c - di.c - 360, di_obs.c - di.c)] %>%
+  .[, caso2 := factor(caso,
+                       levels = c("Obs", "YSU", "MYJ", "ACM2"),
+                       ordered = T)]
+
+gdata[ht > 0.02] %>%
+  ggplot(aes(date_time, ht)) +
+  geom_contour(aes(z = dif_spd, color = ..level..), binwidth = 1) +
+  scale_color_divergent(name = "Magnitud\ndel viento",
+                      #breaks = seq(0, 18, 2), limits = c(0, 19),
+                      guide = guide_colorbar(order = 1)) +
+  scale_x_datetime(name = "Tiempo (UTC)",
+                   date_breaks = "4 hour",
+                   date_labels = "%H:%M",
+                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+                   expand = c(0,0)) +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2),
+                     expand = c(0,0)) +
+  facet_wrap(~caso2, ncol = 1) +
+  theme_minimal(base_size = 14)+ theme(panel.ontop = T,
+                          legend.position="bottom",
+                          legend.box = "horizontal")
+
+gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>%
+  ggplot(aes(date_time, ht)) +
+  geom_tile(aes(z = abs(dif_di), fill = abs(dif_di)), binwidth = 1) +
+  scale_fill_divergent(name = "Dirección\ndel viento",
+                      #breaks = seq(0, 18, 2), limits = c(0, 19),
+                      guide = guide_colorbar(order = 1)) +
+  scale_color_divergent(name = "Dirección\ndel viento") +
+  scale_x_datetime(name = "Tiempo (UTC)",
+                   date_breaks = "4 hour",
+                   date_labels = "%H:%M",
+                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+                   expand = c(0,0)) +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2),
+                     expand = c(0,0)) +
+  facet_wrap(~caso2, ncol = 1) +
+  theme_minimal(base_size = 14)+ theme(panel.ontop = T,
+                          legend.position="bottom",
+                          legend.box = "horizontal")
+```
+
+
+```{r err-spd, fig.cap="Bias, rmse y rmsens en m/s y coeficiente de correlación para la estimación de la velocidad del viento (m/s) con cada simulación en función de la altura y la simulación. \\label{err-spd}", fig.width=0.75*text.width, fig.align='center'}
+
+gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm)) %>%
+  .[vad_20160114[ht != 0.01, .(ht, date_time, obs = spd_smooth)], on = c("ht", "date_time")] %>%
+  .[day(date_time) == 14 & ht <= 2.0] %>%
+  .[, .(bias = bias.f(spd_smooth, obs),
+        rmse = rmse.f(spd_smooth, obs),
+        rmsens = rmsens.f(spd_smooth, obs),
+        correlación = cor(spd_smooth, obs, use = "complete.obs")), by = .(caso, ht)] %>%
+  .[, caso := factor(caso,
+                       levels = c("YSU", "MYJ", "ACM2"),
+                       ordered = T)] %>%
+  melt(id.vars = c("caso", "ht"))
+
+hline <- data.frame(y = 0, variable = c("bias", "correlación"))
+ggplot(gdata, aes(ht, value)) +
+  geom_hline(data = hline, aes(yintercept = y), color = "darkgray") +
+  geom_line(aes(color = caso)) +
+  scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
+  scale_x_continuous(name = "Altura (km)") +
+  scale_y_continuous(name = NULL) +
+  coord_flip() +
+  facet_wrap(~variable, scales = "free") +
+  theme_minimal(base_size = 14)+ theme(legend.position = "bottom")
+
+```
+
+
+
+
+
+```{r perfiles-mod, fig.cap="Perfil de viento (m/s) observado por el radar a las 06 y las 17 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \\label{perfil-mod}", fig.width=0.95*text.width, fig.align='center'}
+
+gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
+gdata[, caso := factor(caso,
+                       levels = c("Obs", "YSU", "MYJ", "ACM2"),
+                       ordered = T)] %>%
+  .[, hora := hour(date_time)] %>%
+  .[minute(date_time) == 00 & day(date_time) == 14 & hour(date_time) %in% c(06, 17) & ht < 2.5 &
+      !is.na(spd_smooth)] %>%
+  ggplot(aes(ht, spd_smooth, color = caso)) +
+  geom_line() +
+  geom_rug(data = gdata[minute(date_time) == 00 & hour(date_time) == 6][, maxspd := max(spd_smooth, na.rm = T), by = caso][spd_smooth == maxspd]) +
+  geom_rug(data = gdata[minute(date_time) == 00 & hour(date_time) == 6 & ht > 0.5][, minspd := min(spd_smooth, na.rm = T), by = caso][spd_smooth == minspd]) +
+  # geom_ribbon(aes(ymin = spd_smooth - rmse2, ymax = spd_smooth + rmse2,
+  #             fill = as.factor(hour(date_time))),
+  #             alpha = 0.5, color = NA) +
+  coord_flip() +
+  scale_color_manual(name= NULL, values = c("#B63679FF", viridis_pal()(3))) +
+  scale_y_continuous(name = "V (m/s)") +
+  scale_x_continuous(name = "Altura (km)", breaks = seq(0, 2.5, 0.5),
+                     limits = c(0, 2.5)) +
+  facet_wrap(~hora, labeller = labeller(hora = c("6" = "06 UTC", "17" = "17 UTC"))) +
+  theme_minimal(base_size = 14)
+```
+
+
+
+```{r hodografa-wrf, fig.cap="Hodógrafa temporal para tres niveles. Cada círculo representa un valor horario (con circulos más grandes cada 4 horas) y el cuadrado marca el primer tiempo (00 UTC). \\label{hodografa-mod}", fig.width=0.95*text.width, fig.align='center'}
+
+gdata <- rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm)
+gdata <- as.data.table(gdata) %>%
+  .[, hora := hour(date_time)] %>%
+  .[minute(date_time) == 00 & day(date_time) == 14 & hora < 13] %>%
+  .[, caso2 := factor(caso,
+                       levels = c("Obs", "YSU", "MYJ", "ACM2"),
+                       ordered = T)]
+
+gdata[ht %in% c(0.3, 0.5, 1.0) & !is.na(spd_smooth)] %>%
+  ggplot(aes(u, v,  color = caso2)) +
+  geom_hline(yintercept = 0, color = "darkgrey") +
+  geom_vline(xintercept = 0, color = "darkgrey") +
+  geom_point(aes(x = ifelse(hour(date_time) != 0, u, NA)), size = 1) +
+  geom_point(aes(x = ifelse(hour(date_time) %in% c(0,4,8,12), u, NA)),
+             size = 2) +
+  geom_point(aes(x = ifelse(hour(date_time) == 0, u, NA)), shape = 15,
+             size = 3) +
+  geom_path() +
+  # geom_text_repel(aes(label = JumpBy(hora, 6, fill = NA)),
+  #                  data = gdata[ht %in% c(0.3, 0.5, 1.0)]) +
+  scale_color_manual(name="Altura", values = c("#B63679FF", viridis_pal()(3))) +
+  scale_x_continuous(name = "u (m/s)") +
+  scale_y_continuous(name = "v (m/s)") +
+  coord_equal() +
+  facet_wrap(~ht) +
+  theme_minimal(base_size = 14)
+
+```
+
+
+
+```{r leo-pbl}
+
+caso.YSU <- ReadNetCDF(paste(path,"caso1_YSU/spd_YSU.nc", sep = "")) %>%
+  mutate(exchh = ReadNetCDF(paste(path,"caso1_YSU/exchh_YSU.nc", sep = ""), out = "vector")[[1]],
+         pblh = ReadNetCDF(paste(path,"caso1_YSU/pblh_YSU.nc", sep = ""), out = "vector")[[1]],
+         ust = ReadNetCDF(paste(path,"caso1_YSU/ust_YSU.nc", sep = ""), out = "vector")[[1]],
+         L = ReadNetCDF(paste(path,"caso1_YSU/l_YSU.nc", sep = ""), out = "vector")[[1]],
+         param = "YSU") %>%
+  .[, lev := lev*1000 - 73] %>%
+  .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>%
+  .[, regimen := ifelse(L <= 0, "Inestable", "Estable")] %>%
+  .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>%
+  .[inside(lon, lat) == T] %>%
+  .[lev > -25,]
+
+caso.MYJ <- ReadNetCDF(paste(path,"caso1_MYJ/spd_MYJ.nc", sep = "")) %>%
+  mutate(exchh = ReadNetCDF(paste(path,"caso1_MYJ/exchh_MYJ.nc", sep = ""), out = "vector")[[1]],
+         pblh = ReadNetCDF(paste(path,"caso1_MYJ/pblh_MYJ.nc", sep = ""), out = "vector")[[1]],
+         ust = ReadNetCDF(paste(path,"caso1_MYJ/ust_MYJ.nc", sep = ""), out = "vector")[[1]],
+         L = ReadNetCDF(paste(path,"caso1_MYJ/l_MYJ.nc", sep = ""), out = "vector")[[1]],
+         param = "MYJ") %>%
+  .[, lev := lev*1000 - 73] %>%
+  .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>%
+  .[, regimen := ifelse(L <= 0, "Inestable", "Estable")] %>%
+  .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>%
+  .[inside(lon, lat) == T] %>%
+  .[lev > -25,]
+
+caso.ACM2 <- ReadNetCDF(paste(path,"caso1_ACM2/spd_ACM2.nc", sep = "")) %>%
+  mutate(exchh = ReadNetCDF(paste(path,"caso1_ACM2/exchh_ACM2.nc", sep = ""), out = "vector")[[1]],
+         pblh = ReadNetCDF(paste(path,"caso1_ACM2/pblh_ACM2.nc", sep = ""), out = "vector")[[1]],
+         ust = ReadNetCDF(paste(path,"caso1_ACM2/ust_ACM2.nc", sep = ""), out = "vector")[[1]],
+         L = ReadNetCDF(paste(path,"caso1_YSU/l_YSU.nc", sep = ""), out = "vector")[[1]],
+         param = "ACM2") %>%
+  .[, lev := lev*1000 - 73] %>%
+  .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>%
+  .[, regimen := ifelse(L <= 0, "Inestable", "Estable")] %>%
+  .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>%
+  .[inside(lon, lat) == T] %>%
+  .[lev > -25,]
+
+all.pbl <- rbind(caso.YSU, caso.MYJ, caso.ACM2) %>%
+  .[lat %~% -31.8484 & lon %~% -60.5372] %>%
+  .[, param :=  factor(param,
+                       levels = c("YSU", "MYJ", "ACM2"),
+                       ordered = T)]
+
+#saveRDS(all.pbl[lev == 25, .(pblh, date, param)], "pblh")
+
+remove(list = c("caso.YSU", "caso.MYJ", "caso.ACM2"))
+```
+
+
+
+
+
+```{r pblh-wrf, fig.cap="Altura de la capa límite (m) en cada simulación. \\label{pblh-wrf}", fig.subcap=c("Estimada directamente por cada esquema de CLP. \\label{pblh}", "Comparación entre la altura calculada por cada esquema (línea) y la estimada a partir de la altura del viento máximo (puntos) sólo en el período estable. \\label{pblh-spd}"), fig.width=0.75*text.width, fig.height=0.35*text.height, fig.align='center', fig.ncol=1}
+all.pbl[lev < 30] %>%
+  ggplot(aes(date, pblh)) +
+  geom_vline(xintercept = as_datetime("2016-01-14 09:40:00"),
+             color = "darkgray") +
+  geom_line(aes(color = param), linetype = 1) +
+  scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
+  scale_y_continuous(name = "Altura de la capa límite (m)", limits = c(0, 3000)) +
+  scale_x_datetime(name = "Hora UTC",
+                   date_breaks = "4 hours",
+                   date_labels = "%H") +
+  theme_minimal(base_size = 14)
+
+all.pbl[lev < 2500 & L >=0 , .(pblh = pblh[1], pblh.spd = lev[which.max(spd)], L = L[1]), by = .(date, param)] %>%   
+  # .[!is.na(pblh), ] %>%
+  ggplot(aes(date, pblh)) +
+  # geom_vline(xintercept = as_datetime("2016-01-14 09:40:00"),
+  #            color = "darkgray") +
+  geom_line(aes(color = param), linetype = 1) +
+  geom_point(aes(y = pblh.spd, color = param)) +
+  scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
+  scale_y_continuous(name = "Altura de la capa límite (m)", limits = c(0, 600)) +
+  scale_x_datetime(name = "Hora UTC",
+                   date_breaks = "3 hours",
+                   date_labels = "%H",
+                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+                   expand = c(0,0)) +
+  facet_wrap(~param, ncol = 1) +
+  theme_minimal(base_size = 14)
+
+```
+
+
+
+```{r dbz-wrf, fig.cap="Valor absoluto del gradiente vertical de reflectividad (dBZ/m) en función de la altura y el tiempo para el Caso 1 y la altura de la capa límite estimada en cada simulación. \\label{dbz-wrf}", fig.align='center',  fig.height=0.4*text.height}
+elev <- unique(dbz_20160114$elevacion)
+pbl <- readRDS("pblh")
+dbz_20160114[elevacion == elev[8] & ht_reg > 200] %>%
+  ggplot(aes(date, ht_reg/1000)) +
+  geom_tile(aes(fill = abs(ddbz), color = abs(ddbz))) +
+  scale_fill_viridis(name = "Gradiente \n vertical de \n reflectividad",
+                     limits = c(0, 0.06)) +
+  scale_color_viridis(name = "Gradiente \n vertical de \n reflectividad",
+                      limits = c(0, 0.06)) +
+  scale_y_continuous(name = "Altura (km)", limits = c(0, 3)) +
+  scale_x_datetime(name = "Hora (UTC)",
+                   date_breaks = "3 hour",
+                   date_labels = "%H:%M",
+                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+                   expand = c(0,0)) +
+  geom_point(data = pbl, aes(date, pblh/1000, shape = param), size = 1) +
+  scale_shape_discrete(name = "Simulación") +
+  theme_minimal(base_size = 14)
+remove(files, dbz_20160114)
+```
+
+
+```{r make-ulke}
+all.pbl <- all.pbl[, c("kh.u", "km.u", "u.u") := .(
+  kh.ulke(lev, pblh, L, ust),
+  km.ulke(lev, pblh, L, ust),
+  u.ulke(lev, pblh, L, ust))] %>%
+  .[, Pr := km.u/kh.u]
+```
+
+
+
+
+```{r k_ulke_wrf, fig.cap="Coeficientes de difusividad turbulenta de calor sensible (a) y cantidad de movimiento (b) promediados entre las 05 y 06 UTC (período estable, izquierda) y entre las 16 y 17 UTC (período inestable, derecha) de la capa límite en todas las simulaciones.  \\label{k-ulke-wrf}", fig.subcap=c("Calor $K_h$ ($m^2/s$). \\label{kh-wrf}", "Moviento $K_m$ ($m^2/s$). \\label{km-wrf}"), fig.align='center', fig.width=0.98*text.width, fig.ncol=1, fig.height=0.40*text.height}
+
+all.pbl <- all.pbl[, exchm := Pr*exchh]
+
+# ggplot(all.pbl[regimen == "Estable"], aes(lev, exchh, group = factor(lev))) +
+#   geom_boxplot() +
+#   facet_wrap(~param)
+
+d <- all.pbl[date %between% c(as_datetime("2016-01-14 04:00:00"), as_datetime("2016-01-14 05:00:00")) | date %between% c(as_datetime("2016-01-14 16:00:00"), as_datetime("2016-01-14 17:00:00"))] %>%
+  group_by(param, lev, regimen) %>%
+  summarise(Kh.m = median(exchh, na.rm = T), Km.m = median(exchm, na.rm = T)) %>%
+  ungroup()
+
+# ggplot(all.pbl[date %between% c(as_datetime("2016-01-14 04:00:00"), as_datetime("2016-01-14 07:00:00"))], aes(lev, exchh)) +
+#   geom_line(aes(color = as.factor(param))) +
+#   scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
+#   scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
+#   scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)",
+#                      limits = c(0, 500)) +
+#   facet_wrap(~date, scales = "free") +
+#   coord_flip() +
+#   theme_minimal(base_size = 14)
+
+ggplot(d, aes(lev, Kh.m)) +
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
+  scale_x_continuous(name = "Altura sobre el nivel del suelo (km)",
+                     limits = c(0, 2500)) +
+  facet_wrap(~regimen, scales = "free") +
+  coord_flip() +
+  theme_minimal(base_size = 14)
+
+ggplot(d, aes(lev, Km.m)) +
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[m], " (", m^2,s^{-1}, ")"))) +
+  scale_x_continuous(name = "Altura sobre el nivel del suelo (km)",
+                     limits = c(0, 2500)) +
+  facet_wrap(~regimen, scales = "free") +
+  #labs(title = "Perfiles a partir del promedio del dominio") +
+  coord_flip() +
+  theme_minimal(base_size = 14)
+
+remove(d)
+```
