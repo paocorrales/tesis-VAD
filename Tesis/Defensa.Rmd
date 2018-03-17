@@ -491,20 +491,38 @@ dbz_20160114[elevacion == elev[8] & ht_reg > 100] %>%
   #geom_line(aes(color = factor(elevacion))) +
   geom_tile(aes(fill = dbz, color = dbz)) +
   scale_fill_viridis(name = "dBZ",
-               limits = c(NA, NA)) +
+               limits = c(NA, NA),
+                 guide = "none") +
   scale_color_viridis(name = "dBZ",
-                    limits = c(NA, NA)) +
-  # geom_contour(data = vad_20160114[ht > 0.02], aes(date_time, ht, z = spd_smooth)) +
+                    limits = c(NA, NA),
+                      guide = "none") +
+  geom_contour(data = vad_20160114[ht > 0.02], aes(date_time, ht, z = spd_smooth), color = "white") +
+  geom_text_contour(data = vad_20160114[ht > 0.02],
+                      aes(x = date_time, y = ht, z = spd_smooth, label = ..level..),
+                  size = 4,
+                  breaks = seq(0, 16, 1),
+                  color = "white",
+                  rotate = F) +
   scale_y_continuous(name = "Altura (km)",
                      limits = c(0, 3),
                      breaks = seq(0, 3, 0.5),
                      expand = c(0,0)) +
-  scale_x_datetime(name = NULL,
+  scale_x_datetime(name = "Hora (UTC)",
                    date_breaks = "3 hour",
                    date_labels = "%H:%M",
                    limits = c(as_datetime("2016-01-14 00:00:00"), NA),
                    expand = c(0,0)) +
   theme_minimal(base_size = 14)
+
+```
+
+```{r make-ri}
+sup_20160114 <- superficie[day(fecha) == 14]
+ri_20160114 <- create.ri(vad_20160114, sup_20160114$fecha, sup_20160114$temp, sup_20160114$presion_estacion, 27.7, 1002.6)
+ri_20160114[, caso := "Caso 1"]
+ri_20160114[, hora := hour(date_time)]
+ri_20160114 <- ri_20160114[date_time %between% c(as_datetime("2016-01-14 03:50:00"), as_datetime("2016-01-14 09:40:00"))]
+
 
 ```
 
@@ -515,30 +533,28 @@ dbz_20160114[elevacion == elev[8] & ht_reg > 200] %>%
   #geom_line(aes(color = factor(elevacion))) +
   geom_tile(aes(fill = abs(ddbz), color = abs(ddbz))) +
   scale_fill_viridis(name = "Gradiente \n vertical de \n reflectividad",
-                     limits = c(0, 0.06)) +
+                     limits = c(0, 0.06), 
+                     guide = "none") +
   scale_color_viridis(name = "Gradiente \n vertical de \n reflectividad",
-                      limits = c(0, 0.06)) +
+                      limits = c(0, 0.06),
+                        guide = "none") +
   scale_y_continuous(name = "Altura (km)",
                      limits = c(0, 3),
                      breaks = seq(0, 3, 0.5),
                      expand = c(0,0)) +
-  scale_x_datetime(name = NULL,
+  scale_x_datetime(name = "Hora (UTC)",
                    date_breaks = "3 hour",
                    date_labels = "%H:%M",
                    limits = c(as_datetime("2016-01-14 00:00:00"), NA),
                    expand = c(0,0)) +
+  geom_segment(y = 0.3, yend = 0.3, x = as_datetime("2016-01-14 03:50:00"), xend = as_datetime("2016-01-14 09:40:00"), color = "red") +
+  #geom_line(data = ri_20160114, aes(hora, z_max), color = "red") +
   theme_minimal(base_size = 14)
 
 ```
 
 
-```{r make-ri}
-sup_20160114 <- superficie[day(fecha) == 14]
-ri_20160114 <- create.ri(vad_20160114, sup_20160114$fecha, sup_20160114$temp, sup_20160114$presion_estacion, 27.7, 1002.6)
-ri_20160114[, caso := "Caso 1"]
 
-
-```
 
 
 
@@ -560,7 +576,7 @@ vad_20160114 <- vad_20160114[, caso := "Obs"]
 
 
 
-```{r vad-modelo-spd, fig.cap="Magnitud del viento (m/s) estimada a partir de los datos de radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con la técnica VAD. \\label{modelo-spd}", fig.width=0.98*text.width, fig.align='center'}
+```{r vad-modelo-spd, fig.cap="Magnitud del viento (m/s) estimada a partir de los datos de radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con la técnica VAD. \\label{modelo-spd}", fig.width=0.98*text.width, fig.align='center', fig.height=5.5}
 
 gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 gdata[, caso := factor(caso,
@@ -672,7 +688,7 @@ gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>%
 ```
 
 
-```{r err-spd, fig.cap="Bias, rmse y rmsens en m/s y coeficiente de correlación para la estimación de la velocidad del viento (m/s) con cada simulación en función de la altura y la simulación. \\label{err-spd}", fig.width=0.75*text.width, fig.align='center'}
+```{r err-spd, fig.cap="Bias, rmse y rmsens en m/s y coeficiente de correlación para la estimación de la velocidad del viento (m/s) con cada simulación en función de la altura y la simulación. \\label{err-spd}", fig.width=0.75*text.width, fig.align='center', fig.height=6}
 
 gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm)) %>%
   .[vad_20160114[ht != 0.01, .(ht, date_time, obs = spd_smooth)], on = c("ht", "date_time")] %>%
@@ -703,7 +719,7 @@ ggplot(gdata, aes(ht, value)) +
 
 
 
-```{r perfiles-mod, fig.cap="Perfil de viento (m/s) observado por el radar a las 06 y las 17 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \\label{perfil-mod}", fig.width=0.95*text.width, fig.align='center'}
+```{r perfiles-mod, fig.cap="Perfil de viento (m/s) observado por el radar a las 06 y las 17 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \\label{perfil-mod}", fig.width=0.95*text.width, fig.align='center', fig.height=5.5}
 
 gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 gdata[, caso := factor(caso,
@@ -819,7 +835,7 @@ remove(list = c("caso.YSU", "caso.MYJ", "caso.ACM2"))
 
 
 
-```{r pblh-wrf, fig.cap="Altura de la capa límite (m) en cada simulación. \\label{pblh-wrf}", fig.subcap=c("Estimada directamente por cada esquema de CLP. \\label{pblh}", "Comparación entre la altura calculada por cada esquema (línea) y la estimada a partir de la altura del viento máximo (puntos) sólo en el período estable. \\label{pblh-spd}"), fig.width=0.75*text.width, fig.height=0.35*text.height, fig.align='center', fig.ncol=1}
+```{r pblh-wrf, fig.cap="Altura de la capa límite (m) en cada simulación. \\label{pblh-wrf}", fig.subcap=c("Estimada directamente por cada esquema de CLP. \\label{pblh}", "Comparación entre la altura calculada por cada esquema (línea) y la estimada a partir de la altura del viento máximo (puntos) sólo en el período estable. \\label{pblh-spd}"), fig.width=0.65*text.width, fig.height=0.35*text.height, fig.align='center', fig.ncol=1}
 all.pbl[lev < 30] %>%
   ggplot(aes(date, pblh)) +
   geom_vline(xintercept = as_datetime("2016-01-14 09:40:00"),
@@ -840,12 +856,13 @@ all.pbl[lev < 2500 & L >=0 , .(pblh = pblh[1], pblh.spd = lev[which.max(spd)], L
   geom_line(aes(color = param), linetype = 1) +
   geom_point(aes(y = pblh.spd, color = param)) +
   scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
-  scale_y_continuous(name = "Altura de la capa límite (m)", limits = c(0, 600)) +
+  scale_y_continuous(name = "Altura de la capa límite (m)") +
   scale_x_datetime(name = "Hora UTC",
                    date_breaks = "3 hours",
                    date_labels = "%H",
                    limits = c(as_datetime("2016-01-14 00:00:00"), NA),
                    expand = c(0,0)) +
+  coord_cartesian(ylim = c(0, 600)) +
   facet_wrap(~param, ncol = 1) +
   theme_minimal(base_size = 14)
 
@@ -853,7 +870,7 @@ all.pbl[lev < 2500 & L >=0 , .(pblh = pblh[1], pblh.spd = lev[which.max(spd)], L
 
 
 
-```{r dbz-wrf, fig.cap="Valor absoluto del gradiente vertical de reflectividad (dBZ/m) en función de la altura y el tiempo para el Caso 1 y la altura de la capa límite estimada en cada simulación. \\label{dbz-wrf}", fig.align='center',  fig.height=0.4*text.height}
+```{r dbz-wrf, fig.cap="Valor absoluto del gradiente vertical de reflectividad (dBZ/m) en función de la altura y el tiempo para el Caso 1 y la altura de la capa límite estimada en cada simulación. \\label{dbz-wrf}", fig.align='center', fig.width=0.98*text.width, fig.height=0.4*text.height}
 elev <- unique(dbz_20160114$elevacion)
 pbl <- readRDS("pblh")
 dbz_20160114[elevacion == elev[8] & ht_reg > 200] %>%

@@ -2114,12 +2114,13 @@ all.pbl[lev < 2500 & L >=0 , .(pblh = pblh[1], pblh.spd = lev[which.max(spd)], L
   geom_line(aes(color = param), linetype = 1) +
   geom_point(aes(y = pblh.spd, color = param)) +
   scale_color_viridis(name = "Simulación", discrete = T, option = "viridis") +
-  scale_y_continuous(name = "Altura de la capa límite (m)", limits = c(0, 600)) +
+  scale_y_continuous(name = "Altura de la capa límite (m)") +
   scale_x_datetime(name = "Hora UTC",
                    date_breaks = "3 hours",
                    date_labels = "%H",
                    limits = c(as_datetime("2016-01-14 00:00:00"), NA),
                    expand = c(0,0)) +
+   coord_cartesian(ylim = c(0, 600)) +
   facet_wrap(~param, ncol = 1) +
   theme_minimal()
 
