@@ -635,7 +635,7 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_d
 ```
 
 
-```{r diferencia, fig.cap="Diferencia entre las observaciones y cada simulación para la magnitud del viento (m/s) (a) y el ángulo de la dirección del viento (grados) (b) correspondiente al Caso 1. \\label{dif}", fig.subcap=c("Magnitud del viento (m/s) \\label{dif-spd}", "Ángulo de la dirección del viento (grados) \\label{dif-dir}"), fig.height=0.85*text.height, fig.width=0.48*text.width, fig.ncol=2}
+```{r diferencia, fig.cap="Diferencia entre las observaciones y cada simulación para la magnitud del viento (m/s) (a) y el ángulo de la dirección del viento (grados) (b) correspondiente al Caso 1. \\label{dif}", fig.subcap=c("Magnitud del viento (m/s) \\label{dif-spd}", "Ángulo de la dirección del viento (grados) \\label{dif-dir}"), fig.width=0.98*text.width}
 
 gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 
@@ -662,29 +662,29 @@ gdata[ht > 0.02] %>%
                    expand = c(0,0)) +
   scale_y_continuous(name = "Altura (km)", limits = c(0,2),
                      expand = c(0,0)) +
-  facet_wrap(~caso2, ncol = 1) +
+  facet_wrap(~caso2, ncol = 3) +
   theme_minimal(base_size = 14)+ theme(panel.ontop = T,
                           legend.position="bottom",
                           legend.box = "horizontal")
-
-gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>%
-  ggplot(aes(date_time, ht)) +
-  geom_tile(aes(z = abs(dif_di), fill = abs(dif_di)), binwidth = 1) +
-  scale_fill_divergent(name = "Dirección\ndel viento",
-                      #breaks = seq(0, 18, 2), limits = c(0, 19),
-                      guide = guide_colorbar(order = 1)) +
-  scale_color_divergent(name = "Dirección\ndel viento") +
-  scale_x_datetime(name = "Tiempo (UTC)",
-                   date_breaks = "4 hour",
-                   date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
-                   expand = c(0,0)) +
-  scale_y_continuous(name = "Altura (km)", limits = c(0,2),
-                     expand = c(0,0)) +
-  facet_wrap(~caso2, ncol = 1) +
-  theme_minimal(base_size = 14)+ theme(panel.ontop = T,
-                          legend.position="bottom",
-                          legend.box = "horizontal")
+# 
+# gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>%
+#   ggplot(aes(date_time, ht)) +
+#   geom_tile(aes(z = abs(dif_di), fill = abs(dif_di)), binwidth = 1) +
+#   scale_fill_divergent(name = "Dirección\ndel viento",
+#                       #breaks = seq(0, 18, 2), limits = c(0, 19),
+#                       guide = guide_colorbar(order = 1)) +
+#   scale_color_divergent(name = "Dirección\ndel viento") +
+#   scale_x_datetime(name = "Tiempo (UTC)",
+#                    date_breaks = "4 hour",
+#                    date_labels = "%H:%M",
+#                    limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+#                    expand = c(0,0)) +
+#   scale_y_continuous(name = "Altura (km)", limits = c(0,2),
+#                      expand = c(0,0)) +
+#   facet_wrap(~caso2, ncol = 1) +
+#   theme_minimal(base_size = 14)+ theme(panel.ontop = T,
+#                           legend.position="bottom",
+#                           legend.box = "horizontal")
 ```
 
 

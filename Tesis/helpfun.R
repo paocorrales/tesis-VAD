@@ -25,11 +25,11 @@ read.vad <- function(path, lowess = TRUE){
   }
   if (lowess == TRUE){
     temp2 <- lowess.vad(temp2)
-    temp2$di <- ConvertLongitude(temp2$di, 180)
+    temp2$di <- ConvertLongitude(temp2$di)
     temp2$u <- -temp2$spd_smooth * sin(temp2$di*pi/180)
     temp2$v <- -temp2$spd_smooth * cos(temp2$di*pi/180)
   } else{
-    temp2$di <- ConvertLongitude(temp2$di, 180)
+    temp2$di <- ConvertLongitude(temp2$di)
     temp2$u <- -temp2$spd * sin(temp2$di*pi/180)
     temp2$v <- -temp2$spd * cos(temp2$di*pi/180)
   }
@@ -222,7 +222,7 @@ rrange <- function(lon, lat, lon0 = -60.537289, lat0 = -31.848438) {
 azimuth <- function(lon, lat, lon0 = -60.537289, lat0 = -31.848438) {
   m <- matrix(c(lon, lat), ncol = 2)
   d <- geosphere::bearingRhumb(m, c(lon0, lat0))
-  d <- ConvertLongitude(d - 180, 180)
+  d <- ConvertLongitude(d - 180)
 }
 
 cuad_split <- function(azimut) {
