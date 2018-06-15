@@ -85,7 +85,7 @@ text.width <- (210 - 50)/25.4
 color_manual <- c("#231151", "#d3436e", "#feba80")
 
 path1 <- "~/Dropbox/Tesis/tesis-VAD/Tesis/"
-path2 <- "/media/pao/Disk 2/VAD/"
+path2 <- "/mnt/336658a0-2e6f-4561-8c97-efb257107c03//VAD/"
 remove(map2)
 ```
 
@@ -105,17 +105,6 @@ vad_20160114[, caso := "Caso 1"]
 remove(sup_vad)
 ```
 
-## Análisis de las observaciones de radar procesadas con VAD
-
-### Magnitud y velocidad del viento
-
-Los datos de $V_r$ del radar fueron procesados para obtener la magnitud y la intensidad del viento para el período correspondiente a cada caso de estudio. Debido a que la señal de radar en días de aire claro no supera a los primeros kilómetros de atmósfera y que en altura los datos no superan los controles de calidad impuestos, en muchos momentos del día los perfiles se pueden estimar hasta una altura que varía entre 1000 y 3000 m.
-
-La magnitud y dirección del viento para el Caso 1 se muestra en la Figura \ref{campo-caso1}. En la Figura \ref{caso1-spd} se puede observar en contornos la magnitud del viento en función de la altura y a lo largo del tiempo para todo el período correspondiente, y en símbolos los errores calculados. Las mayores velocidades de viento se observan en horas nocturnas con un máximo de 16 m/s cercano a las 06 UTC y a 300 metros de altura sobre la superficie. Este máximo comienza a observarse a partir de las 03 UTC y se extiende más allá de las 12 UTC (3 horas después de la salida del sol). Posteriormente, durante el día, la magnitud del viento disminuye a valores cercanos a 4 m/s y su variación con la altura es mucho menor en comparación con las horas previas. Estas características son coherentes con lo esperable en la capa mezclada. En las últimas horas del día la velocidad del viento comienza a aumentar nuevamente con valores de hasta 8 m/s coincidiendo con la puesta del sol cuando la capa mezclada queda desacoplada de la superficie y comienza a desarrollarse la capa límite estable nocturna.
-
-En el período nocturno se observa un aumento en la magnitud de los errores, principalmente del $rmse$. Este error está asociado al error de estimación del viento en cada anillo de datos. Los mayores valores del $rmse$ (hasta 3.8 m/s) se observan en los bordes superior e inferior de las regiones donde hay datos, por lo que es posible que por fuera de estos límites los datos de radar no hayan cumplido con los controles de calidad y fueron descartados. La $dispersi\acute{o}n$ calculada para los datos, es menor a 0.5 m/s para la mayoría de los tiempos y altura. Algunas excepciones ocurren alrededor de las 08 UTC y para el mismo volumen de datos.
-
-En la Figura \ref{caso1-dir} se muestra la dirección del viento en función de la altura y el tiempo, los vectores representan la dirección y sentido del viento, y en colores y largo de cada vector la magnitud. Se observa que en las primeras horas del Caso 1 la dirección predominante es del E y SE en niveles altos. En horas posteriores se observa una rotación mostrando vientos del NE durante el máximo nocturno. Durante el día el viento se mantiene con dirección N y NE. El nivel más bajo en el gráfico no corresponden a datos del radar sino al viento observado en la estación meteorológica. Si bien no se observa mucha coherencia entre los datos de superficie y lo observado por el radar para niveles cercanos a superficie, esto puede deberse al origen de los datos o diferencias en la ubicación geográfica.
 
 ```{r campo-caso1, fig.cap="Intensidad (m/s) y dirección del viento (grados) correspondiente al Caso 1 (14/01/2016) estimados a partir de las observaciones de radar utilizando la técnica VAD. En el caso de la magnitud del viento se muestran los errores calculados ($dispersi\\acute{o}n$ en círculos y $rmse$ en cruces) cuando superan los 0.5 m/s. \\label{campo-caso1}", fig.subcap=c("Magnitud del viento. \\label{caso1-spd}", "Dirección. \\label{caso1-dir}"), fig.width=0.95*text.width, fig.height=0.4*text.height, fig.ncol=1}
 
@@ -144,11 +133,12 @@ vad_20160114[ht > 0.02] %>%
                      expand = c(0,0)) +
   theme_minimal()
 
-vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
+vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth) & ht < 3] %>%
   ggplot(aes(date_time, ht)) +
   geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
-             scale = 0.007, start = -90, direction = -1) +
-  # geom_point(data = subset(vad_20160114, rmse1 > 0.5),
+             preserve.dir = TRUE) +
+  scale_mag(length = 1) +
+  # geom_point(data = subset(vad_20160114, rmse1 > 0.5),) + 
   #            aes(size = rmse1),
   #            shape = 1, color = "grey25") +
   # geom_point(data = subset(vad_20160114, rmse2 > 0.5),
@@ -157,7 +147,7 @@ vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   scale_color_viridis(name = "Magnitud\ndel viento",
                       breaks = seq(0, 16, 2), limits = c(0, 16)) +
   scale_size_continuous(range = c(0, 5), guide = "none") +
-  scale_y_continuous(name = "Altura (km)", limits = c(0,NA)) +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,3)) +
   scale_x_datetime(name = "Hora (UTC)",
                    date_breaks = "3 hour",
                    date_labels = "%H:%M",
@@ -188,12 +178,12 @@ ggplot(gdata, aes(ht, spd_smooth, color = as.factor(hour(date_time)))) +
   theme_minimal()
 ```
 
-La variación de la dirección del viento con la altura puede analizarse a partir de un hodógrafa. En la Figura \ref{hodografa-h} se muestra la hodógrafa de las 06 UTC para cada caso. El triángulo corresponde al nivel inferior y los círculos grandes se ubican cada 500 m. Se observa en los tres casos una rotación antihoraria en los primeros metros (correspondientes a la capa límite estable nocturna), que se mantiene en todo el perfil para los casos 2 y 3. Esto podría deberse a que los perfiles mantienen algunas características propias de la capa mezclada del día anterior a pesar del decaimiento de la turbulencia y el desarrollo de la capa estable. Si bien existen discusiones sobre la validés del modelo, estás características podrían estar asociadas a la espiral de Ekman con rotación del viento en sentido antihorario [@Stull1988].
 
 ```{r hodografa-horaria, fig.cap="Hodógrafa en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 06 UTC. El triángulo marca el nivel inferior y los círculos grandes se ubican cada 500 metros. \\label{hodografa-h}", fig.align='center', fig.width=0.75*text.width}
 
-gdata <- rbind(vad_20160114, vad_20160121, vad_20160123) %>%
+gdata <- vad_20160114 %>%
   .[, hora := hour(date_time)] %>%
+  .[, day := day(date_time)] %>% 
   .[minute(date_time) == 00 & hour(date_time) %in% c(06) &
       !is.na(spd_smooth) & ht > 0.02 & ht <= 3]
 ggplot(gdata, aes(u, v,  color = caso)) +
@@ -207,8 +197,8 @@ ggplot(gdata, aes(u, v,  color = caso)) +
   scale_color_viridis(name="Casos", discrete = T) +
   scale_x_continuous(name = "u (m/s)") +
   scale_y_continuous(name = "v (m/s)") +
- # facet_wrap(~hora, scales = "free") +
-  coord_equal() +
+  facet_wrap(~day, scales = "free") +
+  #coord_equal() +
   theme_minimal()
 ```
 ### Características de la capa límite planetaria
