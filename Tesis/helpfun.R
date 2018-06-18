@@ -34,6 +34,7 @@ read.vad <- function(path, lowess = TRUE){
     temp2$v <- -temp2$spd * cos(temp2$di*pi/180)
   }
   temp2$date_time <- round_date(temp2$date_time, "minute")
+  temp2$ht <- round(temp$ht, 1)
   setDT(temp2)
   
   return(temp2)

@@ -85,7 +85,7 @@ text.width <- (210 - 50)/25.4
 color_manual <- c("#231151", "#d3436e", "#feba80")
 
 path1 <- "~/Dropbox/Tesis/tesis-VAD/Tesis/"
-path2 <- "/mnt/336658a0-2e6f-4561-8c97-efb257107c03//VAD/"
+path2 <- "/mnt/Data/VAD/"
 remove(map2)
 ```
 
@@ -99,7 +99,7 @@ sup_vad <- convert.sup(superficie)
 # Caso 1 - 14/01/2016
 vad_20160114 <- read.vad(paste0(path2, "20160114/v*"))  
 vad_20160114 <- rbind(subset(sup_vad,
-                             day(date_time) == c(13,14)), vad_20160114)
+                             day(date_time) %in% c(13,14)), vad_20160114)
 vad_20160114[, caso := "Caso 1"]
 
 remove(sup_vad)
@@ -135,7 +135,7 @@ vad_20160114[ht > 0.02] %>%
 
 vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth) & ht < 3] %>%
   ggplot(aes(date_time, ht)) +
-  geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
+  geom_arrow(aes(mag = spd_smooth, angle = di),
              preserve.dir = TRUE) +
   scale_mag(length = 1) +
   # geom_point(data = subset(vad_20160114, rmse1 > 0.5),) + 
@@ -150,7 +150,7 @@ vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth) & ht < 3] %>%
   scale_y_continuous(name = "Altura (km)", limits = c(0,3)) +
   scale_x_datetime(name = "Hora (UTC)",
                    date_breaks = "3 hour",
-                   date_labels = "%H:%M",
+                   date_labels = "%H",
                    limits = c(as_datetime("2016-01-13 00:00:00"), NA)) +
   theme_minimal()
 ```
@@ -205,19 +205,14 @@ ggplot(gdata, aes(u, v,  color = caso)) +
 
 #### Oscilación inercial y LLJ
 
-Si bien en los perfiles mostrados en la Figura \ref{perfiles-horarios} se observa claramente las características típicas del LLJ con el máximo viento en los primeros cientos de metros, el criterio de Bonner permite detectar el LLJ de manera cuantitativa. De acuerdo al Criterio 1 el LLJ ocurre si el máximo de viento es igual o superior a 12 m/s y disminuye al menos 6 m/s al alcanzar el siguiente mínimo [@Bonner1968]. Valores análogos se siguen para máximos de mayor magnitud, por ejemplo si el máximo es de 16 m/s, el mínimo tendrá que ser de al menos 8 m/s (Criterio 2). Esto también puede verse en la Figura \ref{perfiles-horarios} observando la diferencia entre las marcas verticales en el eje horizontal que representan el mínimo y el máximo en cada perfil nocturno. En todos los casos en estudio el criterio de Bonner se cumple satisfactoriamente.
 
-En la Figura \ref{hodografa-n} se muestran hodógrafas temporales para tres niveles distintos (el primero correspondiente a las observaciones de la estación meteorológica) desde las 00 UTC. El cuadrado indica el punto final del vector del viento en el primer tiempo y los círculos grandes, corresponden al vector en intervalos cada 6 horas. De acuerdo al modelo de @VanDeWiel2010, en los niveles próximos a la superficie el giro de la hodógrafa es antihorario (en el Hemisferio Sur) con respecto al vector de viento inicial. Esta osicilación genera la disminución de la magnitud del viento ya que hacia la puesta de sol, la velocidad del viento cerca de superficie es mayor que la velocidad asociada al perfil de equilibrio nocturno que resulta del balance entre la fuerza de presión, Coriolis y el transporte turbulento de cantidad de movimiento que continúa actuando durante la noche en esta porción de la atmósfera. En niveles altos, el giro del viento se mantienen antihorario pero la oscilación produce un aumento de la magnitud del viento, debido a que el viento a la hora del atardecer es menor que el perfil de equilibrio nocturno que es aproximadamente igual al viento geostrófico. Esto es debido principalmente a que en estos niveles el efecto de la turbulencia es mucho menor o nulo respecto de lo que ocurría durante las horas diurnas. Por las características de los datos registrados por la estación meteorológica, en la hodógrafa correspondiente al nivel inferior no hay evidencias de una rotacion coherente de la dirección del viento con el tiempo como se esperaría a partir del modelo de oscilación inercial (Figura \ref{hodo-nivel1}).
-
-Por su parte los perfiles estimados a partir del radar entre las 00 y las 09 UTC muestran que en los niveles superiores 0.3 km dentro de la capa estable) y 1 km (por encima de la capa estable) la forma de herradura si puede distinguirse y el giro de la hodógrafa es antihorario mostrando una concordancia cualitativa con el modelo de oscilación inercial propuesto por Van de Wiel. Posterior a las 09 UTC, comienza a formarse la capa mezclada a partir de la producción de turbulencia térmica y por lo tanto el comportamiento del viento depende de procesos distintos a oscilación inercial dejando de ser válido el modelo de Van de Wiel. Si bien cada caso tiene sus características particulares, los casos 1 y 2 tienen cierta similitud ya que las hodógrafas se ubican principalmente en el cuadrante inferior izquierdo mientras que la hodógrafa del Caso 3 se ubica en el derecho. Esto último tiene que ver con las características del viento que es predominante del O en casi todo el período para este último caso.
-
-Las hodógrafas observadas para los dos niveles mostrados (y otros niveles no incluidos en la figura por motivos de espacio) muestran una variación con la altura principalmente en la magnitud del viento. Esto indica que la oscilación inercial tiene una variación vertical y podría estar asociada al perfil inicial del viento geostrófico al atardecer [@Blackadar1957].
 
 ```{r hodografa-nivel, fig.cap="Hodógrafa temporal para el nivel correspondiente a los datos de la estación meteorológica (a) y 0.3 y 1 km a partir de la estimación del viento con los dato del radar (b). el cuadrado marca el primer tiempo (00 UTC) y cada círculo representa un valor horario (con circulos más grandes cada 6 horas). \\label{hodografa-n}", fig.subcap=c("Datos observados en la estación meteorológica. \\label{hodo-nivel1}", "Datos observados por el radar. \\label{hodo-nivel2}"), fig.width=0.95*text.width, fig.ncol=1, fig.align='center', fig.height=0.25*text.height}
 
-gdata <- rbind(vad_20160114, vad_20160121, vad_20160123)
+gdata <- vad_20160114
 gdata <- as.data.table(gdata) %>%
   .[, hora := hour(date_time)] %>%
+  .[, day := day(date_time)] %>% 
   .[ht %in% c(0.01) & !is.na(spd_smooth) &
       minute(date_time) == 00 & hora < 18]
 ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
@@ -235,11 +230,12 @@ ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
   scale_x_continuous(name = "u (m/s)") +
   scale_y_continuous(name = "v (m/s)") +
   coord_equal() +
-  facet_wrap(~caso) +
+  facet_wrap(~caso+day) +
   theme_minimal()
 
-gdata <- as.data.table(rbind(vad_20160114, vad_20160121, vad_20160123)) %>%
+gdata <- as.data.table(rbind(vad_20160114)) %>%
   .[, hora := hour(date_time)] %>%
+  .[, day := day(date_time)] %>% 
   .[ht %in% c(0.3, 1) & !is.na(spd_smooth) &
       minute(date_time) == 00 & hora <= 18]
 ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
@@ -257,7 +253,7 @@ ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
   scale_x_continuous(name = "u (m/s)") +
   scale_y_continuous(name = "v (m/s)") +
   coord_equal() +
-  facet_wrap(~caso) +
+  facet_wrap(~caso+day) +
   theme_minimal()
 
 ```
@@ -266,24 +262,14 @@ ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
 #### Altura de la capa límite y turbulencia
 
 ```{r read-dbz}
-files <- Sys.glob("~/Radar/VAD/PARANA/20160114/240/*.nc")
+files <- Sys.glob(paste0(path2, "caso1_YSU_l/wrf_to_radar/*.nc"))
 dbz_20160114 <- rbindlist(lapply(files, read.radar))
 
-files <- Sys.glob("~/Radar/VAD/PARANA/20160121/240/*.nc")
-dbz_20160121 <- rbindlist(lapply(files, read.radar))
-
-files <- Sys.glob("~/Radar/VAD/PARANA/20160123/240/*.nc")
-dbz_20160123 <- rbindlist(lapply(files, read.radar))
+# files <- Sys.glob("~/Radar/VAD/PARANA/20160123/240/*.nc")
+# dbz_20160123 <- rbindlist(lapply(files, read.radar))
 ```
 
 
-Una posible manera de determinar la altura de la capa límite es analizando la distribución de los ecos de reflectividad detectados por el radar a lo largo del día. En días de aire claro las variaciones de la reflectividad pueden depender tanto de la presencia de insectos dentro de la capa límite como de la variaciones del índice de refracción del aire producto de la turbulencia observada o "Bragg scatter" [@Martin2007]. La turbulencia modifica el índice de refracción del aire y produce un aumento en la variación de la reflectividad con la altura. En la Figura \ref{dbz} se muestra la reflectividad medida por el radar en función de la altura y el tiempo para cada caso de estudio mientras que en la Figura \ref{pblh-dbz} se muestra el valor absoluto del gradiente vertical de reflectividad ($\nabla_z dBZ$) para los mismos períodos. Debido a que se buscan las mayores variaciones de reflectividad en la Figura \ref{pblh-dbz} se buscó resaltar los niveles donde el gradiente vertical de reflectividad fuera mayor independientemente del signo. Luego de la exploración de los datos se decidió utilizar sólo los datos del ángulo de 5° de elevación, con excepción de los primeros niveles, por tener poco ruido y presentar cierta coherencia espacial.
-
-En el Caso 1 (Figura \ref{reflec-1}) la reflectividad muestra valores positivos y máximos en niveles cercanos a la superficie que forman una región entre 5 y 10 dBZ por encima de la cual la variable disminuye hasta alcanzar valores negativos. En la Figura \ref{dbz-1} se observa un máximo del $\nabla_z dBZ$ a aproximadamente 300 m de altura entre las 03 y 09 UTC que luego se eleva rápidamente y forma dos máximos, uno a 1000 m hasta las 15 UTC y el otro por encima hasta las 18 UTC, que luego decae hasta desaparecer a partir de las 21 UTC. Estos máximos coinciden con la ubicación de los máximos de dBZ y la región límite por encima de la cual la variable es negativa. Por las características del crecimiento, entre las 09 y las 11 UTC, el tope de la capa límite mezclada correspondería al segundo máximo, ya que también se observa en los perfiles verticales de viento (Figura \ref{perfiles-horarios}) que la capa mezclada alcanza los 2 km de altura. El primer máximo de gradiente que ocurre entre las 10 y las 15 UTC a 1000 m de altura coincide con el borde superior del LLJ, que va perdiendo intensidad luego del amanecer pero que mantiene una cortante de viento importante y que podría generar un aumento de la reflectividad debido al Bragg scattering por la presencia de turbulencia mecánica. También podría estar relacionado con ecos asociados a la presencia de insectos. También se observa un mínimo de reflectividad entre dos máximos, uno de ellos cerca de superficie y el otro a 1000 m de altura entre las 09 y las 12 UTC que podrían estar asociados a la cortante que se produce por debajo de jet. En las observaciones entre las 00 y 09 UTC se observan regiones con máximos relativos de $\nabla_z dBZ$ que podría estar asociado la presencia de la capa residual y la turbulencia remanente de la capa mezclada del día anterior. De acuerdo a @Martin2007 el aumento de la reflectividad observado en esas horas podría deberse a la presencia de insectos que tienen mayor actividad luego del atardecer, esta característica es llamada "bloom del radar".
-
-En la Figura \ref{reflec-2} la reflectividad para el Caso 2 muestra regiones donde la variable es positiva y máxima pero la estructura no es tan clara como ocurre en el Caso 1. De la misma manera, en la Figura \ref{dbz-2} las regiones de máximo  $\nabla_z dBZ$ no son claras aunque es posible determinar una línea entre 500 y 1000 m previo a las 09 UTC que podría corresponder al tope de la capa límite estable nocturna. Luego de ese momento, el máximo del gradiente vertical aumenta rápidamente hasta alcanzar los 1500 m de altura y comienza a descender luego de las 12 UTC. Estas observaciones no concuerdan con el perfil vertical de viento observado a las 17 UTC (Figura \ref{perfiles-horarios}) que se mantiene homogéneo alcanzando una altura de 2000 m.
-
-La variación de la reflectividad con la altura para el Caso 3 se muestra en la Figura \ref{reflec-3}, si bien la región de valores positivos ocupa gran parte del espesor de atmósfera mostrado, es evidente un máximo absoluto por debajo de 500 m que luego de las 09 UTC asciende por encima de los 1000 m. La variación de $\nabla_z dBZ$ con la altura (Figura \ref{dbz-3}) muestra un máximo cercano a 2000 m en las primeras horas de la noche que luego desciende y podría corresponder nuevamente al "bloom del radar". Por otro lado se observa por debajo de 500 m un máximo intenso que se mantiene durante horas hasta las 14 UTC. Durante la noche este máximo puede asociarse al tope de la capa estable pero luego del amanecer la persistencia de esta capa de gran variabilidad en la reflectividad podría deberse a la presencia de turbulencia debido a la cortante vertical de viento generada por el máximo de viento secundario que se observa en la Figura \ref{caso3-spd} a las 12 UTC. Al igual que en los otros casos se observa un máximo relativo que crece desde las 9 UTC y alcanza rápidamente los 2000 m de altura. Este máximo que se mantiene durante el día podría indicar el tope de la capa mezclada.
 
 ```{r dbz, fig.cap="Reflecttividad (dBZ) medida por el radar en función de la altura y el tiempo para el Caso 1 (a), el Caso 2 (b) y el Caso 3 (c). \\label{dbz}", fig.subcap=c("Caso 1. \\label{reflec-1}", "Caso2. \\label{reflec-2}", "Caso 3. \\label{reflec-3}"), fig.align='center', fig.height=0.28*text.height, fig.ncol=1}
 elev <- unique(dbz_20160114$elevacion)
@@ -303,47 +289,29 @@ dbz_20160114[elevacion == elev[8] & ht_reg > 100] %>%
   scale_x_datetime(name = NULL,
                    date_breaks = "3 hour",
                    date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+                   limits = c(as_datetime("2016-01-13 00:00:00"), NA),
                    expand = c(0,0)) +
   theme_minimal()
 
-dbz_20160121[elevacion == elev[8] & ht_reg > 200] %>%
-  ggplot(aes(date, ht_reg/1000)) +
-  #geom_line(aes(color = factor(elevacion))) +
-  geom_tile(aes(fill = dbz, color = dbz)) +
-  scale_fill_viridis(name = "dBZ",
-               limits = c(NA, NA)) +
-  scale_color_viridis(name = "dBZ",
-                    limits = c(NA, NA)) +
-  scale_y_continuous(name = "Altura (km)",
-                     limits = c(0, 3),
-                     breaks = seq(0, 3, 0.5),
-                     expand = c(0,0)) +
-  scale_x_datetime(name = NULL,
-                   date_breaks = "3 hour",
-                   date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-21 00:00:00"), NA),
-                   expand = c(0,0)) +
-  theme_minimal()
 
-dbz_20160123[elevacion == elev[8] & ht_reg > 200] %>%
-  ggplot(aes(date, ht_reg/1000)) +
-  #geom_line(aes(color = factor(elevacion))) +
-  geom_tile(aes(fill = dbz, color = dbz)) +
-  scale_fill_viridis(name = "dBZ",
-               limits = c(NA, NA)) +
-  scale_color_viridis(name = "dBZ",
-                    limits = c(NA, NA)) +
-  scale_y_continuous(name = "Altura (km)",
-                     limits = c(0, 3),
-                     breaks = seq(0, 3, 0.5),
-                     expand = c(0,0)) +
-  scale_x_datetime(name = "Hora (UTC)",
-                   date_breaks = "3 hour",
-                   date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-23 00:00:00"), NA),
-                   expand = c(0,0)) +
-  theme_minimal()
+# dbz_20160123[elevacion == elev[8] & ht_reg > 200] %>%
+#   ggplot(aes(date, ht_reg/1000)) +
+#   #geom_line(aes(color = factor(elevacion))) +
+#   geom_tile(aes(fill = dbz, color = dbz)) +
+#   scale_fill_viridis(name = "dBZ",
+#                limits = c(NA, NA)) +
+#   scale_color_viridis(name = "dBZ",
+#                     limits = c(NA, NA)) +
+#   scale_y_continuous(name = "Altura (km)",
+#                      limits = c(0, 3),
+#                      breaks = seq(0, 3, 0.5),
+#                      expand = c(0,0)) +
+#   scale_x_datetime(name = "Hora (UTC)",
+#                    date_breaks = "3 hour",
+#                    date_labels = "%H:%M",
+#                    limits = c(as_datetime("2016-01-23 00:00:00"), NA),
+#                    expand = c(0,0)) +
+#   theme_minimal()
 
 ```
 
@@ -364,81 +332,53 @@ dbz_20160114[elevacion == elev[8] & ht_reg > 200] %>%
   scale_x_datetime(name = NULL,
                    date_breaks = "3 hour",
                    date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+                   limits = c(as_datetime("2016-01-13 00:00:00"), NA),
                    expand = c(0,0)) +
   theme_minimal()
 
-dbz_20160121[elevacion == elev[8] & ht_reg > 200] %>%
-  ggplot(aes(date, ht_reg/1000)) +
-  #geom_line(aes(color = factor(elevacion))) +
-  geom_tile(aes(fill = abs(ddbz), color = abs(ddbz))) +
-  scale_fill_viridis(name = "Gradiente \n vertical de \n reflectividad",
-                     limits = c(0, 0.06)) +
-  scale_color_viridis(name = "Gradiente \n vertical de \n reflectividad",
-                      limits = c(0, 0.06)) +
-  scale_y_continuous(name = "Altura (km)",
-                     limits = c(0, 3),
-                     breaks = seq(0, 3, 0.5),
-                    expand = c(0,0)) +
-  scale_x_datetime(name = NULL,
-                   date_breaks = "3 hour",
-                   date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-21 00:00:00"), NA),
-                   expand = c(0,0)) +
-  theme_minimal()
-
-dbz_20160123[elevacion == elev[8] & ht_reg > 200] %>%
-  ggplot(aes(date, ht_reg/1000)) +
-  #geom_line(aes(color = factor(elevacion))) +
-  geom_tile(aes(fill = abs(ddbz), color = abs(ddbz))) +
-  scale_fill_viridis(name = "Gradiente \n vertical de \n reflectividad",
-                     limits = c(0, 0.06)) +
-  scale_color_viridis(name = "Gradiente \n vertical de \n reflectividad",
-                      limits = c(0, 0.06)) +
-  scale_y_continuous(name = "Altura (km)",
-                     limits = c(0, 3),
-                     breaks = seq(0, 3, 0.5),
-                    expand = c(0,0)) +
-  scale_x_datetime(name = "Hora (UTC)",
-                   date_breaks = "3 hour",
-                   date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-23 00:00:00"), NA),
-                   expand = c(0,0)) +
-  theme_minimal()
-remove(dbz_20160121, dbz_20160123)
+# 
+# dbz_20160123[elevacion == elev[8] & ht_reg > 200] %>%
+#   ggplot(aes(date, ht_reg/1000)) +
+#   #geom_line(aes(color = factor(elevacion))) +
+#   geom_tile(aes(fill = abs(ddbz), color = abs(ddbz))) +
+#   scale_fill_viridis(name = "Gradiente \n vertical de \n reflectividad",
+#                      limits = c(0, 0.06)) +
+#   scale_color_viridis(name = "Gradiente \n vertical de \n reflectividad",
+#                       limits = c(0, 0.06)) +
+#   scale_y_continuous(name = "Altura (km)",
+#                      limits = c(0, 3),
+#                      breaks = seq(0, 3, 0.5),
+#                     expand = c(0,0)) +
+#   scale_x_datetime(name = "Hora (UTC)",
+#                    date_breaks = "3 hour",
+#                    date_labels = "%H:%M",
+#                    limits = c(as_datetime("2016-01-23 00:00:00"), NA),
+#                    expand = c(0,0)) +
+#   theme_minimal()
+# remove(dbz_20160121, dbz_20160123)
 
 ```
 
 
-```{r make-ri}
+```{r make-ri, eval=FALSE, include=FALSE}
 sup_20160114 <- superficie[day(fecha) == 14]
 ri_20160114 <- create.ri(vad_20160114, sup_20160114$fecha, sup_20160114$temp, sup_20160114$presion_estacion, 27.7, 1002.6)
 ri_20160114[, caso := "Caso 1"]
 
-sup_20160121 <- superficie[day(fecha) == 21]
-ri_20160121 <- create.ri(vad_20160121, sup_20160121$fecha, sup_20160121$temp, sup_20160121$presion_estacion, 35.7, 1001.8)
-ri_20160121[, caso := "Caso 2"]
 
 sup_20160123 <- superficie[day(fecha) == 23]
 ri_20160123 <- create.ri(vad_20160123, sup_20160123$fecha, sup_20160123$temp, sup_20160123$presion_estacion, 34.2, 998.8)
 ri_20160123[, caso := "Caso 3"]
 
-ri_vad <- rbindlist(list(ri_20160114, ri_20160121, ri_20160123))
+ri_vad <- rbindlist(list(ri_20160114, ri_20160123))
 ri_vad[, hora := day(date_time)]
 
-remove(sup_20160114, sup_20160121, sup_20160123,
-            ri_20160114, ri_20160121, ri_20160123)
+remove(sup_20160114, sup_20160123,
+            ri_20160114, ri_20160123)
 ```
 
-La estimación del tope de la capa límite a partir de las variaciones de la reflectividad con la altura es una metodología poco desarrollada y que no ha sido aplicada a la información provista por los radares de la región. Por este motivo es importante contar con estimaciones independientes para validar los resultados previos. Los datos disponibles en este trabajo permitieron evaluar algunas características de la capa estable nocturna (Figura \ref{estable-vad}). En primer lugar se estimó la altura de la capa estable como el nivel en el cual ocurre el máximo viento (Figura \ref{h-vad}) durante el período donde se observó el máximo. Esta estimación depende de la resolución vertical elegida para el cálculo del VAD que en este caso es de 100 m, por lo tanto la estimación no es muy precisa. En la Figura \ref{cortante-vad} se presenta la cortante vertical calculada por debajo del máximo del viento y en la Figura \ref{ri-vad} el número de Richardson calculado de acuerdo a la Ecuación \ref{eq-ri3} hasta la hora del amanecer cuando la aproximación deja de ser válida. Los períodos sombreados corresponden a los momentos donde se observó el máximo de viento.
 
-En el Caso 1 la altura de la capa estable se mantuvo en 300 m en todo momento coincidiendo con lo estimado a partir del $\nabla_z dBZ$. La cortante de viento tuvo variaciones temporales con un máximo que coincidió con el momento donde el LLJ fue más intenso. De acuerdo a @Banta2003, estos valores de cortante están asociados a la presencia de energía cinética turbulenta y podría ser usada como un estimado de la turbulencia en la capa. Consistente con lo anterior, el número de Richardson es siempre positivo y por lo tanto se trata de una situación de estabilidad estática y además se mantiene por debajo de 1 por lo tanto el flujo se mantiene turbulento debido a procesos mecánicos asociados a la cortante.
-
-En los Casos 2 y 3 la cortante vertical y el número de Richardson tienen un comportamiento similar al primer caso y por lo tanto corresponden a situaciones estables con el flujo en estado turbulento.
-
-La estimación del tope de la capa estable en el Caso 2 de acuerdo a este criterio se ubica en 200 m. En este caso es muy difícil establecer una comparación con lo visualizado en la Figura \ref{dbz-2}, ya que los ecos de radar ofrecen muy poca intensidad de los máximos relativos cercanos a superficie, impidiendo delimitar bien la posición del tope de la capa límite estable nocturna con esa metodología. En el Caso 3 las dos estimaciones si coinciden y además se observa coincidencia en la evolución a lo largo del tiempo.
-
-```{r estable-vad, fig.cap="Series de tiempo de la altura de la capa límite, cortante vertical y el número de Richarsdon en la capa estable nocturna para todos los casos de estudio. En a) y b) se muestra solo el período donde se observa el LLJ, en c) el período en cada caso se encuentra sombreado. \\label{estable-vad}", fig.subcap=c("Altura de la capa estable \\label{h-vad}", "Cortante ($u_{máx}/z_{máx}$) \\label{cortante-vad}", "Número de Richardson \\label{ri-vad}"), fig.ncol=1, fig.height=0.24*text.height}
+```{r estable-vad, eval=FALSE, fig.cap="Series de tiempo de la altura de la capa límite, fig.height=0.24*text.height, fig.ncol=1, cortante vertical y el número de Richarsdon en la capa estable nocturna para todos los casos de estudio. En a) y b) se muestra solo el período donde se observa el LLJ, en c) el período en cada caso se encuentra sombreado. \\label{estable-vad}", fig.subcap=c("Altura de la capa estable \\label{h-vad}", "Cortante ($u_{máx}/z_{máx}$) \\label{cortante-vad}", "Número de Richardson \\label{ri-vad}"), include=FALSE}
 
 ri_vad$hora <- ri_vad$date_time
 day(ri_vad$hora) = 14
@@ -498,29 +438,30 @@ remove(gdata, vad_20160121, vad_20160123)
 
 ##Análisis de las simulaciones con WRF y comparación con observaciones de radar
 
-Se realizaron tres simulaciones para el período correspondiente al Caso 1 utilizando distintas parametrizaciones de capa límite. Para analizar el desempeño de las parametrizaciones elegidas se compararon las distintas simulaciones con las observaciones de radar y se calcularon la diferencias en la magnitud del viento, el ángulo de la dirección del viento y algunos parámetros como el bias  (o sesgo), rmse, rmsens (raíz del error cuadrático medio debido a errores no sistemáticos) y el coeficiente de correlación tanto globalmente como dependientes de la altura.
+
 
 ### Magnitud y dirección del viento
 
 ```{r read-WRF-VAD}
 # YSU
-vad_caso1ysu <- read.vad("../../caso1ysu_240/vda*")
+vad_caso1ysu <- read.vad(paste0(path2, "/caso1_YSU_l/VAD/vad*"))
 vad_caso1ysu[, caso := "YSU"]
 
 #MYJ
-vad_caso1myj <- read.vad("../../caso1myj_240/vda*")
+vad_caso1myj <- read.vad(paste0(path2, "/caso1_MYJ_l/VAD/vad*"))
 vad_caso1myj[, caso := "MYJ"]
 
 #ACM2
-vad_caso1acm <- read.vad("../../caso1acm_240/vda*")
+vad_caso1acm <- read.vad(paste0(path2, "/caso1_ACM2_l/VAD/vad*"))
 vad_caso1acm[, caso := "ACM2"]
 
+vad_20160114 <- read.vad(paste0(path2, "20160114/v*"))  
+# vad_20160114 <- rbind(subset(sup_vad,
+                #             day(date_time) %in% c(13,14)), vad_20160114)
 vad_20160114 <- vad_20160114[, caso := "Obs"]
+vad_20160114[, rmse3 := NULL]
 ```
 
-En la Figura \ref{modelo-spd} se  muestra la magnitud del viento en función del tiempo y de la altura observada por el radar (panel superior izquierdo) y cada simulación nombradas de acuerdo a la parametrización de capa límite utilizada: YSU, MYJ y ACM2. En términos generales se puede observar en primer lugar que las tres simulaciones son similares entre sí y en segundo lugar que hay una coherencia importante entre las simulaciones y las observaciones ya que las simulaciones son capaces de representar el máximo de viento nocturno asociado al LLJ y el viento más débil y verticalmente homogéneo en las horas diurnas.
-
-Sin embargo hay diferencias destacables entre las observaciones y las simulaciones. Se observa un primer máximo entre las 00 y las 03 UTC por debajo de 500 m en las primeras horas que precede al máximo asociado al LLJ pero que tiene menor magnitud. Si bien no hay observaciones previas a las 00 UTC, las tres simulaciones coinciden en mostrar un aumento en la intensidad del viento en la capa mezclada a partir de las 22 UTC, una hora antes del atardecer. Posteriormente en las tres simulaciones el LLJ parece prolongarse en el tiempo al menos 3 horas más que en las observaciones y el máximo de viento ocurre en distintos niveles en cada caso. En niveles altos, durante la noche el viento decrece rápidamente  subestimando los valores observados.
 
 
 ```{r vad-modelo-spd, fig.cap="Magnitud del viento (m/s) estimada a partir de los datos de radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con la técnica VAD. \\label{modelo-spd}", fig.width=0.98*text.width, fig.align='center'}
@@ -529,7 +470,7 @@ gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 gdata[, caso := factor(caso,
                        levels = c("Obs", "YSU", "MYJ", "ACM2"),
                        ordered = T)]
-gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-13 12:00:00"), as_datetime("2016-01-15 00:00:00")) ] %>%
+gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-13 06:00:00"), as_datetime("2016-01-15 00:00:00")) ] %>%
   ggplot(aes(date_time, ht)) +
   geom_contour(aes(z = spd_smooth, color = ..level..), binwidth = 1) +
   scale_color_viridis(name = "Magnitud\ndel viento", direction = 1,
@@ -541,7 +482,7 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-13 12:00:00"), as_d
   scale_x_datetime(name = "Hora (UTC)",
                    date_breaks = "4 hour",
                    date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-13 20:00:00"), NA),
+                   limits = c(as_datetime("2016-01-13 06:00:00"), NA),
                    expand = c(0,0)) +
   scale_y_continuous(name = "Altura (km)", limits = c(0,2),
                      expand = c(0,0)) +
@@ -550,19 +491,19 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-13 12:00:00"), as_d
 
 ```
 
-La variación de la dirección del viento con el tiempo y la altura en cada simulación se muestra en la Figura \ref{modelo-dir}. Nuevamente se observa una similaridad importante entre las tres simulaciones y en líneas generales conservan las características de las observaciones aunque se distinguen algunas diferencias. Para analizar en más detalle el desempeño de las simulaciones se calculó la diferencia de la magnitud del viento entre las observaciones y cada simulación y lo mismo para el ángulo de la dirección del viento (Figura \ref{dif}).
+
 
 
 ```{r vad-modelo-dir, fig.cap="Dirección del viento (grados) estimada por el radar (Obs) y simulada por el modelo WRF utilizando distintos esquemas de CLP para el Caso 1 (14/01/2016) y posteriormente procesados con VAD. \\label{modelo-dir}", fig.width=0.98*text.width, fig.align='center'}
 
 gdata <- setDT(rbind(vad_20160114, vad_caso1ysu, vad_caso1myj, vad_caso1acm))
-gdata[, caso2 := factor(caso,
+gdata[, caso := factor(caso,
                        levels = c("Obs", "YSU", "MYJ", "ACM2"),
                        ordered = T)]
-gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_datetime("2016-01-15 00:00:00")) & minute(date_time) == 0 & !is.na(spd_smooth) ] %>%
+gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-13 06:00:00"), as_datetime("2016-01-15 00:00:00")) & minute(date_time) == 0 & !is.na(spd_smooth) ] %>%
   ggplot(aes(date_time, ht)) +
-  geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
-             scale = 0.005, start = -90, direction = -1) +
+  geom_arrow(aes(mag = spd_smooth, angle = di, colour = spd_smooth)) +
+  scale_mag() +
   # geom_point(data = subset(vad_20160114, rmse1 > 0.5),
   #            aes(size = rmse1),
   #            shape = 1, color = "grey25") +
@@ -576,16 +517,12 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_d
   scale_x_datetime(name = "Hora (UTC)",
                    date_breaks = "4 hour",
                    date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+        #           limits = c(as_datetime("2016-01-16 06:00:00"), NA),
                    expand = c(0,0)) +
-  facet_wrap(~caso2) +
+  facet_wrap(~caso) +
   theme_minimal() + theme(legend.position = "bottom")
 
 ```
-
-La diferencia en la magnitud del viento entre las observaciones y la simulación con la parametrización YSU es negativa (sobrestima) en los primeros niveles de altura y positiva (subestima) por encima de 500 m. En los primeros niveles las mayores diferencias se deben a la presencia de un máximo de viento entre las 00 y las 03 UTC en la simulación que no se corresponde con las observaciones y la persistencia del LLJ luego de su decaimiento en las observaciones. La simulación MYJ es la que presenta mayores diferencias con las observaciones tanto en las horas nocturnas como en las horas diurnas, esta diferencia llega valores negativos en niveles superiores durante el día. La parametrización ACM2 se comporta de manera similar a YSU aunque las diferencias en los primeros 500 m parecen ser menores. En líneas generales las tres parametrizaciones tienen un peor desempeño en horas nocturnas sobreestimando el viento en los primeros niveles y subestimandolo en los niveles altos.
-
-En cuanto a la dirección del viento, en la Figura \ref{dif-dir} se muestra el valor absoluto de la diferencia entre el ángulo del vector del viento observado y el simulado. En las tres simulaciones la mayor diferencia se da por encima de 1000 m con valores de hasta 149° en MYJ, 141° en YSU y 131° en ACM2. En los primeros 1000 metros la diferencia es mucho menor y en algunos momentos cercana a cero. Cualitativamente no es posible identificar si alguna de las simulaciones tiene un mejor desempeño al estimar esta variable.
 
 
 ```{r diferencia, fig.cap="Diferencia entre las observaciones y cada simulación para la magnitud del viento (m/s) (a) y el ángulo de la dirección del viento (grados) (b) correspondiente al Caso 1. \\label{dif}", fig.subcap=c("Magnitud del viento (m/s) \\label{dif-spd}", "Ángulo de la dirección del viento (grados) \\label{dif-dir}"), fig.height=0.85*text.height, fig.width=0.48*text.width, fig.ncol=2}
@@ -595,10 +532,12 @@ gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 gdata <- gdata[vad_20160114[, .(date_time, ht, spd_obs = spd_smooth, di_obs = di, u_obs = u, v_obs = v)],
       on = c("date_time", "ht")] %>%
   .[, dif_spd := spd_obs - spd_smooth] %>%
-  .[, di.c := circular(di, units = "degrees", modulo = "2pi")] %>%
-  .[, di_obs.c := circular(di_obs, units = "degrees", modulo = "2pi")] %>%
-  .[, dif_di := ifelse(di_obs.c - di.c > 180, di_obs.c - di.c - 360, di_obs.c - di.c)] %>%
-  .[, caso2 := factor(caso,
+  .[, di.c := circular(di, units = "degrees", modulo = "pi")] %>%
+  .[, di_obs.c := circular(di_obs, units = "degrees", modulo = "pi")] %>%
+  .[, dif_di := abs(di_obs.c - di.c)] %>% 
+  # .[, dif_di := ifelse(di_obs.c - di.c > 180, di_obs.c - di.c - 360, di_obs.c - di.c)] %>%
+  .[, dif_di2 := ifelse(abs(di_obs.c - di.c) > 180, 360 - abs(di_obs.c - di.c), di_obs.c - di.c)] %>% 
+  .[, caso := factor(caso,
                        levels = c("Obs", "YSU", "MYJ", "ACM2"),
                        ordered = T)]
 
@@ -615,14 +554,14 @@ gdata[ht > 0.02] %>%
                    expand = c(0,0)) +
   scale_y_continuous(name = "Altura (km)", limits = c(0,2),
                      expand = c(0,0)) +
-  facet_wrap(~caso2, ncol = 1) +
+  facet_wrap(~caso, ncol = 1) +
   theme_minimal() + theme(panel.ontop = T,
                           legend.position="bottom",
                           legend.box = "horizontal")
 
-gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>%
+gdata[ht > 0.02 & caso != "Obs" & hour(date_time) < 22] %>%
   ggplot(aes(date_time, ht)) +
-  geom_tile(aes(z = abs(dif_di), fill = abs(dif_di)), binwidth = 1) +
+  geom_tile(aes(fill = abs(dif_di))) +
   scale_fill_divergent(name = "Dirección\ndel viento",
                       #breaks = seq(0, 18, 2), limits = c(0, 19),
                       guide = guide_colorbar(order = 1)) +
@@ -630,19 +569,17 @@ gdata[ht > 0.02 & caso2 != "Obs" & hour(date_time) < 22] %>%
   scale_x_datetime(name = "Tiempo (UTC)",
                    date_breaks = "4 hour",
                    date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+                   limits = c(as_datetime("2016-01-13 06:00:00"), NA),
                    expand = c(0,0)) +
   scale_y_continuous(name = "Altura (km)", limits = c(0,2),
                      expand = c(0,0)) +
-  facet_wrap(~caso2, ncol = 1) +
+  facet_wrap(~caso, ncol = 1) +
   theme_minimal() + theme(panel.ontop = T,
                           legend.position="bottom",
                           legend.box = "horizontal")
 ```
 
-En la Tabla \ref{err} se presenta la magnitud del bias, rmse, rmsens y del coeficiente de correlación de la magnitud y la dirección del viento calculados de manera global para las tres simulaciones, es decir para todo momento y nivel. El rmse que cuantifica el error total y el rmsens asociado a los errores no sistemáticos de la velocidad son muy similares y por lo tanto puede determinarse que las diferencias entre las observaciones y cada simulación se debe principalmente a los errores no sistemáticos. En concordancia con el análisis cualitativo, MYJ tiene un mayor rmse mientras que en YSU y ACM2, son similares. Sin embargo ACM2 es la simulación con mayor bias y MYJ tiene el menor. En los tres casos el bias es negativo y por lo tanto globalmente la magnitud del viento está subestimada en las simulaciones. La mayor correlación se da entre las observaciones y ACM2 y es menor con YSU y MYJ.
 
-El error total, el error no sistemático y el bias calculado para la dirección del viento son similares en las tres simulaciones. En este caso MYJ muestra errores menores que YSU y ACM2 a diferencia de lo sucedido con la magnitud del viento. El rmsens es menor al rmse (representa entre el 80 y 83% del rmse), por lo que los errores sistemáticos representados por el bias también son importantes en esta variable.
 
 
 ```{r err-spd, fig.cap="Bias, rmse y rmsens en m/s y coeficiente de correlación para la estimación de la velocidad del viento (m/s) con cada simulación en función de la altura y la simulación. \\label{err-spd}", fig.width=0.75*text.width, fig.align='center'}
