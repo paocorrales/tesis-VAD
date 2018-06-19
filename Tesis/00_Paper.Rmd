@@ -102,6 +102,12 @@ vad_20160114 <- rbind(subset(sup_vad,
                              day(date_time) %in% c(13,14)), vad_20160114)
 vad_20160114[, caso := "Caso 1"]
 
+# Caso 3 - 23/01/2016
+# vad_20160123 <- read.vad(paste0(path2, "20160123/v*"))  
+# vad_20160123 <- rbind(subset(sup_vad,
+#                              day(date_time) %in% c(22,23)), vad_20160123)
+# vad_20160123[, caso := "Caso 2"]
+
 remove(sup_vad)
 ```
 
@@ -135,7 +141,7 @@ vad_20160114[ht > 0.02] %>%
 
 vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth) & ht < 3] %>%
   ggplot(aes(date_time, ht)) +
-  geom_arrow(aes(mag = spd_smooth, angle = di),
+  geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
              preserve.dir = TRUE) +
   scale_mag(length = 1) +
   # geom_point(data = subset(vad_20160114, rmse1 > 0.5),) + 
@@ -529,7 +535,7 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-13 06:00:00"), as_d
 
 gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm))
 
-gdata <- gdata[vad_20160114[, .(date_time, ht, spd_obs = spd_smooth, di_obs = di, u_obs = u, v_obs = v)],
+gdata <- gdata[vad_20160114[date_time %between% c(as_datetime("2016-01-13 06:00:00"), as_datetime("2016-01-15 00:00:00")), .(date_time, ht, spd_obs = spd_smooth, di_obs = di, u_obs = u, v_obs = v)],
       on = c("date_time", "ht")] %>%
   .[, dif_spd := spd_obs - spd_smooth] %>%
   .[, di.c := circular(di, units = "degrees", modulo = "pi")] %>%
@@ -559,7 +565,7 @@ gdata[ht > 0.02] %>%
                           legend.position="bottom",
                           legend.box = "horizontal")
 
-gdata[ht > 0.02 & caso != "Obs" & hour(date_time) < 22] %>%
+gdata[ht > 0.02 & caso != "Obs"] %>%
   ggplot(aes(date_time, ht)) +
   geom_tile(aes(fill = abs(dif_di))) +
   scale_fill_divergent(name = "Dirección\ndel viento",
@@ -648,17 +654,6 @@ kable(err, format = "latex",
   #kable_styling(latex_options = "hold_position")
 ```
 
-Otro aspecto importante para analizar es el comportamiento de los errores con la altura. Para eso se calcularon el bias, rmse, rmsens y el coeficiente de correlación de la magnitud del viento para cada nivel y simulación (Figura \ref{err-spd}). En todas las simulaciones el bias tiene un comportamiento similar con la altura, siendo positivo por debajo de 600 m y negativo por encima. Esto significa que si bien globalmente el bias es negativo y por lo tanto las simulaciones subestiman la magnitud del viento, las tres parametrizaciones sobreestiman la variable en los primeros niveles de la atmósfera. La mayor diferencia de bias entre las simulaciones se da en los niveles inferiores entre 200 y 300 m donde MYJ tiene un bias 1 m/s mayor que ACM2. El perfil vertical del rmse tiene un mínimo en 500 m para todas las simulaciones y aumenta tanto en el nivel del LLJ como por encima de los 500 m. La simulación MYJ tiene un mayor rmse en casi todos los niveles respecto de YSU y ACM2. Los errores no sistemáticos son más importantes alrededor de 1000 m y por encima de 500 m MYJ tiene un rmsens mayor a las otras simulaciones que suma a su error total. En cuanto al coeficiente de correlación, en los primeros niveles y hasta los 600 m aproximadamente es superior a 0.9 y con un comportamiento muy similar en las tres simulaciones. Luego de ese nivel donde las simulaciones no pueden representar las condiciones del viento, y la correlación rápidamente hasta llegar a valores cercanos a cero o negativos por encima de 1000 m. Como en el caso de los errores MYJ tiene el peor desempeño de las tres simulaciones.
-
-### Características de la capa límite planetaria
-
-Los perfiles mostrados en la Figura \ref{perfil-mod} correspondientes a las 17 UTC muestran las características de la capa mezclada. El perfil observado muestra un ligero aumento con la altura pero mantiene la homogeneidad característica de la capa mezclada. Las tres simulaciones presentan un perfil con un comportamiento similar, son verticalmente homogéneos con una ligera disminución de la magnitud del viento con la altura al contrario de lo que ocurre en horas nocturnas. La comparación de los perfiles con las observaciones muestra que son similares a pesar de que el viento en los primeros niveles es sobreestimado por las simulaciones en hasta 2 m/s.
-
-#### Oscilación inercial y LLJ
-
-Si bien el máximo del viento en la capa estable se da en distintos momentos en cada simulación y con respecto a las observaciones, se comparó el perfil vertical de viento a las 06 UTC como hora de referencia donde se observa el LLJ (Figura \ref{perfil-mod}). Los perfiles de las tres simulaciones tienen un comportamiento similar mostrando la característica "nariz" de LLJ, y tienen diferencias de hasta 2 m/s en algunos niveles. Como se observó en la Figura \ref{modelo-spd} durante la noche, la magnitud del viento disminuye rápidamente luego del máximo, llegando a un mínimo de entre 2 y 3 m/s en las simulaciones respecto de los 8 m/s observados por el radar a 1000 m, lo que genera el bias negativo mostrado previamente.
-
-Al aplicar el criterio de Bonner en todas las simulaciones se puede determinar cuantitativamente la presencia del LLJ, que a las 06 UTC tiene el máximo ubicado en 200 m y con magnitudes que varían entre 14 y 16 m/s, mientras que el máximo en las observaciones está 100 m por encima. Sin embargo, la Figura \ref{modelo-spd} muestra que en las simulaciones el LLJ se prolonga en el tiempo más que en las observaciones ya que el máximo viento ocurre dos horas después (posterior a las 8 UTC) y con magnitud entre 1 y 2 m/s superior a lo observado.
 
 
 ```{r perfiles-mod, fig.cap="Perfil de viento (m/s) observado por el radar a las 06 y las 17 UTC y perfiles simulados por el modelo para los mismos momentos. Las marcas en los ejes indican la magnitud del viento máxima y mínima y la altura a la que ocurren. \\label{perfil-mod}", fig.width=0.95*text.width, fig.align='center'}
@@ -668,7 +663,7 @@ gdata[, caso := factor(caso,
                        levels = c("Obs", "YSU", "MYJ", "ACM2"),
                        ordered = T)] %>%
   .[, hora := hour(date_time)] %>%
-  .[minute(date_time) == 00 & day(date_time) == 14 & hour(date_time) %in% c(06, 17) & ht < 2.5 &
+  .[minute(date_time) == 00 & day(date_time) == 14 & hour(date_time) %in% c(07, 17) & ht < 2.5 &
       !is.na(spd_smooth)] %>%
   ggplot(aes(ht, spd_smooth, color = caso)) +
   geom_line() +
@@ -686,9 +681,7 @@ gdata[, caso := factor(caso,
   theme_minimal()
 ```
 
-En la Figura \ref{hodografa-mod} se presentan las hodógrafas temporales observadas para distintos niveles en el Caso 1 y las obtenidas a partir de las tres simulaciones. Al igual que en figuras anteriores, las simulaciones tienen un comportamiento similar entre sí. En el primer nivel de 0.3 km las hodógrafas tiene la forma de herradura pronosticada por el modelo de Van de Wiel aunque la magnitud del viento en las simulaciones es superior a lo observado en las primeras 10 horas mostradas. El nivel de 0.5 km también presenta la característica forma de herradura pero en este caso la magnitud del viento de las distintas simulaciones es similar a la observada en las primeras horas y luego es menor.
 
-Sin embargo, en el nivel de 1 km, si bien la hodógrafa observada presenta la forma de herradura y se ajusta cualitativamente al modelo de oscilación inercial, no ocurre lo mismo en las simulaciones. En primer lugar, al igual que se observó en la Figura \ref{modelo-spd}, la magnitud del viento es mucho menor a las observaciones ya que decrece rápidamente con la altura (Figura \ref{perfil-mod}) pero además la rotación alrededor de un perfil de equilibrio no se observa en ninguna de las simulaciones y por lo tanto no se ajustan al modelo de oscilación inercial. A partir de esto puede verse que las simulaciones si bien puede representar la oscilación inercial, ésta está asociada a mayores intensidades de viento pero a su vez su extensión vertical es menor. Esto podría estar asociado a una subestimación del tope de la capa mezclada del día anterior, o podría deberse a una cortante intensa en el perfil de viento inicial correspondiente al atardecer del día previo [@Blackadar1957].
 
 
 ```{r hodografa-wrf, fig.cap="Hodógrafa temporal para tres niveles. Cada círculo representa un valor horario (con circulos más grandes cada 4 horas) y el cuadrado marca el primer tiempo (00 UTC). \\label{hodografa-mod}", fig.width=0.95*text.width, fig.align='center'}
@@ -726,42 +719,42 @@ gdata[ht %in% c(0.3, 0.5, 1.0) & !is.na(spd_smooth)] %>%
 
 ```{r leo-pbl}
 
-caso.YSU <- ReadNetCDF(paste(path,"caso1_YSU/spd_YSU.nc", sep = "")) %>%
-  mutate(exchh = ReadNetCDF(paste(path,"caso1_YSU/exchh_YSU.nc", sep = ""), out = "vector")[[1]],
-         pblh = ReadNetCDF(paste(path,"caso1_YSU/pblh_YSU.nc", sep = ""), out = "vector")[[1]],
-         ust = ReadNetCDF(paste(path,"caso1_YSU/ust_YSU.nc", sep = ""), out = "vector")[[1]],
-         L = ReadNetCDF(paste(path,"caso1_YSU/l_YSU.nc", sep = ""), out = "vector")[[1]],
+caso.YSU <- ReadNetCDF(paste(path2,"caso1_YSU_l/spd_YSU.nc", sep = "")) %>%
+  mutate(exchh = ReadNetCDF(paste(path2,"caso1_YSU_l/exchh_YSU.nc", sep = ""), out = "vector")[[1]],
+         pblh = ReadNetCDF(paste(path2,"caso1_YSU_l/pblh_YSU.nc", sep = ""), out = "vector")[[1]],
+         ust = ReadNetCDF(paste(path2,"caso1_YSU_l/ust_YSU.nc", sep = ""), out = "vector")[[1]],
+         L = ReadNetCDF(paste(path2,"caso1_YSU_l/l_YSU.nc", sep = ""), out = "vector")[[1]],
          param = "YSU") %>%
   .[, lev := lev*1000 - 73] %>%
-  .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>%
+  .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(time, lon, lat, param)] %>%
   .[, regimen := ifelse(L <= 0, "Inestable", "Estable")] %>%
-  .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>%
+  .[time %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>%
   .[inside(lon, lat) == T] %>%
   .[lev > -25,]
 
-caso.MYJ <- ReadNetCDF(paste(path,"caso1_MYJ/spd_MYJ.nc", sep = "")) %>%
-  mutate(exchh = ReadNetCDF(paste(path,"caso1_MYJ/exchh_MYJ.nc", sep = ""), out = "vector")[[1]],
-         pblh = ReadNetCDF(paste(path,"caso1_MYJ/pblh_MYJ.nc", sep = ""), out = "vector")[[1]],
-         ust = ReadNetCDF(paste(path,"caso1_MYJ/ust_MYJ.nc", sep = ""), out = "vector")[[1]],
-         L = ReadNetCDF(paste(path,"caso1_MYJ/l_MYJ.nc", sep = ""), out = "vector")[[1]],
+caso.MYJ <- ReadNetCDF(paste(path2,"caso1_MYJ_l/spd_MYJ.nc", sep = "")) %>%
+  mutate(exchh = ReadNetCDF(paste(path2,"caso1_MYJ_l/exchh_MYJ.nc", sep = ""), out = "vector")[[1]],
+         pblh = ReadNetCDF(paste(path2,"caso1_MYJ_l/pblh_MYJ.nc", sep = ""), out = "vector")[[1]],
+         ust = ReadNetCDF(paste(path2,"caso1_MYJ_l/ust_MYJ.nc", sep = ""), out = "vector")[[1]],
+         L = ReadNetCDF(paste(path2,"caso1_MYJ_l/l_MYJ.nc", sep = ""), out = "vector")[[1]],
          param = "MYJ") %>%
   .[, lev := lev*1000 - 73] %>%
-  .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>%
+  .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(time, lon, lat, param)] %>%
   .[, regimen := ifelse(L <= 0, "Inestable", "Estable")] %>%
-  .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>%
+  .[time %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>%
   .[inside(lon, lat) == T] %>%
   .[lev > -25,]
 
-caso.ACM2 <- ReadNetCDF(paste(path,"caso1_ACM2/spd_ACM2.nc", sep = "")) %>%
-  mutate(exchh = ReadNetCDF(paste(path,"caso1_ACM2/exchh_ACM2.nc", sep = ""), out = "vector")[[1]],
-         pblh = ReadNetCDF(paste(path,"caso1_ACM2/pblh_ACM2.nc", sep = ""), out = "vector")[[1]],
-         ust = ReadNetCDF(paste(path,"caso1_ACM2/ust_ACM2.nc", sep = ""), out = "vector")[[1]],
-         L = ReadNetCDF(paste(path,"caso1_YSU/l_YSU.nc", sep = ""), out = "vector")[[1]],
+caso.ACM2 <- ReadNetCDF(paste(path2,"caso1_ACM2_l/spd_ACM2.nc", sep = "")) %>%
+  mutate(exchh = ReadNetCDF(paste(path2,"caso1_ACM2_l/exchh_ACM2.nc", sep = ""), out = "vector")[[1]],
+         pblh = ReadNetCDF(paste(path2,"caso1_ACM2_l/pblh_ACM2.nc", sep = ""), out = "vector")[[1]],
+         ust = ReadNetCDF(paste(path2,"caso1_ACM2_l/ust_ACM2.nc", sep = ""), out = "vector")[[1]],
+         L = ReadNetCDF(paste(path2,"caso1_YSU_l/l_YSU.nc", sep = ""), out = "vector")[[1]],
          param = "ACM2") %>%
   .[, lev := lev*1000 - 73] %>%
-  .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(date, lon, lat, param)] %>%
+  .[, c("pblh", "ust", "L") := .(pblh[1], ust[1], L[1]), by = .(time, lon, lat, param)] %>%
   .[, regimen := ifelse(L <= 0, "Inestable", "Estable")] %>%
-  .[date %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>%
+  .[time %between% as.POSIXct(c("2016-01-13 22:10:00", "2016-01-14 22:00:00"), tz = "UTC"), ] %>%
   .[inside(lon, lat) == T] %>%
   .[lev > -25,]
 
@@ -776,12 +769,12 @@ all.pbl <- rbind(caso.YSU, caso.MYJ, caso.ACM2) %>%
 remove(list = c("caso.YSU", "caso.MYJ", "caso.ACM2"))
 ```
 
-Un parámetro importante que permite caracterizar la capa límite es la Longitud de Monin-Ovukhov ($L$). Esta magnitud depende de la velocidad de fricción, de la temperatura y del flujo vertical de calor sensible. La variable permite reconocer el período estable de la capa límite, es decir, la capa estable nocturna y el período instable correspondiente a la capa mezclada. Debido a que el signo depende de $(\overline{w'\theta '})_s$ y este a su vez que cambia su signo en la transición entre una capa y la otra, $L$ tiende a infinito a estos momentos. En la Figura \ref{L-param} se presenta la variación de $L$ a lo largo del tiempo en cada simulación. El comportamiento de $L$ es acorde a lo descripto por @Stull1988 para condiciones de buen tiempo y clasifica los períodos estable e inestable de manera correcta.
+
 
 
 ```{r L-parm, fig.cap="Longitud de Monin Obukhov (m) en función del tiempo, para cada simulación. Los puntos violetas corresponden al régimen estable (nocturno) y los puntos rosas corresponden al régimen inestable (diurno) \\label{L-param}", fig.width=0.95*text.width, fig.align='center'}
 
-ggplot(all.pbl, aes(date, L)) +
+ggplot(all.pbl, aes(time, L)) +
   geom_point(aes(color = regimen)) +
   geom_hline(yintercept = 0, color = "darkgrey") +
   scale_color_manual(name = "Regimen", values = color_manual) +
@@ -797,16 +790,11 @@ ggplot(all.pbl, aes(date, L)) +
 
 #### Altura de la capa límite
 
-En esta sección se analiza la altura de la capa límite a partir de la estimación realizada por cada simulación y se comparan con los resultados obtenidos de las observaciones de radar. En la Figura \ref{pblh} se muestra la altura de la capa límite estimada por cada parametrización en todo el período en el punto más cercano al radar de Paraná. Es importante tener en cuenta que cada parametrización estima esta variable de manera distinta. En líneas generales la evolución del tope de la capa límite es consistente con el comportamiento esperado para el tope de la CLP en días despejados. Por ejemplo las tres parametrizaciones convergen en las últimas horas de la capa estable nocturna y marcan el comienzo del crecimiento de la capa mezclada pasadas las 10 UTC, esto es aproximadamente una hora posterior al amanecer pero divergen de manera considerable al estimar el tope de la capa mezclada.
-
-En YSU la altura de la capa estable es mayor a las otras dos parametrizaciones mientras que durante el día la estimación queda por debajo o entre las otras. MYJ presenta las mayores variaciones del tope de la capa mezclada, inicialmente su crecimiento es muy rápido superando los 1000 metros en una hora pero posteriormente el crecimiento se desacelera con un período de decrecimiento luego de las 17 UTC. Si bien en presencia de nubosidad el tope de la capa mezclada puede verse afecta de esta manera, el resto de las condiciones meteorológicas no se vieron afectadas y por lo tanto no sería la razón de la disminución del tope de la CLP. Tampoco se observa el decrecimiento del tope en las otras simulaciones por lo que es posible que no esté reflejando el comportamiento real de la capa mezclada. La parametrización ACM2 genera la capa mezclada más profunda superando los 2500 m o 1872 m en promedio para todo el período inestable (Tabla \ref{tabla-clp}). En resumen, ACM2 produce la capa mezclada más profunda, seguidas por YSU y MYJ. Este resultado fue obtenido por otros autores [por ejemplo @Hu2010; @Xie2012] y puede deberse a las características de las distintas parametrizaciones. En particular MYJ es un esquema local y por lo tanto el transporte vertical de las distintas propiedades es más débil. Sumando a lo anterior, MYJ produce un menor intercambio de temperatura y humedad con la atmósfera libre limitando el crecimiento de la capa límite [@Xu2010].
-
-Para obtener una estiación de la altura de la CLP bajo un único método, se utilizó el criterio descripto en la Sección \ref{sec-pbh} para estimar la altura de la capa estable en las tres simulaciones. En la Figura \ref{pblh-spd} se muestra la altura de la capa estable nocturna estimada por cada parametrización en líneas y la estimada utilizando la altura a la que ocurre el máximo viento en puntos. Si bien este criterio está limitado por la resolución de la retícula vertical utilizada por el VAD, se observa una concordancia entre las estimaciones con MYJ y ACM2 principalmente en los momentos donde se produce el máximo LLJ.
 
 ```{r pblh-wrf, fig.cap="Altura de la capa límite (m) en cada simulación. \\label{pblh-wrf}", fig.subcap=c("Estimada directamente por cada esquema de CLP. \\label{pblh}", "Comparación entre la altura calculada por cada esquema (línea) y la estimada a partir de la altura del viento máximo (puntos) sólo en el período estable. \\label{pblh-spd}"), fig.width=0.75*text.width, fig.height=0.35*text.height, fig.align='center', fig.ncol=1}
 
 all.pbl[lev < 30] %>%
-  ggplot(aes(date, pblh)) +
+  ggplot(aes(time, pblh)) +
   geom_vline(xintercept = as_datetime("2016-01-14 09:40:00"),
              color = "darkgray") +
   geom_line(aes(color = param), linetype = 1) +
@@ -817,9 +805,9 @@ all.pbl[lev < 30] %>%
                    date_labels = "%H") +
   theme_minimal()
 
-all.pbl[lev < 2500 & L >=0 , .(pblh = pblh[1], pblh.spd = lev[which.max(spd)], L = L[1]), by = .(date, param)] %>%   
+all.pbl[lev < 2500 & L >=0 , .(pblh = pblh[1], pblh.spd = lev[which.max(spd)], L = L[1]), by = .(time, param)] %>%   
   # .[!is.na(pblh), ] %>%
-  ggplot(aes(date, pblh)) +
+  ggplot(aes(time, pblh)) +
   # geom_vline(xintercept = as_datetime("2016-01-14 09:40:00"),
   #            color = "darkgray") +
   geom_line(aes(color = param), linetype = 1) +
@@ -837,9 +825,7 @@ all.pbl[lev < 2500 & L >=0 , .(pblh = pblh[1], pblh.spd = lev[which.max(spd)], L
 
 ```
 
-La Figura \ref{dbz-wrf} permite comparar la estimación de la altura de la capa límite a partir de la variación del gradiente vertical de reflectividad con la altura (en colores) y las estimaciones de cada simulación (en símbolos). En las primeras horas de la noche el tope de la capa estable se encuentra por debajo de los 200 m de acuerdo a las parametrizaciones y no es posible compararlo con $\nabla_{z}dBZ$ debido al ruido de esta variable en los primeros metros (no se muestra). Posteriormente el $\nabla_{z}dBZ$ presenta un máximo a 300 m de altura desde las 04 UTC mientras que la altura de la capa límite estimada por las observaciones llega a esa altura pasadas las 05 UTC. La altura de la capa estable se mantienen alrededor de ese nivel hasta las 10 UTC mientras que $\nabla_{z}dBZ$ crece rápidamente a partir de las 09 UTC. De acuerdo a esto la capa límite estimada por las parametrizaciones parece *retrasada* respecto de las observaciones en aproximadamente dos horas.
 
-El desarrollo de la capa mezclada en las parametrizaciones parece ser más lento en comparación con las observaciones de $\nabla_{z}dBZ$, puesto que el tope crece más lentamente y lo hace casi dos horas después. ACM2 sobreestima la altura de la capa mezclada y sucede algo similar con YSU aunque la señal del máximo $\nabla_{z}dBZ$ desaparece en el momento donde ocurre la máxima altura para YSU. El comportamiento de MYJ si bien es muy diferente al observado en las otras dos simulaciones, tiene características semejantes a la altura de la CLP estimada con las observaciones. En primer lugar, al comenzar el desarrollo de la capa mezclada, el tope de la capa estimada por MYJ crece rápidamente y al mismo ritmo que en las observaciones aunque una hora después. La desaceleración observada posteriormente coincide con uno de los máximos de $\nabla_{z}dBZ$ observados entre las 10 y las 15 UTC para luego profundizarse hasta alcanzar los 2000 m de altura al igual que las observaciones. El descenso observado en esta simulación también está presente en la variación de la reflectividad pero no así el posterior crecimiento. Sin embargo es posible que el máximo inferior entre las 10 y las 15 UTC esté asociado a variaciones en la reflectividad que no tienen relación con la altura de la CLP.
 
 ```{r dbz-wrf, fig.cap="Valor absoluto del gradiente vertical de reflectividad (dBZ/m) en función de la altura y el tiempo para el Caso 1 y la altura de la capa límite estimada en cada simulación. \\label{dbz-wrf}", fig.align='center',  fig.height=0.4*text.height}
 elev <- unique(dbz_20160114$elevacion)
@@ -874,12 +860,6 @@ all.pbl <- all.pbl[, c("kh.u", "km.u", "u.u") := .(
   .[, Pr := km.u/kh.u]
 ```
 
-El análisis de los coeficientes de difusividad turbulenta determinan el transporte vertical turbulento de distintas propiedades y permite conocer la estructura de la CLP. Debido a que solo el coeficiente de difusividad de calor sensible ($K_h(z)$) pudo obtenerse como variable de salida en las simulaciones del modelo, se estimó el coeficiente de cantidad de movimiento ($K_m(z)$) a partir de su relación con el número de Prandtl ($Pr = K_m/K_h$) y el $K_h$ de cada simulación.
-
-Por otro lado el número de Prandtl se estimó calculando los perfiles verticales de los coeficientes de difusividad propuestos por el modelo de @Ulke2000 para cada período estable e inestable. Cada perfil fue obtenido utilizando los valores de $L$, $u_*$ y $h$ estimados en cada simulación por el modelo. Los valores promedio de estos parámetros para cada régimen y simulación se presentan en la Tabla \ref{tabla-clp}.  
-
-Los perfiles calculados (no se muestran), presentan una estructura acorde al modelo teórico propuesto para las tres parametrizaciones. Las diferencias encontradas entre los perfiles calculados para cada simulación están asociadas a los parámetros utilizados en cada caso. En la Figura \ref{Pr} se muestran los perfiles verticales del número de Prandtl estimados a partir de los perfiles del modelo @Ulke2000. Se observa un comportamiento similar en todas la simulaciones, en particular no hay diferencias entre YSU y ACM2 mientras que el perfil de MYJ se separa de los otros dos. En todos los casos varía en los primeros 200 m y luego es aproximadamente constante con la altura, lo que es esperable para este parámetro.
-
 
 ```{r pr, fig.cap="Variación del número de Prandtl calculado a partir del modelo propuesto por Ulke 2000 con las variables de cada simulación y promediado en cada periodo. \\label{Pr}", fig.align='center', fig.width=0.95*text.width}
 all.pbl_norm <- all.pbl[, `:=`(kh.u_norm = kh.u/(ust*0.4*pblh),
@@ -889,8 +869,8 @@ all.pbl_norm <- all.pbl[, `:=`(kh.u_norm = kh.u/(ust*0.4*pblh),
   .[, .(lev_norm = seq(0, 1, by = 0.1),
         kh.u_norm = approx(lev_norm, kh.u_norm, xout = seq(0, 1, by = 0.1))$y,
         km.u_norm = approx(lev_norm, km.u_norm, xout = seq(0, 1, by = 0.1))$y),
-    by = .(param, regimen, date)] %>%
-  .[, lapply(.SD, mean, na.rm = T), by = .(param, lev_norm, regimen), .SDcols = -"date"]
+    by = .(param, regimen, time)] %>%
+  .[, lapply(.SD, mean, na.rm = T), by = .(param, lev_norm, regimen), .SDcols = -"time"]
 
 group_by(all.pbl, param, lev, regimen) %>%
   summarise(Pr = mean(Pr, na.rm = T)) %>%
@@ -940,13 +920,7 @@ kable(hL, "latex",
 
 
 
-Finalmente se obtuvieron los perfiles de $K_m$ utilizando los valores del número de Prandtl y el $K_h$ disponible en el resultado de cada simulación. En la Figura \ref{k-ulke-wrf} se muestran los perfiles verticales de $K_m$ y de $K_h$ para cada simulación obtenidos a partir del promedio de la variable en cada nivel durante un período estable (05 a 06 UTC) y un período inestable (16 a 17 UTC). Los perfiles de $K_h$ y $K_m$ obtenidos para el régimen estable presentan mucha variación temporal durante el período por lo que solo se muestra el promedio obtenido durante las horas más representativas.
 
-En el período estable es esperable que el coeficiente de difusividad tenga un máximo dentro de la capa límite estable nocturna y que tienda rápidamente a valores cercanos a cero por encima del tope de la capa [@Klein2016]. Sin embargo se observa que en las tres simulaciones el máximo de difusividad se encuentra entre 750 y 1000 m de altura, mientras que es casi nulo en niveles superiores e inferiores. Este comportamiento podría estar explicado por la presencia de turbulencia en esos niveles debido a la importante cortante por encima del LLJ. Esta cortate es superior a la observada con el radar (Figura \ref{perfil-mod}) y podría estar asociada al transporte turbulento de cantidad de movimiento desde el nivel del LLJ hacia niveles superiores. Sin embargo, con los datos disponibles no es posible determinar si efectivamente hay turbulencia en esos niveles.
-De acuerdo a los perfiles obtenidos, YSU genera una mezcla más profunda que las otras parametrizaciones ya que el máximo ocurre en mayor altura y los coeficientes de difusividad tienen mayor magnitud. En el otro extremo MYJ muestra una mezcla menor con un máximo en niveles inferiores a YSU, esto es esperable debido a que MYJ es un esquema local y por lo tanto el transporte vertical será más débil. De acuerdo con @Klein2016 una mayor mezcla vertical está asociada a un LLJ menos intenso debido a que la mezcla podría generar divergencia de cantidad de movimiento en la capa del LLJ debilitándolo. En concordancia a lo anterior, en la Figura \ref{perfil-mod} se observa que el perfil de viento simulado por MYJ está asociado a un LLJ más intenso que en las otras simulaciones. El máximo intenso en los perfiles de los coeficientes turbulentos para YSU podría explicar la presencia de un LLJ más débil debido al mayor transporte de cantidad de movimiento por encima del jet que además genera una cortante más suave en concordancia a lo encontrado por @Klein2016.
-
-Los perfiles del período inestable divergen entre las distintas simulaciones en los primeros 2000 m pero luego de ese nivel convergen a cero debido que ese nivel se encuentra fuera de la CLP. En este régimen MYJ muestra las mayores magnitudes de los coeficientes de difusividad y por lo tanto genera una mezcla más intenta. El máximo en los perfiles de los coeficientes ocurren en niveles menores a las otras parametrizaciones, esto está asociado a una capa mezclada menos profunda (Figura \ref{pblh}), y también explica que el perfil de de los coeficientes se anule en 1500 m de altura aproximadamente.
-YSU y ACM2 presentan capas muy profundas en comparación con MYJ ya que llegan cero a los 2000 m, pero la mezcla durante el día es menos intensa al contrario que lo que ocurre durante la noche. Si bien sería importante analizar los perfiles de los coeficientes de difusividad turbulenta de la capa mezclada del día previo al Caso 1 para analizar cómo eso afecta al desarrollo del LLJ observado, es posible que una menor mezcla durante el día, es decir un $K$ más débil, y lo contrario durante la noche explique la menor intensidad del LLJ en YSU y ACM2.
 
 ```{r k_ulke_wrf, fig.cap="Coeficientes de difusividad turbulenta de calor sensible (a) y cantidad de movimiento (b) promediados entre las 05 y 06 UTC (período estable, izquierda) y entre las 16 y 17 UTC (período inestable, derecha) de la capa límite en todas las simulaciones.  \\label{k-ulke-wrf}", fig.subcap=c("Calor $K_h$ ($m^2/s$). \\label{kh-wrf}", "Moviento $K_m$ ($m^2/s$). \\label{km-wrf}"), fig.align='center', fig.width=0.98*text.width, fig.ncol=1, fig.height=0.40*text.height}
 
@@ -956,20 +930,20 @@ all.pbl <- all.pbl[, exchm := Pr*exchh]
 #   geom_boxplot() +
 #   facet_wrap(~param)
 
-d <- all.pbl[date %between% c(as_datetime("2016-01-14 04:00:00"), as_datetime("2016-01-14 05:00:00")) | date %between% c(as_datetime("2016-01-14 16:00:00"), as_datetime("2016-01-14 17:00:00"))] %>%
+d <- all.pbl[time %between% c(as_datetime("2016-01-14 04:00:00"), as_datetime("2016-01-14 05:00:00")) | time %between% c(as_datetime("2016-01-14 16:00:00"), as_datetime("2016-01-14 17:00:00"))] %>%
   group_by(param, lev, regimen) %>%
   summarise(Kh.m = median(exchh, na.rm = T), Km.m = median(exchm, na.rm = T)) %>%
   ungroup()
 
-# ggplot(all.pbl[date %between% c(as_datetime("2016-01-14 04:00:00"), as_datetime("2016-01-14 07:00:00"))], aes(lev, exchh)) +
-#   geom_line(aes(color = as.factor(param))) +
-#   scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
-#   scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
-#   scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)",
-#                      limits = c(0, 500)) +
-#   facet_wrap(~date, scales = "free") +
-#   coord_flip() +
-#   theme_minimal()
+ggplot(all.pbl[time %between% c(as_datetime("2016-01-14 04:00:00"), as_datetime("2016-01-14 07:00:00"))], aes(lev, exchh)) +
+  geom_line(aes(color = as.factor(param))) +
+  scale_color_viridis(name = "Esquema",discrete = T, option = "viridis") +
+  scale_y_continuous(name = expression(paste(K[h], " (", m^2,s^{-1}, ")"))) +
+  scale_x_continuous(name = "Altura sobre el nivel del suelo (Km)",
+                     limits = c(0, 500)) +
+  facet_wrap(~time, scales = "free") +
+  coord_flip() +
+  theme_minimal()
 
 ggplot(d, aes(lev, Kh.m)) +
   geom_line(aes(color = as.factor(param))) +
@@ -995,33 +969,3 @@ ggplot(d, aes(lev, Km.m)) +
 remove(d)
 ```
 
-# Conclusiones
-
-Este trabajo de tesis tuvo como objetivo explorar la potencialidad del uso de datos de los radares Doppler en Argentina para estudiar algunos procesos que ocurren en la capa límite planetaria y validar un modelo numérico de la atmósfera analizando el desempeño de tres parametrizaciones de CLP. En primer lugar se determinaron las características necesarias para identificar los casos de estudio que permitan analizar los procesos de CLP asociados al ciclo diario. Para eso se analizaron los datos del Radar Doppler INTA Paraná y de la estación meteorológica Paraná Aero en busca de días con cielos despejados (o en su defecto, donde la nubosidad no tenga un efecto significativo sobre la temperatura observada) y con vientos moderados (menor a 7 m/s) durante el mes de enero de 2016. A partir de los criterios establecidos se identificaron tres casos correspondientes a tres días desde las 00 UTC: 14, 21 y 23 de enero.
-
-Para el procesamiento de los datos de radar se desarrolló un algoritmo basado en la técnica de Visualización Azimutal de la Velocidad (VAD) que permitió la obtención de perfiles verticales de la velocidad del viento horizontal a partir de la velocidad radial medida por el radar. En esta técnica se incluyeron controles de calidad para asegurar la validez de los resultados teniendo en cuenta distintas fuentes de errores posibles. En este trabajo se aplicaron controles para limitar la presencia de datos faltantes dispersos y consecutivos, se determinaron los límites del dominio donde el cálculo es posible y los ángulos de elevación del radar utilizados. Posteriormente se definió un umbral mínimo para eliminar datos que no tuvieran un buen ajuste al modelo propuesto a partir del $R^2$. Para validar la técnica de VAD desarrollada se construyeron campos de velocidad radial sintéticos con distintos errores a partir de los datos de un sondeo y se compararon los perfiles resultantes con el sondeo inicial y con el perfil obtenido a partir de los datos de un radar cercano. A partir de estas comparaciones se concluyó que el algoritmo tiene un buen desempeño aunque la presencia de datos faltantes genera un aumento en los errores calculados.
-
-A partir de los perfiles verticales del viento para cada caso en estudio se analizaron las características principales de la variación del viento a lo largo del día. Si bien en algunos momentos los errores calculados por el VAD son importantes, la resolución tanto espacial como temporal permitieron observar la evolución diaria de la capa límite  hasta alturas que van entre 1000 y 3000 m de altura. En los tres casos seleccionados se observó el desarrollo del LLJ durante las horas nocturnas con el máximo viento entre 15 y 16 m/s y entre 200 y 400 m de altura. El criterio de Bonner permitió identificar el LLJ en cada caso de manera cuantitativa y sin ambigüedades ya que los perfiles verticales presentaron un único máximo.
-
-El análisis de las hodógrafas temporales de viento permitió comparar cualitativamente las observaciones con el modelo de oscilación inercial propuesto por Van de Wiel. Todos los casos presentaron concordancia con el modelo incluyendo la variación de la oscilación inercial con la altura. Si bien no se estudiaron otros mecanismos asociados al desarrollo del LLJ, el buen ajuste al modelo de oscilación inercial permitió identificarlo como el mecanismo principal. Para validar esto de manera cualitativa, a futuro sería necesario contar con datos de viento geostrófico y su variación con la altura.
-
-Se estimó la altura de la capa estable nocturna utilizando dos métodos diferentes, como la altura a la que ocurre el máximo viento del LLJ y de acuerdo a la máxima variación del gradiente vertical de reflectividad. Las estimaciones coincidieron en dos de los casos estudiados dándole robustez al segundo método. A partir del cálculo del número de Richardson Bulk se pudo determinar que la capa estable nocturna se mantuvo estáticamente estable durante las horas del LLJ pero en presencia de un flujo turbulento gracias a la cortante existente.
-
-En los tres casos se observó el desarrollo de la capa mezclada posterior a la salida del sol. El viento observado por el radar se mantuvo aproximadamente constante con la altura a partir de los 100 a 200 m y con menor magnitud respecto a lo observado en horas nocturnas. Solo en el Caso 1 pudo verse el aumento en la magnitud del viento al final del día correspondiente al debilitamiento de la capa mezclada luego del atardecer. La estimación de la altura de la capa mezclada utilizando el gradiente vertical de reflectividad fue acorde a lo esperado teóricamente aunque hace evidente la necesidad de desarrollar una técnica que permita determinar el tope de la capa sin ambigüedades utilizando distintos ángulos de elevación y otras variables asociadas a la reflectividad.
-
-En la segunda etapa de este trabajo se realizaron simulaciones numéricas con el modelo regional WRF utilizando tres parametrizaciones de capa límite. Se seleccionó la parametrización YSU con clausura no local, MYJ con clausura local y ACM2 que tiene un comportamiento mixto. Se definió un dominio alrededor del radar y se utilizaron condiciones iniciales adecuadas para modelar el Caso 1. En términos cualitativos las tres simulaciones lograron representar las condiciones generales observadas durante período correspondiente. En particular las simulaciones lograron representar la evolución de la magnitud del viento, el LLJ durante la noche y el perfil homogéneo típico de la capa mezclada. Los campos de diferencias en la magnitud del viento entre las observaciones y cada simulación mostraron un mínimo alrededor de 500 m donde el error total fue menor en las tres comparaciones. Por debajo de ese nivel el bias resultó positivo y negativo por encima y este último dominó globalmente. La correlación entre las observaciones y las simulaciones fue muy buena hasta 600 m, pero luego desciende rápidamente y llega a valores negativos. Esto puede deberse a que la oscilación inercial en las tres simulaciones se observa hasta alturas menores que la estimación realizada por el radar. La diferencia calculada para la dirección del viento muestra un patrón similar en las tres simulaciones, diferencias pequeñas o nulas en los primeros 1000 m que luego crecen en los niveles superiores hasta valores cercanos a 140°. Al igual que con la magnitud del viento, el bias fue negativo y la correlación fue similar en los tres casos con valores cercanos a 0.5.
-
-A partir de lo anterior puede concluirse que las tres simulaciones tuvieron un mejor desempeño en los primeros 600 a 1000 m de altura. MYJ presentó un mayor error total y menor correlación en la magnitud del viento pero fue el mejor al simular su dirección. A pesar de sus diferencias, YSU y ACM2 tienen un comportamiento muy similar por lo que la componente no local de la parametrización ACM2 domina la simulación. Por encima de los 1000 m de altura el desempeño disminuye y por lo tanto las simulaciones podrían no estar representando de manera correcta los procesos que ocurren en la atmósfera. Sin embargo también es posible que parte de esa diferencia esté asociada a un error en la estimación de los perfiles con la técnica VAD debido a los errores de aproximación generados en el cálculo de la propagación vertical del haz de radar. Este problema es más importante durante la noche cuando se produce una inversión térmica que puede afectar significativamente la altura del haz.
-
-El LLJ simulado se prolonga entre una y dos horas más de lo observado y el máximo de viento es ligeramente superior. Cualitativamente el modelo de Van de Wiel se ajusta ya que las hodógrafas tienen la forma característica de herradura y presentan concordancia con las observaciones hasta los 500 m. Pero en niveles superiores esto no ocurre, en las tres simulaciones la hodógrafa pierde totalmente la forma y el viento tiene menor magnitud respecto de las observaciones, indicando que la oscilación inercial no llega hasta niveles altos.
-
-Se comparó la altura de la capa límite calculada por cada parametrización con la estimación realizada para la capa estable nocturna y con el gradiente vertical de la reflectividad. Las variaciones entre las simulaciones puede deberse a que cada parametrización estima este parámetro de manera distinta, sin embargo las tres convergen principalmente durante el período nocturno. En este mismo período MYJ y ACM2 logran representar la altura de la capa estable durante la presencia del LLJ de manera satisfactoria. La comparación con el gradiente vertical de reflectividad muestra que la capa estable nocturna persiste dos horas luego del amanecer a diferencias de las observaciones donde la capa mezclada empieza a desarrollarse inmediatamente. Esto podría explicar la extensión temporal del LLJ observado en las simulaciones. Posteriormente la altura de la capa límite crece lentamente superando el tope medido por las observaciones en el caso de YSU y ACM2. Por otro lado MYJ muestra cierta concordancia con las observaciones en las primeras horas del día y luego cuando ocurre la mayor profundidad de la capa límite. El desempeño de MYJ al representar la altura de la capa límite podría estar indicando que el transporte local de las distintas propiedades es suficiente para desarrollar la profundidad de la capa a través de pequeños torbellinos.
-
-El análisis de los coeficientes de difusividad turbulenta permitió entender algunas de las características de la estructura de la capa límite. Los perfiles de las simulaciones en el régimen estable (nocturno) no presentaron la estructura esperada y asociada a la turbulencia dentro de la capa límite estable. Por el contrario, se observó un máximo por encima de la capa que podría estar asociado a la intensa cortante por encima del LLJ. En concordancia con observaciones previas la mezcla débil generada por MYJ está asociada a un LLJ más intenso mientras que en YSU y ACM2 ocurre lo contrario debido a una mayor divergencia de cantidad de movimiento que debilita el LLJ. Durante el día los perfiles muestran un máximo dentro de la capa mezclada y la profundidad de la mezcla en cada simulación concuerda con la altura de la capa mezclada estimada por cada esquema.
-
-Finalmente se proponen algunas posible mejoras en la implementación de la técnica VAD y su uso en otras situaciones meteorológicas. Éstas incluyen una mejor determinación de la propagación del haz de radar con la posibilidad de usar simulaciones numéricas para determinar los perfiles de temperatura y humedad, mejorar el tratamiento de aliasing y otros problemas asociados al viento radial utilizando técnicas más complejas que tengan en cuenta la consistencia temporal de los datos, implementar técnicas de suavizado espacio-temporal como el filtro de Kalman para mejorar la suavidad de los perfiles y hacerlos más robustos frente a los datos faltantes o erróneos, estudiar la posibilidad de incorporar cambios en el algoritmo que permitan eliminar la condición de linealidad del campo de viento horizontal para analizar otros procesos asociados a la mesoescala y estudiar en profundidad los datos de radar de 120 km de rango para poder utilizarlos de manera eficiente.
-
-Para extender el análisis de los procesos asociados a la CLP en futuros trabajos sería importante el estudio de días consecutivos para mejorar la comprensión de las características de la capa límite y cómo influye en la formación de la capa límite subsiguiente y el LLJ nocturno, incluir mediciones de turbulencia que permitan ampliar el análisis de las características de la CLP, utilizar cuando sea posible datos de radares como Resistencia, Ezeiza o Anguil donde se realizan mediciones con radiosondeos para ampliar los datos disponibles, realizar experimentos de simulación numérica sobre un número mayor de casos de forma tal de poder estudiar los errores sistemáticos asociados a cada parametrización, evaluar la sensibilidad de las parametrizaciones a sus parámetros y evaluar una posible optimización de dichos parámetros utilizando las observaciones de radar.
-
-
-# Referencias
