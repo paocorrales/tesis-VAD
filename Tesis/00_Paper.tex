@@ -78,16 +78,17 @@
 }
 
 \setlength{\droptitle}{-2em}
-  \title{}
-  \pretitle{\vspace{\droptitle}}
-  \posttitle{}
-\subtitle{Validación de parametrizaciones de capa límite utilizando datos de radar}
-  \author{Paola Corrales}
-  \preauthor{\centering\large\emph}
-  \postauthor{\par}
-  \date{}
-  \predate{}\postdate{}
 
+  \title{}
+    \pretitle{\vspace{\droptitle}}
+  \posttitle{}
+  \subtitle{Validación de parametrizaciones de capa límite utilizando datos de radar}
+  \author{Paola Corrales}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+    \date{}
+    \predate{}\postdate{}
+  
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -99,7 +100,9 @@
 \usepackage{pdflscape}
 \usepackage{tabu}
 \usepackage{threeparttable}
+\usepackage{threeparttablex}
 \usepackage[normalem]{ulem}
+\usepackage{makecell}
 
 \usepackage{setspace}
 \setstretch{1.5}
@@ -129,12 +132,6 @@
 \caption{Hodógrafa en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 06 UTC. El triángulo marca el nivel inferior y los círculos grandes se ubican cada 500 metros. \label{hodografa-h}}\label{fig:hodografa-horaria}
 \end{figure}
 
-\subsection{Características de la capa límite
-planetaria}\label{caracteristicas-de-la-capa-limite-planetaria}
-
-\subsubsection{Oscilación inercial y
-LLJ}\label{oscilacion-inercial-y-llj}
-
 \begin{figure}
 
 {\centering \subfloat[Datos observados en la estación meteorológica. \label{hodo-nivel1}\label{fig:hodografa-nivel1}]{\includegraphics{00_Paper_files/figure-latex/hodografa-nivel-1} }\newline\subfloat[Datos observados por el radar. \label{hodo-nivel2}\label{fig:hodografa-nivel2}]{\includegraphics{00_Paper_files/figure-latex/hodografa-nivel-2} }
@@ -143,9 +140,6 @@ LLJ}\label{oscilacion-inercial-y-llj}
 
 \caption{Hodógrafa temporal para el nivel correspondiente a los datos de la estación meteorológica (a) y 0.3 y 1 km a partir de la estimación del viento con los dato del radar (b). el cuadrado marca el primer tiempo (00 UTC) y cada círculo representa un valor horario (con circulos más grandes cada 6 horas). \label{hodografa-n}}\label{fig:hodografa-nivel}
 \end{figure}
-
-\subsubsection{Altura de la capa límite y
-turbulencia}\label{altura-de-la-capa-limite-y-turbulencia}
 
 \begin{figure}
 
@@ -164,13 +158,6 @@ turbulencia}\label{altura-de-la-capa-limite-y-turbulencia}
 
 \caption{Valor absoluto del gradiente vertical de reflectividad (dBZ/m) en función de la altura y el tiempo para el Caso 1 (a), el Caso 2 (b) y el Caso 3 (c). \label{pblh-dbz}}\label{fig:pblh-dbz}
 \end{figure}
-
-\section{Análisis de las simulaciones con WRF y comparación con
-observaciones de
-radar}\label{analisis-de-las-simulaciones-con-wrf-y-comparacion-con-observaciones-de-radar}
-
-\subsection{Magnitud y dirección del
-viento}\label{magnitud-y-direccion-del-viento}
 
 \begin{figure}
 
@@ -247,8 +234,6 @@ ACM2 & -0.739 & 1.878 & 1.695 & 0.753 & -13.174 & 33.620 & 30.677 & 0.622\\
 \caption{Longitud de Monin Obukhov (m) en función del tiempo, para cada simulación. Los puntos violetas corresponden al régimen estable (nocturno) y los puntos rosas corresponden al régimen inestable (diurno) \label{L-param}}\label{fig:L-parm}
 \end{figure}
 
-\subsubsection{Altura de la capa límite}\label{altura-de-la-capa-limite}
-
 \begin{figure}
 
 {\centering \subfloat[Estimada directamente por cada esquema de CLP. \label{pblh}\label{fig:pblh-wrf1}]{\includegraphics{00_Paper_files/figure-latex/pblh-wrf-1} }\newline\subfloat[Comparación entre la altura calculada por cada esquema (línea) y la estimada a partir de la altura del viento máximo (puntos) sólo en el período estable. \label{pblh-spd}\label{fig:pblh-wrf2}]{\includegraphics{00_Paper_files/figure-latex/pblh-wrf-2} }
@@ -266,9 +251,6 @@ ACM2 & -0.739 & 1.878 & 1.695 & 0.753 & -13.174 & 33.620 & 30.677 & 0.622\\
 
 \caption{Valor absoluto del gradiente vertical de reflectividad (dBZ/m) en función de la altura y el tiempo para el Caso 1 y la altura de la capa límite estimada en cada simulación. \label{dbz-wrf}}\label{fig:dbz-wrf}
 \end{figure}
-
-\subsubsection{Coeficientes de difusividad
-turbulenta}\label{coeficientes-de-difusividad-turbulenta}
 
 \begin{figure}
 

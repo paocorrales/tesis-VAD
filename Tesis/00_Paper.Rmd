@@ -85,8 +85,8 @@ text.width <- (210 - 50)/25.4
 color_manual <- c("#231151", "#d3436e", "#feba80")
 
 path1 <- "~/Dropbox/Tesis/tesis-VAD/Tesis/"
-path2 <- "~/Radar/VAD/Data/"
-# path2 <- "/mnt/Data/VAD/"
+# path2 <- "~/Radar/VAD/Data/"
+path2 <- "/mnt/Data/VAD/"
 remove(map2)
 ```
 
@@ -658,7 +658,7 @@ gdata[, caso := factor(caso,
                        levels = c("Obs", "YSU", "MYJ", "ACM2"),
                        ordered = T)] %>%
   .[, hora := hour(date_time)] %>%
-  .[minute(date_time) == 00 & day(date_time) == 14 & hour(date_time) %in% c(07, 17) & ht < 2.5 &
+  .[minute(date_time) == 00 & day(date_time) == 14 & hour(date_time) %in% c(08, 06) & ht < 2.5 &
       !is.na(spd_smooth)] %>%
   ggplot(aes(ht, spd_smooth, color = caso)) +
   geom_line() +
@@ -955,7 +955,6 @@ ggplot(d, aes(lev, Km.m)) +
   scale_x_continuous(name = "Altura sobre el nivel del suelo (km)",
                      limits = c(0, 2500)) +
   facet_wrap(~regimen, scales = "free") +
-  #labs(title = "Perfiles a partir del promedio del dominio") +
   coord_flip() +
   theme_minimal()
 
