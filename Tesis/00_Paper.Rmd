@@ -85,7 +85,8 @@ text.width <- (210 - 50)/25.4
 color_manual <- c("#231151", "#d3436e", "#feba80")
 
 path1 <- "~/Dropbox/Tesis/tesis-VAD/Tesis/"
-path2 <- "/mnt/Data/VAD/"
+path2 <- "~/Radar/VAD/Data/"
+# path2 <- "/mnt/Data/VAD/"
 remove(map2)
 ```
 
@@ -142,7 +143,7 @@ vad_20160114[ht > 0.02] %>%
 vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth) & ht < 3] %>%
   ggplot(aes(date_time, ht)) +
   geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
-             preserve.dir = TRUE) +
+             direction = "cw", start = -90) +
   scale_mag(length = 1) +
   # geom_point(data = subset(vad_20160114, rmse1 > 0.5),) + 
   #            aes(size = rmse1),
@@ -207,9 +208,6 @@ ggplot(gdata, aes(u, v,  color = caso)) +
   #coord_equal() +
   theme_minimal()
 ```
-### Características de la capa límite planetaria
-
-#### Oscilación inercial y LLJ
 
 
 
@@ -265,7 +263,7 @@ ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
 ```
 
 
-#### Altura de la capa límite y turbulencia
+
 
 ```{r read-dbz}
 files <- Sys.glob(paste0(path2, "caso1_YSU_l/wrf_to_radar/*.nc"))
@@ -442,11 +440,8 @@ remove(gdata, vad_20160121, vad_20160123)
 ```
 
 
-##Análisis de las simulaciones con WRF y comparación con observaciones de radar
 
 
-
-### Magnitud y dirección del viento
 
 ```{r read-WRF-VAD}
 # YSU
@@ -788,7 +783,6 @@ ggplot(all.pbl, aes(time, L)) +
 ```
 
 
-#### Altura de la capa límite
 
 
 ```{r pblh-wrf, fig.cap="Altura de la capa límite (m) en cada simulación. \\label{pblh-wrf}", fig.subcap=c("Estimada directamente por cada esquema de CLP. \\label{pblh}", "Comparación entre la altura calculada por cada esquema (línea) y la estimada a partir de la altura del viento máximo (puntos) sólo en el período estable. \\label{pblh-spd}"), fig.width=0.75*text.width, fig.height=0.35*text.height, fig.align='center', fig.ncol=1}
@@ -850,7 +844,6 @@ remove(files, dbz_20160114)
 ```
 
 
-#### Coeficientes de difusividad turbulenta
 
 ```{r make-ulke}
 all.pbl <- all.pbl[, c("kh.u", "km.u", "u.u") := .(
