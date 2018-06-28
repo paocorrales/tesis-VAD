@@ -265,114 +265,15 @@ ggplot(gdata, aes(u, v,  color = as.factor(ht))) +
 
 
 
-```{r read-dbz}
-files <- Sys.glob(paste0(path2, "caso1_YSU_l/wrf_to_radar/*.nc"))
-dbz_20160114 <- rbindlist(lapply(files, read.radar))
-
-# files <- Sys.glob("~/Radar/VAD/PARANA/20160123/240/*.nc")
-# dbz_20160123 <- rbindlist(lapply(files, read.radar))
-```
-
-
-
-```{r dbz, fig.cap="Reflecttividad (dBZ) medida por el radar en función de la altura y el tiempo para el Caso 1 (a), el Caso 2 (b) y el Caso 3 (c). \\label{dbz}", fig.subcap=c("Caso 1. \\label{reflec-1}", "Caso2. \\label{reflec-2}", "Caso 3. \\label{reflec-3}"), fig.align='center', fig.height=0.28*text.height, fig.ncol=1}
-elev <- unique(dbz_20160114$elevacion)
-dbz_20160114[elevacion == elev[8] & ht_reg > 100] %>%
-  ggplot(aes(date, ht_reg/1000)) +
-  #geom_line(aes(color = factor(elevacion))) +
-  geom_tile(aes(fill = dbz, color = dbz)) +
-  scale_fill_viridis(name = "dBZ",
-               limits = c(NA, NA)) +
-  scale_color_viridis(name = "dBZ",
-                    limits = c(NA, NA)) +
-  # geom_contour(data = vad_20160114[ht > 0.02], aes(date_time, ht, z = spd_smooth)) +
-  scale_y_continuous(name = "Altura (km)",
-                     limits = c(0, 3),
-                     breaks = seq(0, 3, 0.5),
-                     expand = c(0,0)) +
-  scale_x_datetime(name = NULL,
-                   date_breaks = "3 hour",
-                   date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-13 00:00:00"), NA),
-                   expand = c(0,0)) +
-  theme_minimal()
-
-
-# dbz_20160123[elevacion == elev[8] & ht_reg > 200] %>%
-#   ggplot(aes(date, ht_reg/1000)) +
-#   #geom_line(aes(color = factor(elevacion))) +
-#   geom_tile(aes(fill = dbz, color = dbz)) +
-#   scale_fill_viridis(name = "dBZ",
-#                limits = c(NA, NA)) +
-#   scale_color_viridis(name = "dBZ",
-#                     limits = c(NA, NA)) +
-#   scale_y_continuous(name = "Altura (km)",
-#                      limits = c(0, 3),
-#                      breaks = seq(0, 3, 0.5),
-#                      expand = c(0,0)) +
-#   scale_x_datetime(name = "Hora (UTC)",
-#                    date_breaks = "3 hour",
-#                    date_labels = "%H:%M",
-#                    limits = c(as_datetime("2016-01-23 00:00:00"), NA),
-#                    expand = c(0,0)) +
-#   theme_minimal()
-
-```
-
-```{r pblh-dbz, fig.cap="Valor absoluto del gradiente vertical de reflectividad (dBZ/m) en función de la altura y el tiempo para el Caso 1 (a), el Caso 2 (b) y el Caso 3 (c). \\label{pblh-dbz}", fig.subcap=c("Caso 1. \\label{dbz-1}", "Caso2. \\label{dbz-2}", "Caso 3. \\label{dbz-3}"), fig.align='center', fig.height=0.28*text.height, fig.ncol=1}
-elev <- unique(dbz_20160114$elevacion)
-dbz_20160114[elevacion == elev[8] & ht_reg > 200] %>%
-  ggplot(aes(date, ht_reg/1000)) +
-  #geom_line(aes(color = factor(elevacion))) +
-  geom_tile(aes(fill = abs(ddbz), color = abs(ddbz))) +
-  scale_fill_viridis(name = "Gradiente \n vertical de \n reflectividad",
-                     limits = c(0, 0.06)) +
-  scale_color_viridis(name = "Gradiente \n vertical de \n reflectividad",
-                      limits = c(0, 0.06)) +
-  scale_y_continuous(name = "Altura (km)",
-                     limits = c(0, 3),
-                     breaks = seq(0, 3, 0.5),
-                     expand = c(0,0)) +
-  scale_x_datetime(name = NULL,
-                   date_breaks = "3 hour",
-                   date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-13 00:00:00"), NA),
-                   expand = c(0,0)) +
-  theme_minimal()
-
-# 
-# dbz_20160123[elevacion == elev[8] & ht_reg > 200] %>%
-#   ggplot(aes(date, ht_reg/1000)) +
-#   #geom_line(aes(color = factor(elevacion))) +
-#   geom_tile(aes(fill = abs(ddbz), color = abs(ddbz))) +
-#   scale_fill_viridis(name = "Gradiente \n vertical de \n reflectividad",
-#                      limits = c(0, 0.06)) +
-#   scale_color_viridis(name = "Gradiente \n vertical de \n reflectividad",
-#                       limits = c(0, 0.06)) +
-#   scale_y_continuous(name = "Altura (km)",
-#                      limits = c(0, 3),
-#                      breaks = seq(0, 3, 0.5),
-#                     expand = c(0,0)) +
-#   scale_x_datetime(name = "Hora (UTC)",
-#                    date_breaks = "3 hour",
-#                    date_labels = "%H:%M",
-#                    limits = c(as_datetime("2016-01-23 00:00:00"), NA),
-#                    expand = c(0,0)) +
-#   theme_minimal()
-# remove(dbz_20160121, dbz_20160123)
-
-```
-
-
 ```{r make-ri, eval=FALSE, include=FALSE}
 sup_20160114 <- superficie[day(fecha) == 14]
 ri_20160114 <- create.ri(vad_20160114, sup_20160114$fecha, sup_20160114$temp, sup_20160114$presion_estacion, 27.7, 1002.6)
 ri_20160114[, caso := "Caso 1"]
 
 
-sup_20160123 <- superficie[day(fecha) == 23]
-ri_20160123 <- create.ri(vad_20160123, sup_20160123$fecha, sup_20160123$temp, sup_20160123$presion_estacion, 34.2, 998.8)
-ri_20160123[, caso := "Caso 3"]
+# sup_20160123 <- superficie[day(fecha) == 23]
+# ri_20160123 <- create.ri(vad_20160123, sup_20160123$fecha, sup_20160123$temp, sup_20160123$presion_estacion, 34.2, 998.8)
+# ri_20160123[, caso := "Caso 3"]
 
 ri_vad <- rbindlist(list(ri_20160114, ri_20160123))
 ri_vad[, hora := day(date_time)]
@@ -551,7 +452,7 @@ gdata[ht > 0.02] %>%
   scale_x_datetime(name = "Tiempo (UTC)",
                    date_breaks = "4 hour",
                    date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+                   limits = c(as_datetime("2016-01-13 12:00:00"), NA),
                    expand = c(0,0)) +
   scale_y_continuous(name = "Altura (km)", limits = c(0,2),
                      expand = c(0,0)) +
@@ -570,7 +471,7 @@ gdata[ht > 0.02 & caso != "Obs"] %>%
   scale_x_datetime(name = "Tiempo (UTC)",
                    date_breaks = "4 hour",
                    date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-13 06:00:00"), NA),
+                   limits = c(as_datetime("2016-01-13 12:00:00"), NA),
                    expand = c(0,0)) +
   scale_y_continuous(name = "Altura (km)", limits = c(0,2),
                      expand = c(0,0)) +
@@ -581,6 +482,29 @@ gdata[ht > 0.02 & caso != "Obs"] %>%
 ```
 
 
+```{r diff_spd, fig.cap="Diferencia entre las observaciones y cada simulación para la magnitud del viento (m/s) correspondiente al Caso 1. \\label{dif}", fig.height=0.3*text.height, fig.width=1.1*text.width}
+gdata[ht > 0.02] %>%
+  ggplot(aes(date_time, ht)) +
+  geom_contour(aes(z = dif_spd, color = ..level..), binwidth = 1) +
+  scale_color_divergent(name = "Diferencia en la\nmagnitud del viento", limits = c(-5, 5),
+                      #breaks = seq(0, 18, 2), 
+                      guide = guide_colorbar(order = 1)) +
+  scale_x_datetime(name = "Tiempo (UTC)",
+                   date_breaks = "4 hour",
+                   date_labels = "%H",
+                   limits = c(as_datetime("2016-01-13 12:00:00"), as_datetime("2016-01-14 12:00:00")),
+                   expand = c(0,0)) +
+  scale_y_continuous(name = "Altura (km)", limits = c(0,2),
+                     expand = c(0,0)) +
+  facet_wrap(~caso, ncol = 3) +
+  theme_minimal() + theme(panel.ontop = T,
+                          legend.position="bottom",
+                          legend.box = "horizontal", 
+                          legend.title.align = 0.5,
+                          legend.margin=margin(t=-0.3, r=0, b=0, l=0, unit="cm"),
+                          legend.key.size = unit(0.5, "cm"),
+                          legend.title = element_text(size = 10))
+```
 
 
 ```{r err-spd, fig.cap="Bias, rmse y rmsens en m/s y coeficiente de correlación para la estimación de la velocidad del viento (m/s) con cada simulación en función de la altura y la simulación. \\label{err-spd}", fig.width=0.75*text.width, fig.align='center'}
