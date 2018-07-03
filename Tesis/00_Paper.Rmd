@@ -85,7 +85,7 @@ text.width <- (210 - 50)/25.4
 color_manual <- c("#231151", "#d3436e", "#feba80")
 
 path1 <- "~/Dropbox/Tesis/tesis-VAD/Tesis/"
-# path2 <- "~/Radar/VAD/Data/"
+#path2 <- "~/Radar/VAD/Data/"
 path2 <- "/mnt/Data/VAD/"
 remove(map2)
 ```
@@ -492,7 +492,7 @@ gdata[ht > 0.02] %>%
   scale_x_datetime(name = "Tiempo (UTC)",
                    date_breaks = "4 hour",
                    date_labels = "%H",
-                   limits = c(as_datetime("2016-01-13 12:00:00"), as_datetime("2016-01-14 12:00:00")),
+                   limits = c(as_datetime("2016-01-13 12:00:00"), as_datetime("2016-01-14 11:00:00")),
                    expand = c(0,0)) +
   scale_y_continuous(name = "Altura (km)", limits = c(0,2),
                      expand = c(0,0)) +
@@ -511,7 +511,7 @@ gdata[ht > 0.02] %>%
 
 gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm)) %>%
   .[vad_20160114[ht != 0.01, .(ht, date_time, obs = spd_smooth)], on = c("ht", "date_time")] %>%
-  .[day(date_time) == 14 & ht <= 2.0] %>%
+  .[date_time %between% c(as_datetime("2016-01-13 12:00:00"), as_datetime("2016-01-14 12:00:00"))] %>%
   .[, .(bias = bias.f(spd_smooth, obs),
         rmse = rmse.f(spd_smooth, obs),
         rmsens = rmsens.f(spd_smooth, obs),
@@ -539,7 +539,7 @@ ggplot(gdata, aes(ht, value)) +
 gdata <- setDT(rbind(vad_caso1ysu, vad_caso1myj, vad_caso1acm)) %>%
   .[vad_20160114[ht != 0.01, .(ht, date_time, obs = spd_smooth)],
     on = c("ht", "date_time")] %>%
-  .[day(date_time) == 14 & ht <= 2.0] %>%
+  .[date_time %between% c(as_datetime("2016-01-13 12:00:00"), as_datetime("2016-01-14 12:00:00"))] %>%
   .[, .(bias = bias.f(spd_smooth, obs),
         rmse = rmse.f(spd_smooth, obs),
         rmsens = rmsens.f(spd_smooth, obs),
@@ -597,7 +597,7 @@ gdata[, caso := factor(caso,
   scale_x_continuous(name = "Altura (km)", breaks = seq(0, 2.5, 0.5),
                      limits = c(0, 2.5)) +
   facet_wrap(~hora, labeller = labeller(hora = c("6" = "06 UTC", "17" = "17 UTC"))) +
-  theme_minimal()
+  theme_minimal() 
 ```
 
 
@@ -625,12 +625,13 @@ gdata[ht %in% c(0.3, 0.5, 1.0) & !is.na(spd_smooth)] %>%
   geom_path() +
   # geom_text_repel(aes(label = JumpBy(hora, 6, fill = NA)),
   #                  data = gdata[ht %in% c(0.3, 0.5, 1.0)]) +
-  scale_color_manual(name="Altura", values = c("#B63679FF", viridis_pal()(3))) +
+  scale_color_manual(name=NULL, values = c("#B63679FF", viridis_pal()(3))) +
   scale_x_continuous(name = "u (m/s)") +
   scale_y_continuous(name = "v (m/s)") +
   coord_equal() +
   facet_wrap(~ht) +
-  theme_minimal()
+  theme_minimal() +
+  theme(legend.position="bottom", legend.box = "horizontal", legend.margin=margin(t=-0.3, r=0, b=0, l=0, unit="cm"))
 
 ```
 
