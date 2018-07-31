@@ -629,7 +629,9 @@ gdata[ht %in% c(0.3, 0.5, 1.0) & !is.na(spd_smooth)] %>%
   scale_x_continuous(name = "u (m/s)") +
   scale_y_continuous(name = "v (m/s)") +
   coord_equal() +
-  facet_wrap(~ht) +
+  facet_wrap(~ht, labeller = labeller(ht = c("0.3" = "0.3 km",
+                                             "0.5" = "0.5 km",
+                                             "1" = "1.0 km"))) +
   theme_minimal() +
   theme(legend.position="bottom", legend.box = "horizontal", legend.margin=margin(t=-0.3, r=0, b=0, l=0, unit="cm"))
 

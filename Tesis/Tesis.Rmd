@@ -53,11 +53,11 @@ library(dtplyr)
 library(viridis)
 library(directlabels)
 library(data.table)
-library(patchwork)
 library(ncdf4)
 library(knitr)
 library(kableExtra)
 library(circular)
+library(patchwork)
 source("helpfun.R")
 
 # Variables útiles
@@ -150,14 +150,14 @@ Para analizar procesos asociados a la capa límite planetaria (CLP) se utilizaro
 
 # Introducción
 
-La capa límite planetaria (CLP) corresponde a la porción de atmósfera que se encuentra directamente influenciada por la superficie terrestre y que responde a sus forzantes en una escala de tiempo de una hora o menos [@Stull1988]. Dentro de esta capa el flujo se encuentra en estado turbulento y por lo tanto los movimientos del aire son aleatorios. Debido a que la capa límite es forzada por las características de la superficie terrestre (por su rugosidad, temperatura, humedad y otros) su evolución presenta una variabilidad diaria importante .
+La capa límite planetaria (CLP) corresponde a la porción de atmósfera que se encuentra directamente influenciada por la superficie terrestre y que responde a sus forzantes en una escala de tiempo de una hora o menos [@Stull1988]. Dentro de esta capa el flujo se encuentra en estado turbulento y por lo tanto los movimientos del aire son aleatorios. Debido a que la capa límite es forzada por las características de la superficie terrestre (por su rugosidad, temperatura, humedad y otros) su evolución presenta una variabilidad diaria importante.
 
 Los procesos que ocurren dentro de esta capa son de suma importancia para entender y pronosticar la evolución de la tropósfera en distintas escalas espaciales y temporales. En particular estos procesos controlan el intercambio de energía entre la superficie y la atmósfera afectando, entre otras cosas, las condiciones para la ocurrencia de convección húmeda profunda y la intensidad de las circulaciones de mesoescala, originando eventos meteorológicos que pueden tener un alto impacto sobre las actividades humanas.
 
 La estructura de la capa límite puede ser descripta a partir de su evolución. Luego del amanecer la capa límite comienza a crecer debido al calentamiento radiativo de la superficie que produce turbulencia dando lugar a la capa mezclada. En esta capa la intensidad del viento, la temperatura potencial y otras variables se mantienen aproximadamente constantes con la altura debido a la intensa mezcla vertical, persistiendo a lo largo del día hasta el momento del atardecer cuando la turbulencia comienza a decaer. Durante la noche se forma la capa límite nocturna estable forzada por el enfriamiento radiativo desde superficie y caracterizada generalmente por una inversión en el perfil de temperatura. En esta capa la turbulencia puede decaer o producirse intermitentemente. Por encima de esta capa persisten las características de la capa mezclada por lo que toma el nombre de capa residual y no forma parte de la capa límite. Al amanecer se forma una nueva capa mezclada que orada la capa estable hasta hacerla desaparecer.
 
 En nuestra región existen estudios que buscan caracterizar la evolución y los procesos que ocurren en la capa límite de forma tal de poder avanzar en su entendimiento y su dependencia por ejemplo con las propiedades de la superficie o el estado de la atmósfera [@Mazzeo1990; @Ulke2000; @Gassmann2001; @Acevedo2014; @Tonti2015].
-Otros estudios buscan ver la influencia de la capa límite en distintas escalas, por ejemplo  @Marengo2004 sugiere que existe una relación entre las condiciones de la CLP y el SALLJ (South American low-level jet) durante el verano, uno de los principales mecanismos responsables de desarrollo de sistemas convectivos de mesoescala en nuestra región [@Salio2007].
+Otros estudios analizan la influencia de la capa límite en distintas escalas, por ejemplo  @Marengo2004 sugiere que existe una relación entre las condiciones de la CLP y el SALLJ (South American low-level jet) durante el verano, uno de los principales mecanismos responsables de desarrollo de sistemas convectivos de mesoescala en nuestra región [@Salio2007].
 
 Dado que la ocurrencia de turbulencia en la capa límite planetaria se da en múltiples escalas espaciales y temporales, la representación de los procesos que ocurren dentro de ella es un desafío para los modelos numéricos. Actualmente los modelos de simulación regional y global no cuentan con la resolución necesaria para representar los procesos de la CLP de forma explícita, debiendo recurrir a una representación simplificada. De esta manera se simula numéricamente una parte del espectro turbulento, mientras que los procesos en la escala de subgrilla se resuelven a través de parametrizaciones con cierres de distinto orden [@Stull1988], es decir, con diferentes niveles de aproximaciones.
 
@@ -167,7 +167,7 @@ A nivel regional, la representación de la capa límite en los modelos numérico
 
 Uno de los principales desafíos a la hora de estudiar los procesos que ocurren en la capa límite o para validar cómo los modelos representan dichos procesos, es la disponibilidad de observaciones. Las redes de radiosondeos que permiten obtener perfiles de viento, temperatura y humedad en la capa límite están disponibles con frecuencias temporales de entre 12 y 24 horas (sólo eventualmente cada 6 horas) lo que dificulta la posibilidad de analizar la evolución de las características de la CLP a lo largo del día. Sumado a esto, las mediciones se realizan en puntos geográficos muy dispersos entre sí.
 
-Una alternativa al uso de mediciones in situ, es la utilización de sensores remotos que permiten obtener en forma indirecta información sobre el comportamiento de las variables dentro de la CLP. Distintos estudios utilizaron datos medidos con Lidar, Sodar, Ras, Radares, entre otros. En particular los radares Doppler permiten estimar la componente radial del viento en un radio horizontal de hasta 240 km y a partir de esa información reconstruir perfiles verticales de viento utilizando la técnica Velocity Azimuth Display (VAD, por ejemplo @Lhermitte1962 y posteriores). Otra ventaja de las observaciones de radar es que están disponibles con una frecuencia temporal de hasta 5 minutos permitiendo obtener perfiles de viento con una resolución temporal mucho mayor que la de los radiosondeos.
+Una alternativa al uso de mediciones in situ, es la utilización de sensores remotos que permiten obtener en forma indirecta información sobre el comportamiento de las variables dentro de la CLP. Distintos estudios utilizaron datos medidos con Lidar, Sodar, RASS, Radares, entre otros. En particular los radares Doppler permiten estimar la componente radial del viento en un radio horizontal de hasta 240 km y a partir de esa información reconstruir perfiles verticales de viento utilizando la técnica Velocity Azimuth Display (VAD, por ejemplo @Lhermitte1962 y posteriores). Otra ventaja de las observaciones de radar es que están disponibles con una frecuencia temporal de hasta 5 minutos permitiendo obtener perfiles de viento con una resolución temporal mucho mayor que la de los radiosondeos.
 
 En días en los que no existen ecos producidos por hidrometeoros, los radares pueden detectar el viento dentro de la capa límite a partir de blancos como los insectos. De acuerdo a @Rennie2010 estos datos podrían ser utilizados para reconstruir el perfil vertical del viento si se elimina el efecto de los ecos de terreno y otras observaciones erróneas.
 
@@ -228,12 +228,12 @@ En el primer tipo de datos se analizó la velocidad de viento, la cobertura nubo
 
 ## Descripción de los datos de radar
 
-El radar ubicado en Paraná (Provincia de Entre Ríos) es de doble polarización y emite energía electromagnética en la banda C (4 a 8 GHz). La estrategia de escaneo está programada para que la antena dé giros en sentido horizontal de 360º y cambie de elevación sucesivamente 12 veces. El ángulo vertical varía entre 0.5° y 15.1°. El rango del radar (distancia a la que llega la señal desde la ubicación del radar) puede ser de 120, 240 y 480 km con una resolución espacial en la dirección del rango de 500 m de acuerdo a la estrategia de escaneo [@Saibene2014].
+El radar ubicado en Paraná (Provincia de Entre Ríos) es de doble polarización y emite energía electromagnética en 5.6 GHz (banda C). La estrategia de escaneo está programada para que la antena dé giros en sentido horizontal de 360º y cambie de elevación sucesivamente 12 veces. El ángulo de elevación varía entre 0.5° y 15.1°. El rango del radar (distancia a la que llega la señal desde la ubicación del radar) puede ser de 120, 240 y 480 km con una resolución espacial en la dirección del rango de 500 m de acuerdo a la estrategia de escaneo [@Saibene2014].
 
 El escaneo completo del volumen de atmósfera que rodea al radar se realiza cada 5 minutos en el rango de 120 km y de 240 km de manera intercalada, dando como resultado 144 volúmenes de datos diarios para cada estrategia de escaneo.
 Las variables disponibles en cada tiempo incluyen la reflectividad (dBZ) y velocidad radial ($V_r$).
 
-Los datos de reflectividad permitieron evaluar la presencia de nubosidad en cada momento mientras que la velocidad radial se utilizó para calcular el perfil de viento. La velocidad radial medida por el radar corresponde a la velocidad de los objetos que dispersan la energía del haz. En situaciones de aire claro (sin nubosidad) es posible tener una medida del campo de viento dentro de la capa límite usando insectos como obstáculos.
+Los datos de reflectividad permitieron evaluar la presencia de hidrometeóros en cada momento mientras que la velocidad radial se utilizó para calcular el perfil de viento. La velocidad radial medida por el radar corresponde a la velocidad de los objetos que dispersan la energía del haz. En situaciones de aire claro (sin nubosidad) es posible tener una medida del campo de viento radial dentro de la capa límite usando insectos como obstáculos.
 
 En este trabajo se usaron datos de radar provistos por el Servicio Meteorológico Nacional correspondientes a la estrategia de 240 km y 12 ángulos de elevación para los períodos comprendidos por cada caso de estudio. Si bien los datos correspondientes a la estrategia de 120 km tienen menor probabilidad de estar contaminados por aliasing (Ver Sección \ref{sec-aliasing}), no fueron utilizados debido a la cantidad de ángulos de elevación disponibles fue distinta para cada día y en todos los casos menor a 12. La menor cantidad de datos disponibles en este último caso afecta la calidad del resultado final generando perfiles de viento con mucho ruido y con poca extensión vertical.
 
@@ -241,7 +241,7 @@ Cada volumen de dato correspondiente a un tiempo de escaneo completo en el forma
 
 ## Tratamiento de aliasing \label{sec-aliasing}
 
-Un problema importante al momento de utilizar los datos de velocidad radial es la contaminación por aliasing ya que afecta significativamente la calidad de los perfiles de viento finales. De acuerdo a @Gao2004 un 3% de contaminación por aliasing puede generar un error cuadrático medio del 50% en el perfil de viento medio a partir de la técnica VAD. El aliasing ocurre cuando la señal que se mide tiene una frecuencia mayor a la frecuencia que puede detectar el instrumento denominada frecuencia de Nyquist y que está directamente relacionada con la frecuencia de repetición de los pulsos de radar (o PRF por sus siglas en inglés). En esos casos la señal es interpretada por el instrumento como una señal de menor frecuencia que la real. Dicho fenómeno se conoce como "aliasing" o "folding". A partir de lo anterior es posible determinar la velocidad máxima que puede ser medida por un radar sin ambigüedades o aliasing, es decir la Velocidad de Nyquist ($V_N$). Cualquier velocidad que se encuentre fuera del intervalo de Nysquist ($-V_N,+V_N$) será interpretada como una velocidad menor (Figura \ref{nysquist}). La $V_N$ es intrínseca a las características del radar ya que depende de la longitud de onda de la señal y de la frecuencia de repetición del pulso que emite, lo que a vez determina el rango máximo del radar.
+Un problema importante al momento de utilizar los datos de velocidad radial es la contaminación por aliasing ya que afecta significativamente la calidad de los perfiles de viento finales. De acuerdo a @Gao2004 un 3% de contaminación por aliasing puede generar un error cuadrático medio del 50% en el perfil de viento medio a partir de la técnica VAD. El aliasing ocurre cuando la señal que se mide tiene una frecuencia mayor a la frecuencia que puede detectar el instrumento denominada frecuencia de Nyquist y que está directamente relacionada con la frecuencia de repetición de los pulsos de radar (o PRF por sus siglas en inglés). En esos casos la señal es interpretada por el instrumento como una señal de menor frecuencia que la real. Dicho fenómeno se conoce como "aliasing" o "folding". A partir de lo anterior es posible determinar la velocidad máxima que puede ser medida por un radar sin ambigüedades o aliasing, es decir la Velocidad de Nyquist ($V_N$). Cualquier velocidad que se encuentre fuera del intervalo de Nysquist ($-V_N,+V_N$) será interpretada como una velocidad dentro del intervalo (Figura \ref{nysquist}). La $V_N$ es intrínseca a las características del radar y los parámetros establecidos ya que depende de la longitud de onda de la señal y de la frecuencia de repetición del pulso que emite, lo que a vez determina el rango máximo del radar.
 
 En el caso del radar de Paraná con la estrategia de escaneo de 240 km de rango, tiene una $V_N =$ 6.7 m/s por lo que cualquier velocidad mayor se verá afectada por el aliasing. Esto puede verse en la Figura \ref{aliasing} donde las regiones afectadas por aliasing son aquellas donde el valor de la velocidad radial salta al extremo opuesto de la escala de velocidad.
 
@@ -255,7 +255,7 @@ Existen muchos algoritmos que buscan solucionar el problema del aliasing [por ej
 A partir de la exploración visual puede observarse que el algoritmo resuelve el problema de manera satisfactoria en la mayor parte del dominio. Sin embargo se observa una zona en el borde inferior donde la magnitud de la variable es anómalamente alta. Algunas discontinuidades se observaron también en otros casos. Por tal motivo se decidió utilizar este algoritmo para corregir las velocidades afectadas por aliasing, pero se desarrollaron e implementaron además controles de calidad adicionales (Ver Sección \ref{sec-vad}) para reducir el impacto de aquellos píxeles que no fueron exitosamente corregidos por el algoritmo de corrección del aliasing. Esto puede ser o bien por una falla de dicho algoritmo, o bien porque dichos píxeles fueron afectados por otras fuentes de error.
 
 ```{r aliasing, fig.cap="Velocidad radial (m/s) observada a las 06 UTC por el radar de Paraná en la elevación $1.3^{\\circ}$ y $V_N =$ 6.7 m/s con aliasing (a) y sin aliasing (b). Notar las escalas diferentes.", fig.subcap=c("Con aliasing \\label{aliasing}", "Sin aliasing \\label{no-aliasing}"), out.extra=" ", fig.width=0.48*text.width, fig.align='center'}
-
+      
 radar <- nc_open("seudocache/cfrad.20160114_060005.000_to_20160114_060431.001_INTA_Parana_SUR.nc")
 azimut <- ncvar_get(radar, 'azimuth')   
 elevacion <- ncvar_get(radar, 'elevation')
@@ -272,14 +272,14 @@ radar[, elevacion := elevacion, by = rango]
 radar[, Vda := c(Vda)]
 
 radar[elevacion == elev[3] & !is.na(V), ] %>%
-  RepeatLon(., colname = "azimut") %>%
   ggplot(aes(azimut, rango/1000)) +
   geom_path(data = mapa.ar,
             aes(group = interaction(group, group2)), color = "darkgray") +
   geom_point(aes(color = V, size = rango)) +
   scale_color_divergent() +
   scale_size_area(max_size = 0.1) +
-  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90),
+                     limits = c(0, 360)) +
   scale_y_continuous(name = "Distancia al centro (km)",
                      breaks = c(40, 80, 120, 160, 200, 240),
                      limits = c(0, 300), expand = c(0, 0)) +
@@ -288,14 +288,14 @@ radar[elevacion == elev[3] & !is.na(V), ] %>%
   theme_minimal() + theme(legend.position = "bottom")
 
 radar[elevacion == elev[3] & !is.na(Vda), ] %>%
-  RepeatLon(., colname = "azimut") %>%
   ggplot(aes(azimut, rango/1000)) +
   geom_path(data = mapa.ar,
             aes(group = interaction(group, group2)), color = "darkgray") +
   geom_point(aes(color = Vda, size = rango)) +
   scale_color_divergent(name = expression(V[da])) +
   scale_size_area(max_size = 0.1) +
-  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90),
+                     limits = c(0, 360)) +
   scale_y_continuous(name = "Distancia al centro (km)",
                      breaks = c(40, 80, 120, 160, 200, 240),
                      limits = c(0, 300), expand = c(0, 0)) +
@@ -323,7 +323,7 @@ remove(list = c("radar", "V", "Vda", "azimut", "elev", "elevacion", "rango"))
 ```
 
 
-En días de buen tiempo y aire claro la señal que recibe el radar corresponden a los insectos que se encuentran en la capa límite. Diferentes autores han analizado la validez de la estimación del viento a partir de estos blancos. Si bien en algunos casos los insectos pueden ser considerados blancos pasivos, en otros casos, dependiendo del tamaño y características del insecto, pueden moverse con velocidad y dirección propias [@Rennie2014]. De acuerdo a @Hannesen2014, una posible solución a este problema podría ser el uso de variables polarimétricas que permitan determinar la orientación y dirección de desplazamiento de los insectos para luego corregir la variable $V_r$ observada. En este trabajo si bien no se analizó la calidad de los datos desde este punto de vista individualmente, si se tuvieron en cuenta controles de calidad para disminuir posibles errores.
+En días de buen tiempo y aire claro la señal que recibe el radar corresponden a los insectos, pájaros o a la turbuelencia que se encuentran en la capa límite. Diferentes autores han analizado la validez de la estimación del viento a partir de estos blancos. Si bien en algunos casos los insectos pueden ser considerados blancos pasivos, en otros casos, dependiendo del tamaño y características del insecto, pueden moverse con velocidad y dirección propias [@Rennie2014]. De acuerdo a @Hannesen2014, una posible solución a este problema podría ser el uso de variables polarimétricas que permitan determinar la orientación y dirección de desplazamiento de los insectos para luego corregir la variable $V_r$ observada. En este trabajo si bien no se analizó la calidad de los datos desde este punto de vista individualmente, si se tuvieron en cuenta controles de calidad para disminuir posibles errores.
 
 Usando el concepto de la Visualización Azimutal de la Velocidad distintos autores han desarrollado técnicas para obtener el perfil vertical de viento a partir del viento radial o su gradiente con diferentes grados de complejidad. Estas técnicas también son llamadas VAD (o sus derivaciones). Algunos de estos algoritmos permiten estimar variaciones horizontales del viento dentro del dominio siempre que éstas sean lineales. @Browning1968, unos de los primeros autores en aplicar este concepto, desarrollaron una técnica utilizando series de Fourier para obtener variables del campo del viento descompuesto en una parte divergente, una parte rotacional y una componente de deformación válida para casos donde la velocidad terminal de la precipitación es horizontalmente homogénea y la cortante vertical no es intensa.
 
@@ -350,7 +350,7 @@ La Ecuación \ref{eq-vr1} puede ser expresada como una serie de Fourier de la fo
 V_r =  \frac{1}{2}a_0 + \sum_{n = 1}^{\infty} (a_n \cos(n\phi) + b_n \sin(n \phi))
 \end{equation}
 
-Los coeficientes de la serie de Fourier hasta $n=2$ (Ecuaciones \ref{eq-vr3}) están asociados al viento en el centro del dominio de escaneo (con subíndice 0) como:
+Los coeficientes de la serie de Fourier hasta $n=2$ (Ecuaciones \ref{eq-vr3}) obtenidos a partir del desarrollo de la serie de Taylor, están asociados al viento en el centro del dominio de escaneo (con subíndice 0) como:
 
 \begin{equation} \label{eq-vr3}
 \begin{aligned}
@@ -369,7 +369,7 @@ Los coeficientes de la serie se obtienen mediante el ajuste de cada anillo de da
 V_r \sim a_1\cos \phi + b_1 \sin \phi
 \end{equation}
 
-Los coeficientes $a_0$, $a_2$ y $b_2$ dan información sobre la divergencia horizontal,  la vorticidad y la deformación del viento. Estos no fueron estimados por el algoritmo pero es posible su implementación en futuros trabajos.
+Los coeficientes $a_0$, $a_2$ y $b_2$ dan información sobre la divergencia horizontal y la deformación del viento. Estos no fueron estimados por el algoritmo pero es posible su implementación en futuros trabajos.
 
 Finalmente la velocidad y dirección del viento pueden ser calculadas a partir de los coeficientes (Ecuaciones \ref{eq-vr3}).
 
@@ -456,14 +456,14 @@ El algoritmo de VAD desarrollado incluye algunos controles de calidad para evita
 Los siguientes controles y parámetros permiten determinar cuales son los anillos de datos válidos y eliminar posibles errores aleatorios antes del ajuste lineal.
 
 * **Ángulos de elevación seleccionados:** La presencia de ecos de terreno pueden generar que los campos de velocidad radial para los primeros ángulos de elevación sean muy ruidosos y sin coherencia espacial. En el otro extremo, en caso de ser necesario, se pueden eliminar los ángulos superiores. Por lo tanto es posible seleccionar el rango de ángulos a ser analizados y utilizados en el cálculo del VAD con los parámetros *Ángulo mínimo* y *Ángulo máximo*.
-* **Selección del dominio de cálculo:** Otra posibilidad para evitar los ecos de terreno es definir un *Radio interior* por debajo del cual no se incluyen los datos para el cálculo de VAD. En el otro extremo, es posible definir un *Radio exterior* para limitar el uso de datos muy lejanos al centro del volumen de escaneo. Esto es importante para evitar inhomogeneidades en el campo de viento horizontal.
+* **Selección del dominio de cálculo:** Otra posibilidad para evitar los ecos de terreno es definir un *Radio interior* por debajo del cual no se incluyen los datos para el cálculo de VAD. En el otro extremo, es posible definir un *Radio exterior* para limitar el uso de datos muy lejanos al centro del volumen de escaneo. Esto es importante para evitar inhomogeneidades en el campo de viento horizontal dado que el volumen muestreado por el radar es grande.
 * **Cantidad de datos por anillo:** el algoritmo cuenta la cantidad de datos válidos por anillo y se define un porcentaje de datos faltantes (NaN) límite respecto del total para descartar el anillo. Si se excede dicho umbral (*NaN máximo*) el anillo es descartado. De esta manera se evita la utilización de anillos donde la señal es muy débil.
 * **Hueco continuo en un anillo:** Además de los datos faltantes ubicados de manera aleatoria a lo largo de un anillo, los huecos continuos pueden ocurrir debido a la falta de señal en una determinada región o debido al bloqueo del haz por la presencia de obstáculos. De acuerdo a @Matejka1991 esto puede generar importantes errores en el resultado final, por lo tanto cuando el hueco o *Gap máximo* es mayor a 30° de azimut, el anillo se descarta.
 * **Errores aleatorios:** Los errores aleatorios, producto de ruido del instrumento, pueden ser eliminados utilizando un filtro pasa bajo [@Gao2004]. Este control no elimina anillos pero produce un suavizado de los datos de cada anillo de manera independiente. Es necesario definir la cantidad de datos o $Pesos$ que se utilizarán para calcular el filtro en cada punto.
 
 #### Luego del ajuste de los datos
 
-* **R cuadrado:** El $r^2$ del modelo ajustado (Ecuación \ref{eq-vr4}) permite obtener una medida de la calidad de ese modelo respecto de las observaciones. A partir de la exploración de resultados preliminares se observó que la definición de un umbral mínimo para el $r^2$ permite descartar anillos que pese a no tener datos faltantes eran erróneos.
+* **R cuadrado:** El $r^2$ del modelo ajustado permite obtener una medida de la calidad de ese modelo respecto de las observaciones. A partir de la exploración de resultados preliminares se observó que la definición de un umbral mínimo para el $r^2$ permite descartar anillos que pese a no tener datos faltantes eran erróneos.
 
 * **Consistencia temporal de las observaciones:** Ya que uno de los objetivos de esta tesis es estudiar la evolución del viento a lo largo del día, es importante asegurar cierta consistencia temporal en los datos. La inconsistencia temporal puede deberse a que cada volumen de datos no es medido de manera instantánea si no que demora algunos minutos Si bien en periodos sin cambios sinópticos importantes no se espera variaciones bruscas del viento, es posible que variaciones menores a los 10 minutos (resolución temporal de los datos de radar) estén afectando la consistencia temporal. La inconsistencia temporal también puede deberse a cualquier error previamente descripto que no fuera detectado con los controles de calidad. Estos podrían detectarse si se produce un salto brusco en la dirección o intensidad del viento y principalmente si esa variación ocurre para un volumen determinado y para un conjunto de niveles determinados.    
 Para solucionar este problema se aplicó un suavizado pesado localmente o LOWESS (LOcally WEighted Scatterplot Smoothing, @Cleveland1979). LOWESS es un método de regresión no paramétrica y por lo tanto no es necesario asumir que los datos tienen algún tipo de distribución particular. Esto lo hace un método flexible al representar el comportamiento de los datos. El suavizado para cada punto se realiza utilizando la información de datos vecinos.    
@@ -517,7 +517,7 @@ Además, dado que el resultado de la interpolación del viento real da un campo 
 
 ### Configuración del algoritmo elegida
 
-En la Tabla \ref{parametros} se detallan los valores utilizados en los distintos parámetros necesarios para el algoritmo VAD que se mantuvieron para todos los casos de estudio. Los ángulos utilizados fueron elegidos de tal manera de evitar aquellas elevaciones con mayor ruido. Los radios interior y exterior, como así también el gap máximo fueron determinados a partir de las recomendaciones de @Matejka1991. De acuerdo a estos autores el espaciado de retícula vertical óptimo es de 300 m, sin embargo esto imposibilita estudiar la capa límite en detalle por lo que se eligió una retícula menor. La cantidad de NaNs permitida se determinó en un 20% por anillo, si bien la regresión lineal puede calcularse con menos datos se utilizó un máximo conservador para disminuir los errores de estimación. El valor de $R^2$ fue definido cualitativamente a partir de la exploración de resultados preliminares (no se muestra).
+En la Tabla \ref{parametros} se detallan los valores utilizados en los distintos parámetros necesarios para el algoritmo VAD que se mantuvieron para todos los casos de estudio. Los ángulos utilizados fueron elegidos de tal manera de evitar aquellas elevaciones con mayor ruido. Los radios interior y exterior, como así también el gap máximo fueron determinados a partir de las recomendaciones de @Matejka1991. De acuerdo a estos autores el espaciado de retícula vertical óptimo es de 300 m, sin embargo esto imposibilita estudiar la capa límite en detalle por lo que se eligió una retícula menor. La cantidad de NaNs permitida se determinó en un 20% por anillo, si bien la regresión lineal puede calcularse con menos datos se utilizó un máximo conservador para disminuir los errores de estimación. El valor de $R^2$ fue definido cualitativamente a partir de la exploración de resultados preliminares (no se muestra). En futuros trabajos será importante determinar de manera cuantitativa el valor de los distintos parámetros para los radares disponibles, teniendo en cuenta por ejemplo, la geometría del haz al alejarse del radar.
 
 ```{r parametros}
 param <- read.csv("seudocache/parametros.csv", sep = ",", header = T)
@@ -827,14 +827,14 @@ setnames(radar, "i.Vr", "Vrena")
 radar[Vrena < -999, Vrena := NA]
 
 radar[elevacion == elev[3] & !is.na(Vr), ] %>%
-  RepeatLon(., colname = "azimut") %>%
   ggplot(aes(azimut, rango/1000)) +
   # geom_path(data = map[rango <= 300*1000], aes(group = group),
   #           color = "darkgray") +
   geom_point(aes(color = Vr, size = rango)) +
   scale_color_divergent(name = expression(V[r]), limits = c(-20,20)) +
   scale_size_area(max_size = 0.1) +
-  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90),
+                     limits = c(0, 360)) +
   scale_y_continuous(name = "Distancia al centro (km)",
                      breaks = c(10, 20, 30, 40),
                      limits = c(0, 50), expand = c(0, 0)) +
@@ -843,14 +843,14 @@ radar[elevacion == elev[3] & !is.na(Vr), ] %>%
   theme_minimal() + theme(legend.position = "bottom")
 
 radar[elevacion == elev[3] & !is.na(Vrs), ] %>%
-  RepeatLon(., colname = "azimut") %>%
   ggplot(aes(azimut, rango/1000)) +
   # geom_path(data = map[rango <= 300*1000], aes(group = group),
   #           color = "darkgray") +
   geom_point(aes(color = Vrs, size = rango)) +
   scale_color_divergent(name = expression(V[rs]), limits = c(-20,20)) +
   scale_size_area(max_size = 0.1) +
-  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90),
+                     limits = c(0, 360)) +
   scale_y_continuous(name = "Distancia al centro (km)",
                      breaks = c(10, 20, 30, 40),
                      limits = c(0, 50), expand = c(0, 0)) +
@@ -859,14 +859,14 @@ radar[elevacion == elev[3] & !is.na(Vrs), ] %>%
   theme_minimal() + theme(legend.position = "bottom")
 
 radar[elevacion == elev[3] & !is.na(Vre), ] %>%
-  RepeatLon(., colname = "azimut") %>%
   ggplot(aes(azimut, rango/1000)) +
   # geom_path(data = map[rango <= 300*1000], aes(group = group),
   #           color = "darkgray") +
   geom_point(aes(color = Vre, size = rango)) +
   scale_color_divergent(name = expression(V[rs]), limits = c(-20,20)) +
   scale_size_area(max_size = 0.1) +
-  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90),
+                     limits = c(0, 360)) +
   scale_y_continuous(name = "Distancia al centro (km)",
                      breaks = c(10, 20, 30, 40),
                      limits = c(0, 50), expand = c(0, 0)) +
@@ -875,14 +875,14 @@ radar[elevacion == elev[3] & !is.na(Vre), ] %>%
   theme_minimal() + theme(legend.position = "bottom")
 
 radar[elevacion == elev[3] & !is.na(Vrena), ] %>%
-  RepeatLon(., colname = "azimut") %>%
   ggplot(aes(azimut, rango/1000)) +
   # geom_path(data = map[rango <= 300*1000], aes(group = group),
   #           color = "darkgray") +
   geom_point(aes(color = Vrena, size = rango)) +
   scale_color_divergent(name = expression(V[rs]), limits = c(-20,20)) +
   scale_size_area(max_size = 0.1) +
-  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90)) +
+  scale_x_continuous(name = NULL, labels = NULL, breaks = seq(0, 359, 90),
+                     limits = c(0, 360)) +
   scale_y_continuous(name = "Distancia al centro (km)",
                      breaks = c(10, 20, 30, 40),
                      limits = c(0, 50), expand = c(0, 0)) +
@@ -920,7 +920,7 @@ Otro problema importante en los datos de radar es la ausencia de señal, que se 
 
 En la Figura \ref{validacion-perfiles} se muestra el perfil del sondeo para los primeros 3 km de altura, los perfiles calculados con VAD a partir de los distintos campos sintéticos y en negro se muestra el perfil vertical obtenido a partir de las observaciones del radar para esa hora. La grilla vertical de los perfiles sintéticos fue establecida igual a la grilla del radar para mejorar la comparación. En cuanto a la magnitud no se ven diferencias importantes entre el sondeo y los perfiles sintéticos. Al observar el detalle de los primeros 1000 metros de altura (Figura \ref{zoom}), la diferencia entre estos perfiles es menor a 0.5 m/s en todos los casos. Tampoco se observó sensibilidad al aumento de la amplitud de error lo cual sugiere que el algoritmo es robusto frente a la presencia de errores aleatorios (no se muestra).
 
-```{r validacion-perfiles, fig.cap="Viento medio (m/s) en función de la altura a partir del sondeo, y las distintas pruebas de validación (a) y detalle ampliado del máximo en niveles bajos (b). \\label{validacion-perfiles}", fig.subcap=c(" \\label{perfiles}", " \\label{zoom}"), fig.align='center', fig.width=0.45*text.width}
+```{r validacion-perfiles, fig.cap="Viento medio (m/s) en función de la altura a partir del sondeo, de los datos de radar (negro) y las distintas pruebas de validación (a) y detalle ampliado del máximo en niveles bajos (b). \\label{validacion-perfiles}", fig.subcap=c(" \\label{perfiles}", " \\label{zoom}"), fig.align='center', fig.width=0.45*text.width}
 vad <- read.csv("seudocache/Vr_se_2016-01-05T12:04:23Z-INTA_Anguil.csv",
                 sep = ";", dec = ".", na.strings = "-9999")
 vade <- read.csv("seudocache/Vr_ce_2016-01-05T12:04:23Z-INTA_Anguil.csv",
@@ -1062,7 +1062,7 @@ superficie[day(fecha) == 14, .(fecha, temp, q)] %>%
            xmin = as_datetime("2016-01-14 00:00:00"),
            xmax = as_datetime("2016-01-14 04:00:00"),
            ymin = -Inf, ymax = Inf,
-           fill = "darkgrey", alpha = 0.2) +
+           fill = "gray40", alpha = 0.2) +
   facet_wrap(~variable, ncol = 1, scales = "free",
              labeller = labeller(variable = c("temp" = "T", "q" = "q"))) +
   geom_line() +
@@ -1117,7 +1117,7 @@ superficie[day(fecha) == 21, .(fecha, temp, q)] %>%
            xmin = as_datetime("2016-01-21 09:00:00"),
            xmax = as_datetime("2016-01-21 17:00:00"),
            ymin = -Inf, ymax = Inf,
-           fill = "darkgrey", alpha = 0.2) +
+           fill = "gray40", alpha = 0.2) +
   facet_wrap(~variable, ncol = 1, scales = "free",
              labeller = labeller(variable = c("temp" = "T", "q" = "q"))) +
   geom_line() +
@@ -1174,7 +1174,7 @@ superficie[day(fecha) == 23, .(fecha, temp, q)] %>%
            xmin = as_datetime("2016-01-23 14:00:00"),
            xmax = as_datetime("2016-01-23 17:00:00"),
            ymin = -Inf, ymax = Inf,
-           fill = "darkgrey", alpha = 0.2) +
+           fill = "gray40", alpha = 0.2) +
   facet_wrap(~variable, ncol = 1, scales = "free",
              labeller = labeller(variable = c("temp" = "T", "q" = "q"))) +
   geom_line() +
@@ -1252,7 +1252,8 @@ vad_20160114[ht > 0.02] %>%
 vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   ggplot(aes(date_time, ht)) +
   geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
-             scale = 0.007, start = -90, direction = -1) +
+             direction = "cw", start = -90) +
+  scale_mag(length = 1) +
   # geom_point(data = subset(vad_20160114, rmse1 > 0.5),
   #            aes(size = rmse1),
   #            shape = 1, color = "grey25") +
@@ -1266,8 +1267,10 @@ vad_20160114[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   scale_x_datetime(name = "Hora (UTC)",
                    date_breaks = "3 hour",
                    date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-14 00:00:00"), NA)) +
+                   limits = c(as_datetime("2016-01-14 00:00:00"), NA),
+                   expand = c(0,0)) +
   theme_minimal()
+
 ```
 
 
@@ -1307,7 +1310,8 @@ vad_20160121[ht > 0.02] %>%
 vad_20160121[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   ggplot(aes(date_time, ht)) +
   geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
-             scale = 0.007, start = -90, direction = -1) +
+             direction = "cw", start = -90) +
+  scale_mag(length = 1) +
   # geom_point(data = subset(vad_20160121, rmse1 > 0.5),
   #            aes(size = rmse1),
   #            shape = 1, color = "grey25") +
@@ -1321,7 +1325,8 @@ vad_20160121[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   scale_x_datetime(name = "Hora (UTC)",
                    date_breaks = "3 hour",
                    date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-21 00:00:00"), NA)) +
+                   limits = c(as_datetime("2016-01-21 00:00:00"), NA),
+                   expand = c(0,0)) +
   theme_minimal()
 ```
 
@@ -1360,7 +1365,8 @@ vad_20160123[ht > 0.02] %>%
 vad_20160123[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   ggplot(aes(date_time, ht)) +
   geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
-             scale = 0.007, start = -90, direction = -1) +
+             direction = "cw", start = -90) +
+  scale_mag(length = 1) +
   # geom_point(data = subset(vad_20160123, rmse1 > 0.5),
   #            aes(size = rmse1),
   #            shape = 1, color = "grey25") +
@@ -1374,7 +1380,8 @@ vad_20160123[minute(date_time) == 0 & !is.na(spd_smooth)] %>%
   scale_x_datetime(name = "Hora (UTC)",
                    date_breaks = "3 hour",
                    date_labels = "%H:%M",
-                   limits = c(as_datetime("2016-01-23 00:00:00"), NA)) +
+                   limits = c(as_datetime("2016-01-23 00:00:00"), NA),
+                   expand = c(0,0)) +
   theme_minimal()
 ```
 
@@ -1404,7 +1411,7 @@ ggplot(gdata, aes(ht, spd_smooth, color = as.factor(hour(date_time)))) +
   theme_minimal()
 ```
 
-La variación de la dirección del viento con la altura puede analizarse a partir de un hodógrafa. En la Figura \ref{hodografa-h} se muestra la hodógrafa de las 06 UTC para cada caso. El triángulo corresponde al nivel inferior y los círculos grandes se ubican cada 500 m. Se observa en los tres casos una rotación antihoraria en los primeros metros (correspondientes a la capa límite estable nocturna), que se mantiene en todo el perfil para los casos 2 y 3. Esto podría deberse a que los perfiles mantienen algunas características propias de la capa mezclada del día anterior a pesar del decaimiento de la turbulencia y el desarrollo de la capa estable. Si bien existen discusiones sobre la validés del modelo, estás características podrían estar asociadas a la espiral de Ekman con rotación del viento en sentido antihorario [@Stull1988].
+La variación de la dirección del viento con la altura puede analizarse a partir de un hodógrafa. En la Figura \ref{hodografa-h} se muestra la hodógrafa de las 06 UTC para cada caso. El triángulo corresponde al nivel inferior y los círculos grandes se ubican cada 500 m. Se observa en los tres casos una rotación antihoraria en los primeros metros (correspondientes a la capa límite estable nocturna), que se mantiene en todo el perfil para los casos 2 y 3. Esto podría deberse a que los perfiles mantienen algunas características propias de la capa mezclada del día anterior a pesar del decaimiento de la turbulencia y el desarrollo de la capa estable. Si bien existen discusiones sobre la validéz del modelo, estás características podrían estar asociadas a la espiral de Ekman con rotación del viento en sentido antihorario [@Stull1988].
 
 ```{r hodografa-horaria, fig.cap="Hodógrafa en función de la altura entre 100 y 3000 metros, para cada caso de estudio observada por el radar a las 06 UTC. El triángulo marca el nivel inferior y los círculos grandes se ubican cada 500 metros. \\label{hodografa-h}", fig.align='center', fig.width=0.75*text.width}
 
@@ -1511,7 +1518,7 @@ En la Figura \ref{reflec-2} la reflectividad para el Caso 2 muestra regiones don
 
 La variación de la reflectividad con la altura para el Caso 3 se muestra en la Figura \ref{reflec-3}, si bien la región de valores positivos ocupa gran parte del espesor de atmósfera mostrado, es evidente un máximo absoluto por debajo de 500 m que luego de las 09 UTC asciende por encima de los 1000 m. La variación de $\nabla_z dBZ$ con la altura (Figura \ref{dbz-3}) muestra un máximo cercano a 2000 m en las primeras horas de la noche que luego desciende y podría corresponder nuevamente al "bloom del radar". Por otro lado se observa por debajo de 500 m un máximo intenso que se mantiene durante horas hasta las 14 UTC. Durante la noche este máximo puede asociarse al tope de la capa estable pero luego del amanecer la persistencia de esta capa de gran variabilidad en la reflectividad podría deberse a la presencia de turbulencia debido a la cortante vertical de viento generada por el máximo de viento secundario que se observa en la Figura \ref{caso3-spd} a las 12 UTC. Al igual que en los otros casos se observa un máximo relativo que crece desde las 9 UTC y alcanza rápidamente los 2000 m de altura. Este máximo que se mantiene durante el día podría indicar el tope de la capa mezclada.
 
-```{r dbz, fig.cap="Reflecttividad (dBZ) medida por el radar en función de la altura y el tiempo para el Caso 1 (a), el Caso 2 (b) y el Caso 3 (c). \\label{dbz}", fig.subcap=c("Caso 1. \\label{reflec-1}", "Caso2. \\label{reflec-2}", "Caso 3. \\label{reflec-3}"), fig.align='center', fig.height=0.28*text.height, fig.ncol=1}
+```{r dbz, fig.cap="Reflecttividad (dBZ) medida por el radar en función de la altura y el tiempo para el ángulo de elevación de 5 grados en el Caso 1 (a), el Caso 2 (b) y el Caso 3 (c). \\label{dbz}", fig.subcap=c("Caso 1. \\label{reflec-1}", "Caso2. \\label{reflec-2}", "Caso 3. \\label{reflec-3}"), fig.align='center', fig.height=0.28*text.height, fig.ncol=1}
 elev <- unique(dbz_20160114$elevacion)
 dbz_20160114[elevacion == elev[8] & ht_reg > 100] %>%
   ggplot(aes(date, ht_reg/1000)) +
@@ -1658,7 +1665,7 @@ remove(sup_20160114, sup_20160121, sup_20160123,
 
 La estimación del tope de la capa límite a partir de las variaciones de la reflectividad con la altura es una metodología poco desarrollada y que no ha sido aplicada a la información provista por los radares de la región. Por este motivo es importante contar con estimaciones independientes para validar los resultados previos. Los datos disponibles en este trabajo permitieron evaluar algunas características de la capa estable nocturna (Figura \ref{estable-vad}). En primer lugar se estimó la altura de la capa estable como el nivel en el cual ocurre el máximo viento (Figura \ref{h-vad}) durante el período donde se observó el máximo. Esta estimación depende de la resolución vertical elegida para el cálculo del VAD que en este caso es de 100 m, por lo tanto la estimación no es muy precisa. En la Figura \ref{cortante-vad} se presenta la cortante vertical calculada por debajo del máximo del viento y en la Figura \ref{ri-vad} el número de Richardson calculado de acuerdo a la Ecuación \ref{eq-ri3} hasta la hora del amanecer cuando la aproximación deja de ser válida. Los períodos sombreados corresponden a los momentos donde se observó el máximo de viento.
 
-En el Caso 1 la altura de la capa estable se mantuvo en 300 m en todo momento coincidiendo con lo estimado a partir del $\nabla_z dBZ$. La cortante de viento tuvo variaciones temporales con un máximo que coincidió con el momento donde el LLJ fue más intenso. De acuerdo a @Banta2003, estos valores de cortante están asociados a la presencia de energía cinética turbulenta y podría ser usada como un estimado de la turbulencia en la capa. Consistente con lo anterior, el número de Richardson es siempre positivo y por lo tanto se trata de una situación de estabilidad estática y además se mantiene por debajo de 1 por lo tanto el flujo se mantiene turbulento debido a procesos mecánicos asociados a la cortante.
+En el Caso 1 la altura de la capa estable se mantuvo en 300 m en todo momento coincidiendo con lo estimado a partir del $\nabla_z dBZ$. La cortante de viento tuvo variaciones temporales con un máximo que coincidió con el momento donde el LLJ fue más intenso. De acuerdo a @Banta2003, estos valores de cortante están asociados a la presencia de energía cinética turbulenta y podría ser usada como un estimador de la turbulencia en la capa. Consistente con lo anterior, el número de Richardson es siempre positivo y por lo tanto se trata de una situación de estabilidad estática y además se mantiene por debajo de 1 por lo tanto el flujo se mantiene turbulento debido a procesos mecánicos asociados a la cortante.
 
 En los Casos 2 y 3 la cortante vertical y el número de Richardson tienen un comportamiento similar al primer caso y por lo tanto corresponden a situaciones estables con el flujo en estado turbulento.
 
@@ -1788,7 +1795,8 @@ gdata[, caso2 := factor(caso,
 gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_datetime("2016-01-15 00:00:00")) & minute(date_time) == 0 & !is.na(spd_smooth) ] %>%
   ggplot(aes(date_time, ht)) +
   geom_arrow(aes(mag = spd_smooth, angle = di, color = spd_smooth),
-             scale = 0.005, start = -90, direction = -1) +
+             direction = "cw", start = -90) +
+  scale_mag(length = 1) +
   # geom_point(data = subset(vad_20160114, rmse1 > 0.5),
   #            aes(size = rmse1),
   #            shape = 1, color = "grey25") +
@@ -1809,7 +1817,7 @@ gdata[ht > 0.02 & date_time %between% c(as_datetime("2016-01-14 00:00:00"), as_d
 
 ```
 
-La diferencia en la magnitud del viento entre las observaciones y la simulación con la parametrización YSU es negativa (sobrestima) en los primeros niveles de altura y positiva (subestima) por encima de 500 m. En los primeros niveles las mayores diferencias se deben a la presencia de un máximo de viento entre las 00 y las 03 UTC en la simulación que no se corresponde con las observaciones y la persistencia del LLJ luego de su decaimiento en las observaciones. La simulación MYJ es la que presenta mayores diferencias con las observaciones tanto en las horas nocturnas como en las horas diurnas, esta diferencia llega valores negativos en niveles superiores durante el día. La parametrización ACM2 se comporta de manera similar a YSU aunque las diferencias en los primeros 500 m parecen ser menores. En líneas generales las tres parametrizaciones tienen un peor desempeño en horas nocturnas sobreestimando el viento en los primeros niveles y subestimandolo en los niveles altos.
+La diferencia en la magnitud del viento entre las observaciones y la simulación con la parametrización YSU es negativa (sobrestima) en los primeros niveles de altura y positiva (subestima) por encima de 500 m. En los primeros niveles las mayores diferencias se deben a la presencia de un máximo de viento entre las 00 y las 03 UTC en la simulación que no se corresponde con las observaciones y la persistencia del LLJ luego de su decaimiento en las observaciones. La simulación MYJ es la que presenta mayores diferencias con las observaciones tanto en las horas nocturnas como en las horas diurnas, esta diferencia llega a valores negativos en niveles superiores durante el día. La parametrización ACM2 se comporta de manera similar a YSU aunque las diferencias en los primeros 500 m parecen ser menores. En líneas generales las tres parametrizaciones tienen un peor desempeño en horas nocturnas sobreestimando el viento en los primeros niveles y subestimandolo en los niveles altos.
 
 En cuanto a la dirección del viento, en la Figura \ref{dif-dir} se muestra el valor absoluto de la diferencia entre el ángulo del vector del viento observado y el simulado. En las tres simulaciones la mayor diferencia se da por encima de 1000 m con valores de hasta 149° en MYJ, 141° en YSU y 131° en ACM2. En los primeros 1000 metros la diferencia es mucho menor y en algunos momentos cercana a cero. Cualitativamente no es posible identificar si alguna de las simulaciones tiene un mejor desempeño al estimar esta variable.
 
@@ -2090,7 +2098,7 @@ En esta sección se analiza la altura de la capa límite a partir de la estimaci
 
 En YSU la altura de la capa estable es mayor a las otras dos parametrizaciones mientras que durante el día la estimación queda por debajo o entre las otras. MYJ presenta las mayores variaciones del tope de la capa mezclada, inicialmente su crecimiento es muy rápido superando los 1000 metros en una hora pero posteriormente el crecimiento se desacelera con un período de decrecimiento luego de las 17 UTC. Si bien en presencia de nubosidad el tope de la capa mezclada puede verse afecta de esta manera, el resto de las condiciones meteorológicas no se vieron afectadas y por lo tanto no sería la razón de la disminución del tope de la CLP. Tampoco se observa el decrecimiento del tope en las otras simulaciones por lo que es posible que no esté reflejando el comportamiento real de la capa mezclada. La parametrización ACM2 genera la capa mezclada más profunda superando los 2500 m o 1872 m en promedio para todo el período inestable (Tabla \ref{tabla-clp}). En resumen, ACM2 produce la capa mezclada más profunda, seguidas por YSU y MYJ. Este resultado fue obtenido por otros autores [por ejemplo @Hu2010; @Xie2012] y puede deberse a las características de las distintas parametrizaciones. En particular MYJ es un esquema local y por lo tanto el transporte vertical de las distintas propiedades es más débil. Sumando a lo anterior, MYJ produce un menor intercambio de temperatura y humedad con la atmósfera libre limitando el crecimiento de la capa límite [@Xu2010].
 
-Para obtener una estiación de la altura de la CLP bajo un único método, se utilizó el criterio descripto en la Sección \ref{sec-pbh} para estimar la altura de la capa estable en las tres simulaciones. En la Figura \ref{pblh-spd} se muestra la altura de la capa estable nocturna estimada por cada parametrización en líneas y la estimada utilizando la altura a la que ocurre el máximo viento en puntos. Si bien este criterio está limitado por la resolución de la retícula vertical utilizada por el VAD, se observa una concordancia entre las estimaciones con MYJ y ACM2 principalmente en los momentos donde se produce el máximo LLJ.
+Para obtener una estimación de la altura de la CLP bajo un único método, se utilizó el criterio descripto en la Sección \ref{sec-pbh} para estimar la altura de la capa estable en las tres simulaciones. En la Figura \ref{pblh-spd} se muestra la altura de la capa estable nocturna estimada por cada parametrización en líneas y la estimada utilizando la altura a la que ocurre el máximo viento en puntos. Si bien este criterio está limitado por la resolución de la retícula vertical utilizada al obtener el perfil de viento, se observa una concordancia entre las estimaciones con MYJ y ACM2 principalmente en los momentos donde se produce el máximo LLJ.
 
 ```{r pblh-wrf, fig.cap="Altura de la capa límite (m) en cada simulación. \\label{pblh-wrf}", fig.subcap=c("Estimada directamente por cada esquema de CLP. \\label{pblh}", "Comparación entre la altura calculada por cada esquema (línea) y la estimada a partir de la altura del viento máximo (puntos) sólo en el período estable. \\label{pblh-spd}"), fig.width=0.75*text.width, fig.height=0.35*text.height, fig.align='center', fig.ncol=1}
 
@@ -2186,7 +2194,7 @@ group_by(all.pbl, param, lev, regimen) %>%
 ungroup() %>%
 ggplot(aes(lev, Pr)) +
   geom_line(aes(color = as.factor(param))) +
-  scale_color_viridis(name = "Esquema",discrete = T, option = "viridis",
+  scale_color_viridis(name = "Estimación",discrete = T, option = "viridis",
                        labels=c(expression(U2000[YSU]),
                                expression(U2000[MYJ]),
                                expression(U2000[ACM2]))) +
@@ -2231,7 +2239,7 @@ kable(hL, "latex",
 
 Finalmente se obtuvieron los perfiles de $K_m$ utilizando los valores del número de Prandtl y el $K_h$ disponible en el resultado de cada simulación. En la Figura \ref{k-ulke-wrf} se muestran los perfiles verticales de $K_m$ y de $K_h$ para cada simulación obtenidos a partir del promedio de la variable en cada nivel durante un período estable (05 a 06 UTC) y un período inestable (16 a 17 UTC). Los perfiles de $K_h$ y $K_m$ obtenidos para el régimen estable presentan mucha variación temporal durante el período por lo que solo se muestra el promedio obtenido durante las horas más representativas.
 
-En el período estable es esperable que el coeficiente de difusividad tenga un máximo dentro de la capa límite estable nocturna y que tienda rápidamente a valores cercanos a cero por encima del tope de la capa [@Klein2016]. Sin embargo se observa que en las tres simulaciones el máximo de difusividad se encuentra entre 750 y 1000 m de altura, mientras que es casi nulo en niveles superiores e inferiores. Este comportamiento podría estar explicado por la presencia de turbulencia en esos niveles debido a la importante cortante por encima del LLJ. Esta cortate es superior a la observada con el radar (Figura \ref{perfil-mod}) y podría estar asociada al transporte turbulento de cantidad de movimiento desde el nivel del LLJ hacia niveles superiores. Sin embargo, con los datos disponibles no es posible determinar si efectivamente hay turbulencia en esos niveles.
+En el período estable es esperable que el coeficiente de difusividad tenga un máximo dentro de la capa límite estable nocturna y que tienda rápidamente a valores cercanos a cero por encima del tope de la capa [@Klein2016]. Sin embargo se observa que en las tres simulaciones el máximo de difusividad se encuentra entre 750 y 1000 m de altura, mientras que es casi nulo en niveles superiores e inferiores. Este comportamiento podría estar explicado por la presencia de turbulencia en esos niveles debido a la importante cortante por encima del LLJ. Esta cortante es superior a la observada con el radar (Figura \ref{perfil-mod}) y podría estar asociada al transporte turbulento de cantidad de movimiento desde el nivel del LLJ hacia niveles superiores. Sin embargo, con los datos disponibles no es posible determinar si efectivamente hay turbulencia en esos niveles.
 De acuerdo a los perfiles obtenidos, YSU genera una mezcla más profunda que las otras parametrizaciones ya que el máximo ocurre en mayor altura y los coeficientes de difusividad tienen mayor magnitud. En el otro extremo MYJ muestra una mezcla menor con un máximo en niveles inferiores a YSU, esto es esperable debido a que MYJ es un esquema local y por lo tanto el transporte vertical será más débil. De acuerdo con @Klein2016 una mayor mezcla vertical está asociada a un LLJ menos intenso debido a que la mezcla podría generar divergencia de cantidad de movimiento en la capa del LLJ debilitándolo. En concordancia a lo anterior, en la Figura \ref{perfil-mod} se observa que el perfil de viento simulado por MYJ está asociado a un LLJ más intenso que en las otras simulaciones. El máximo intenso en los perfiles de los coeficientes turbulentos para YSU podría explicar la presencia de un LLJ más débil debido al mayor transporte de cantidad de movimiento por encima del jet que además genera una cortante más suave en concordancia a lo encontrado por @Klein2016.
 
 Los perfiles del período inestable divergen entre las distintas simulaciones en los primeros 2000 m pero luego de ese nivel convergen a cero debido que ese nivel se encuentra fuera de la CLP. En este régimen MYJ muestra las mayores magnitudes de los coeficientes de difusividad y por lo tanto genera una mezcla más intenta. El máximo en los perfiles de los coeficientes ocurren en niveles menores a las otras parametrizaciones, esto está asociado a una capa mezclada menos profunda (Figura \ref{pblh}), y también explica que el perfil de de los coeficientes se anule en 1500 m de altura aproximadamente.
@@ -2286,7 +2294,7 @@ remove(d)
 
 # Conclusiones
 
-Este trabajo de tesis tuvo como objetivo explorar la potencialidad del uso de datos de los radares Doppler en Argentina para estudiar algunos procesos que ocurren en la capa límite planetaria y validar un modelo numérico de la atmósfera analizando el desempeño de tres parametrizaciones de CLP. En primer lugar se determinaron las características necesarias para identificar los casos de estudio que permitan analizar los procesos de CLP asociados al ciclo diario. Para eso se analizaron los datos del Radar Doppler INTA Paraná y de la estación meteorológica Paraná Aero en busca de días con cielos despejados (o en su defecto, donde la nubosidad no tenga un efecto significativo sobre la temperatura observada) y con vientos moderados (menor a 7 m/s) durante el mes de enero de 2016. A partir de los criterios establecidos se identificaron tres casos correspondientes a tres días desde las 00 UTC: 14, 21 y 23 de enero.
+Este trabajo de tesis tuvo como objetivo explorar el potencial uso de datos de los radares Doppler en Argentina para estudiar algunos procesos que ocurren en la capa límite planetaria y validar un modelo numérico de la atmósfera analizando el desempeño de tres parametrizaciones de CLP. En primer lugar se determinaron las características necesarias para identificar los casos de estudio que permitan analizar los procesos de CLP asociados al ciclo diario. Para eso se analizaron los datos del Radar Doppler INTA Paraná y de la estación meteorológica Paraná Aero en busca de días con cielos despejados (o en su defecto, donde la nubosidad no tenga un efecto significativo sobre la temperatura observada) y con vientos en superficie moderados (menor a 7 m/s) durante el mes de enero de 2016. A partir de los criterios establecidos se identificaron tres casos correspondientes a tres días desde las 00 UTC: 14, 21 y 23 de enero.
 
 Para el procesamiento de los datos de radar se desarrolló un algoritmo basado en la técnica de Visualización Azimutal de la Velocidad (VAD) que permitió la obtención de perfiles verticales de la velocidad del viento horizontal a partir de la velocidad radial medida por el radar. En esta técnica se incluyeron controles de calidad para asegurar la validez de los resultados teniendo en cuenta distintas fuentes de errores posibles. En este trabajo se aplicaron controles para limitar la presencia de datos faltantes dispersos y consecutivos, se determinaron los límites del dominio donde el cálculo es posible y los ángulos de elevación del radar utilizados. Posteriormente se definió un umbral mínimo para eliminar datos que no tuvieran un buen ajuste al modelo propuesto a partir del $R^2$. Para validar la técnica de VAD desarrollada se construyeron campos de velocidad radial sintéticos con distintos errores a partir de los datos de un sondeo y se compararon los perfiles resultantes con el sondeo inicial y con el perfil obtenido a partir de los datos de un radar cercano. A partir de estas comparaciones se concluyó que el algoritmo tiene un buen desempeño aunque la presencia de datos faltantes genera un aumento en los errores calculados.
 
@@ -2298,7 +2306,7 @@ Se estimó la altura de la capa estable nocturna utilizando dos métodos diferen
 
 En los tres casos se observó el desarrollo de la capa mezclada posterior a la salida del sol. El viento observado por el radar se mantuvo aproximadamente constante con la altura a partir de los 100 a 200 m y con menor magnitud respecto a lo observado en horas nocturnas. Solo en el Caso 1 pudo verse el aumento en la magnitud del viento al final del día correspondiente al debilitamiento de la capa mezclada luego del atardecer. La estimación de la altura de la capa mezclada utilizando el gradiente vertical de reflectividad fue acorde a lo esperado teóricamente aunque hace evidente la necesidad de desarrollar una técnica que permita determinar el tope de la capa sin ambigüedades utilizando distintos ángulos de elevación y otras variables asociadas a la reflectividad.
 
-En la segunda etapa de este trabajo se realizaron simulaciones numéricas con el modelo regional WRF utilizando tres parametrizaciones de capa límite. Se seleccionó la parametrización YSU con clausura no local, MYJ con clausura local y ACM2 que tiene un comportamiento mixto. Se definió un dominio alrededor del radar y se utilizaron condiciones iniciales adecuadas para modelar el Caso 1. En términos cualitativos las tres simulaciones lograron representar las condiciones generales observadas durante período correspondiente. En particular las simulaciones lograron representar la evolución de la magnitud del viento, el LLJ durante la noche y el perfil homogéneo típico de la capa mezclada. Los campos de diferencias en la magnitud del viento entre las observaciones y cada simulación mostraron un mínimo alrededor de 500 m donde el error total fue menor en las tres comparaciones. Por debajo de ese nivel el bias resultó positivo y negativo por encima y este último dominó globalmente. La correlación entre las observaciones y las simulaciones fue muy buena hasta 600 m, pero luego desciende rápidamente y llega a valores negativos. Esto puede deberse a que la oscilación inercial en las tres simulaciones se observa hasta alturas menores que la estimación realizada por el radar. La diferencia calculada para la dirección del viento muestra un patrón similar en las tres simulaciones, diferencias pequeñas o nulas en los primeros 1000 m que luego crecen en los niveles superiores hasta valores cercanos a 140°. Al igual que con la magnitud del viento, el bias fue negativo y la correlación fue similar en los tres casos con valores cercanos a 0.5.
+En la segunda etapa de este trabajo se realizaron simulaciones numéricas con el modelo regional WRF utilizando tres parametrizaciones de capa límite. Se seleccionó la parametrización YSU con clausura no local, MYJ con clausura local y ACM2 que tiene un comportamiento mixto. Se definió un dominio alrededor del radar y se utilizaron condiciones iniciales adecuadas para modelar el Caso 1. En términos cualitativos las tres simulaciones lograron representar las condiciones generales observadas durante período el correspondiente. En particular las simulaciones lograron representar la evolución de la magnitud del viento, el LLJ durante la noche y el perfil homogéneo típico de la capa mezclada. Los campos de diferencias en la magnitud del viento entre las observaciones y cada simulación mostraron un mínimo alrededor de 500 m donde el error total fue menor en las tres comparaciones. Por debajo de ese nivel el bias resultó positivo y negativo por encima y este último dominó globalmente. La correlación entre las observaciones y las simulaciones fue muy buena hasta 600 m, pero luego desciende rápidamente y llega a valores negativos. Esto puede deberse a que la oscilación inercial en las tres simulaciones se observa hasta alturas menores que la estimación realizada por el radar. La diferencia calculada para la dirección del viento muestra un patrón similar en las tres simulaciones, diferencias pequeñas o nulas en los primeros 1000 m que luego crecen en los niveles superiores hasta valores cercanos a 140°. Al igual que con la magnitud del viento, el bias fue negativo y la correlación fue similar en los tres casos con valores cercanos a 0.5.
 
 A partir de lo anterior puede concluirse que las tres simulaciones tuvieron un mejor desempeño en los primeros 600 a 1000 m de altura. MYJ presentó un mayor error total y menor correlación en la magnitud del viento pero fue el mejor al simular su dirección. A pesar de sus diferencias, YSU y ACM2 tienen un comportamiento muy similar por lo que la componente no local de la parametrización ACM2 domina la simulación. Por encima de los 1000 m de altura el desempeño disminuye y por lo tanto las simulaciones podrían no estar representando de manera correcta los procesos que ocurren en la atmósfera. Sin embargo también es posible que parte de esa diferencia esté asociada a un error en la estimación de los perfiles con la técnica VAD debido a los errores de aproximación generados en el cálculo de la propagación vertical del haz de radar. Este problema es más importante durante la noche cuando se produce una inversión térmica que puede afectar significativamente la altura del haz.
 
